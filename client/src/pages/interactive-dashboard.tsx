@@ -167,73 +167,102 @@ export default function InteractiveDashboard() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-gray-900 to-black p-8 border-b border-gray-800 sticky top-0 z-40 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="flex-1">
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent mb-2">
-                The Death of Artificial Scarcity
+      <header className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border-b border-slate-700/50 backdrop-blur-xl sticky top-0 z-40">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto p-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Live Analysis</span>
+              </div>
+              
+              <h1 className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
+                The Death of<br />
+                <span className="text-4xl lg:text-6xl">Artificial Scarcity</span>
               </h1>
-              <p className="text-gray-400 text-lg">
-                Real-time analysis of low float/high FDV failures vs revenue-generating success
+              
+              <p className="text-slate-300 text-xl max-w-2xl leading-relaxed">
+                Real-time analysis of <span className="text-red-400 font-semibold">low float/high FDV failures</span> vs <span className="text-green-400 font-semibold">revenue-generating success</span>
               </p>
+              
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-2 text-green-400">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">CoinGecko Pro API</span>
+                </div>
+                <div className="w-1 h-4 bg-slate-600"></div>
+                <div className="text-slate-400 text-sm">
+                  Last updated: {new Date().toLocaleTimeString()}
+                </div>
+              </div>
             </div>
             
-            <div className="flex flex-wrap gap-4 items-center">
-              <a 
-                href="/hyperliquid" 
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
-              >
-                <Rocket className="w-4 h-4" />
-                Hyperliquid Success Story
-              </a>
-              
-              <a 
-                href="/monte-carlo" 
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
-              >
-                <BarChart3 className="w-4 h-4" />
-                Price Simulations
-              </a>
-              
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
-              >
-                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
-              </button>
-              
-              <div className="bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
-                <label className="text-sm text-gray-400 mr-2">Sort:</label>
-                <select 
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-black text-white border border-gray-600 rounded px-2 py-1 text-sm"
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap gap-3">
+                <a 
+                  href="/hyperliquid" 
+                  className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2 overflow-hidden"
                 >
-                  <option value="performance">Performance</option>
-                  <option value="marketCap">Market Cap</option>
-                  <option value="float">Float %</option>
-                </select>
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Rocket className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Success Story</span>
+                </a>
+                
+                <a 
+                  href="/monte-carlo" 
+                  className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <BarChart3 className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Simulations</span>
+                </a>
+                
+                <button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center gap-2 overflow-hidden disabled:cursor-not-allowed"
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <RefreshCw className={`w-5 h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span className="relative z-10">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+                </button>
               </div>
               
-              <div className="bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
-                <label className="text-sm text-gray-400 mr-2">Filter:</label>
-                <select 
-                  value={filterBy}
-                  onChange={(e) => setFilterBy(e.target.value)}
-                  className="bg-black text-white border border-gray-600 rounded px-2 py-1 text-sm"
-                >
-                  <option value="all">All Tokens</option>
-                  <option value="worst">Worst Performers</option>
-                  <option value="gaming">Gaming</option>
-                  <option value="defi">DeFi</option>
-                  <option value="layer2">Layer 2</option>
-                </select>
+              <div className="flex gap-3">
+                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
+                  <label className="text-sm text-slate-400 font-medium">Sort:</label>
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="ml-2 bg-transparent text-white border-none outline-none text-sm font-medium cursor-pointer"
+                  >
+                    <option value="performance" className="bg-slate-800">Performance</option>
+                    <option value="marketCap" className="bg-slate-800">Market Cap</option>
+                    <option value="float" className="bg-slate-800">Float %</option>
+                  </select>
+                </div>
+                
+                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
+                  <label className="text-sm text-slate-400 font-medium">Filter:</label>
+                  <select 
+                    value={filterBy}
+                    onChange={(e) => setFilterBy(e.target.value)}
+                    className="ml-2 bg-transparent text-white border-none outline-none text-sm font-medium cursor-pointer"
+                  >
+                    <option value="all" className="bg-slate-800">All Tokens</option>
+                    <option value="worst" className="bg-slate-800">Worst Performers</option>
+                    <option value="gaming" className="bg-slate-800">Gaming</option>
+                    <option value="defi" className="bg-slate-800">DeFi</option>
+                    <option value="layer2" className="bg-slate-800">Layer 2</option>
+                  </select>
+                </div>
               </div>
-              
-
             </div>
           </div>
         </div>
@@ -241,49 +270,86 @@ export default function InteractiveDashboard() {
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-red-500 transition-all duration-300 group">
-            <TrendingDown className="w-6 h-6 text-red-500 mb-2 opacity-20 absolute top-4 right-4" />
-            <div className="text-2xl font-bold text-red-500">{(summary as any)?.averageLoss || "-95.2"}%</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">Average Decline</div>
-            <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              Live data
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-12">
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <TrendingDown className="w-8 h-8 text-red-500" />
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-red-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                {(summary as any)?.averageLoss || "-95.2"}%
+              </div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Average Decline</div>
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="font-medium">Live data</span>
+              </div>
             </div>
           </div>
           
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-red-500 transition-all duration-300">
-            <Unlock className="w-6 h-6 text-red-500 mb-2 opacity-20 absolute top-4 right-4" />
-            <div className="text-2xl font-bold text-red-500">$155B</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">Pending Unlocks</div>
-            <div className="text-xs text-gray-500 mt-1">By 2030</div>
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <Unlock className="w-8 h-8 text-red-500" />
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-red-400 mb-2 group-hover:scale-110 transition-transform duration-300">$155B</div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Pending Unlocks</div>
+              <div className="text-xs text-slate-500 font-medium">By 2030</div>
+            </div>
           </div>
           
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-yellow-500 transition-all duration-300">
-            <div className="text-2xl font-bold">{(summary as any)?.averageInitialFloat || "13.2"}%</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">Avg Initial Float</div>
-            <div className="text-xs text-gray-500 mt-1">At launch</div>
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-yellow-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                <span className="text-yellow-500 font-bold text-sm">%</span>
+              </div>
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-yellow-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                {(summary as any)?.averageInitialFloat || "13.2"}%
+              </div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Avg Initial Float</div>
+              <div className="text-xs text-slate-500 font-medium">At launch</div>
+            </div>
           </div>
           
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-green-500 transition-all duration-300">
-            <Rocket className="w-6 h-6 text-green-500 mb-2 opacity-20 absolute top-4 right-4" />
-            <div className="text-2xl font-bold text-green-500">+1,029%</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">HYPE Performance</div>
-            <div className="text-xs text-green-500 mt-1">Since launch</div>
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <Rocket className="w-8 h-8 text-green-500" />
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-green-400 mb-2 group-hover:scale-110 transition-transform duration-300">+1,029%</div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">HYPE Performance</div>
+              <div className="text-xs text-green-400 font-medium">Since launch</div>
+            </div>
           </div>
           
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-green-500 transition-all duration-300">
-            <DollarSign className="w-6 h-6 text-green-500 mb-2 opacity-20 absolute top-4 right-4" />
-            <div className="text-2xl font-bold text-green-500">$1.15B</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">HYPE Revenue</div>
-            <div className="text-xs text-gray-500 mt-1">Annual run rate</div>
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <DollarSign className="w-8 h-8 text-green-500" />
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-green-400 mb-2 group-hover:scale-110 transition-transform duration-300">$1.15B</div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">HYPE Revenue</div>
+              <div className="text-xs text-green-400 font-medium">Annual run rate</div>
+            </div>
           </div>
           
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-green-500 transition-all duration-300">
-            <Users className="w-6 h-6 text-green-500 mb-2 opacity-20 absolute top-4 right-4" />
-            <div className="text-2xl font-bold text-green-500">190K+</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wide">HYPE Users</div>
-            <div className="text-xs text-gray-500 mt-1">Active traders</div>
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <Users className="w-8 h-8 text-cyan-500" />
+            </div>
+            <div className="relative z-10">
+              <div className="text-3xl font-black text-cyan-400 mb-2 group-hover:scale-110 transition-transform duration-300">190K+</div>
+              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">HYPE Users</div>
+              <div className="text-xs text-cyan-400 font-medium">Active traders</div>
+            </div>
           </div>
         </div>
 

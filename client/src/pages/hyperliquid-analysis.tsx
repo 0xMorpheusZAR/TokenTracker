@@ -12,31 +12,68 @@ export default function HyperliquidAnalysis() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900/10 to-slate-900 text-white">
+      <div className="max-w-7xl mx-auto p-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center justify-between mb-6">
-            <a href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
+        <div className="relative mb-12">
+          {/* Animated background elements */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          </div>
+          
+          <div className="relative flex flex-wrap items-center justify-between mb-8">
+            <a 
+              href="/" 
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
+            >
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+              <span className="font-medium">Back to Dashboard</span>
             </a>
             
             <a 
               href="/monte-carlo" 
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
+              className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2 overflow-hidden"
             >
-              <Target className="w-4 h-4" />
-              Price Simulations
+              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Target className="w-5 h-5 relative z-10" />
+              <span className="relative z-10">Price Simulations</span>
             </a>
           </div>
           
-          <div className="text-center">
-            <h1 className="text-6xl font-black bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-4">
-              Hyperliquid: The Success Story
+          <div className="relative text-center space-y-6">
+            <div className="inline-flex items-center gap-3 px-6 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-500/20">
+              <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+              <span className="text-emerald-400 font-semibold uppercase tracking-wider text-sm">Success Case Study</span>
+            </div>
+            
+            <h1 className="text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 leading-tight tracking-tight">
+              Hyperliquid
             </h1>
-            <p className="text-2xl text-gray-300 mb-2">How to Build a Token That Actually Works</p>
-            <p className="text-lg text-gray-400">The Anti-Thesis to Low Float/High FDV Failures</p>
+            
+            <div className="space-y-3">
+              <p className="text-3xl font-bold text-white">The Success Story</p>
+              <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+                How to build a token that <span className="text-emerald-400 font-semibold">actually works</span> — the complete opposite of low float/high FDV failures
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-center gap-6 pt-4">
+              <div className="flex items-center gap-2 text-emerald-400">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">Revenue-Generating</span>
+              </div>
+              <div className="w-1 h-4 bg-slate-600"></div>
+              <div className="flex items-center gap-2 text-emerald-400">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">Fair Launch</span>
+              </div>
+              <div className="w-1 h-4 bg-slate-600"></div>
+              <div className="flex items-center gap-2 text-emerald-400">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">+1,029% Performance</span>
+              </div>
+            </div>
           </div>
         </div>
 
