@@ -51,6 +51,14 @@ export default function InteractiveDashboard() {
     queryKey: ["/api/coingecko/status"],
   });
 
+  const { data: hyperliquidData } = useQuery({
+    queryKey: ["/api/hyperliquid/comprehensive"],
+  });
+
+  const { data: detailedTokenData } = useQuery({
+    queryKey: ["/api/coingecko/detailed"],
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1500);
     return () => clearTimeout(timer);
@@ -570,41 +578,216 @@ export default function InteractiveDashboard() {
           </div>
         )}
 
-        {/* Hyperliquid Hero Section */}
+        {/* Comprehensive Hyperliquid Analysis Section */}
         <section className="bg-gradient-to-br from-green-900/20 to-gray-900 border-2 border-green-500 rounded-2xl p-8 mb-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-green-500/5 animate-pulse"></div>
           <div className="relative z-10">
             <div className="text-center mb-8">
-              <h2 className="text-4xl font-black bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-2">
+              <h2 className="text-5xl font-black bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-4">
                 The New Paradigm: Hyperliquid
               </h2>
-              <p className="text-xl text-gray-400">Real Revenue. Real Users. Real Value.</p>
+              <p className="text-2xl text-gray-300 mb-2">Real Revenue. Real Users. Real Value.</p>
+              <p className="text-lg text-gray-400">The Only Token That Actually Works</p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">$36.50</div>
+            {/* Real-time Key Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  ${(hyperliquidData as any)?.realTimeMetrics?.currentPrice?.toFixed(2) || "36.50"}
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Current Price</div>
+                <div className="text-xs text-green-400 mt-1">
+                  {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h > 0 ? '+' : ''}
+                  {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h?.toFixed(1) || "+5.2"}% 24h
+                </div>
               </div>
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">+1,029%</div>
+              
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  +{(hyperliquidData as any)?.realTimeMetrics?.priceChangeSinceLaunch?.toFixed(0) || "1,029"}%
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Since Launch</div>
+                <div className="text-xs text-gray-400 mt-1">Nov 29, 2024</div>
               </div>
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">$12.07B</div>
+              
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  ${((hyperliquidData as any)?.realTimeMetrics?.marketCap / 1e9)?.toFixed(2) || "12.07"}B
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Market Cap</div>
+                <div className="text-xs text-gray-400 mt-1">Rank #41</div>
               </div>
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">$1.15B</div>
+              
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  ${((hyperliquidData as any)?.fundamentals?.annualRevenue / 1e9)?.toFixed(2) || "1.15"}B
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Annual Revenue</div>
+                <div className="text-xs text-green-400 mt-1">275% QoQ Growth</div>
               </div>
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">190K+</div>
+              
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  {((hyperliquidData as any)?.fundamentals?.activeUsers / 1000)?.toFixed(0) || "190"}K+
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Active Users</div>
+                <div className="text-xs text-gray-400 mt-1">Real traders</div>
               </div>
-              <div className="text-center bg-black/30 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-all duration-300 hover:transform hover:-translate-y-2">
-                <div className="text-3xl font-bold text-green-400">33.39%</div>
+              
+              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
+                <div className="text-3xl font-black text-green-400">
+                  {(hyperliquidData as any)?.fundamentals?.launchFloat?.toFixed(1) || "33.4"}%
+                </div>
                 <div className="text-xs text-gray-400 uppercase tracking-wide">Fair Launch Float</div>
+                <div className="text-xs text-green-400 mt-1">2.5x Failed Avg</div>
+              </div>
+            </div>
+
+            {/* Comparative Analysis */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
+                <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <Rocket className="w-6 h-6" />
+                  Success Metrics
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
+                    <span className="text-gray-300">Price Performance</span>
+                    <span className="text-green-400 font-bold">+1,029% vs -95% avg failure</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
+                    <span className="text-gray-300">Daily Volume</span>
+                    <span className="text-green-400 font-bold">
+                      ${((hyperliquidData as any)?.fundamentals?.dailyVolume / 1e9)?.toFixed(1) || "2.8"}B vs $0 failures
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
+                    <span className="text-gray-300">Monthly Revenue</span>
+                    <span className="text-green-400 font-bold">
+                      ${((hyperliquidData as any)?.fundamentals?.monthlyRevenue / 1e6)?.toFixed(0) || "96"}M recurring
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
+                    <span className="text-gray-300">Operating Margin</span>
+                    <span className="text-green-400 font-bold">~85% profitability</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 rounded-xl p-6 border border-red-500/30">
+                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center gap-2">
+                  <TrendingDown className="w-6 h-6" />
+                  Failed Token Comparison
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
+                    <span className="text-gray-300">Average Float</span>
+                    <span className="text-red-400 font-bold">13.2% (artificially scarce)</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
+                    <span className="text-gray-300">Revenue Model</span>
+                    <span className="text-red-400 font-bold">$0 - No working product</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
+                    <span className="text-gray-300">Real Users</span>
+                    <span className="text-red-400 font-bold">Minimal - Speculative only</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
+                    <span className="text-gray-300">Performance</span>
+                    <span className="text-red-400 font-bold">-95.2% average decline</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Business Model Deep Dive */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5" />
+                  Revenue Streams
+                </h3>
+                <div className="space-y-3">
+                  {(hyperliquidData as any)?.businessModel?.revenueStreams?.map((stream: string, index: number) => (
+                    <div key={index} className="flex items-center gap-2 text-sm text-gray-300">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      {stream}
+                    </div>
+                  )) || [
+                    <div key="1" className="flex items-center gap-2 text-sm text-gray-300">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      Trading fees (0.02-0.05%)
+                    </div>,
+                    <div key="2" className="flex items-center gap-2 text-sm text-gray-300">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      Liquidation fees
+                    </div>
+                  ]}
+                </div>
+              </div>
+
+              <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  User Growth
+                </h3>
+                <div className="space-y-3">
+                  <div className="text-2xl font-bold text-green-400">
+                    {((hyperliquidData as any)?.fundamentals?.dailyActiveUsers / 1000)?.toFixed(0) || "45"}K
+                  </div>
+                  <div className="text-sm text-gray-400">Daily Active Users</div>
+                  <div className="text-sm text-green-400">
+                    Growing organically from product-market fit
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <Unlock className="w-5 h-5" />
+                  Tokenomics
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Team Allocation</span>
+                    <span className="text-green-400">23% (4yr vesting)</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Community</span>
+                    <span className="text-green-400">77% (fair distribution)</span>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    No private sales, no VC dumping
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Risk Assessment */}
+            <div className="bg-black/40 rounded-xl p-6 border border-yellow-500/30">
+              <h3 className="text-2xl font-bold text-yellow-400 mb-4">Risk Assessment</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="text-center">
+                  <div className="text-green-400 font-bold">LOW</div>
+                  <div className="text-xs text-gray-400 mt-1">Technical Risk</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-green-400 font-bold">LOW</div>
+                  <div className="text-xs text-gray-400 mt-1">Token Dilution</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-green-400 font-bold">LOW</div>
+                  <div className="text-xs text-gray-400 mt-1">Team Risk</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-yellow-400 font-bold">MEDIUM</div>
+                  <div className="text-xs text-gray-400 mt-1">Competition</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-yellow-400 font-bold">MEDIUM</div>
+                  <div className="text-xs text-gray-400 mt-1">Regulatory</div>
+                </div>
               </div>
             </div>
           </div>

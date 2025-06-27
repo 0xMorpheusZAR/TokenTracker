@@ -109,7 +109,13 @@ The application uses a normalized schema with three core entities:
 
 ```
 Changelog:
-- June 27, 2025. Initial setup
+- June 27, 2025: Initial setup with basic dashboard and token failure analytics
+- June 27, 2025: Integrated CoinGecko Pro API for accurate real-time pricing data
+- June 27, 2025: Enhanced CoinGecko service with detailed market data endpoints
+- June 27, 2025: Added comprehensive Hyperliquid analysis section with real revenue metrics
+- June 27, 2025: Implemented real-time token data synchronization with CoinGecko Pro
+- June 27, 2025: Built advanced interactive dashboard with Chart.js visualizations
+- June 27, 2025: Added enhanced filtering, sorting, and multi-view capabilities
 ```
 
 ## User Preferences

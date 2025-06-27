@@ -44,8 +44,12 @@ export class CoinGeckoService {
   private isProUser: boolean;
 
   constructor() {
-    this.apiKey = process.env.COINGECKO_API_KEY || process.env.COINGECKO_PRO_API_KEY || '';
-    this.isProUser = !!process.env.COINGECKO_PRO_API_KEY;
+    this.apiKey = process.env.COINGECKO_PRO_API_KEY || '';
+    this.isProUser = !!this.apiKey;
+    console.log(`CoinGecko initialized: ${this.isProUser ? 'Pro' : 'Free'} tier`);
+    if (this.isProUser) {
+      console.log('Using CoinGecko Pro API for enhanced data accuracy');
+    }
   }
 
   private getApiUrl(): string {
@@ -77,6 +81,8 @@ export class CoinGeckoService {
       'MANTA': 'manta-network',
       'ALT': 'altlayer',
       'ENA': 'ethena',
+      'OMNI': 'omni-network',
+      'HYPE': 'hyperliquid',
       'W': 'wormhole'
     };
     
@@ -169,6 +175,74 @@ export class CoinGeckoService {
 
   isConnected(): boolean {
     return this.isProUser ? !!this.apiKey : true; // Free tier doesn't require API key
+  }
+
+  async getDetailedTokenData(symbols: string[]): Promise<any> {
+    try {
+      const coinIds = symbols.map(symbol => this.getTokenId(symbol)).join(',');
+      const url = `${this.getApiUrl()}/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=1h,24h,7d,30d,1y&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;
+      
+      console.log(`Fetching detailed data from: ${url}`);
+      const response = await fetch(url, {
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        console.error(`CoinGecko detailed data error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const data = await response.json();
+      console.log(`Fetched detailed data for ${data.length} tokens`);
+      return data;
+    } catch (error) {
+      console.error('Error fetching detailed token data:', error);
+      return null;
+    }
+  }
+
+  async getHyperliquidData(): Promise<any> {
+    try {
+      const url = `${this.getApiUrl()}/coins/hyperliquid`;
+      console.log(`Fetching Hyperliquid data from: ${url}`);
+      
+      const response = await fetch(url, {
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        console.error(`Hyperliquid data error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const data = await response.json();
+      console.log('Fetched Hyperliquid real-time data');
+      return data;
+    } catch (error) {
+      console.error('Error fetching Hyperliquid data:', error);
+      return null;
+    }
+  }
+
+  async getTokenOHLCV(symbol: string, days: number = 30): Promise<any> {
+    try {
+      const coinId = this.getTokenId(symbol);
+      const url = `${this.getApiUrl()}/coins/${coinId}/ohlc?vs_currency=usd&days=${days}`;
+      
+      const response = await fetch(url, {
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        console.error(`CoinGecko OHLCV error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching OHLCV data:', error);
+      return null;
+    }
   }
 
   getConnectionStatus(): { connected: boolean; tier: string; rateLimit: string } {
