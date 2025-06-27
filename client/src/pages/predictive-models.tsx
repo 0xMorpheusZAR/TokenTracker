@@ -7,17 +7,21 @@ import { formatCurrency, formatPercentage, getRiskColor, getPerformanceColor } f
 
 interface TokenMetrics {
   symbol: string;
-  current_price: number;
-  market_cap: number;
-  volume_24h: number;
-  price_change_24h: number;
-  price_change_7d: number;
-  price_change_30d: number;
-  ath: number;
-  ath_change_percentage: number;
-  volatility_30d: number;
-  protocol_name?: string;
-  revenue_growth_30d?: number;
+  protocol_name: string;
+  category: string;
+  current_price?: number;
+  market_cap?: number;
+  volume_24h?: number;
+  price_change_24h?: number;
+  price_change_7d?: number;
+  price_change_30d?: number;
+  ath?: number;
+  ath_change_percentage?: number;
+  volatility_30d?: number;
+  revenue_growth_30d: number;
+  revenue_growth_90d: number;
+  monthly_revenue: number;
+  annual_revenue: number;
   pe_ratio?: number;
 }
 
@@ -63,10 +67,43 @@ export default function PredictiveModels() {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Fetch all protocol data from Dune Analytics
-  const { data: tokens = [] } = useQuery<TokenMetrics[]>({
+  const { data: duneTokens = [], isLoading: duneLoading } = useQuery<TokenMetrics[]>({
     queryKey: ['/api/dune/protocols'],
     staleTime: 5 * 60 * 1000
   });
+
+  // Fetch CoinGecko price data to supplement Dune data
+  const { data: coinGeckoData = [] } = useQuery({
+    queryKey: ['/api/coingecko/detailed'],
+    staleTime: 5 * 60 * 1000
+  });
+
+  // Merge Dune and CoinGecko data
+  const tokens = useMemo(() => {
+    if (!duneTokens || duneTokens.length === 0) return [];
+    
+    return duneTokens.map(token => {
+      // Find matching CoinGecko data by symbol
+      const cgToken = Array.isArray(coinGeckoData) ? coinGeckoData.find((cg: any) => 
+        cg.symbol?.toUpperCase() === token.symbol?.toUpperCase()
+      ) : null;
+      
+      return {
+        ...token,
+        current_price: cgToken?.current_price || 0,
+        market_cap: cgToken?.market_cap || 0,
+        volume_24h: cgToken?.total_volume || 0,
+        price_change_24h: cgToken?.price_change_percentage_24h || 0,
+        price_change_7d: cgToken?.price_change_percentage_7d || 0,
+        price_change_30d: cgToken?.price_change_percentage_30d || 0,
+        ath: cgToken?.ath || 0,
+        ath_change_percentage: cgToken?.ath_change_percentage || 0,
+        volatility_30d: Math.abs(cgToken?.price_change_percentage_30d || 0),
+        pe_ratio: token.annual_revenue > 0 && cgToken?.market_cap ? 
+          cgToken.market_cap / token.annual_revenue : undefined
+      };
+    });
+  }, [duneTokens, coinGeckoData]);
 
   const models: PredictionModel[] = [
     {
@@ -117,7 +154,7 @@ export default function PredictiveModels() {
       const currentPrice = token.current_price || 0;
       if (currentPrice === 0) return null; // Skip tokens without price data
       
-      const revenueGrowth = token.revenue_growth_30d || 0;
+      const revenueGrowth = token.revenue_growth_30d;
       const priceVolatility = Math.abs(token.price_change_30d || 0) / 30;
       const momentum = (token.price_change_7d || 0) * 0.6 + (token.price_change_24h || 0) * 0.4;
       
@@ -161,12 +198,12 @@ export default function PredictiveModels() {
       const riskFactors = [
         token.revenue_growth_30d < 0 ? 'Declining revenue' : null,
         Math.abs(token.price_change_30d || 0) > 50 ? 'High volatility' : null,
-        token.market_cap < 100000000 ? 'Low market cap' : null
+        (token.market_cap || 0) < 100000000 ? 'Low market cap' : null
       ].filter(Boolean) as string[];
 
       const bullishSignals = [
         token.revenue_growth_30d > 20 ? 'Strong revenue growth' : null,
-        token.price_change_7d > 5 ? 'Positive momentum' : null,
+        (token.price_change_7d || 0) > 5 ? 'Positive momentum' : null,
         token.pe_ratio && token.pe_ratio < 25 ? 'Attractive valuation' : null
       ].filter(Boolean) as string[];
 
@@ -301,12 +338,13 @@ export default function PredictiveModels() {
   }, [selectedTokenPrediction, selectedToken, tokens]);
 
   // Loading state
-  if (!tokens || tokens.length === 0) {
+  if (duneLoading || !duneTokens || duneTokens.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-400">Loading protocol data from Dune Analytics...</p>
+          <p className="text-slate-500 text-sm mt-2">Fetching 24 protocols from query 4796056</p>
         </div>
       </div>
     );
@@ -353,8 +391,14 @@ export default function PredictiveModels() {
                 </h1>
               </div>
               <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Advanced machine learning models analyzing all 24 protocols from our revenue dashboard
+                Advanced machine learning models analyzing {duneTokens.length} protocols from Dune Analytics
               </p>
+              <div className="text-center mt-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  Powered by Dune Query #4796056
+                </span>
+              </div>
             </div>
           </div>
 
@@ -417,20 +461,44 @@ export default function PredictiveModels() {
             <div className="space-y-3">
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className={`w-full py-2 px-4 rounded-lg transition-all duration-200 ${
+                className={`w-full py-3 px-4 rounded-lg transition-all duration-200 ${
                   showAdvanced
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
                     : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50'
                 }`}
               >
-                {showAdvanced ? 'Advanced Analysis' : 'Standard Analysis'}
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">
+                    {showAdvanced ? '🧠 Advanced Analysis' : '📊 Standard Analysis'}
+                  </span>
+                  <span className="text-xs opacity-75">
+                    {showAdvanced ? '1.2x' : '0.8x'}
+                  </span>
+                </div>
               </button>
-              <p className="text-xs text-slate-400">
-                {showAdvanced 
-                  ? 'Incorporates revenue metrics, P/E ratios, and fundamental analysis'
-                  : 'Basic technical analysis with price and momentum indicators'
-                }
-              </p>
+              <div className={`p-3 rounded-lg text-xs ${
+                showAdvanced 
+                  ? 'bg-blue-500/10 border border-blue-500/20 text-blue-300'
+                  : 'bg-slate-700/30 text-slate-400'
+              }`}>
+                <div className="space-y-1">
+                  {showAdvanced ? (
+                    <>
+                      <div>✓ Revenue growth factors</div>
+                      <div>✓ P/E ratio analysis</div>
+                      <div>✓ Fundamental indicators</div>
+                      <div>✓ Enhanced complexity factor (1.2x)</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>• Basic price momentum</div>
+                      <div>• Technical indicators</div>
+                      <div>• Simplified analysis</div>
+                      <div>• Standard complexity (0.8x)</div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
