@@ -165,59 +165,40 @@ export default function InteractiveDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-green-400">
-      {/* Matrix Background Animation */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-black">
-          {Array.from({ length: 80 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute text-green-400 text-xs font-mono animate-matrix-rain"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${2 + Math.random() * 6}s`
-              }}
-            >
-              {Math.random().toString(36).substring(2, 15)}
-            </div>
-          ))}
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="relative overflow-hidden bg-black/90 border-b border-green-400/30 backdrop-blur-xl sticky top-0 z-40">
-        {/* Matrix glitch effects */}
+      <header className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border-b border-slate-700/50 backdrop-blur-xl sticky top-0 z-40">
+        {/* Animated background elements */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-400/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-green-400/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto p-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
             <div className="flex-1 space-y-4">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-sm font-medium uppercase tracking-wider font-mono">LIVE_ANALYSIS</span>
+                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Live Analysis</span>
               </div>
               
-              <h1 className="text-5xl lg:text-7xl font-black text-green-400 mb-4 leading-tight tracking-tight font-mono">
-                THE_DEATH_OF<br />
-                <span className="text-4xl lg:text-6xl text-red-500">ARTIFICIAL_SCARCITY</span>
+              <h1 className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
+                The Death of<br />
+                <span className="text-4xl lg:text-6xl">Artificial Scarcity</span>
               </h1>
               
-              <p className="text-green-400/70 text-xl max-w-2xl leading-relaxed font-mono">
-                REAL-TIME_ANALYSIS_OF <span className="text-red-400 font-semibold">LOW_FLOAT/HIGH_FDV_FAILURES</span> VS <span className="text-green-400 font-semibold">REVENUE-GENERATING_SUCCESS</span>
+              <p className="text-slate-300 text-xl max-w-2xl leading-relaxed">
+                Real-time analysis of <span className="text-red-400 font-semibold">low float/high FDV failures</span> vs <span className="text-green-400 font-semibold">revenue-generating success</span>
               </p>
               
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-green-400">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium font-mono">COINGECKO_PRO_API</span>
+                  <span className="text-sm font-medium">CoinGecko Pro API</span>
                 </div>
-                <div className="w-1 h-4 bg-green-400/30"></div>
-                <div className="text-green-400/50 text-sm font-mono">
-                  LAST_UPDATED: {new Date().toLocaleTimeString()}
+                <div className="w-1 h-4 bg-slate-600"></div>
+                <div className="text-slate-400 text-sm">
+                  Last updated: {new Date().toLocaleTimeString()}
                 </div>
               </div>
             </div>
@@ -226,35 +207,39 @@ export default function InteractiveDashboard() {
               <div className="flex flex-wrap gap-3">
                 <a 
                   href="/revenue-analysis" 
-                  className="group relative px-6 py-3 bg-black/80 border-2 border-green-400/30 hover:border-green-400 text-green-400 rounded-lg font-semibold transition-all duration-300 hover:bg-green-400/10 flex items-center gap-2 font-mono"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center gap-2 overflow-hidden"
                 >
-                  <DollarSign className="w-5 h-5" />
-                  <span>CASH_COWS</span>
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <DollarSign className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Cash Cows</span>
                 </a>
                 
                 <a 
                   href="/hyperliquid" 
-                  className="group relative px-6 py-3 bg-black/80 border-2 border-green-400/30 hover:border-green-400 text-green-400 rounded-lg font-semibold transition-all duration-300 hover:bg-green-400/10 flex items-center gap-2 font-mono"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2 overflow-hidden"
                 >
-                  <Rocket className="w-5 h-5" />
-                  <span>SUCCESS_STORY</span>
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Rocket className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Success Story</span>
                 </a>
                 
                 <a 
                   href="/monte-carlo" 
-                  className="group relative px-6 py-3 bg-black/80 border-2 border-green-400/30 hover:border-green-400 text-green-400 rounded-lg font-semibold transition-all duration-300 hover:bg-green-400/10 flex items-center gap-2 font-mono"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2 overflow-hidden"
                 >
-                  <BarChart3 className="w-5 h-5" />
-                  <span>HYPE_SIMULATION</span>
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <BarChart3 className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10 font-mono">HYPE_SIMULATION</span>
                 </a>
                 
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="group relative px-6 py-3 bg-black/80 border-2 border-green-400/30 hover:border-green-400 disabled:border-red-500/30 text-green-400 disabled:text-red-500 rounded-lg font-semibold transition-all duration-300 hover:bg-green-400/10 disabled:bg-red-500/10 flex items-center gap-2 font-mono disabled:cursor-not-allowed"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-2 overflow-hidden disabled:cursor-not-allowed"
                 >
-                  <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>{isRefreshing ? 'REFRESHING...' : 'REFRESH'}</span>
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <RefreshCw className={`w-5 h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span className="relative z-10">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </button>
               </div>
               
