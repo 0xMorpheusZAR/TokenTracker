@@ -233,10 +233,7 @@ export default function InteractiveDashboard() {
                 </select>
               </div>
               
-              <button className="bg-gray-800 hover:bg-red-600 transition-all duration-300 px-4 py-2 rounded-lg border border-gray-700 flex items-center gap-2">
-                <RefreshCw className="w-4 h-4" />
-                Refresh
-              </button>
+
             </div>
           </div>
         </div>
