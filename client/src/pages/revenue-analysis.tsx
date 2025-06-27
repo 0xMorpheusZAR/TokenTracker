@@ -79,7 +79,7 @@ export default function RevenueAnalysis() {
   const [selectedMetric, setSelectedMetric] = useState<'revenue' | 'growth' | 'efficiency'>('revenue');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [compareToHype, setCompareToHype] = useState(true);
-  const [showMonteCarlo, setShowMonteCarlo] = useState(false);
+
   const [selectedProtocol, setSelectedProtocol] = useState<string>('HYPE');
   const [simulationResults, setSimulationResults] = useState<MonteCarloResult[]>([]);
 
@@ -1012,20 +1012,14 @@ export default function RevenueAnalysis() {
         
         {/* Monte Carlo Simulation Section */}
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
               Monte Carlo Price Simulations
             </h2>
-            <button
-              onClick={() => setShowMonteCarlo(!showMonteCarlo)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
-            >
-              {showMonteCarlo ? 'Hide Simulations' : 'Run Simulations'}
-            </button>
+            <p className="text-xl text-slate-300">Statistical modeling for revenue-generating protocols</p>
           </div>
 
-          {showMonteCarlo && (
-            <div className="space-y-6">
+          <div className="space-y-6">
               {/* Protocol Selector */}
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
                 <h3 className="text-xl font-semibold text-white mb-4">Select Protocol for Simulation</h3>
@@ -1051,8 +1045,7 @@ export default function RevenueAnalysis() {
               </div>
 
               {/* Simulation Results */}
-              {simulationResults.length > 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {simulationResults.map((result, index) => (
                     <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30 hover:border-purple-500/30 transition-all duration-300">
                       <div className="flex items-center justify-between mb-4">
@@ -1121,11 +1114,9 @@ export default function RevenueAnalysis() {
                     </div>
                   ))}
                 </div>
-              )}
 
               {/* Comparison Chart */}
-              {simulationResults.length > 0 && (
-                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
                   <h4 className="text-xl font-semibold text-white mb-6">1-Year Price Projection Comparison</h4>
                   <div className="h-80">
                     <Bar
@@ -1201,11 +1192,10 @@ export default function RevenueAnalysis() {
                     />
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
-        
       </div>
     </div>
   );

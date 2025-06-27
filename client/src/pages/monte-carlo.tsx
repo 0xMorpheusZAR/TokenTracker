@@ -129,7 +129,7 @@ export default function MonteCarlo() {
     return [
       {
         scenario: "Bearish Case",
-        probability: 15,
+        probability: 0.15,
         endPrice: bearishPrice,
         priceChange: bearishChange,
         marketCap: bearishPrice * circulatingSupply,
@@ -154,7 +154,7 @@ export default function MonteCarlo() {
       },
       {
         scenario: "Base Case",
-        probability: 70,
+        probability: 0.50,
         endPrice: basePrice,
         priceChange: baseChange,
         marketCap: basePrice * circulatingSupply,
@@ -179,7 +179,7 @@ export default function MonteCarlo() {
       },
       {
         scenario: "Bullish Case",
-        probability: 15,
+        probability: 0.85,
         endPrice: bullishPrice,
         priceChange: bullishChange,
         marketCap: bullishPrice * circulatingSupply,
@@ -433,7 +433,10 @@ export default function MonteCarlo() {
                   }`}>
                     {result.scenario}
                   </div>
-                  <div className="text-lg text-gray-300">{result.probability}% Probability</div>
+                  <div className="text-lg text-gray-300">
+                    {result.scenario === 'Bearish Case' ? '15th Percentile' : 
+                     result.scenario === 'Base Case' ? '50th Percentile' : '85th Percentile'}
+                  </div>
                 </div>
 
                 <div className="space-y-4 mb-6">
