@@ -1,0 +1,540 @@
+WITH price_data AS (
+    SELECT
+        date_trunc('day', minute) as day,
+        CASE WHEN  UPPER(symbol) = 'INST' THEN 'FLUID' ELSE  UPPER(symbol) END as symbol,
+        price
+    FROM prices.usd 
+    WHERE contract_address IN (
+        0x1f9840a85d5af5bf1d1762f925bdaddc4201f984, -- UNI
+        0x0479d9c7cc1035de7211f99eb48c09d70b2bdf5bdf9e2e56b8a1fbb5a2ea3327, -- JUP
+        0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82, -- CAKE
+        0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9, -- AAVE
+        0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2, -- MKR
+        0xd533a949740bb3306d119cc777fa900ba034cd52, -- CRV
+        0x3432b6a60d23ca0dfca7761b7ab56459d9c964d0, -- FXS
+        0x57e114B691Db790C35207b2e685D4A43181e6061, -- ENA
+        0x940181a94a35a4569e4529a3cdfb74e38fd98631, -- AERO
+        0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a, -- GMX
+        0x808507121b80c02388fad14726482e061b8da827, -- PENDLE
+        0x6f40d4A6237C257fff2dB00FA0510DeEECd303eb -- FLUID
+    )
+    UNION ALL
+    SELECT
+        DATE_TRUNC('day', minute) as day,
+        symbol,
+        price
+    FROM prices.usd
+    WHERE symbol IN ('HYPE', 'ETHFI', 'JTO', 'LDO', 'DYDX', 'ACX', 'RAY', 'KMNO', 'XVS', 'MORPHO', 'CVX')
+
+    UNION ALL
+    SELECT date_trunc ('day', block_time) AS day,
+    'SYRUP' AS symbol,
+    SUM(cast(amount_usd AS DOUBLE))/SUM(cast(token_bought_amount_raw/1e18 AS DOUBLE)) AS price
+FROM dex.trades
+WHERE token_bought_address = 0x643c4e15d7d62ad0abec4a9bd4b001aa3ef52d66
+GROUP BY 1
+),
+
+-- Calculating historical prices for growth metrics - explicit date checks for clarity
+historical_prices AS (
+    SELECT
+        symbol,
+        MAX(CASE WHEN day = date_trunc('day', CURRENT_DATE) THEN price END) AS current_price,
+        MAX(CASE WHEN day = date_trunc('day', CURRENT_DATE - INTERVAL '30' day) THEN price END) AS price_30d_ago,
+        MAX(CASE WHEN day = date_trunc('day', CURRENT_DATE - INTERVAL '90' day) THEN price END) AS price_90d_ago,
+        MAX(CASE WHEN day = date_trunc('day', CURRENT_DATE - INTERVAL '365' day ) THEN price END) AS price_1y_ago
+    FROM price_data
+    WHERE day IN (
+        date_trunc('day', CURRENT_DATE),
+        date_trunc('day', CURRENT_DATE - INTERVAL '30' day),
+        date_trunc('day', CURRENT_DATE - INTERVAL '90' day),
+        date_trunc('day', CURRENT_DATE - INTERVAL '365' day)
+    )
+    GROUP BY symbol
+),
+
+-- Defining the list of protocols to analyze with their tokens and total supply
+protocol_list AS (
+    SELECT 
+        protocol_name, 
+        symbol,
+        total_supply,
+        key_value_capture,
+        Category
+    FROM (
+        VALUES 
+            ('jito', 'JTO', 1000000000, 'Governance', 'LST'),
+            ('jupiter', 'JUP',  6999216143, 'Rev Share', 'DEX/PERPS'),
+            ('pancakeswap', 'CAKE', 381254070, 'Fees Share', 'DEX/PERPS'),
+            ('pendle', 'PENDLE', 281527448, 'Rev Share', 'YIELDS'),
+            ('lido', 'LDO', 1000000000, 'Governance', 'LST'),
+            ('uniswap', 'UNI', 1000000000, 'Staking (Soon)', 'DEX'),
+            ('raydium', 'RAY', 555000000, 'Token Buyback', 'DEX'),
+            ('fluid', 'FLUID', 100000000, 'Token Buyback (Soon)', 'DEX/LENDING'),
+            ('aave', 'AAVE', 16000000, 'Rev Share', 'LENDING'),
+            ('makerdao', 'MKR', 879609, 'Rev Share', 'STABLECOIN'),
+            ('ethena', 'ENA', 15000000000, 'Rev Share', 'STABLECOIN'),
+            ('morpho', 'MORPHO', 1000000000, 'Governance', 'LENDING'),
+            ('aerodrome', 'AERO', 1622750191, 'Rev Share', 'DEX'),
+            ('gmx', 'GMX',  10135105, 'Rev Share', 'PERPS'),
+            ('kamino', 'KMNO', 10000000000, 'Rev Share', 'LENDING'),
+            ('across', 'ACX', 1000000000, 'Governance', 'BRIDGE'),
+            ('venus', 'XVS', 29745110, 'Token Buybacks', 'LENDING'),
+            ('dydx', 'DYDX', 910035763, 'Rev Share', 'PERPS'),
+            ('hyperliquid', 'HYPE', 999990391, 'Fees Burn', 'PERPS'),
+            ('frax-finance', 'FXS', 99681753, 'Rev Share', 'STABLECOIN'),
+            ('curve-finance', 'CRV', 2260978202, 'Rev Share', 'DEX'),
+            ('convex-finance', 'CVX', 99888076, 'Rev Share', 'YIELDS'),
+            ('maple-finance', 'SYRUP', 1192421860, 'Rev Share + Staking Rewards', 'LENDING'),
+            ('ether.fi', 'ETHFI', 1000000000, 'Staking Rewards', 'LRT')
+    
+    ) AS t(protocol_name, symbol, total_supply,key_value_capture, Category)
+),
+
+-- Fetching fee and revenue data for each protocol using DefiLlama API
+defi_data AS (
+    SELECT 
+        p.protocol_name,
+        p.symbol,
+        p.total_supply,
+        JSON_PARSE(
+            HTTP_GET(
+                CONCAT('https://api.llama.fi/summary/fees/', p.protocol_name, '?dataType=dailyFees') 
+            )
+        ) AS fee_data,
+        JSON_PARSE(
+            HTTP_GET(
+                CONCAT('https://api.llama.fi/summary/fees/', p.protocol_name, '?dataType=dailyRevenue') 
+            )
+        ) AS revenue_data
+    FROM protocol_list p
+),
+
+-- Extracting daily fee data for each protocol
+daily_fees AS (
+    SELECT 
+        a.protocol_name,
+        a.symbol,
+        a.total_supply,
+        t.timestamp,
+        t.fee
+    FROM defi_data a
+    CROSS JOIN UNNEST(
+        CAST(JSON_EXTRACT(a.fee_data, '$.totalDataChart') AS ARRAY(ROW(timestamp BIGINT, fee DOUBLE)))
+    ) AS t(timestamp, fee)
+    WHERE t.fee IS NOT NULL
+),
+
+-- Extracting daily revenue data for each protocol
+daily_revenue AS (
+    SELECT 
+        a.protocol_name,
+        a.symbol,
+        a.total_supply,
+        t.timestamp,
+        t.revenue
+    FROM defi_data a
+    CROSS JOIN UNNEST(
+        CAST(JSON_EXTRACT(a.revenue_data, '$.totalDataChart') AS ARRAY(ROW(timestamp BIGINT, revenue DOUBLE)))
+    ) AS t(timestamp, revenue)
+    WHERE t.revenue IS NOT NULL
+),
+
+-- Adding date and month information for fees
+formatted_fees AS (
+    SELECT
+        protocol_name,
+        symbol,
+        total_supply,
+        FROM_UNIXTIME(timestamp) AS date_time,  
+        TRY_CAST(fee AS DECIMAL(36, 2)) AS daily_fee_usd
+    FROM daily_fees
+    WHERE FROM_UNIXTIME(timestamp) IS NOT NULL  
+),
+
+-- Adding date and month information for revenue
+formatted_revenue AS (
+    SELECT
+        protocol_name,
+        symbol,
+        total_supply,
+        FROM_UNIXTIME(timestamp) AS date_time,  
+        TRY_CAST(revenue AS DECIMAL(36, 2)) AS daily_revenue_usd
+    FROM daily_revenue
+    WHERE FROM_UNIXTIME(timestamp) IS NOT NULL  
+),
+
+-- Getting the current and previous time periods for comparison
+date_ranges AS (
+    SELECT
+        CAST(CURRENT_TIMESTAMP AS DATE) AS current_dt,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '29' DAY AS DATE) AS last_30d_start,
+        CAST(CURRENT_TIMESTAMP AS DATE) AS last_30d_end,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '59' DAY AS DATE) AS prev_30d_start,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '30' DAY AS DATE) AS prev_30d_end,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '89' DAY AS DATE) AS last_90d_start,
+        CAST(CURRENT_TIMESTAMP AS DATE) AS last_90d_end,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '179' DAY AS DATE) AS prev_90d_start,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '90' DAY AS DATE) AS prev_90d_end,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '364' DAY AS DATE) AS last_1y_start,
+        CAST(CURRENT_TIMESTAMP AS DATE) AS last_1y_end,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '729' DAY AS DATE) AS prev_1y_start,
+        CAST(CURRENT_TIMESTAMP - INTERVAL '365' DAY AS DATE) AS prev_1y_end
+),
+
+-- Calculating fees by time periods for current and previous periods
+fees_by_period AS (
+    SELECT
+        f.symbol,
+        f.total_supply,
+        SUM(CASE WHEN f.date_time BETWEEN dr.last_30d_start AND dr.last_30d_end THEN f.daily_fee_usd ELSE 0 END) AS monthly_fees_30d,
+        SUM(CASE WHEN f.date_time BETWEEN dr.last_90d_start AND dr.last_90d_end THEN f.daily_fee_usd ELSE 0 END) AS quarterly_fees,
+        SUM(CASE WHEN f.date_time BETWEEN dr.last_1y_start AND dr.last_1y_end THEN f.daily_fee_usd ELSE 0 END) AS yearly_fees,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_30d_start AND dr.prev_30d_end THEN f.daily_fee_usd ELSE 0 END) AS prev_monthly_fees,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_90d_start AND dr.prev_90d_end THEN f.daily_fee_usd ELSE 0 END) AS prev_quarterly_fees,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_1y_start AND dr.prev_1y_end THEN f.daily_fee_usd ELSE 0 END) AS prev_yearly_fees,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_30d_start AND dr.prev_30d_end THEN f.daily_fee_usd ELSE 0 END) * 12 AS annualized_fees_30d_ago,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_90d_start AND dr.prev_90d_end THEN f.daily_fee_usd ELSE 0 END) * 4 AS annualized_fees_90d_ago,
+        SUM(CASE WHEN f.date_time BETWEEN dr.prev_1y_start AND dr.prev_1y_end THEN f.daily_fee_usd ELSE 0 END) AS annualized_fees_1y_ago
+    FROM formatted_fees f
+    CROSS JOIN date_ranges dr
+    GROUP BY f.symbol, f.total_supply
+),
+
+-- Calculating revenue by time periods for current and previous periods
+revenue_by_period AS (
+    SELECT
+        r.symbol,
+        r.total_supply,
+        SUM(CASE WHEN r.date_time BETWEEN dr.last_30d_start AND dr.last_30d_end THEN r.daily_revenue_usd ELSE 0 END) AS monthly_revenue_30d,
+        SUM(CASE WHEN r.date_time BETWEEN dr.last_90d_start AND dr.last_90d_end THEN r.daily_revenue_usd ELSE 0 END) AS quarterly_revenue,
+        SUM(CASE WHEN r.date_time BETWEEN dr.last_1y_start AND dr.last_1y_end THEN r.daily_revenue_usd ELSE 0 END) AS yearly_revenue,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_30d_start AND dr.prev_30d_end THEN r.daily_revenue_usd ELSE 0 END) AS prev_monthly_revenue,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_90d_start AND dr.prev_90d_end THEN r.daily_revenue_usd ELSE 0 END) AS prev_quarterly_revenue,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_1y_start AND dr.prev_1y_end THEN r.daily_revenue_usd ELSE 0 END) AS prev_yearly_revenue,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_30d_start AND dr.prev_30d_end THEN r.daily_revenue_usd ELSE 0 END) * 12 AS annualized_revenue_30d_ago,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_90d_start AND dr.prev_90d_end THEN r.daily_revenue_usd ELSE 0 END) * 4 AS annualized_revenue_90d_ago,
+        SUM(CASE WHEN r.date_time BETWEEN dr.prev_1y_start AND dr.prev_1y_end THEN r.daily_revenue_usd ELSE 0 END) AS annualized_revenue_1y_ago
+    FROM formatted_revenue r
+    CROSS JOIN date_ranges dr
+    GROUP BY r.symbol, r.total_supply
+),
+
+-- Calculating growth rates and annualized metrics for fees
+fee_metrics_with_growth AS (
+    SELECT
+        symbol,
+        total_supply,
+        monthly_fees_30d,
+        quarterly_fees,
+        yearly_fees,
+        monthly_fees_30d * 12 AS annualized_fees,
+        annualized_fees_30d_ago,
+        annualized_fees_90d_ago,
+        annualized_fees_1y_ago,
+        
+        -- Calculating growth percentages with specific handling for zero or NULL values
+        CASE 
+            WHEN prev_monthly_fees IS NULL OR prev_monthly_fees = 0 THEN 
+                CASE 
+                    WHEN monthly_fees_30d > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                             -- From zero to zero
+                END 
+            ELSE ((monthly_fees_30d / prev_monthly_fees) - 1) * 100 
+        END AS fees_growth_30d,
+        
+        CASE 
+            WHEN prev_quarterly_fees IS NULL OR prev_quarterly_fees = 0 THEN 
+                CASE 
+                    WHEN quarterly_fees > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                           -- From zero to zero
+                END 
+            ELSE ((quarterly_fees / prev_quarterly_fees) - 1) * 100 
+        END AS fees_growth_90d,
+        
+        CASE 
+            WHEN prev_yearly_fees IS NULL OR prev_yearly_fees = 0 THEN 
+                CASE 
+                    WHEN yearly_fees > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                        -- From zero to zero
+                END 
+            ELSE ((yearly_fees / prev_yearly_fees) - 1) * 100 
+        END AS fees_growth_1y
+    FROM fees_by_period
+),
+
+-- Calculating growth rates and annualized metrics for revenue
+revenue_metrics_with_growth AS (
+    SELECT
+        symbol,
+        total_supply,
+        monthly_revenue_30d,
+        quarterly_revenue,
+        yearly_revenue,
+        monthly_revenue_30d * 12 AS annualized_revenue,
+        annualized_revenue_30d_ago,
+        annualized_revenue_90d_ago,
+        annualized_revenue_1y_ago,
+        
+        -- Calculating growth percentages with specific handling for zero or NULL values
+        CASE 
+            WHEN prev_monthly_revenue IS NULL OR prev_monthly_revenue = 0 THEN 
+                CASE 
+                    WHEN monthly_revenue_30d > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                               -- From zero to zero
+                END 
+            ELSE ((monthly_revenue_30d / prev_monthly_revenue) - 1) * 100 
+        END AS revenue_growth_30d,
+        
+        CASE 
+            WHEN prev_quarterly_revenue IS NULL OR prev_quarterly_revenue = 0 THEN 
+                CASE 
+                    WHEN quarterly_revenue > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                             -- From zero to zero
+                END 
+            ELSE ((quarterly_revenue / prev_quarterly_revenue) - 1) * 100 
+        END AS revenue_growth_90d,
+        
+        CASE 
+            WHEN prev_yearly_revenue IS NULL OR prev_yearly_revenue = 0 THEN 
+                CASE 
+                    WHEN yearly_revenue > 0 THEN 100.0  -- From zero to something
+                    ELSE 0.0                          -- From zero to zero
+                END 
+            ELSE ((yearly_revenue / prev_yearly_revenue) - 1) * 100 
+        END AS revenue_growth_1y
+    FROM revenue_by_period
+),
+
+-- Calculating final results with all metrics
+final_results AS (
+    SELECT
+        p.symbol,
+        p.current_price,
+        p.price_30d_ago,
+        p.price_90d_ago,
+        p.price_1y_ago,
+        COALESCE(f.total_supply, r.total_supply,
+            (SELECT total_supply FROM protocol_list WHERE symbol = p.symbol)
+        ) AS total_supply,
+        
+        -- Calculating price growth with fallbacks for missing data
+        CASE 
+            WHEN p.price_30d_ago IS NULL THEN NULL
+            WHEN p.price_30d_ago = 0 THEN 
+                CASE WHEN p.current_price > 0 THEN 100.0 ELSE 0.0 END
+            ELSE ((p.current_price / p.price_30d_ago) - 1) * 100 
+        END AS price_growth_30d,
+        
+        CASE 
+            WHEN p.price_90d_ago IS NULL THEN NULL
+            WHEN p.price_90d_ago = 0 THEN 
+                CASE WHEN p.current_price > 0 THEN 100.0 ELSE 0.0 END
+            ELSE ((p.current_price / p.price_90d_ago) - 1) * 100 
+        END AS price_growth_90d,
+        
+        CASE 
+            WHEN p.price_1y_ago IS NULL THEN NULL
+            WHEN p.price_1y_ago = 0 THEN 
+                CASE WHEN p.current_price > 0 THEN 100.0 ELSE 0.0 END
+            ELSE ((p.current_price / p.price_1y_ago) - 1) * 100 
+        END AS price_growth_1y,
+        
+        -- Fee metrics
+        COALESCE(f.monthly_fees_30d, 0) AS monthly_fees_30d,
+        COALESCE(f.quarterly_fees, 0) AS quarterly_fees,
+        COALESCE(f.yearly_fees, 0) AS yearly_fees,
+        COALESCE(f.annualized_fees, 0) AS annualized_fees,
+        COALESCE(f.annualized_fees_30d_ago, 0) AS annualized_fees_30d_ago,
+        COALESCE(f.annualized_fees_90d_ago, 0) AS annualized_fees_90d_ago,
+        COALESCE(f.annualized_fees_1y_ago, 0) AS annualized_fees_1y_ago,
+        
+        -- Fee growth metrics with COALESCE to handle NULLs
+        COALESCE(f.fees_growth_30d, 0) AS fees_growth_30d,
+        COALESCE(f.fees_growth_90d, 0) AS fees_growth_90d,
+        COALESCE(f.fees_growth_1y, 0) AS fees_growth_1y,
+        
+        -- Revenue metrics
+        COALESCE(r.monthly_revenue_30d, 0) AS monthly_revenue_30d,
+        COALESCE(r.quarterly_revenue, 0) AS quarterly_revenue,
+        COALESCE(r.yearly_revenue, 0) AS yearly_revenue,
+        COALESCE(r.annualized_revenue, 0) AS annualized_revenue,
+        COALESCE(r.annualized_revenue_30d_ago, 0) AS annualized_revenue_30d_ago,
+        COALESCE(r.annualized_revenue_90d_ago, 0) AS annualized_revenue_90d_ago,
+        COALESCE(r.annualized_revenue_1y_ago, 0) AS annualized_revenue_1y_ago,
+        
+        -- Revenue growth metrics with COALESCE to handle NULLs
+        COALESCE(r.revenue_growth_30d, 0) AS revenue_growth_30d,
+        COALESCE(r.revenue_growth_90d, 0) AS revenue_growth_90d,
+        COALESCE(r.revenue_growth_1y, 0) AS revenue_growth_1y,
+        
+        -- Calculating FDV at different points in time
+        p.current_price * 
+        COALESCE(f.total_supply, r.total_supply,
+            (SELECT total_supply FROM protocol_list WHERE symbol = p.symbol)
+        ) AS current_fdv,
+        
+        p.price_30d_ago * 
+        COALESCE(f.total_supply, r.total_supply,
+            (SELECT total_supply FROM protocol_list WHERE symbol = p.symbol)
+        ) AS fdv_30d_ago,
+        
+        p.price_90d_ago * 
+        COALESCE(f.total_supply, r.total_supply,
+            (SELECT total_supply FROM protocol_list WHERE symbol = p.symbol)
+        ) AS fdv_90d_ago,
+        
+        p.price_1y_ago * 
+        COALESCE(f.total_supply, r.total_supply,
+            (SELECT total_supply FROM protocol_list WHERE symbol = p.symbol)
+        ) AS fdv_1y_ago
+    FROM historical_prices p
+    LEFT JOIN fee_metrics_with_growth f ON p.symbol = f.symbol
+    LEFT JOIN revenue_metrics_with_growth r ON p.symbol = r.symbol
+),
+
+-- Calculating FDV ratio changes for both fees and revenue
+fdv_ratio_changes AS (
+    SELECT
+        symbol,
+        current_price,
+        total_supply,
+        current_fdv,
+        price_growth_30d,
+        price_growth_90d,
+        price_growth_1y,
+        
+        -- Fee metrics
+        monthly_fees_30d,
+        quarterly_fees,
+        yearly_fees,
+        annualized_fees,
+        fees_growth_30d,
+        fees_growth_90d,
+        fees_growth_1y,
+        
+        -- Revenue metrics
+        monthly_revenue_30d,
+        quarterly_revenue,
+        yearly_revenue,
+        annualized_revenue,
+        revenue_growth_30d,
+        revenue_growth_90d,
+        revenue_growth_1y,
+        
+        -- Current FDV to Annualized Fees Ratio
+        CASE 
+            WHEN annualized_fees IS NULL OR annualized_fees = 0 THEN NULL
+            ELSE current_fdv / annualized_fees 
+        END AS current_fdv_to_annual_fees_ratio,
+        
+        -- Current FDV to Annualized Revenue Ratio
+        CASE 
+            WHEN annualized_revenue IS NULL OR annualized_revenue = 0 THEN NULL
+            ELSE current_fdv / annualized_revenue 
+        END AS current_fdv_to_annual_revenue_ratio,
+        
+        -- Calculating 30D change in FDV/Annual Fees ratio
+        CASE 
+            WHEN annualized_fees IS NULL OR annualized_fees = 0 
+                OR annualized_fees_30d_ago IS NULL OR annualized_fees_30d_ago = 0 
+                OR fdv_30d_ago IS NULL OR fdv_30d_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_fees) / (fdv_30d_ago / annualized_fees_30d_ago) - 1) * 100
+        END AS fdv_fees_ratio_change_30d,
+        
+        -- Calculating 90D change in FDV/Annual Fees ratio
+        CASE 
+            WHEN annualized_fees IS NULL OR annualized_fees = 0 
+                OR annualized_fees_90d_ago IS NULL OR annualized_fees_90d_ago = 0
+                OR fdv_90d_ago IS NULL OR fdv_90d_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_fees) / (fdv_90d_ago / annualized_fees_90d_ago) - 1) * 100
+        END AS fdv_fees_ratio_change_90d,
+        
+        -- Calculating 1Y change in FDV/Annual Fees ratio
+        CASE 
+            WHEN annualized_fees IS NULL OR annualized_fees = 0 
+                OR annualized_fees_1y_ago IS NULL OR annualized_fees_1y_ago = 0
+                OR fdv_1y_ago IS NULL OR fdv_1y_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_fees) / (fdv_1y_ago / annualized_fees_1y_ago) - 1) * 100
+        END AS fdv_fees_ratio_change_1y,
+        
+        -- Calculating 30D change in FDV/Annual Revenue ratio
+        CASE 
+            WHEN annualized_revenue IS NULL OR annualized_revenue = 0 
+                OR annualized_revenue_30d_ago IS NULL OR annualized_revenue_30d_ago = 0 
+                OR fdv_30d_ago IS NULL OR fdv_30d_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_revenue) / (fdv_30d_ago / annualized_revenue_30d_ago) - 1) * 100
+        END AS fdv_revenue_ratio_change_30d,
+        
+        -- Calculating 90D change in FDV/Annual Revenue ratio
+        CASE 
+            WHEN annualized_revenue IS NULL OR annualized_revenue = 0 
+                OR annualized_revenue_90d_ago IS NULL OR annualized_revenue_90d_ago = 0
+                OR fdv_90d_ago IS NULL OR fdv_90d_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_revenue) / (fdv_90d_ago / annualized_revenue_90d_ago) - 1) * 100
+        END AS fdv_revenue_ratio_change_90d,
+        
+        -- Calculating 1Y change in FDV/Annual Revenue ratio
+        CASE 
+            WHEN annualized_revenue IS NULL OR annualized_revenue = 0 
+                OR annualized_revenue_1y_ago IS NULL OR annualized_revenue_1y_ago = 0
+                OR fdv_1y_ago IS NULL OR fdv_1y_ago = 0
+            THEN NULL
+            ELSE ((current_fdv / annualized_revenue) / (fdv_1y_ago / annualized_revenue_1y_ago) - 1) * 100
+        END AS fdv_revenue_ratio_change_1y
+    FROM final_results
+)
+
+-- Final dashboard output with both fee and revenue metrics
+SELECT 
+    r.symbol,
+    p.category,
+    p.key_value_capture, 
+    current_price,
+    ROUND(current_fdv, 2) AS fully_diluted_valuation,
+    ROUND(price_growth_30d, 2) AS price_growth_30d,
+    ROUND(price_growth_90d, 2) AS price_growth_90d,
+    ROUND(price_growth_1y, 2) AS price_growth_1y,
+    
+    -- Fee metrics
+    ROUND(monthly_fees_30d, 2) AS monthly_fees_30d,
+    ROUND(monthly_revenue_30d, 2) AS monthly_revenue_30d,
+    
+    ROUND(quarterly_fees, 2) AS quarterly_fees,
+    ROUND(quarterly_revenue, 2) AS quarterly_revenue,
+    
+    ROUND(yearly_fees, 2) AS yearly_fees,
+    ROUND(yearly_revenue, 2) AS yearly_revenue,
+    
+    ROUND(annualized_fees, 2) AS annualized_fees,
+    ROUND(annualized_revenue, 2) AS annualized_revenue,
+    
+    ROUND(fees_growth_30d, 2) AS fees_growth_30d,
+    ROUND(revenue_growth_30d, 2) AS revenue_growth_30d,
+    
+    ROUND(fees_growth_90d, 2) AS fees_growth_90d,
+    ROUND(revenue_growth_90d, 2) AS revenue_growth_90d,
+    
+    ROUND(fees_growth_1y, 2) AS fees_growth_1y,
+    ROUND(revenue_growth_1y, 2) AS revenue_growth_1y,
+    
+    ROUND(current_fdv_to_annual_fees_ratio, 2) AS fdv_to_annualized_fees_ratio,
+    ROUND(current_fdv_to_annual_revenue_ratio, 2) AS fdv_to_annualized_revenue_ratio,
+    
+    ROUND(fdv_fees_ratio_change_30d, 2) AS fdv_fees_ratio_change_30d_pct,
+    ROUND(fdv_revenue_ratio_change_30d, 2) AS fdv_revenue_ratio_change_30d_pct,
+    
+    ROUND(fdv_fees_ratio_change_90d, 2) AS fdv_fees_ratio_change_90d_pct,
+    ROUND(fdv_revenue_ratio_change_90d, 2) AS fdv_revenue_ratio_change_90d_pct,
+    
+    ROUND(fdv_fees_ratio_change_1y, 2) AS fdv_fees_ratio_change_1y_pct,
+    ROUND(fdv_revenue_ratio_change_1y, 2) AS fdv_revenue_ratio_change_1y_pct
+    
+FROM fdv_ratio_changes r
+LEFT JOIN protocol_list p ON r.symbol = p.symbol
+ORDER BY annualized_revenue DESC;
