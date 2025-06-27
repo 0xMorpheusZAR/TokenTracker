@@ -125,6 +125,9 @@ Changelog:
 - June 27, 2025: Created comprehensive Revenue Analysis dashboard ("Cash Cows") with DeFi protocol comparison, P/E ratios, and revenue metrics analysis
 - June 27, 2025: Standardized Monte Carlo methodology across application using Geometric Brownian Motion with fundamental factors, consistent scenario definitions (Bearish/Base/Bullish at 15th/50th/85th percentiles), and aligned volatility models based on protocol categories
 - June 27, 2025: Removed AI predictions functionality completely from the application per user request
+- June 27, 2025: Implemented comprehensive green/black cypherpunk theme across entire website with Matrix-style animations, monospace fonts, and terminal-inspired UI elements
+- June 27, 2025: Fixed front page scrolling to natural website behavior with proper sections and smooth navigation
+- June 27, 2025: Renamed "Simulations" button to "Hype Simulation" and updated all navigation elements with cypherpunk styling
 ```
 
 ## User Preferences

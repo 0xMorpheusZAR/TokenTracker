@@ -229,7 +229,7 @@ export default function InteractiveDashboard() {
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <BarChart3 className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Simulations</span>
+                  <span className="relative z-10 font-mono">HYPE_SIMULATION</span>
                 </a>
                 
                 <button

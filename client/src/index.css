@@ -24,17 +24,17 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* Advanced Dark Theme Colors */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #2a2a2a;
-  --border-color: #333;
-  --text-primary: #ffffff;
-  --text-secondary: #888;
+  /* Cypherpunk Green/Black Theme Colors */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #001a00;
+  --border-color: #00ff41;
+  --text-primary: #00ff41;
+  --text-secondary: #00cc33;
   --red: #ff0040;
   --red-light: #ff6b6b;
-  --green: #00ff88;
-  --green-light: #00ffcc;
+  --green: #00ff41;
+  --green-light: #00ff88;
   --blue: #0088ff;
   --purple: #8b5cf6;
   --yellow: #fbbf24;
@@ -79,7 +79,7 @@
 
   body {
     @apply font-sans antialiased text-white;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #001a00 50%, #000000 75%, #0a0a0a 100%);
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -131,15 +131,31 @@
   }
 }
 
-/* Advanced Animations */
+/* Cypherpunk Animations */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 15px var(--red); }
-  50% { box-shadow: 0 0 10px var(--red), 0 0 20px var(--red), 0 0 30px var(--red); }
+  0%, 100% { box-shadow: 0 0 5px var(--green), 0 0 10px var(--green), 0 0 15px var(--green); }
+  50% { box-shadow: 0 0 10px var(--green), 0 0 20px var(--green), 0 0 30px var(--green); }
+}
+
+@keyframes matrix-rain {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes glitch {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes float {
@@ -162,7 +178,7 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Custom Animation Classes */
+/* Cypherpunk Animation Classes */
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
@@ -185,6 +201,14 @@
 
 .animate-scale-in {
   animation: scaleIn 0.5s ease-out;
+}
+
+.animate-matrix-rain {
+  animation: matrix-rain 3s linear infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease-in-out infinite;
 }
 
 /* Performance Bar Animation */
@@ -219,11 +243,12 @@
   background-clip: text;
 }
 
-/* Glass Effect */
+/* Cypherpunk Glass Effect */
 .glass-effect {
-  background: rgba(26, 26, 26, 0.8);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
 }
 
 /* Hover Effects */
