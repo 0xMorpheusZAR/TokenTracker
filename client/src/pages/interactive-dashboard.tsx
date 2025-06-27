@@ -232,15 +232,6 @@ export default function InteractiveDashboard() {
                   <span className="relative z-10">Simulations</span>
                 </a>
                 
-                <a 
-                  href="/predictive-models" 
-                  className="group relative px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/25 flex items-center gap-2 overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <LineChart className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">AI Predictions</span>
-                </a>
-                
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
