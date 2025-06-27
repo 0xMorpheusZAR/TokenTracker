@@ -352,21 +352,40 @@ export default function MonteCarlo() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-black text-green-400 p-6 relative overflow-hidden">
+      {/* Matrix Background */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-black">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-green-400 text-xs font-mono animate-matrix-rain"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${2 + Math.random() * 6}s`
+              }}
+            >
+              {Math.random().toString(36).substring(2, 15)}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors">
+          <a href="/" className="inline-flex items-center gap-2 text-green-400/70 hover:text-green-400 mb-6 transition-colors font-mono">
             <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+            BACK_TO_DASHBOARD
           </a>
           
           <div className="text-center">
-            <h1 className="text-6xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-              Monte Carlo Price Analysis
+            <h1 className="text-6xl font-black text-green-400 mb-4 font-mono tracking-wider">
+              MONTE_CARLO_PRICE_ANALYSIS
             </h1>
-            <p className="text-2xl text-gray-300 mb-2">HYPE End-of-Year Price Scenarios</p>
-            <p className="text-lg text-gray-400">Statistical modeling based on real fundamentals and market dynamics</p>
+            <p className="text-2xl text-green-400/80 mb-2 font-mono">HYPE_END_OF_YEAR_PRICE_SCENARIOS</p>
+            <p className="text-lg text-green-400/60 font-mono">STATISTICAL_MODELING_BASED_ON_REAL_FUNDAMENTALS_AND_MARKET_DYNAMICS</p>
           </div>
         </div>
 
