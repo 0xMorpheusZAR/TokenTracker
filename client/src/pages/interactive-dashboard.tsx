@@ -206,6 +206,15 @@ export default function InteractiveDashboard() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap gap-3">
                 <a 
+                  href="/revenue-analysis" 
+                  className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center gap-2 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <DollarSign className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Cash Cows</span>
+                </a>
+                
+                <a 
                   href="/hyperliquid" 
                   className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2 overflow-hidden"
                 >
@@ -226,7 +235,7 @@ export default function InteractiveDashboard() {
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center gap-2 overflow-hidden disabled:cursor-not-allowed"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-2 overflow-hidden disabled:cursor-not-allowed"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <RefreshCw className={`w-5 h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
