@@ -255,8 +255,7 @@ export default function InteractiveDashboard() {
               </div>
               
               <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
-                A Comprehensive Breakdown of High FDV Failures<br />
-                <span className="text-3xl lg:text-5xl bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text text-transparent">Comprehensive Analysis</span>
+                A Comprehensive Breakdown of High FDV Failures
               </h1>
               
               <div className="flex items-center gap-4 pt-2">
