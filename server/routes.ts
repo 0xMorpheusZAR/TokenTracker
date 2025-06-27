@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { cryptoRankService } from "./services/cryptorank";
 import { coinGeckoService } from "./services/coingecko";
+import { duneService } from "./services/dune";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -400,6 +401,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch analytics summary" });
+    }
+  });
+
+  // Dune Analytics API routes
+  app.get("/api/dune/protocols", async (req, res) => {
+    try {
+      const protocolData = await duneService.getProtocolRevenueData();
+      
+      if (!protocolData) {
+        return res.status(500).json({ error: "Failed to fetch protocol data from Dune" });
+      }
+      
+      res.json(protocolData);
+    } catch (error) {
+      console.error("Failed to fetch Dune protocol data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/dune/status", async (req, res) => {
+    try {
+      const status = duneService.getConnectionStatus();
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check Dune status" });
+    }
+  });
+
+  app.get("/api/dune/query/:queryId", async (req, res) => {
+    try {
+      const queryId = parseInt(req.params.queryId);
+      const limit = parseInt(req.query.limit as string) || 1000;
+      
+      const queryResult = await duneService.getQueryResults(queryId, limit);
+      
+      if (!queryResult) {
+        return res.status(500).json({ error: "Failed to fetch query results" });
+      }
+      
+      res.json(queryResult);
+    } catch (error) {
+      console.error("Failed to fetch Dune query:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

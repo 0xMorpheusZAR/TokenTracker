@@ -77,20 +77,40 @@ export default function PredictiveModels() {
   const [timeframe, setTimeframe] = useState<'7d' | '30d' | '90d'>('30d');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Fetch token data for predictions
+  // Fetch protocol data from Dune Analytics
+  const { data: duneProtocols = [] } = useQuery({
+    queryKey: ['/api/dune/protocols'],
+    staleTime: 1000 * 60 * 10, // 10 minutes
+  });
+
+  // Fetch CoinGecko data for price information
   const { data: tokensRaw = [] } = useQuery({
     queryKey: ['/api/coingecko/detailed'],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  // Filter tokens to only include HYPE and Cash Cows protocols
-  const cashCowsSymbols = ['HYPE', 'UNI', 'AAVE', 'MKR', 'GMX', 'PENDLE'];
+  // Combine Dune protocol data with CoinGecko price data
   const tokens = useMemo(() => {
-    if (!tokensRaw || !Array.isArray(tokensRaw)) return [];
-    return (tokensRaw as any[]).filter(token => 
-      cashCowsSymbols.includes(token.symbol?.toUpperCase())
-    );
-  }, [tokensRaw]);
+    if (!duneProtocols || !Array.isArray(duneProtocols)) return [];
+    
+    return duneProtocols.map((protocol: any) => {
+      // Find matching CoinGecko data for current price
+      const coinGeckoData = Array.isArray(tokensRaw) ? 
+        tokensRaw.find((token: any) => 
+          token.symbol?.toUpperCase() === protocol.symbol?.toUpperCase()
+        ) : null;
+
+      return {
+        ...protocol,
+        current_price: coinGeckoData?.current_price || 0,
+        market_cap: coinGeckoData?.market_cap || 0,
+        price_change_percentage_24h: coinGeckoData?.price_change_percentage_24h || 0,
+        price_change_percentage_7d: coinGeckoData?.price_change_percentage_7d || 0,
+        price_change_percentage_30d: coinGeckoData?.price_change_percentage_30d || 0,
+        name: protocol.protocol_name || coinGeckoData?.name || protocol.symbol
+      };
+    });
+  }, [duneProtocols, tokensRaw]);
 
   const { data: hyperliquidData } = useQuery({
     queryKey: ['/api/hyperliquid/comprehensive'],
@@ -316,7 +336,7 @@ export default function PredictiveModels() {
           
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 backdrop-blur-sm rounded-full border border-green-500/20 mt-4">
             <Target className="w-4 h-4 text-green-400" />
-            <span className="text-green-400 text-sm font-medium">Focused on HYPE + Cash Cows protocols with proven revenue models</span>
+            <span className="text-green-400 text-sm font-medium">Real protocol data from Dune Analytics dashboard</span>
           </div>
         </div>
 
@@ -365,8 +385,8 @@ export default function PredictiveModels() {
         {/* Token Selection and Controls */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
-            <h3 className="text-lg font-semibold text-white mb-2">Token Selection</h3>
-            <p className="text-sm text-slate-400 mb-4">Revenue-generating protocols only</p>
+            <h3 className="text-lg font-semibold text-white mb-2">Protocol Selection</h3>
+            <p className="text-sm text-slate-400 mb-4">All protocols from Dune Analytics dashboard</p>
             <select
               value={selectedToken}
               onChange={(e) => setSelectedToken(e.target.value)}
