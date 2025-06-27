@@ -123,6 +123,7 @@ Changelog:
 - June 27, 2025: Integrated real-time data into Monte Carlo simulations for end-of-year projections
 - June 27, 2025: Enhanced entire website with world-class UI/UX including animated backgrounds, glass morphism effects, and premium hover animations
 - June 27, 2025: Created comprehensive Revenue Analysis dashboard ("Cash Cows") with DeFi protocol comparison, P/E ratios, and revenue metrics analysis
+- June 27, 2025: Standardized Monte Carlo methodology across application using Geometric Brownian Motion with fundamental factors, consistent scenario definitions (Bearish/Base/Bullish at 15th/50th/85th percentiles), and aligned volatility models based on protocol categories
 ```
 
 ## User Preferences

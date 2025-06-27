@@ -83,94 +83,155 @@ export default function RevenueAnalysis() {
   const [selectedProtocol, setSelectedProtocol] = useState<string>('HYPE');
   const [simulationResults, setSimulationResults] = useState<MonteCarloResult[]>([]);
 
-  // Monte Carlo Simulation Function
+  // Monte Carlo Simulation Function - Consistent with dedicated Monte Carlo methodology
   const runMonteCarloSimulation = (protocol: ProtocolData): MonteCarloResult[] => {
-    const scenarios = [
+    const numSimulations = 10000;
+    const timeToExpiry = 1; // 1 year projection
+    const dt = 1/365; // Daily steps
+    const numSteps = Math.floor(timeToExpiry / dt);
+    
+    // Base volatility for different protocol types
+    const baseVolatility = protocol.category === 'PERPS' ? 0.85 : 
+                          protocol.category === 'DEX' ? 0.75 :
+                          protocol.category === 'LENDING' ? 0.65 : 0.70;
+    
+    // Calculate fundamental factors
+    const revenueScale = Math.log(protocol.annualized_revenue / 1e9) * 0.15;
+    const peRatioAdjustment = Math.log(30 / protocol.pe_ratio) * 0.1; // Lower P/E = higher expected return
+    const recommendationBoost = protocol.recommendation === 'STRONG_BUY' ? 0.3 : 
+                               protocol.recommendation === 'BUY' ? 0.15 : 0.0;
+    
+    const baseDrift = revenueScale + peRatioAdjustment + recommendationBoost;
+    
+    const finalPrices: number[] = [];
+    
+    // Run Monte Carlo simulations using Geometric Brownian Motion
+    for (let i = 0; i < numSimulations; i++) {
+      let price = protocol.current_price;
+      
+      for (let step = 0; step < numSteps; step++) {
+        const randomShock = Math.random() * 2 - 1; // Random number between -1 and 1
+        const normalRandom = randomShock; // Simplified normal distribution
+        
+        // Geometric Brownian Motion with fundamental factors
+        price = price * Math.exp((baseDrift - 0.5 * baseVolatility * baseVolatility) * dt + 
+                                baseVolatility * Math.sqrt(dt) * normalRandom);
+      }
+      
+      finalPrices.push(price);
+    }
+    
+    // Sort and calculate percentiles (consistent with main Monte Carlo page)
+    finalPrices.sort((a, b) => a - b);
+    
+    const bearishPrice = finalPrices[Math.floor(numSimulations * 0.15)]; // 15th percentile
+    const basePrice = finalPrices[Math.floor(numSimulations * 0.50)]; // 50th percentile (median)
+    const bullishPrice = finalPrices[Math.floor(numSimulations * 0.85)]; // 85th percentile
+    
+    const bearishChange = ((bearishPrice - protocol.current_price) / protocol.current_price) * 100;
+    const baseChange = ((basePrice - protocol.current_price) / protocol.current_price) * 100;
+    const bullishChange = ((bullishPrice - protocol.current_price) / protocol.current_price) * 100;
+    
+    return [
       {
-        name: 'Conservative',
-        probability: 0.4,
-        volatility: 0.45,
-        drift: protocol.recommendation === 'STRONG_BUY' ? 0.15 : 
-               protocol.recommendation === 'BUY' ? 0.08 : 0.02
+        protocol: protocol.symbol,
+        scenario: "Bearish Case",
+        probability: 0.15,
+        endPrice: bearishPrice,
+        priceChange: bearishChange,
+        marketCap: bearishPrice * protocol.total_supply,
+        reasoning: getScenarioReasoning(protocol, "Bearish"),
+        keyDrivers: getKeyDrivers(protocol, "Bearish"),
+        riskFactors: getRiskFactors(protocol, "Bearish")
       },
       {
-        name: 'Moderate',
-        probability: 0.35,
-        volatility: 0.65,
-        drift: protocol.recommendation === 'STRONG_BUY' ? 0.35 : 
-               protocol.recommendation === 'BUY' ? 0.20 : 0.05
+        protocol: protocol.symbol,
+        scenario: "Base Case",
+        probability: 0.50,
+        endPrice: basePrice,
+        priceChange: baseChange,
+        marketCap: basePrice * protocol.total_supply,
+        reasoning: getScenarioReasoning(protocol, "Base"),
+        keyDrivers: getKeyDrivers(protocol, "Base"),
+        riskFactors: getRiskFactors(protocol, "Base")
       },
       {
-        name: 'Aggressive',
-        probability: 0.25,
-        volatility: 0.85,
-        drift: protocol.recommendation === 'STRONG_BUY' ? 0.65 : 
-               protocol.recommendation === 'BUY' ? 0.40 : 0.10
+        protocol: protocol.symbol,
+        scenario: "Bullish Case",
+        probability: 0.85,
+        endPrice: bullishPrice,
+        priceChange: bullishChange,
+        marketCap: bullishPrice * protocol.total_supply,
+        reasoning: getScenarioReasoning(protocol, "Bullish"),
+        keyDrivers: getKeyDrivers(protocol, "Bullish"),
+        riskFactors: getRiskFactors(protocol, "Bullish")
       }
     ];
-
-    return scenarios.map(scenario => {
-      const timeHorizon = 1; // 1 year
-      const iterations = 10000;
-      const returns = [];
-
-      for (let i = 0; i < iterations; i++) {
-        let price = protocol.current_price;
-        for (let t = 0; t < 252; t++) { // 252 trading days
-          const random = Math.random() * 2 - 1; // -1 to 1
-          const dailyReturn = scenario.drift / 252 + (scenario.volatility / Math.sqrt(252)) * random;
-          price *= (1 + dailyReturn);
-        }
-        returns.push(price);
-      }
-
-      const averagePrice = returns.reduce((a, b) => a + b, 0) / returns.length;
-      const priceChange = (averagePrice / protocol.current_price - 1) * 100;
-      const marketCap = averagePrice * protocol.total_supply;
-
-      return {
-        protocol: protocol.symbol,
-        scenario: scenario.name,
-        probability: scenario.probability,
-        endPrice: averagePrice,
-        priceChange,
-        marketCap,
-        reasoning: getScenarioReasoning(protocol, scenario.name),
-        keyDrivers: getKeyDrivers(protocol, scenario.name),
-        riskFactors: getRiskFactors(protocol, scenario.name)
-      };
-    });
   };
 
   const getScenarioReasoning = (protocol: ProtocolData, scenario: string): string[] => {
     const base = [
-      `Revenue multiple based on ${protocol.symbol}'s current ${protocol.pe_ratio.toFixed(1)}x P/E ratio`,
-      `Market position in ${protocol.category} sector with ${protocol.key_value_capture} model`
+      `Revenue-based valuation using ${protocol.symbol}'s ${protocol.pe_ratio.toFixed(1)}x P/E ratio`,
+      `${protocol.category} sector positioning with ${protocol.key_value_capture} value capture mechanism`
     ];
 
-    if (scenario === 'Conservative') {
-      return [...base, 'Assumes market normalization and stable growth', 'Limited multiple expansion due to market maturity'];
-    } else if (scenario === 'Moderate') {
-      return [...base, 'Moderate revenue growth and some multiple expansion', 'Balanced risk-reward with sector outperformance'];
+    if (scenario === 'Bearish') {
+      return [
+        ...base,
+        'Market share erosion due to increased competition',
+        'Crypto bear market reduces trading volumes by 40-60%',
+        'Regulatory headwinds impact protocol adoption'
+      ];
+    } else if (scenario === 'Base') {
+      return [
+        ...base,
+        'Steady revenue growth with market expansion',
+        'Maintains current market position and user base',
+        'Normal crypto market conditions with moderate volatility'
+      ];
     } else {
-      return [...base, 'High revenue growth with significant multiple expansion', 'Assumes protocol captures significant market share'];
+      return [
+        ...base,
+        'Accelerated revenue growth with market share expansion',
+        'Crypto bull market increases trading volumes significantly',
+        'Strong institutional adoption drives premium valuations'
+      ];
     }
   };
 
   const getKeyDrivers = (protocol: ProtocolData, scenario: string): string[] => {
-    const drivers = protocol.bull_case.slice(0, 3);
-    if (scenario === 'Aggressive') {
-      return [...drivers, 'Crypto market expansion', 'Institutional adoption acceleration'];
+    if (scenario === 'Bearish') {
+      return [
+        'Increased competition pressure',
+        'Reduced market volumes',
+        'Regulatory uncertainty'
+      ];
+    } else if (scenario === 'Base') {
+      return protocol.bull_case.slice(0, 3);
+    } else {
+      return [
+        ...protocol.bull_case.slice(0, 2),
+        'Crypto market expansion',
+        'Institutional adoption acceleration'
+      ];
     }
-    return drivers;
   };
 
   const getRiskFactors = (protocol: ProtocolData, scenario: string): string[] => {
-    const risks = protocol.bear_case.slice(0, 2);
-    if (scenario === 'Conservative') {
-      return [...risks, 'Market volatility', 'Regulatory uncertainty'];
+    if (scenario === 'Bearish') {
+      return [
+        ...protocol.bear_case.slice(0, 2),
+        'Market share loss',
+        'Volume decline'
+      ];
+    } else if (scenario === 'Base') {
+      return protocol.bear_case.slice(0, 2);
+    } else {
+      return [
+        'Market overvaluation risk',
+        'Execution challenges at scale'
+      ];
     }
-    return risks;
   };
 
   // Comprehensive protocol analysis with investment cases
@@ -996,16 +1057,17 @@ export default function RevenueAnalysis() {
                     <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30 hover:border-purple-500/30 transition-all duration-300">
                       <div className="flex items-center justify-between mb-4">
                         <h4 className={`text-xl font-bold ${
-                          result.scenario === 'Conservative' ? 'text-blue-400' :
-                          result.scenario === 'Moderate' ? 'text-yellow-400' : 'text-red-400'
+                          result.scenario === 'Bearish Case' ? 'text-red-400' :
+                          result.scenario === 'Base Case' ? 'text-blue-400' : 'text-green-400'
                         }`}>
-                          {result.scenario} Scenario
+                          {result.scenario}
                         </h4>
                         <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          result.scenario === 'Conservative' ? 'bg-blue-500/20 text-blue-400' :
-                          result.scenario === 'Moderate' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
+                          result.scenario === 'Bearish Case' ? 'bg-red-500/20 text-red-400' :
+                          result.scenario === 'Base Case' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'
                         }`}>
-                          {(result.probability * 100).toFixed(0)}% Probability
+                          {result.scenario === 'Bearish Case' ? '15th' : 
+                           result.scenario === 'Base Case' ? '50th' : '85th'} Percentile
                         </div>
                       </div>
 
@@ -1074,14 +1136,14 @@ export default function RevenueAnalysis() {
                             label: 'Projected Price ($)',
                             data: simulationResults.map(result => result.endPrice),
                             backgroundColor: [
-                              'rgba(59, 130, 246, 0.6)',
-                              'rgba(245, 158, 11, 0.6)',
-                              'rgba(239, 68, 68, 0.6)'
+                              'rgba(239, 68, 68, 0.6)',  // Red for Bearish
+                              'rgba(59, 130, 246, 0.6)',  // Blue for Base
+                              'rgba(34, 197, 94, 0.6)'   // Green for Bullish
                             ],
                             borderColor: [
+                              'rgba(239, 68, 68, 1)',
                               'rgba(59, 130, 246, 1)',
-                              'rgba(245, 158, 11, 1)',
-                              'rgba(239, 68, 68, 1)'
+                              'rgba(34, 197, 94, 1)'
                             ],
                             borderWidth: 2,
                             borderRadius: 8,
