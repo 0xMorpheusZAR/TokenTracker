@@ -157,9 +157,81 @@ export default function InteractiveDashboard() {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
-        <div className="w-16 h-16 border-4 border-gray-800 border-t-red-500 rounded-full animate-spin mb-4"></div>
-        <p className="text-gray-400">Loading market data...</p>
+      <div className="min-h-screen bg-black text-white">
+        {/* Header skeleton */}
+        <header className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 border-b border-slate-700/50 backdrop-blur-xl">
+          <div className="relative max-w-7xl mx-auto p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+              <div className="flex-1 space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-red-400 text-sm font-medium uppercase tracking-wider animate-pulse">Loading Analysis</span>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="h-16 bg-gradient-to-r from-red-400/20 to-orange-400/20 rounded-lg animate-pulse"></div>
+                  <div className="h-8 bg-slate-700/50 rounded-lg animate-pulse max-w-2xl"></div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="h-12 w-32 bg-slate-700/50 rounded-xl animate-pulse"></div>
+                <div className="h-12 w-32 bg-slate-700/50 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main content skeleton */}
+        <main className="max-w-7xl mx-auto p-8 space-y-8">
+          {/* Stats cards */}
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
+                <div className="space-y-3">
+                  <div className="h-4 bg-slate-700/50 rounded animate-pulse"></div>
+                  <div className="h-8 bg-slate-700/50 rounded animate-pulse w-3/4"></div>
+                  <div className="h-3 bg-slate-700/50 rounded animate-pulse w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </section>
+
+          {/* Charts section */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
+              <div className="space-y-4">
+                <div className="h-6 bg-slate-700/50 rounded animate-pulse w-48"></div>
+                <div className="h-64 bg-slate-700/50 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
+              <div className="space-y-4">
+                <div className="h-6 bg-slate-700/50 rounded animate-pulse w-48"></div>
+                <div className="h-64 bg-slate-700/50 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+          </section>
+
+          {/* Table section */}
+          <section className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
+            <div className="space-y-4">
+              <div className="h-6 bg-slate-700/50 rounded animate-pulse w-64"></div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="h-16 bg-slate-700/50 rounded-lg animate-pulse"></div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Loading indicator */}
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="w-16 h-16 border-4 border-slate-700 border-t-red-500 rounded-full animate-spin mb-4"></div>
+            <p className="text-slate-400 text-lg">Loading market data...</p>
+            <p className="text-slate-500 text-sm mt-2">Fetching real-time prices and analytics</p>
+          </div>
+        </main>
       </div>
     );
   }
@@ -183,12 +255,12 @@ export default function InteractiveDashboard() {
               </div>
               
               <h1 className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
-                The Death of<br />
-                <span className="text-4xl lg:text-6xl">Artificial Scarcity</span>
+                Low Float<br />
+                <span className="text-4xl lg:text-6xl">Death Spiral</span>
               </h1>
               
               <p className="text-slate-300 text-xl max-w-2xl leading-relaxed">
-                Real-time analysis of <span className="text-red-400 font-semibold">low float/high FDV failures</span> vs <span className="text-green-400 font-semibold">revenue-generating success</span>
+                Why <span className="text-red-400 font-semibold">95% of low float/high FDV tokens crash</span> while <span className="text-green-400 font-semibold">revenue protocols moon</span>
               </p>
               
               <div className="flex items-center gap-4 pt-2">
@@ -229,7 +301,7 @@ export default function InteractiveDashboard() {
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <BarChart3 className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10 font-mono">HYPE_SIMULATION</span>
+                  <span className="relative z-10">Hype Simulation</span>
                 </a>
                 
                 <button
