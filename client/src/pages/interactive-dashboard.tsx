@@ -159,6 +159,14 @@ export default function InteractiveDashboard() {
                 Hyperliquid Success Story
               </a>
               
+              <a 
+                href="/monte-carlo" 
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Price Simulations
+              </a>
+              
               <div className="bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
                 <label className="text-sm text-gray-400 mr-2">Sort:</label>
                 <select 

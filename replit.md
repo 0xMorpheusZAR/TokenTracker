@@ -119,6 +119,8 @@ Changelog:
 - June 27, 2025: Created dedicated Hyperliquid analysis page at /hyperliquid route
 - June 27, 2025: Updated Hyperliquid data with latest metrics (76.07% market share, $830M revenue)
 - June 27, 2025: Added navigation system between main dashboard and Hyperliquid success story
+- June 27, 2025: Built Monte Carlo price simulation page with statistical modeling and 3 scenarios
+- June 27, 2025: Integrated real-time data into Monte Carlo simulations for end-of-year projections
 ```
 
 ## User Preferences

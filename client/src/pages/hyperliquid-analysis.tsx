@@ -16,10 +16,20 @@ export default function HyperliquidAnalysis() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </a>
+          <div className="flex flex-wrap items-center justify-between mb-6">
+            <a href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </a>
+            
+            <a 
+              href="/monte-carlo" 
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
+            >
+              <Target className="w-4 h-4" />
+              Price Simulations
+            </a>
+          </div>
           
           <div className="text-center">
             <h1 className="text-6xl font-black bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-4">
