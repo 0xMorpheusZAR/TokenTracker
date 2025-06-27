@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity } from "lucide-react";
+import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle } from "lucide-react";
 import { Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -430,14 +430,12 @@ export default function RevenueAnalysis() {
             
             <div className="flex gap-3">
               <a 
-                href="/hyperliquid" 
-                className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2"
+                href="/failure-analysis" 
+                className="group relative px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/25 flex items-center gap-2"
               >
-                <Target className="w-5 h-5" />
-                <span>Success Story</span>
+                <AlertTriangle className="w-5 h-5" />
+                <span>Failure Analysis</span>
               </a>
-              
-              {/* Price Simulations button removed per user request */}
             </div>
           </div>
           
@@ -447,32 +445,17 @@ export default function RevenueAnalysis() {
               <span className="text-emerald-400 font-semibold uppercase tracking-wider text-sm">Investment Analysis</span>
             </div>
             
-            <h1 className="text-6xl lg:text-8xl xl:text-9xl font-black leading-[0.85] tracking-tight">
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-300 to-emerald-600 drop-shadow-2xl">
-                HYPE
-              </span>
-              <div className="flex items-center justify-center my-4 lg:my-6">
-                <div className="h-1 bg-gradient-to-r from-transparent via-slate-400 to-transparent flex-1"></div>
-                <span className="text-4xl lg:text-6xl xl:text-7xl text-slate-400 font-bold mx-6 relative">
-                  vs
-                  <div className="absolute -inset-2 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 blur-xl rounded-full animate-pulse"></div>
-                </span>
-                <div className="h-1 bg-gradient-to-r from-transparent via-slate-400 to-transparent flex-1"></div>
-              </div>
-              <span className="block text-5xl lg:text-7xl xl:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 drop-shadow-2xl relative">
-                Revenue Titans
-                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-2xl rounded-full animate-pulse"></div>
-              </span>
+            <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 mb-4 leading-tight tracking-tight">
+              Revenue Analysis Dashboard
             </h1>
             
             <div className="space-y-4">
-              <p className="text-3xl font-bold text-white">Deep Investment Analysis: Cash-Generating Protocols</p>
+              <p className="text-3xl font-bold text-white">Cash-Generating DeFi Protocols Analysis</p>
               <p className="text-xl text-slate-300 max-w-5xl mx-auto leading-relaxed">
-                Comprehensive bull/bear analysis and investment recommendations for <span className="text-emerald-400 font-semibold">revenue-generating DeFi protocols</span> vs <span className="text-red-400 font-semibold">speculative tokens with zero cash flows</span>. 
-                See how <span className="text-emerald-400 font-semibold">Hyperliquid's $1.15B revenue</span> compares to the competition.
+                Comprehensive analysis of <span className="text-emerald-400 font-semibold">revenue-generating protocols</span> and their sustainable business models, comparing real cash flows and value accrual mechanisms.
               </p>
               <div className="text-lg text-slate-400 max-w-4xl mx-auto">
-                <span className="text-yellow-400 font-semibold">Professional investment thesis</span> • <span className="text-cyan-400 font-semibold">P/E ratio analysis</span> • <span className="text-purple-400 font-semibold">Target price recommendations</span>
+                <span className="text-yellow-400 font-semibold">Revenue metrics</span> • <span className="text-cyan-400 font-semibold">Growth analysis</span> • <span className="text-purple-400 font-semibold">Business sustainability</span>
               </div>
               
               <div className="mt-6 flex items-center justify-center gap-4 text-sm text-slate-500">
@@ -707,105 +690,7 @@ export default function RevenueAnalysis() {
           </div>
         </div>
 
-        {/* Protocol Analysis Table */}
-        <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
-          <div className="p-8 border-b border-slate-700/50">
-            <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-              <PieChart className="w-6 h-6 text-purple-400" />
-              Detailed Protocol Analysis
-            </h3>
-            <p className="text-slate-400 mt-2">Comprehensive revenue metrics and growth analysis</p>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-800/50">
-                <tr>
-                  <th className="text-left p-6 text-slate-300 font-semibold">Protocol</th>
-                  <th className="text-right p-6 text-slate-300 font-semibold">Revenue (30d)</th>
-                  <th className="text-right p-6 text-slate-300 font-semibold">P/E Ratio</th>
-                  <th className="text-right p-6 text-slate-300 font-semibold">Target Price</th>
-                  <th className="text-center p-6 text-slate-300 font-semibold">Rating</th>
-                  <th className="text-center p-6 text-slate-300 font-semibold">Risk</th>
-                  <th className="text-left p-6 text-slate-300 font-semibold">Investment Thesis</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((protocol, index) => (
-                  <tr key={protocol.symbol} className="border-t border-slate-700/30 hover:bg-slate-800/30 transition-colors duration-200">
-                    <td className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm ${
-                          protocol.symbol === 'HYPE' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
-                          'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                        }`}>
-                          {protocol.symbol}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-white">{protocol.symbol}</div>
-                          <div className="text-sm text-slate-400">{protocol.category}</div>
-                          <div className="text-xs text-slate-500">${(protocol.current_price).toFixed(2)}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-6 text-right">
-                      <div className="font-semibold text-white">${(protocol.monthly_revenue_30d / 1000000).toFixed(1)}M</div>
-                      <div className="text-xs text-slate-400">${(protocol.annualized_revenue / 1000000).toFixed(0)}M annual</div>
-                    </td>
-                    <td className="p-6 text-right">
-                      <div className={`font-semibold ${
-                        protocol.pe_ratio < 15 ? 'text-green-400' : 
-                        protocol.pe_ratio < 30 ? 'text-yellow-400' : 'text-red-400'
-                      }`}>
-                        {protocol.pe_ratio.toFixed(1)}x
-                      </div>
-                    </td>
-                    <td className="p-6 text-right">
-                      <div className="font-semibold text-cyan-400">${protocol.target_price.toFixed(2)}</div>
-                      <div className={`text-xs ${
-                        protocol.target_price > protocol.current_price ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {((protocol.target_price / protocol.current_price - 1) * 100).toFixed(0)}% upside
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                        protocol.recommendation === 'STRONG_BUY' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                        protocol.recommendation === 'BUY' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                        protocol.recommendation === 'HOLD' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                        'bg-red-500/20 text-red-400 border border-red-500/30'
-                      }`}>
-                        {protocol.recommendation.replace('_', ' ')}
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                        protocol.risk_level === 'LOW' ? 'bg-green-500/20 text-green-400' :
-                        protocol.risk_level === 'MEDIUM' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-red-500/20 text-red-400'
-                      }`}>
-                        {protocol.risk_level}
-                      </div>
-                    </td>
-                    <td className="p-6">
-                      <div className="space-y-2">
-                        <div className="text-sm text-slate-300 font-medium">Bull Case:</div>
-                        <ul className="text-xs text-slate-400 space-y-1">
-                          {protocol.bull_case.slice(0, 2).map((point, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <div className="w-1 h-1 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+
 
         {/* Analysis Summary */}
         <div className="mt-12 bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50">
