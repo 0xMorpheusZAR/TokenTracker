@@ -276,14 +276,6 @@ export default function FailureAnalysis() {
             </a>
             
             <div className="flex gap-3">
-              <a 
-                href="/revenue-analysis" 
-                className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2"
-              >
-                <DollarSign className="w-5 h-5" />
-                <span>Cash Cows Analysis</span>
-              </a>
-              
               <Select value={analysisView} onValueChange={setAnalysisView}>
                 <SelectTrigger className="w-48 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white">
                   <SelectValue />
@@ -319,236 +311,280 @@ export default function FailureAnalysis() {
           </div>
         </div>
 
-        {/* Key Insights Overview */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
+        {/* Executive Summary Cards */}
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-orange-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-red-400">Model Failure Rate</h3>
-                <TrendingDown className="w-5 h-5 text-red-500" />
+                <h3 className="text-sm font-medium text-orange-400">Economic Model</h3>
+                <TrendingDown className="w-5 h-5 text-orange-500" />
               </div>
-              <div className="text-3xl font-bold text-red-500">95%</div>
-              <p className="text-xs text-slate-400 mt-1">Of high FDV tokens failed</p>
+              <div className="text-3xl font-bold text-orange-500">Broken</div>
+              <p className="text-xs text-slate-400 mt-1">Fundamentally flawed</p>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-red-400">Capital Destroyed</h3>
-                <DollarSign className="w-5 h-5 text-red-500" />
+                <h3 className="text-sm font-medium text-red-400">Supply Dynamics</h3>
+                <AlertTriangle className="w-5 h-5 text-red-500" />
               </div>
-              <div className="text-3xl font-bold text-red-500">$58.4B</div>
-              <p className="text-xs text-slate-400 mt-1">Total value lost</p>
+              <div className="text-3xl font-bold text-red-500">Critical</div>
+              <p className="text-xs text-slate-400 mt-1">Artificial scarcity</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-red-400">Systemic Issue</h3>
-                <Percent className="w-5 h-5 text-red-500" />
+                <h3 className="text-sm font-medium text-yellow-400">Market Psychology</h3>
+                <Users className="w-5 h-5 text-yellow-500" />
               </div>
-              <div className="text-3xl font-bold text-red-500">13.2%</div>
-              <p className="text-xs text-slate-400 mt-1">Average initial float</p>
+              <div className="text-3xl font-bold text-yellow-500">Exploited</div>
+              <p className="text-xs text-slate-400 mt-1">Behavioral traps</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-red-400">Time to Failure</h3>
-                <Clock className="w-5 h-5 text-red-500" />
+                <h3 className="text-sm font-medium text-purple-400">Outcome</h3>
+                <Target className="w-5 h-5 text-purple-500" />
               </div>
-              <div className="text-3xl font-bold text-red-500">6-18</div>
-              <p className="text-xs text-slate-400 mt-1">Months average</p>
+              <div className="text-3xl font-bold text-purple-500">Inevitable</div>
+              <p className="text-xs text-slate-400 mt-1">Mathematical certainty</p>
             </CardContent>
           </Card>
         </section>
 
         {analysisView === "overview" && (
-          <>
-            {/* Core Failure Mechanisms */}
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                <CardHeader>
-                  <CardTitle className="text-red-400">Core Failure Mechanisms</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-start gap-3 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-red-400 mb-1">Liquidity Mirage</h4>
-                      <p className="text-slate-300 text-sm">Low float creates artificial scarcity, inflating price with minimal actual demand</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-red-400 mb-1">Unlock Avalanche</h4>
-                      <p className="text-slate-300 text-sm">Massive token releases create overwhelming sell pressure impossible to absorb</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <h4 className="font-semibold text-red-400 mb-1">Valuation Disconnect</h4>
-                      <p className="text-slate-300 text-sm">Market cap based on tiny float doesn't reflect economic reality</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                <CardHeader>
-                  <CardTitle className="text-red-400">Economic Death Spiral</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
-                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                      <span className="text-slate-300">High FDV launch with ~10-15% float</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
-                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                      <span className="text-slate-300">Price pumps due to artificial scarcity</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
-                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                      <span className="text-slate-300">Token unlocks begin massive sell pressure</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-black/40 rounded-lg border border-red-500/20">
-                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
-                      <span className="text-gray-300">Price collapses 80-95% from highs</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-red-900/30 rounded-lg border border-red-500/30">
-                      <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">💀</div>
-                      <span className="text-red-400 font-semibold">Token effectively dead</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* Token Breakdown Table */}
-            <Card className="bg-black/80 border-green-400/30 glass-effect relative z-10">
+          <div className="space-y-12">
+            {/* The High FDV Model Explained */}
+            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
               <CardHeader>
-                <CardTitle className="text-green-400 font-mono">DETAILED_TOKEN_ANALYSIS</CardTitle>
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <AlertTriangle className="w-6 h-6 text-orange-400" />
+                  The High FDV/Low Float Model
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm font-mono">
-                    <thead>
-                      <tr className="border-b border-green-400/30">
-                        <th className="text-left p-3 text-green-400">TOKEN</th>
-                        <th className="text-left p-3 text-green-400">EXCHANGE</th>
-                        <th className="text-left p-3 text-green-400">CURRENT_PRICE</th>
-                        <th className="text-left p-3 text-green-400">DECLINE</th>
-                        <th className="text-left p-3 text-green-400">SECTOR</th>
-                        <th className="text-left p-3 text-green-400">FAILURE_TYPE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tokens?.map((token: any) => (
-                        <tr key={token.symbol} className="border-b border-green-400/10 hover:bg-green-400/5">
-                          <td className="p-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold font-mono">
-                                {token.symbol.charAt(0)}
-                              </div>
-                              <div>
-                                <div className="font-medium text-green-400">{token.symbol}</div>
-                                <div className="text-xs text-green-400/50">{token.name}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-3 text-green-400">{token.exchange}</td>
-                          <td className="p-3 text-green-400">${token.currentPrice}</td>
-                          <td className="p-3">
-                            <Badge className="bg-red-500/20 text-red-400 border-red-500/30 font-mono">
-                              {token.performancePercent}%
-                            </Badge>
-                          </td>
-                          <td className="p-3 text-green-400/70">{token.sector}</td>
-                          <td className="p-3 text-red-400 max-w-xs truncate">
-                            {parseFloat(token.performancePercent) < -90 ? "EXTREME_UNLOCK_PRESSURE" :
-                             parseFloat(token.performancePercent) < -80 ? "HIGH_FDV_BUBBLE" :
-                             parseFloat(token.performancePercent) < -70 ? "MARKET_OVERSATURATION" :
-                             "FUNDAMENTAL_WEAKNESS"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <CardContent className="space-y-6">
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-slate-300 text-lg leading-relaxed">
+                    The high Fully Diluted Valuation (FDV) with low initial float model has become a dominant tokenomics structure in crypto. 
+                    This model launches projects with extremely high theoretical valuations based on total supply, while only releasing 5-15% of tokens initially.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-6">
+                    <h4 className="font-semibold text-orange-400 mb-3 flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      Typical Structure
+                    </h4>
+                    <ul className="space-y-2 text-slate-300">
+                      <li>• Total supply: 1B+ tokens</li>
+                      <li>• Initial float: 50-150M tokens (5-15%)</li>
+                      <li>• FDV at launch: $1B-10B+</li>
+                      <li>• Unlock schedule: 24-48 months</li>
+                      <li>• Monthly unlock: 2-8% of total supply</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6">
+                    <h4 className="font-semibold text-red-400 mb-3 flex items-center gap-2">
+                      <TrendingDown className="w-5 h-5" />
+                      Immediate Problems
+                    </h4>
+                    <ul className="space-y-2 text-slate-300">
+                      <li>• Artificial scarcity inflates price</li>
+                      <li>• Market cap doesn't reflect reality</li>
+                      <li>• Unsustainable token velocity</li>
+                      <li>• Future supply overhang pressure</li>
+                      <li>• Misaligned incentives for holders</li>
+                    </ul>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          </>
+
+            {/* Core Economic Failures */}
+            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <DollarSign className="w-6 h-6 text-red-400" />
+                  Economic Failure Mechanisms
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-red-500 text-white rounded-lg flex items-center justify-center font-bold">1</div>
+                      <h4 className="font-semibold text-red-400">Supply Shock Theory</h4>
+                    </div>
+                    <p className="text-slate-300 text-sm">
+                      When massive token unlocks occur, the sudden increase in circulating supply far exceeds natural demand absorption capacity, 
+                      creating inevitable downward price pressure regardless of project fundamentals.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-orange-500 text-white rounded-lg flex items-center justify-center font-bold">2</div>
+                      <h4 className="font-semibold text-orange-400">Liquidity Mirage</h4>
+                    </div>
+                    <p className="text-slate-300 text-sm">
+                      Low float creates artificial scarcity, making small buy orders disproportionately impact price. 
+                      This false price discovery mechanism attracts retail buyers who mistake scarcity for value.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-yellow-500 text-white rounded-lg flex items-center justify-center font-bold">3</div>
+                      <h4 className="font-semibold text-yellow-400">Reflexivity Trap</h4>
+                    </div>
+                    <p className="text-slate-300 text-sm">
+                      Higher prices from artificial scarcity increase paper valuations, attracting more buyers, 
+                      creating a self-reinforcing cycle that amplifies the eventual correction when reality sets in.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {analysisView === "detailed" && (
-          <div className="space-y-8">
-            {/* Economic Theory Section */}
-            <Card className="bg-black/80 border-red-500/30">
+          <div className="space-y-12">
+            {/* Mathematical Analysis */}
+            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
               <CardHeader>
-                <CardTitle className="text-red-400">The Economics of Failure</CardTitle>
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <BarChart3 className="w-6 h-6 text-blue-400" />
+                  Mathematical Inevitability
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div>
-                    <h4 className="text-red-400 font-semibold mb-3">Supply-Demand Imbalance</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-red-900/20 border border-red-500/30 rounded">
-                        <p className="text-gray-300 text-sm"><strong>Problem:</strong> Artificial scarcity with 10-15% float creates price discovery based on tiny supply</p>
-                      </div>
-                      <div className="p-3 bg-red-900/20 border border-red-500/30 rounded">
-                        <p className="text-gray-300 text-sm"><strong>Result:</strong> Market cap reflects unrealistic valuation that cannot be sustained when full supply hits market</p>
+                    <h4 className="text-xl font-semibold text-blue-400 mb-4">Supply-Demand Mathematics</h4>
+                    <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6">
+                      <div className="space-y-4 text-slate-300">
+                        <div className="flex justify-between">
+                          <span>Initial Float:</span>
+                          <span className="text-blue-400 font-semibold">100M tokens</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Monthly Unlock:</span>
+                          <span className="text-orange-400 font-semibold">50M tokens</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Supply Increase:</span>
+                          <span className="text-red-400 font-semibold">+50% monthly</span>
+                        </div>
+                        <div className="border-t border-slate-600 pt-3">
+                          <div className="flex justify-between text-lg font-semibold">
+                            <span>Required Demand Growth:</span>
+                            <span className="text-red-500">+50% monthly</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
                   <div>
-                    <h4 className="text-red-400 font-semibold mb-3">Liquidity Shock Theory</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-red-900/20 border border-red-500/30 rounded">
-                        <p className="text-gray-300 text-sm"><strong>Mechanism:</strong> Token unlocks increase circulating supply by 300-800% within 6-18 months</p>
+                    <h4 className="text-xl font-semibold text-purple-400 mb-4">Economic Reality Check</h4>
+                    <div className="space-y-4">
+                      <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-purple-400 mb-2">Sustainable Growth Rates</h5>
+                        <ul className="text-slate-300 text-sm space-y-1">
+                          <li>• Healthy businesses: 20-50% annual growth</li>
+                          <li>• Crypto bull markets: 100-300% annual growth</li>
+                          <li>• High FDV model requires: 600%+ annual growth</li>
+                        </ul>
                       </div>
-                      <div className="p-3 bg-red-900/20 border border-red-500/30 rounded">
-                        <p className="text-gray-300 text-sm"><strong>Impact:</strong> Demand remains constant while supply multiplies, causing inevitable price collapse</p>
+                      
+                      <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-red-400 mb-2">Mathematical Impossibility</h5>
+                        <p className="text-slate-300 text-sm">
+                          For prices to remain stable, new demand must consistently exceed supply increases. 
+                          The required growth rates are mathematically unsustainable in any economic environment.
+                        </p>
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="mt-6 p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                  <h4 className="text-red-400 font-semibold mb-2">Mathematical Certainty</h4>
-                  <p className="text-gray-300">If a token has 10% float at launch and unlocks 90% over 18 months, even maintaining 50% of original demand would require 5x price appreciation just to break even. This is economically impossible for most projects.</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Behavioral Economics */}
-            <Card className="bg-black/80 border-red-500/30">
+            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
               <CardHeader>
-                <CardTitle className="text-red-400">Behavioral & Market Dynamics</CardTitle>
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <Users className="w-6 h-6 text-green-400" />
+                  Behavioral Exploitation Patterns
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-2">Insider Incentives</h5>
-                    <p className="text-gray-300 text-sm">Teams and VCs have massive unlock schedules, creating structural selling pressure regardless of project success</p>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-lg font-semibold text-green-400 mb-4">Psychological Mechanisms</h4>
+                    <div className="space-y-4">
+                      <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-green-400 mb-2">Scarcity Bias</h5>
+                        <p className="text-slate-300 text-sm">
+                          Low float triggers scarcity bias, making assets appear more valuable due to limited availability, 
+                          even when the scarcity is artificially engineered.
+                        </p>
+                      </div>
+                      
+                      <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-blue-400 mb-2">Anchoring Effect</h5>
+                        <p className="text-slate-300 text-sm">
+                          High FDV creates an anchor point that makes current prices seem reasonable compared to "full dilution," 
+                          masking the true supply economics.
+                        </p>
+                      </div>
+                      
+                      <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-purple-400 mb-2">FOMO Amplification</h5>
+                        <p className="text-slate-300 text-sm">
+                          Rising prices from artificial scarcity create fear of missing out, driving irrational buying behavior 
+                          that temporarily sustains the unsustainable model.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-2">Retail Psychology</h5>
-                    <p className="text-gray-300 text-sm">High token price creates perception of success, attracting retail buyers who become exit liquidity for insiders</p>
-                  </div>
-                  
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-2">Market Efficiency</h5>
-                    <p className="text-gray-300 text-sm">Eventually markets price in future dilution, but by then retail investors have already suffered massive losses</p>
+                  <div>
+                    <h4 className="text-lg font-semibold text-orange-400 mb-4">Information Asymmetries</h4>
+                    <div className="space-y-4">
+                      <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-orange-400 mb-2">Hidden Unlock Schedules</h5>
+                        <p className="text-slate-300 text-sm">
+                          Complex vesting schedules and unclear documentation hide the true extent of future selling pressure 
+                          from retail investors who focus on current metrics.
+                        </p>
+                      </div>
+                      
+                      <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-red-400 mb-2">Insider Knowledge</h5>
+                        <p className="text-slate-300 text-sm">
+                          VCs, team members, and early investors understand the supply dynamics and time their exits accordingly, 
+                          while retail investors remain unaware of the inevitable correction.
+                        </p>
+                      </div>
+                      
+                      <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+                        <h5 className="font-semibold text-yellow-400 mb-2">Marketing Obfuscation</h5>
+                        <p className="text-slate-300 text-sm">
+                          Marketing focuses on current valuation, partnerships, and technology while downplaying tokenomics, 
+                          creating information asymmetry that favors informed participants.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -557,114 +593,161 @@ export default function FailureAnalysis() {
         )}
 
         {analysisView === "comparative" && (
-          <div className="space-y-8">
+          <div className="space-y-12">
             {/* Model Comparison */}
-            <Card className="bg-black/80 border-red-500/30">
+            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
               <CardHeader>
-                <CardTitle className="text-red-400">High FDV vs Sustainable Token Models</CardTitle>
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <Target className="w-6 h-6 text-emerald-400" />
+                  Tokenomics Model Comparison
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h4 className="text-red-400 font-semibold text-lg">Failed High FDV Model</h4>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <X className="w-5 h-5 text-red-500" />
-                          <span className="font-medium text-red-400">Low Float Launch (10-15%)</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">Creates artificial scarcity and unrealistic price discovery</p>
-                      </div>
-                      
-                      <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <X className="w-5 h-5 text-red-500" />
-                          <span className="font-medium text-red-400">Massive Unlock Schedules</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">300-800% supply increase over 18 months guaranteed</p>
-                      </div>
-                      
-                      <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <X className="w-5 h-5 text-red-500" />
-                          <span className="font-medium text-red-400">Valuation Disconnect</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">Market cap based on tiny float, not economic reality</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h4 className="text-green-400 font-semibold text-lg">Sustainable Models (e.g., Hyperliquid)</h4>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Check className="w-5 h-5 text-green-500" />
-                          <span className="font-medium text-green-400">Revenue-Based Valuation</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">Price supported by actual revenue generation ($830M annually)</p>
-                      </div>
-                      
-                      <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Check className="w-5 h-5 text-green-500" />
-                          <span className="font-medium text-green-400">Gradual Distribution</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">Controlled token release aligned with product adoption</p>
-                      </div>
-                      
-                      <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Check className="w-5 h-5 text-green-500" />
-                          <span className="font-medium text-green-400">Market Dominance</span>
-                        </div>
-                        <p className="text-gray-300 text-sm">76% market share with sustainable competitive moats</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-slate-800/50">
+                      <tr>
+                        <th className="text-left p-4 text-slate-300 font-semibold">Characteristic</th>
+                        <th className="text-center p-4 text-slate-300 font-semibold">High FDV/Low Float</th>
+                        <th className="text-center p-4 text-slate-300 font-semibold">Fair Launch</th>
+                        <th className="text-center p-4 text-slate-300 font-semibold">Revenue Sharing</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-t border-slate-700/30">
+                        <td className="p-4 text-slate-300 font-medium">Initial Float</td>
+                        <td className="p-4 text-center">
+                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
+                            5-15%
+                          </span>
+                        </td>
+                        <td className="p-4 text-center">
+                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                            80-100%
+                          </span>
+                        </td>
+                        <td className="p-4 text-center">
+                          <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400">
+                            Variable
+                          </span>
+                        </td>
+                      </tr>
+                      <tr className="border-t border-slate-700/30">
+                        <td className="p-4 text-slate-300 font-medium">Price Discovery</td>
+                        <td className="p-4 text-center text-red-400">Artificial</td>
+                        <td className="p-4 text-center text-green-400">Market-driven</td>
+                        <td className="p-4 text-center text-blue-400">Fundamental</td>
+                      </tr>
+                      <tr className="border-t border-slate-700/30">
+                        <td className="p-4 text-slate-300 font-medium">Sustainability</td>
+                        <td className="p-4 text-center text-red-400">Unsustainable</td>
+                        <td className="p-4 text-center text-green-400">Sustainable</td>
+                        <td className="p-4 text-center text-blue-400">Highly Sustainable</td>
+                      </tr>
+                      <tr className="border-t border-slate-700/30">
+                        <td className="p-4 text-slate-300 font-medium">Investor Alignment</td>
+                        <td className="p-4 text-center text-red-400">Misaligned</td>
+                        <td className="p-4 text-center text-green-400">Aligned</td>
+                        <td className="p-4 text-center text-blue-400">Highly Aligned</td>
+                      </tr>
+                      <tr className="border-t border-slate-700/30">
+                        <td className="p-4 text-slate-300 font-medium">Long-term Viability</td>
+                        <td className="p-4 text-center text-red-400">Low</td>
+                        <td className="p-4 text-center text-green-400">Medium</td>
+                        <td className="p-4 text-center text-blue-400">High</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Solutions Framework */}
-            <Card className="bg-black/80 border-red-500/30">
-              <CardHeader>
-                <CardTitle className="text-red-400">Framework for Avoiding High FDV Disasters</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-3">Due Diligence Red Flags</h5>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• Initial float under 20%</li>
-                      <li>• No sustainable revenue model</li>
-                      <li>• Heavy VC/team unlock schedules</li>
-                      <li>• Market cap over 50x annual revenue</li>
-                    </ul>
+            {/* Alternative Models */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-green-400">Sustainable Alternatives</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                      <h5 className="font-semibold text-green-400 mb-2 flex items-center gap-2">
+                        <Check className="w-4 h-4" />
+                        Revenue-Based Tokens
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Tokens that capture actual business value through fee sharing, buybacks, or direct revenue distribution. 
+                        Value derives from cash flows, not speculation.
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                      <h5 className="font-semibold text-green-400 mb-2 flex items-center gap-2">
+                        <Check className="w-4 h-4" />
+                        Gradual Distribution
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Launch with 60-80% of tokens in circulation, with remaining supply distributed based on usage, 
+                        community contributions, or ecosystem development milestones.
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                      <h5 className="font-semibold text-green-400 mb-2 flex items-center gap-2">
+                        <Check className="w-4 h-4" />
+                        Utility-First Design
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Tokens serve clear utility functions within the ecosystem, creating organic demand 
+                        that grows with platform adoption rather than speculative interest.
+                      </p>
+                    </div>
                   </div>
-                  
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-3">Sustainable Metrics</h5>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• P/E ratio under 50x</li>
-                      <li>• Growing weekly active users</li>
-                      <li>• Positive unit economics</li>
-                      <li>• Market share expansion</li>
-                    </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-red-400">Red Flags to Avoid</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+                      <h5 className="font-semibold text-red-400 mb-2 flex items-center gap-2">
+                        <X className="w-4 h-4" />
+                        Complex Vesting Schedules
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Convoluted unlock mechanisms with multiple tranches, cliffs, and conditions designed to 
+                        obscure the true extent of future selling pressure.
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+                      <h5 className="font-semibold text-red-400 mb-2 flex items-center gap-2">
+                        <X className="w-4 h-4" />
+                        {"FDV > $1B at Launch"}
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Extremely high fully diluted valuations that require unrealistic growth assumptions 
+                        to justify, indicating unsustainable tokenomics from launch.
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+                      <h5 className="font-semibold text-red-400 mb-2 flex items-center gap-2">
+                        <X className="w-4 h-4" />
+                        No Clear Value Accrual
+                      </h5>
+                      <p className="text-slate-300 text-sm">
+                        Tokens without clear mechanisms for capturing business value, relying purely on 
+                        speculation and narrative rather than fundamental value creation.
+                      </p>
+                    </div>
                   </div>
-                  
-                  <div className="p-4 bg-black/40 border border-red-500/20 rounded-lg">
-                    <h5 className="text-red-400 font-medium mb-3">Timing Considerations</h5>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• Avoid 3-6 months before major unlocks</li>
-                      <li>• Wait for revenue proof points</li>
-                      <li>• Look for post-unlock stability</li>
-                      <li>• Monitor competitor dynamics</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>
