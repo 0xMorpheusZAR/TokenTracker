@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart } from "lucide-react";
 import {
@@ -31,11 +31,14 @@ ChartJS.register(
 );
 
 export default function InteractiveDashboard() {
+  const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("performance");
   const [filterBy, setFilterBy] = useState("all");
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   
   // Chart controls state
   const [performanceChartType, setPerformanceChartType] = useState("bar");
@@ -51,9 +54,7 @@ export default function InteractiveDashboard() {
     queryKey: ["/api/analytics/summary"],
   });
 
-  const { data: cryptoRankStatus } = useQuery({
-    queryKey: ["/api/cryptorank/status"],
-  });
+
 
   const { data: coinGeckoStatus } = useQuery({
     queryKey: ["/api/coingecko/status"],
@@ -71,6 +72,34 @@ export default function InteractiveDashboard() {
     const timer = setTimeout(() => setIsLoading(false), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleRefresh = async () => {
+    const now = Date.now();
+    const timeSinceLastRefresh = now - lastRefresh;
+    const RATE_LIMIT_MS = 30000; // 30 seconds rate limit
+
+    if (timeSinceLastRefresh < RATE_LIMIT_MS) {
+      const remainingTime = Math.ceil((RATE_LIMIT_MS - timeSinceLastRefresh) / 1000);
+      alert(`Please wait ${remainingTime} seconds before refreshing again to respect API rate limits.`);
+      return;
+    }
+
+    setIsRefreshing(true);
+    try {
+      // Invalidate all queries to force refresh
+      await queryClient.invalidateQueries({ queryKey: ["/api/tokens"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/analytics/summary"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/coingecko/detailed"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/hyperliquid/comprehensive"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/coingecko/status"] });
+      
+      setLastRefresh(now);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 1000); // Minimum 1 second to show loading state
+    }
+  };
 
   const filterTokens = (tokenData: any[] | undefined) => {
     if (!tokenData || !Array.isArray(tokenData)) return [];
@@ -166,6 +195,15 @@ export default function InteractiveDashboard() {
                 <BarChart3 className="w-4 h-4" />
                 Price Simulations
               </a>
+              
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+              </button>
               
               <div className="bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
                 <label className="text-sm text-gray-400 mr-2">Sort:</label>
@@ -900,51 +938,18 @@ export default function InteractiveDashboard() {
           </div>
         </section>
 
-        {/* API Status */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">CryptoRank API</h3>
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${(cryptoRankStatus as any)?.connected ? "bg-green-500" : "bg-red-500"} animate-pulse`}></div>
-                <span className={`text-sm ${(cryptoRankStatus as any)?.connected ? "text-green-400" : "text-red-400"}`}>
-                  {(cryptoRankStatus as any)?.connected ? "Connected" : "Disconnected"}
-                </span>
-              </div>
-            </div>
-            <div className="space-y-2 text-sm text-gray-400">
-              <div className="flex justify-between">
-                <span>Unlock Data:</span>
-                <span className="text-green-400">Real-time</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Coverage:</span>
-                <span>Hundreds of tokens</span>
-              </div>
+        {/* Data Source Status */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 text-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${(coinGeckoStatus as any)?.connected ? "bg-green-500" : "bg-red-500"} animate-pulse`}></div>
+              <span className="text-white font-semibold">CoinGecko Pro API</span>
+              <span className="text-green-400 text-sm">({(coinGeckoStatus as any)?.tier} Tier)</span>
             </div>
           </div>
-          
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">CoinGecko API</h3>
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${(coinGeckoStatus as any)?.connected ? "bg-green-500" : "bg-red-500"} animate-pulse`}></div>
-                <span className={`text-sm ${(coinGeckoStatus as any)?.connected ? "text-green-400" : "text-red-400"}`}>
-                  {(coinGeckoStatus as any)?.connected ? (coinGeckoStatus as any).tier : "Disconnected"}
-                </span>
-              </div>
-            </div>
-            <div className="space-y-2 text-sm text-gray-400">
-              <div className="flex justify-between">
-                <span>Price Data:</span>
-                <span className="text-green-400">Real-time</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Rate Limit:</span>
-                <span className="text-yellow-400">{(coinGeckoStatus as any)?.rateLimit || "Limited"}</span>
-              </div>
-            </div>
-          </div>
+          <p className="text-gray-400 text-sm">
+            Real-time pricing data with enhanced accuracy and rate limits
+          </p>
         </div>
       </div>
     </div>

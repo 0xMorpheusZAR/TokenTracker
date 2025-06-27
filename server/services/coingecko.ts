@@ -69,13 +69,13 @@ export class CoinGeckoService {
     return headers;
   }
 
-  // Map token symbols to CoinGecko IDs
+  // Map token symbols to CoinGecko IDs - Updated June 27, 2025
   private getTokenId(symbol: string): string {
     const tokenMap: Record<string, string> = {
       'PORTAL': 'portal',
-      'STRK': 'starknet',
+      'STRK': 'starknet', 
       'AEVO': 'aevo',
-      'PIXEL': 'pixels',
+      'PIXEL': 'pixels',  // Note: CoinGecko uses 'pixels' not 'pixel'
       'SAGA': 'saga',
       'REZ': 'renzo',
       'MANTA': 'manta-network',
