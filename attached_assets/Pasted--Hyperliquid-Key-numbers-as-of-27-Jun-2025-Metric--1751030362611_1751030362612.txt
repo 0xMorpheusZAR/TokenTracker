@@ -1,0 +1,61 @@
+### Hyperliquid  ‑ Key numbers *as of 27 Jun 2025*
+
+| Metric                                            | Latest reading                     | Source                       |
+| ------------------------------------------------- | ---------------------------------- | ---------------------------- |
+| **Cumulative perp‑trading volume**                | **\$1.814 trillion**               | ([defillama.com][1])         |
+| **Perp volume – 24 h / 30 d**                     | **\$6.06 B / \$234.16 B**          | ([defillama.com][1])         |
+| **Monthly volume share of all perp DEXs**         | **≈ 62 %** (June)                  | ([dlnews.com][2])            |
+| **Average daily volume (last 3 mo.)**             | **\$6.4 B**                        | ([blockworks.co][3])         |
+| **Open interest (all pairs)**                     | **\$7.17 B**                       | ([coingecko.com][4])         |
+| **BTC‑only OI**                                   | **\$1.4 B (15 % of Binance)**      | ([blockworks.co][3])         |
+| **Protocol fees — 24 h / 30 d / annualised**      | **\$1.66 M / \$68.06 M / \$830 M** | ([defillama.com][1])         |
+| **Revenue to holders — 24 h / 30 d / annualised** | **\$1.55 M / \$63.29 M / \$772 M** | ([defillama.com][1])         |
+| **TVL (Hyperliquid L1)**                          | **\$536 M**                        | ([defillama.com][1])         |
+| **Total unique traders**                          | **≈ 511 k**                        | ([stats.hyperliquid.xyz][5]) |
+| **Cumulative trades / total notional**            | **99.8 B trades / \$1.76 T**       | ([stats.hyperliquid.xyz][5]) |
+| **HYPE price / mkt‑cap / FDV**                    | **\$36.8 / \$12.3 B / \$36.7 B**   | ([defillama.com][1])         |
+
+---
+
+## What the fresh data means for the bull case
+
+### 1.  Network‑effect momentum is accelerating
+
+*Hyperliquid already clears almost two‑thirds of the **entire** decentralised perps market*, processing **\$186 B this month alone** — five times its nearest rival and roughly **10 % of Binance’s total derivatives flow**. Liquidity begets liquidity, and these volumes translate into the **tightest spreads and deepest order books on‑chain**, reinforcing the moat. ([dlnews.com][2], [defillama.com][1])
+
+### 2.  Revenue quality & “real yield” are scaling with usage
+
+At an **\$830 M run‑rate in fees** and **\$772 M flowing to token‑holders and vault depositors**, Hyperliquid is generating CEX‑level cash flow without taking a cent for the core team. That cash‑flow‑to‑FDV ratio (≈ 2.1 %) is already inside the range of large listed exchanges — rare for a two‑year‑old DeFi protocol. ([defillama.com][1])
+
+### 3.  Open‑interest depth rivals mid‑tier CEXs
+
+Aggregate OI sits above **\$7 B**, with **BTC alone at \$1.4 B**, equal to 15 % of Binance and nearly half of OKX. Deep OI reduces slippage for large directional traders and entices systematic funds that were previously CeFi‑only. ([coingecko.com][4], [blockworks.co][3])
+
+### 4.  User distribution remains uniquely “anti‑VC”
+
+Over **510 k wallets** have traded on‑chain, and \~70 % of HYPE supply is community‑owned. No large VC unlocks loom, eliminating the chronic sell pressure that dogs low‑float/high‑FDV launches. That alignment is a branding asset in the current market backlash against VC‑heavy tokenomics. ([stats.hyperliquid.xyz][5])
+
+### 5.  Operating leverage is still ahead
+
+Even after tripling since launch, HYPE’s FDV (\~\$37 B) prices in a **price/revenue multiple close to Coinbase’s** despite much faster top‑line growth. If average daily volume merely holds the recent **\$6.4 B** and fee schedules stay constant, annual revenue could breach **\$1 B** within 12 months — leaving room for upside if share rises above the current 62 % of perp‑DEX flow. ([blockworks.co][3], [defillama.com][1])
+
+---
+
+## Updated long‑term thesis, distilled
+
+1. **CeFi‑grade experience, DeFi trust paradigm.** A fully on‑chain order book clearing >\$6 B/day with sub‑second finality remains unmatched.
+2. **Flywheel is real and measurable.** Each new user (now > 0.5 M) deepens liquidity, which in turn raises volumes, fees and vault yields — hard numbers confirm the loop.
+3. **Incentives are user‑centric.** 100 % of trading fees accrue to community vaults or insurance; no venture drag.
+4. **Dominance is widening, not plateauing.** June’s 62 % share and 10 % of Binance’s flow show migration from CeFi to on‑chain is underway, and Hyperliquid is the primary beneficiary.
+5. **Valuation is increasingly justified by cash flow.** At current run‑rate, Hyperliquid already prints revenues on par with some publicly traded exchanges valued at similar or higher multiples.
+
+**Bottom line:** the newest metrics reinforce every pillar of the bull case — liquidity network effects, revenue growth, token‑holder alignment and market‑share expansion. Unless a rival can simultaneously match throughput, fee structure, and fair tokenomics, Hyperliquid’s lead is likely to compound through the next market cycle.
+
+* [blockworks.co](https://blockworks.co/news/hyperliquid-market-share-success-blockworks-research)
+* [dlnews.com](https://www.dlnews.com/articles/defi/hyperliquid-rival-aster-trading-volume-flies-amid-dark-pools/)
+
+[1]: https://defillama.com/protocol/hyperliquid "Hyperliquid - DefiLlama"
+[2]: https://www.dlnews.com/articles/defi/hyperliquid-rival-aster-trading-volume-flies-amid-dark-pools/ "Hyperliquid rival Aster smashes its monthly trading record with $33bn haul and fulfils CZ’s dark pool wishes – DL News"
+[3]: https://blockworks.co/news/hyperliquid-market-share-success-blockworks-research "Hyperliquid's averaged $6.4B in daily trading volume over the past 3 months: Blockworks Research"
+[4]: https://www.coingecko.com/en/exchanges/hyperliquid "Hyperliquid (Futures) Statistics: Markets, Trading Volume & Trust Score | CoinGecko"
+[5]: https://stats.hyperliquid.xyz/?utm_source=chatgpt.com "Hyperliquid Stats"

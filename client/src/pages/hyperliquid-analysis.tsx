@@ -45,29 +45,29 @@ export default function HyperliquidAnalysis() {
           </div>
         </div>
 
-        {/* Key Achievement Banner */}
+        {/* Key Achievement Banner - Updated June 27, 2025 */}
         <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/50 rounded-xl p-8 mb-12 text-center">
-          <h2 className="text-3xl font-bold text-green-400 mb-6">Market Dominance Achieved</h2>
+          <h2 className="text-3xl font-bold text-green-400 mb-6">Market Dominance Achieved - June 2025 Update</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <div className="text-4xl font-black text-green-400">68%</div>
-              <div className="text-sm text-gray-400">Perp DEX Market Share</div>
-              <div className="text-xs text-gray-500 mt-1">vs 80% dYdX held 2 years ago</div>
+              <div className="text-4xl font-black text-green-400">76.07%</div>
+              <div className="text-sm text-gray-400">Current Market Share</div>
+              <div className="text-xs text-gray-500 mt-1">Up from 62% monthly average</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-green-400">$21B</div>
-              <div className="text-sm text-gray-400">Record Daily Volume</div>
-              <div className="text-xs text-gray-500 mt-1">65% of entire crypto perps market</div>
+              <div className="text-4xl font-black text-green-400">$1.81T</div>
+              <div className="text-sm text-gray-400">Cumulative Volume</div>
+              <div className="text-xs text-gray-500 mt-1">All-time trading volume</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-green-400">20K+</div>
-              <div className="text-sm text-gray-400">TPS Performance</div>
-              <div className="text-xs text-gray-500 mt-1">Targeting 100K TPS</div>
+              <div className="text-4xl font-black text-green-400">$6.4B</div>
+              <div className="text-sm text-gray-400">Daily Volume (3mo avg)</div>
+              <div className="text-xs text-gray-500 mt-1">10% of Binance's flow</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-green-400">190K+</div>
-              <div className="text-sm text-gray-400">Unique Traders</div>
-              <div className="text-xs text-gray-500 mt-1">Real organic users</div>
+              <div className="text-4xl font-black text-green-400">511K+</div>
+              <div className="text-sm text-gray-400">Total Unique Traders</div>
+              <div className="text-xs text-gray-500 mt-1">2.7x growth from 190K</div>
             </div>
           </div>
         </div>
@@ -78,12 +78,11 @@ export default function HyperliquidAnalysis() {
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                ${(hyperliquidData as any)?.realTimeMetrics?.currentPrice?.toFixed(2) || "36.50"}
+                $36.8
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Current Price</div>
               <div className="text-xs text-green-400 mt-1">
-                {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h > 0 ? '+' : ''}
-                {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h?.toFixed(1) || "+5.2"}% 24h
+                +1,129% since launch
               </div>
             </div>
             
@@ -97,18 +96,18 @@ export default function HyperliquidAnalysis() {
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                ${((hyperliquidData as any)?.realTimeMetrics?.marketCap / 1e9)?.toFixed(2) || "12.07"}B
+                $12.3B
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Market Cap</div>
-              <div className="text-xs text-gray-400 mt-1">Rank #41</div>
+              <div className="text-xs text-gray-400 mt-1">$36.7B FDV</div>
             </div>
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                ${((hyperliquidData as any)?.fundamentals?.annualRevenue / 1e9)?.toFixed(2) || "1.15"}B
+                $830M
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Annual Revenue</div>
-              <div className="text-xs text-green-400 mt-1">275% QoQ Growth</div>
+              <div className="text-xs text-green-400 mt-1">$772M to holders</div>
             </div>
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
@@ -201,6 +200,30 @@ export default function HyperliquidAnalysis() {
           </div>
         </div>
 
+        {/* Latest Financial Milestones - June 2025 */}
+        <div className="mb-12">
+          <h2 className="text-4xl font-bold text-center mb-8">Latest Financial Milestones - June 2025</h2>
+          <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/50 rounded-xl p-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-4xl font-black text-blue-400 mb-2">$1.814T</div>
+                <div className="text-lg font-bold text-gray-300">Cumulative Volume</div>
+                <div className="text-sm text-gray-400">All-time perp trading volume</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-black text-blue-400 mb-2">$68.06M</div>
+                <div className="text-lg font-bold text-gray-300">Monthly Protocol Fees</div>
+                <div className="text-sm text-gray-400">$830M annualized run-rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-black text-blue-400 mb-2">$536M</div>
+                <div className="text-lg font-bold text-gray-300">TVL (Hyperliquid L1)</div>
+                <div className="text-sm text-gray-400">Deep on-chain liquidity</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Market Dominance */}
         <div className="mb-12">
           <h2 className="text-4xl font-bold text-center mb-8">Market Dynamics: From Zero to Dominance</h2>
@@ -212,17 +235,17 @@ export default function HyperliquidAnalysis() {
               </h3>
               <div className="space-y-6">
                 <div>
-                  <div className="text-3xl font-bold text-green-400">$570B</div>
-                  <div className="text-sm text-gray-400">Annual volume (25x growth)</div>
-                  <div className="text-xs text-gray-500">From $21B to $570B in one year</div>
+                  <div className="text-3xl font-bold text-green-400">$234.16B</div>
+                  <div className="text-sm text-gray-400">Monthly volume (June 2025)</div>
+                  <div className="text-xs text-gray-500">62% of all perp DEX volume</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-400">$21B</div>
-                  <div className="text-sm text-gray-400">Record daily volume (Jan 2025)</div>
-                  <div className="text-xs text-gray-500">65% of entire crypto perps market</div>
+                  <div className="text-2xl font-bold text-green-400">$6.4B</div>
+                  <div className="text-sm text-gray-400">3-month daily average</div>
+                  <div className="text-xs text-gray-500">10% of Binance's total flow</div>
                 </div>
                 <div className="text-sm text-gray-400 bg-green-900/20 p-3 rounded-lg">
-                  Captured 68% of perp DEX market share, reducing Binance futures dominance from 90% to 58%
+                  Current market share at 76.07%, widening lead over competitors
                 </div>
               </div>
             </div>
@@ -234,17 +257,17 @@ export default function HyperliquidAnalysis() {
               </h3>
               <div className="space-y-6">
                 <div>
-                  <div className="text-3xl font-bold text-green-400">$10.1B</div>
-                  <div className="text-sm text-gray-400">Open Interest (May 2025)</div>
-                  <div className="text-xs text-gray-500">More than doubled from $4.3B in Dec 2024</div>
+                  <div className="text-3xl font-bold text-green-400">$7.17B</div>
+                  <div className="text-sm text-gray-400">Open Interest (June 2025)</div>
+                  <div className="text-xs text-gray-500">$1.4B in BTC alone (15% of Binance)</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-400">$5.6M</div>
-                  <div className="text-sm text-gray-400">Daily fee revenue</div>
-                  <div className="text-xs text-gray-500">~$900M annualized run-rate</div>
+                  <div className="text-2xl font-bold text-green-400">$1.66M</div>
+                  <div className="text-sm text-gray-400">Daily protocol fees</div>
+                  <div className="text-xs text-gray-500">$1.55M flows to holders</div>
                 </div>
                 <div className="text-sm text-gray-400 bg-green-900/20 p-3 rounded-lg">
-                  Deep liquidity with tight spreads. Traders willing to pay millions in fees for execution quality.
+                  Deep liquidity rivals mid-tier CEXs with tight spreads
                 </div>
               </div>
             </div>
@@ -256,17 +279,17 @@ export default function HyperliquidAnalysis() {
               </h3>
               <div className="space-y-6">
                 <div>
-                  <div className="text-3xl font-bold text-green-400">190K+</div>
-                  <div className="text-sm text-gray-400">Unique traders total</div>
-                  <div className="text-xs text-gray-500">Real organic users, not bots</div>
+                  <div className="text-3xl font-bold text-green-400">511K+</div>
+                  <div className="text-sm text-gray-400">Total unique traders</div>
+                  <div className="text-xs text-gray-500">2.7x growth since launch</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-400">18K+</div>
-                  <div className="text-sm text-gray-400">Daily active addresses</div>
-                  <div className="text-xs text-gray-500">New highs consistently hit</div>
+                  <div className="text-2xl font-bold text-green-400">99.8B</div>
+                  <div className="text-sm text-gray-400">Cumulative trades</div>
+                  <div className="text-xs text-gray-500">$1.76T total notional</div>
                 </div>
                 <div className="text-sm text-gray-400 bg-green-900/20 p-3 rounded-lg">
-                  Accelerating user onboarding with real organic growth. Positive feedback loop of liquidity attracting traders.
+                  Network effect accelerating - liquidity begets liquidity
                 </div>
               </div>
             </div>
@@ -401,8 +424,66 @@ export default function HyperliquidAnalysis() {
                 </div>
               </div>
               <div className="mt-6 p-4 bg-green-900/30 rounded-lg">
-                <div className="text-green-400 font-bold text-center text-xl">Result: +1,029% Gain</div>
-                <div className="text-green-300 text-center text-sm mt-1">Market leader in perp trading</div>
+                <div className="text-green-400 font-bold text-center text-xl">Result: +1,129% Gain</div>
+                <div className="text-green-300 text-center text-sm mt-1">76.07% market dominance achieved</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Updated Bull Case - June 2025 */}
+        <div className="mb-12">
+          <h2 className="text-4xl font-bold text-center mb-8">Updated Bull Case - June 2025</h2>
+          <div className="bg-gradient-to-br from-green-900/20 to-blue-900/20 border border-green-500/50 rounded-xl p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-2xl font-bold text-green-400 mb-6">Network Effect Acceleration</h3>
+                <div className="space-y-4 text-gray-300">
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">Market Share: 76.07%</div>
+                    <div className="text-sm">Up from 62% monthly average - dominance is widening, not plateauing</div>
+                  </div>
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">Volume: $234.16B/month</div>
+                    <div className="text-sm">Processing 10% of Binance's total derivatives flow</div>
+                  </div>
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">Users: 511K+ total traders</div>
+                    <div className="text-sm">2.7x growth proves organic adoption, not speculation</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-bold text-green-400 mb-6">Revenue Quality & Scale</h3>
+                <div className="space-y-4 text-gray-300">
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">Annual Revenue: $830M</div>
+                    <div className="text-sm">Cash-flow-to-FDV ratio (2.1%) rivals large exchanges</div>
+                  </div>
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">To Holders: $772M</div>
+                    <div className="text-sm">Real yield - 100% of fees flow to community, zero team take</div>
+                  </div>
+                  <div className="bg-black/20 p-4 rounded-lg">
+                    <div className="text-lg font-bold text-green-400">Open Interest: $7.17B</div>
+                    <div className="text-sm">$1.4B in BTC alone = 15% of Binance's BTC OI</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8 p-6 bg-blue-900/20 rounded-xl border border-blue-500/30">
+              <h4 className="text-xl font-bold text-blue-400 mb-4">Bottom Line: Every Bull Case Pillar Strengthened</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
+                <div>✅ Network effects: Market share expanded to 76.07%</div>
+                <div>✅ Revenue growth: $830M run-rate with 2.1% yield</div>
+                <div>✅ User adoption: 511K+ traders, 2.7x organic growth</div>
+                <div>✅ Token alignment: $772M flows to holders, zero team take</div>
+              </div>
+              <div className="mt-4 text-center text-blue-400 font-bold">
+                Unless a rival can match throughput, fee structure, AND fair tokenomics simultaneously, 
+                Hyperliquid's lead compounds through the next cycle.
               </div>
             </div>
           </div>

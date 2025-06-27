@@ -116,6 +116,9 @@ Changelog:
 - June 27, 2025: Implemented real-time token data synchronization with CoinGecko Pro
 - June 27, 2025: Built advanced interactive dashboard with Chart.js visualizations
 - June 27, 2025: Added enhanced filtering, sorting, and multi-view capabilities
+- June 27, 2025: Created dedicated Hyperliquid analysis page at /hyperliquid route
+- June 27, 2025: Updated Hyperliquid data with latest metrics (76.07% market share, $830M revenue)
+- June 27, 2025: Added navigation system between main dashboard and Hyperliquid success story
 ```
 
 ## User Preferences

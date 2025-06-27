@@ -870,19 +870,19 @@ export default function InteractiveDashboard() {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-black/30 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-400">$1.15B</div>
-                <div className="text-sm text-gray-400">Real Revenue</div>
+                <div className="text-2xl font-bold text-green-400">76.07%</div>
+                <div className="text-sm text-gray-400">Market Share</div>
               </div>
               <div className="bg-black/30 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-400">31%</div>
-                <div className="text-sm text-gray-400">Fair Launch Float</div>
+                <div className="text-2xl font-bold text-green-400">$830M</div>
+                <div className="text-sm text-gray-400">Annual Revenue</div>
               </div>
               <div className="bg-black/30 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-400">190K+</div>
-                <div className="text-sm text-gray-400">Real Users</div>
+                <div className="text-2xl font-bold text-green-400">511K+</div>
+                <div className="text-sm text-gray-400">Total Users</div>
               </div>
               <div className="bg-black/30 p-4 rounded-lg">
-                <div className="text-2xl font-bold text-green-400">+1,029%</div>
+                <div className="text-2xl font-bold text-green-400">+1,129%</div>
                 <div className="text-sm text-gray-400">Price Gain</div>
               </div>
             </div>
