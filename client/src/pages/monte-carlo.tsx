@@ -60,16 +60,25 @@ export default function MonteCarlo() {
     const annualRevenue = 830e6; // $830M annual revenue
     const totalUsers = 511000; // 511K+ users
     
-    // Calculate historical volatility based on crypto market behavior
-    // HYPE has shown +1,129% since launch (Nov 29, 2024 to June 27, 2025)
-    // That's roughly 7 months = ~161% monthly return, but with high volatility
-    const historicalReturn = 11.29; // 1129% total return
-    const monthsTrading = 7;
-    const monthlyReturn = Math.pow(1 + historicalReturn, 1/monthsTrading) - 1;
+    // Realistic HYPE assumptions based on actual fundamentals
+    // HYPE launched Nov 29, 2024 at ~$2, now at ~$24.60 (June 27, 2025)
+    // That's 1,130% return over 7 months, but this was explosive growth phase
     
-    // Estimate annualized volatility (crypto typically 60-120%)
-    const annualVolatility = 0.85; // 85% - reasonable for established DeFi token
-    const drift = monthlyReturn * 12; // Annualized expected return
+    // For mature phase projections, use more conservative assumptions:
+    // 1. Revenue growth: $830M annualized, growing at realistic 20-40% annually
+    // 2. Market share: 76% of perp DEX volume, but competition increasing
+    // 3. Volatility: High but not extreme for established DeFi protocols
+    
+    const revenueGrowthRate = 0.30; // 30% annual revenue growth (conservative for DeFi)
+    const currentPERatio = currentPrice * 334e6 / 830e6; // Price/Earnings based on circulating supply
+    const targetPERatio = 15; // Reasonable for profitable DeFi protocol
+    
+    const fundamentalValue = (830e6 * (1 + revenueGrowthRate)) / 334e6 * (targetPERatio / currentPERatio);
+    const impliedReturn = Math.log(fundamentalValue / currentPrice);
+    
+    // Realistic volatility for established DeFi protocols (60-80% vs 150%+ for new tokens)
+    const annualVolatility = 0.70; // 70% - high but reasonable for DeFi
+    const drift = impliedReturn * 0.6; // 60% of fundamental return (market efficiency discount)
     
     return {
       currentPrice,
@@ -98,12 +107,13 @@ export default function MonteCarlo() {
         const randomShock = Math.random() * 2 - 1; // Random number between -1 and 1
         const normalRandom = randomShock; // Simplified normal distribution
         
-        // Geometric Brownian Motion with mean reversion and fundamental factors
-        const fundamentalBoost = Math.log(params.marketShare + 0.1) * 0.2; // Market share impact
-        const revenueBoost = Math.log(params.revenue / 1e9) * 0.15; // Revenue scale impact
-        const userBoost = Math.log(params.users / 100000) * 0.1; // User growth impact
+        // Realistic Geometric Brownian Motion with fundamental factors
+        // Market dynamics: competition pressure reduces excessive growth expectations
+        const competitionPressure = -Math.log(params.marketShare) * 0.1; // Higher market share = more competition
+        const revenueQuality = Math.log(params.revenue / 1e9) * 0.08; // Revenue scale but diminishing returns
+        const maturityDiscount = -0.15; // Mature protocols grow slower than explosive early phase
         
-        const adjustedDrift = params.drift + fundamentalBoost + revenueBoost + userBoost;
+        const adjustedDrift = params.drift + competitionPressure + revenueQuality + maturityDiscount;
         
         price = price * Math.exp((adjustedDrift - 0.5 * params.volatility * params.volatility) * dt + 
                                  params.volatility * Math.sqrt(dt) * normalRandom);
@@ -134,20 +144,20 @@ export default function MonteCarlo() {
         priceChange: bearishChange,
         marketCap: bearishPrice * circulatingSupply,
         reasoning: [
-          "Market share growth stalls due to increased competition from established CEXs",
-          "Crypto bear market reduces overall trading volumes by 40-60%",
-          "Regulatory headwinds impact DeFi adoption in major markets",
-          "Technical issues or exploits damage reputation temporarily"
+          "Competition intensifies as Binance and other CEXs improve their perp offerings",
+          "Market share declines from 76% to 60-65% due to new entrants like Jupiter, dYdX v4",
+          "Trading volumes normalize after crypto hype cycle, reducing fee income by 25-30%",
+          "Regulatory scrutiny on DeFi perps impacts institutional adoption"
         ],
         keyDrivers: [
-          "Competition from Binance counter-offensive",
-          "Macro crypto market downturn",
-          "Regulatory uncertainty",
-          "Technical execution risks"
+          "Increased competition from established players",
+          "Market maturation and volume normalization", 
+          "Regulatory headwinds for DeFi derivatives",
+          "User migration to lower-fee alternatives"
         ],
         riskFactors: [
-          "Loss of market share to competitors",
-          "Reduced trading volumes",
+          "Market share erosion to 60-65%",
+          "Revenue decline due to lower volumes",
           "Token unlock pressure",
           "Execution missteps"
         ]
