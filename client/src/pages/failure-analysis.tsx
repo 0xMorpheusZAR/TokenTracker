@@ -269,7 +269,7 @@ export default function FailureAnalysis() {
           <div className="relative flex flex-wrap items-center justify-between mb-8">
             <a 
               href="/" 
-              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
             >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-medium">Back to Dashboard</span>
@@ -301,7 +301,7 @@ export default function FailureAnalysis() {
             
             <div className="space-y-4">
               <p className="text-3xl font-bold text-white">Economic Analysis of Systematic Tokenomics Failures</p>
-              <p className="text-xl text-slate-300 max-w-5xl mx-auto leading-relaxed">
+              <p className="text-xl text-white max-w-5xl mx-auto leading-relaxed">
                 Deep dive into why <span className="text-red-400 font-semibold">high FDV/low float models</span> systematically destroy investor capital through <span className="text-orange-400 font-semibold">mathematical inevitability</span> and behavioral exploitation patterns.
               </p>
               <div className="text-lg text-slate-400 max-w-4xl mx-auto">
@@ -370,7 +370,7 @@ export default function FailureAnalysis() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="prose prose-invert max-w-none">
-                  <p className="text-slate-300 text-lg leading-relaxed">
+                  <p className="text-white text-lg leading-relaxed">
                     The high Fully Diluted Valuation (FDV) with low initial float model has become a dominant tokenomics structure in crypto. 
                     This model launches projects with extremely high theoretical valuations based on total supply, while only releasing 5-15% of tokens initially.
                   </p>
@@ -382,7 +382,7 @@ export default function FailureAnalysis() {
                       <BarChart3 className="w-5 h-5" />
                       Typical Structure
                     </h4>
-                    <ul className="space-y-2 text-slate-300">
+                    <ul className="space-y-2 text-white">
                       <li>• Total supply: 1B+ tokens</li>
                       <li>• Initial float: 50-150M tokens (5-15%)</li>
                       <li>• FDV at launch: $1B-10B+</li>
@@ -396,7 +396,7 @@ export default function FailureAnalysis() {
                       <TrendingDown className="w-5 h-5" />
                       Immediate Problems
                     </h4>
-                    <ul className="space-y-2 text-slate-300">
+                    <ul className="space-y-2 text-white">
                       <li>• Artificial scarcity inflates price</li>
                       <li>• Market cap doesn't reflect reality</li>
                       <li>• Unsustainable token velocity</li>
@@ -423,7 +423,7 @@ export default function FailureAnalysis() {
                       <div className="w-10 h-10 bg-red-500 text-white rounded-lg flex items-center justify-center font-bold">1</div>
                       <h4 className="font-semibold text-red-400">Supply Shock Theory</h4>
                     </div>
-                    <p className="text-slate-300 text-sm">
+                    <p className="text-white text-sm">
                       When massive token unlocks occur, the sudden increase in circulating supply far exceeds natural demand absorption capacity, 
                       creating inevitable downward price pressure regardless of project fundamentals.
                     </p>
@@ -434,7 +434,7 @@ export default function FailureAnalysis() {
                       <div className="w-10 h-10 bg-orange-500 text-white rounded-lg flex items-center justify-center font-bold">2</div>
                       <h4 className="font-semibold text-orange-400">Liquidity Mirage</h4>
                     </div>
-                    <p className="text-slate-300 text-sm">
+                    <p className="text-white text-sm">
                       Low float creates artificial scarcity, making small buy orders disproportionately impact price. 
                       This false price discovery mechanism attracts retail buyers who mistake scarcity for value.
                     </p>
@@ -445,7 +445,7 @@ export default function FailureAnalysis() {
                       <div className="w-10 h-10 bg-yellow-500 text-white rounded-lg flex items-center justify-center font-bold">3</div>
                       <h4 className="font-semibold text-yellow-400">Reflexivity Trap</h4>
                     </div>
-                    <p className="text-slate-300 text-sm">
+                    <p className="text-white text-sm">
                       Higher prices from artificial scarcity increase paper valuations, attracting more buyers, 
                       creating a self-reinforcing cycle that amplifies the eventual correction when reality sets in.
                     </p>
@@ -471,7 +471,7 @@ export default function FailureAnalysis() {
                   <div>
                     <h4 className="text-xl font-semibold text-blue-400 mb-4">Supply-Demand Mathematics</h4>
                     <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6">
-                      <div className="space-y-4 text-slate-300">
+                      <div className="space-y-4 text-white">
                         <div className="flex justify-between">
                           <span>Initial Float:</span>
                           <span className="text-blue-400 font-semibold">100M tokens</span>
@@ -499,7 +499,7 @@ export default function FailureAnalysis() {
                     <div className="space-y-4">
                       <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-purple-400 mb-2">Sustainable Growth Rates</h5>
-                        <ul className="text-slate-300 text-sm space-y-1">
+                        <ul className="text-white text-sm space-y-1">
                           <li>• Healthy businesses: 20-50% annual growth</li>
                           <li>• Crypto bull markets: 100-300% annual growth</li>
                           <li>• High FDV model requires: 600%+ annual growth</li>
@@ -508,7 +508,7 @@ export default function FailureAnalysis() {
                       
                       <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-red-400 mb-2">Mathematical Impossibility</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           For prices to remain stable, new demand must consistently exceed supply increases. 
                           The required growth rates are mathematically unsustainable in any economic environment.
                         </p>
@@ -534,7 +534,7 @@ export default function FailureAnalysis() {
                     <div className="space-y-4">
                       <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-green-400 mb-2">Scarcity Bias</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           Low float triggers scarcity bias, making assets appear more valuable due to limited availability, 
                           even when the scarcity is artificially engineered.
                         </p>
@@ -542,7 +542,7 @@ export default function FailureAnalysis() {
                       
                       <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-blue-400 mb-2">Anchoring Effect</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           High FDV creates an anchor point that makes current prices seem reasonable compared to "full dilution," 
                           masking the true supply economics.
                         </p>
@@ -550,7 +550,7 @@ export default function FailureAnalysis() {
                       
                       <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-purple-400 mb-2">FOMO Amplification</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           Rising prices from artificial scarcity create fear of missing out, driving irrational buying behavior 
                           that temporarily sustains the unsustainable model.
                         </p>
@@ -563,7 +563,7 @@ export default function FailureAnalysis() {
                     <div className="space-y-4">
                       <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-orange-400 mb-2">Hidden Unlock Schedules</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           Complex vesting schedules and unclear documentation hide the true extent of future selling pressure 
                           from retail investors who focus on current metrics.
                         </p>
@@ -571,7 +571,7 @@ export default function FailureAnalysis() {
                       
                       <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-red-400 mb-2">Insider Knowledge</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           VCs, team members, and early investors understand the supply dynamics and time their exits accordingly, 
                           while retail investors remain unaware of the inevitable correction.
                         </p>
@@ -579,7 +579,7 @@ export default function FailureAnalysis() {
                       
                       <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
                         <h5 className="font-semibold text-yellow-400 mb-2">Marketing Obfuscation</h5>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-white text-sm">
                           Marketing focuses on current valuation, partnerships, and technology while downplaying tokenomics, 
                           creating information asymmetry that favors informed participants.
                         </p>
@@ -607,15 +607,15 @@ export default function FailureAnalysis() {
                   <table className="w-full">
                     <thead className="bg-slate-800/50">
                       <tr>
-                        <th className="text-left p-4 text-slate-300 font-semibold">Characteristic</th>
-                        <th className="text-center p-4 text-slate-300 font-semibold">High FDV/Low Float</th>
-                        <th className="text-center p-4 text-slate-300 font-semibold">Fair Launch</th>
-                        <th className="text-center p-4 text-slate-300 font-semibold">Revenue Sharing</th>
+                        <th className="text-left p-4 text-white font-semibold">Characteristic</th>
+                        <th className="text-center p-4 text-white font-semibold">High FDV/Low Float</th>
+                        <th className="text-center p-4 text-white font-semibold">Fair Launch</th>
+                        <th className="text-center p-4 text-white font-semibold">Revenue Sharing</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-t border-slate-700/30">
-                        <td className="p-4 text-slate-300 font-medium">Initial Float</td>
+                        <td className="p-4 text-white font-medium">Initial Float</td>
                         <td className="p-4 text-center">
                           <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
                             5-15%
@@ -633,25 +633,25 @@ export default function FailureAnalysis() {
                         </td>
                       </tr>
                       <tr className="border-t border-slate-700/30">
-                        <td className="p-4 text-slate-300 font-medium">Price Discovery</td>
+                        <td className="p-4 text-white font-medium">Price Discovery</td>
                         <td className="p-4 text-center text-red-400">Artificial</td>
                         <td className="p-4 text-center text-green-400">Market-driven</td>
                         <td className="p-4 text-center text-blue-400">Fundamental</td>
                       </tr>
                       <tr className="border-t border-slate-700/30">
-                        <td className="p-4 text-slate-300 font-medium">Sustainability</td>
+                        <td className="p-4 text-white font-medium">Sustainability</td>
                         <td className="p-4 text-center text-red-400">Unsustainable</td>
                         <td className="p-4 text-center text-green-400">Sustainable</td>
                         <td className="p-4 text-center text-blue-400">Highly Sustainable</td>
                       </tr>
                       <tr className="border-t border-slate-700/30">
-                        <td className="p-4 text-slate-300 font-medium">Investor Alignment</td>
+                        <td className="p-4 text-white font-medium">Investor Alignment</td>
                         <td className="p-4 text-center text-red-400">Misaligned</td>
                         <td className="p-4 text-center text-green-400">Aligned</td>
                         <td className="p-4 text-center text-blue-400">Highly Aligned</td>
                       </tr>
                       <tr className="border-t border-slate-700/30">
-                        <td className="p-4 text-slate-300 font-medium">Long-term Viability</td>
+                        <td className="p-4 text-white font-medium">Long-term Viability</td>
                         <td className="p-4 text-center text-red-400">Low</td>
                         <td className="p-4 text-center text-green-400">Medium</td>
                         <td className="p-4 text-center text-blue-400">High</td>
@@ -675,7 +675,7 @@ export default function FailureAnalysis() {
                         <Check className="w-4 h-4" />
                         Revenue-Based Tokens
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Tokens that capture actual business value through fee sharing, buybacks, or direct revenue distribution. 
                         Value derives from cash flows, not speculation.
                       </p>
@@ -686,7 +686,7 @@ export default function FailureAnalysis() {
                         <Check className="w-4 h-4" />
                         Gradual Distribution
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Launch with 60-80% of tokens in circulation, with remaining supply distributed based on usage, 
                         community contributions, or ecosystem development milestones.
                       </p>
@@ -697,7 +697,7 @@ export default function FailureAnalysis() {
                         <Check className="w-4 h-4" />
                         Utility-First Design
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Tokens serve clear utility functions within the ecosystem, creating organic demand 
                         that grows with platform adoption rather than speculative interest.
                       </p>
@@ -717,7 +717,7 @@ export default function FailureAnalysis() {
                         <X className="w-4 h-4" />
                         Complex Vesting Schedules
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Convoluted unlock mechanisms with multiple tranches, cliffs, and conditions designed to 
                         obscure the true extent of future selling pressure.
                       </p>
@@ -728,7 +728,7 @@ export default function FailureAnalysis() {
                         <X className="w-4 h-4" />
                         {"FDV > $1B at Launch"}
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Extremely high fully diluted valuations that require unrealistic growth assumptions 
                         to justify, indicating unsustainable tokenomics from launch.
                       </p>
@@ -739,7 +739,7 @@ export default function FailureAnalysis() {
                         <X className="w-4 h-4" />
                         No Clear Value Accrual
                       </h5>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-white text-sm">
                         Tokens without clear mechanisms for capturing business value, relying purely on 
                         speculation and narrative rather than fundamental value creation.
                       </p>
