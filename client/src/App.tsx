@@ -8,6 +8,7 @@ import InteractiveDashboard from "@/pages/interactive-dashboard";
 import HyperliquidAnalysis from "@/pages/hyperliquid-analysis";
 import MonteCarlo from "@/pages/monte-carlo";
 import RevenueAnalysis from "@/pages/revenue-analysis";
+import FailureAnalysis from "@/pages/failure-analysis";
 
 import NotFound from "@/pages/not-found";
 
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/hyperliquid" component={HyperliquidAnalysis} />
       <Route path="/monte-carlo" component={MonteCarlo} />
       <Route path="/revenue-analysis" component={RevenueAnalysis} />
+      <Route path="/failure-analysis" component={FailureAnalysis} />
       <Route component={NotFound} />
     </Switch>
   );

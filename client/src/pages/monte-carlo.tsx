@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, TrendingUp, TrendingDown, Target, BarChart3, Calculator, DollarSign } from "lucide-react";
+import { runAdvancedMonteCarloSimulation, calculateFundamentalDrift } from "@/lib/monte-carlo-gbm";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -31,18 +32,34 @@ interface MonteCarloResult {
   endPrice: number;
   priceChange: number;
   marketCap: number;
-  reasoning: string[];
-  keyDrivers: string[];
-  riskFactors: string[];
+  confidenceInterval: {
+    lower: number;
+    upper: number;
+  };
+  valueAtRisk: number;
+  maxDrawdown: number;
+  probabilityAbove50: number;
+  fundamentalFactors: {
+    marketShareImpact: number;
+    userGrowthImpact: number;
+    revenueGrowthImpact: number;
+  };
 }
 
 interface SimulationParameters {
   currentPrice: number;
-  volatility: number;
-  drift: number;
+  volatility: number; // Annualized volatility (σ)
+  drift: number; // Expected daily return (μ)
   marketShare: number;
   revenue: number;
   users: number;
+  timeHorizon: number; // Days
+  numSimulations: number;
+  fundamentalAdjustments: {
+    marketShareGrowth: number;
+    userGrowthRate: number;
+    revenueGrowthRate: number;
+  };
 }
 
 export default function MonteCarlo() {

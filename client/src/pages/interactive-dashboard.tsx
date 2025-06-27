@@ -255,7 +255,7 @@ export default function InteractiveDashboard() {
               </div>
               
               <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
-                Failed Low Float/High FDV Tokens:<br />
+                A Comprehensive Breakdown of High FDV Failures<br />
                 <span className="text-3xl lg:text-5xl bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text text-transparent">Comprehensive Analysis</span>
               </h1>
               
@@ -298,6 +298,15 @@ export default function InteractiveDashboard() {
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <BarChart3 className="w-5 h-5 relative z-10" />
                   <span className="relative z-10">Hype Simulation</span>
+                </a>
+                
+                <a 
+                  href="/failure-analysis" 
+                  className="group relative px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/25 flex items-center gap-2 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <TrendingDown className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Failure Analysis</span>
                 </a>
                 
                 <button
