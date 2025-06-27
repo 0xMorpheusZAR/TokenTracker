@@ -474,6 +474,20 @@ export default function RevenueAnalysis() {
               <div className="text-lg text-slate-400 max-w-4xl mx-auto">
                 <span className="text-yellow-400 font-semibold">Professional investment thesis</span> • <span className="text-cyan-400 font-semibold">P/E ratio analysis</span> • <span className="text-purple-400 font-semibold">Target price recommendations</span>
               </div>
+              
+              <div className="mt-6 flex items-center justify-center gap-4 text-sm text-slate-500">
+                <span>Data analytics powered by</span>
+                <a 
+                  href="https://dune.com/dyorcrypto" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-orange-500/10 to-purple-500/10 backdrop-blur-sm rounded-full border border-orange-500/20 hover:border-orange-400/40 transition-all duration-300 hover:transform hover:scale-105"
+                >
+                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                  <span className="text-orange-400 font-semibold">dyorcrypto</span>
+                  <span className="text-slate-400">on Dune</span>
+                </a>
+              </div>
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-6 pt-6">
