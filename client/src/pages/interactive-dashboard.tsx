@@ -254,14 +254,10 @@ export default function InteractiveDashboard() {
                 <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Live Analysis</span>
               </div>
               
-              <h1 className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
-                Low Float<br />
-                <span className="text-4xl lg:text-6xl">Death Spiral</span>
+              <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
+                Failed Low Float/High FDV Tokens:<br />
+                <span className="text-3xl lg:text-5xl bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text text-transparent">Comprehensive Analysis</span>
               </h1>
-              
-              <p className="text-slate-300 text-xl max-w-2xl leading-relaxed">
-                Why <span className="text-red-400 font-semibold">95% of low float/high FDV tokens crash</span> while <span className="text-green-400 font-semibold">revenue protocols moon</span>
-              </p>
               
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-green-400">
