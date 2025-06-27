@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import InteractiveDashboard from "@/pages/interactive-dashboard";
+import HyperliquidAnalysis from "@/pages/hyperliquid-analysis";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -13,6 +14,7 @@ function Router() {
       <Route path="/" component={InteractiveDashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/interactive" component={InteractiveDashboard} />
+      <Route path="/hyperliquid" component={HyperliquidAnalysis} />
       <Route component={NotFound} />
     </Switch>
   );

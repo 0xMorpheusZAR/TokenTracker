@@ -150,7 +150,15 @@ export default function InteractiveDashboard() {
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 items-center">
+              <a 
+                href="/hyperliquid" 
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-2"
+              >
+                <Rocket className="w-4 h-4" />
+                Hyperliquid Success Story
+              </a>
+              
               <div className="bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
                 <label className="text-sm text-gray-400 mr-2">Sort:</label>
                 <select 
@@ -851,413 +859,36 @@ export default function InteractiveDashboard() {
           </div>
         )}
 
-        {/* Comprehensive Hyperliquid Analysis Section */}
-        <section className="bg-gradient-to-br from-green-900/20 to-gray-900 border-2 border-green-500 rounded-2xl p-8 mb-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-green-500/5 animate-pulse"></div>
-          <div className="relative z-10">
-            <div className="text-center mb-8">
-              <h2 className="text-5xl font-black bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-4">
-                Case Study: Hyperliquid's Success
-              </h2>
-              <p className="text-2xl text-gray-300 mb-2">How to Build a Token That Actually Works</p>
-              <p className="text-lg text-gray-400">The Anti-Thesis to Low Float/High FDV Failures</p>
-            </div>
-            
-            {/* Key Achievement Banner */}
-            <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/50 rounded-xl p-6 mb-8 text-center">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <div className="text-3xl font-black text-green-400">68%</div>
-                  <div className="text-sm text-gray-400">Perp DEX Market Share</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-green-400">$21B</div>
-                  <div className="text-sm text-gray-400">Record Daily Volume</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-green-400">20K+</div>
-                  <div className="text-sm text-gray-400">TPS Performance</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-green-400">190K+</div>
-                  <div className="text-sm text-gray-400">Unique Traders</div>
-                </div>
+        {/* Quick Hyperliquid Teaser Section */}
+        <section className="bg-gradient-to-br from-green-900/10 to-gray-900 border border-green-500/30 rounded-xl p-6 mb-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-green-400 mb-4">
+              Why Did Hyperliquid Succeed While Others Failed?
+            </h2>
+            <p className="text-gray-300 mb-6">
+              While low float tokens lost -95.2% on average, Hyperliquid gained +1,029% with real revenue and fair tokenomics.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-400">$1.15B</div>
+                <div className="text-sm text-gray-400">Real Revenue</div>
+              </div>
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-400">31%</div>
+                <div className="text-sm text-gray-400">Fair Launch Float</div>
+              </div>
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-400">190K+</div>
+                <div className="text-sm text-gray-400">Real Users</div>
+              </div>
+              <div className="bg-black/30 p-4 rounded-lg">
+                <div className="text-2xl font-bold text-green-400">+1,029%</div>
+                <div className="text-sm text-gray-400">Price Gain</div>
               </div>
             </div>
-            
-            {/* Real-time Key Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  ${(hyperliquidData as any)?.realTimeMetrics?.currentPrice?.toFixed(2) || "36.50"}
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Current Price</div>
-                <div className="text-xs text-green-400 mt-1">
-                  {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h > 0 ? '+' : ''}
-                  {(hyperliquidData as any)?.realTimeMetrics?.priceChange24h?.toFixed(1) || "+5.2"}% 24h
-                </div>
-              </div>
-              
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  +{(hyperliquidData as any)?.realTimeMetrics?.priceChangeSinceLaunch?.toFixed(0) || "1,029"}%
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Since Launch</div>
-                <div className="text-xs text-gray-400 mt-1">Nov 29, 2024</div>
-              </div>
-              
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  ${((hyperliquidData as any)?.realTimeMetrics?.marketCap / 1e9)?.toFixed(2) || "12.07"}B
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Market Cap</div>
-                <div className="text-xs text-gray-400 mt-1">Rank #41</div>
-              </div>
-              
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  ${((hyperliquidData as any)?.fundamentals?.annualRevenue / 1e9)?.toFixed(2) || "1.15"}B
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Annual Revenue</div>
-                <div className="text-xs text-green-400 mt-1">275% QoQ Growth</div>
-              </div>
-              
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  {((hyperliquidData as any)?.fundamentals?.activeUsers / 1000)?.toFixed(0) || "190"}K+
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Active Users</div>
-                <div className="text-xs text-gray-400 mt-1">Real traders</div>
-              </div>
-              
-              <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
-                <div className="text-3xl font-black text-green-400">
-                  {(hyperliquidData as any)?.fundamentals?.launchFloat?.toFixed(1) || "33.4"}%
-                </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wide">Fair Launch Float</div>
-                <div className="text-xs text-green-400 mt-1">2.5x Failed Avg</div>
-              </div>
-            </div>
-
-            {/* Comparative Analysis */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                <h3 className="text-2xl font-bold text-green-400 mb-4 flex items-center gap-2">
-                  <Rocket className="w-6 h-6" />
-                  Success Metrics
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
-                    <span className="text-gray-300">Price Performance</span>
-                    <span className="text-green-400 font-bold">+1,029% vs -95% avg failure</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
-                    <span className="text-gray-300">Daily Volume</span>
-                    <span className="text-green-400 font-bold">
-                      ${((hyperliquidData as any)?.fundamentals?.dailyVolume / 1e9)?.toFixed(1) || "2.8"}B vs $0 failures
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
-                    <span className="text-gray-300">Monthly Revenue</span>
-                    <span className="text-green-400 font-bold">
-                      ${((hyperliquidData as any)?.fundamentals?.monthlyRevenue / 1e6)?.toFixed(0) || "96"}M recurring
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-green-900/20 rounded-lg">
-                    <span className="text-gray-300">Operating Margin</span>
-                    <span className="text-green-400 font-bold">~85% profitability</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-black/40 rounded-xl p-6 border border-red-500/30">
-                <h3 className="text-2xl font-bold text-red-400 mb-4 flex items-center gap-2">
-                  <TrendingDown className="w-6 h-6" />
-                  Failed Token Comparison
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
-                    <span className="text-gray-300">Average Float</span>
-                    <span className="text-red-400 font-bold">13.2% (artificially scarce)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
-                    <span className="text-gray-300">Revenue Model</span>
-                    <span className="text-red-400 font-bold">$0 - No working product</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
-                    <span className="text-gray-300">Real Users</span>
-                    <span className="text-red-400 font-bold">Minimal - Speculative only</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg">
-                    <span className="text-gray-300">Performance</span>
-                    <span className="text-red-400 font-bold">-95.2% average decline</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Protocol Fundamentals */}
-            <div className="mb-8">
-              <h3 className="text-3xl font-bold text-green-400 mb-6 text-center">Why Hyperliquid Succeeded: Protocol Fundamentals</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Technical Innovation</h4>
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>20,000+ TPS with sub-1 second finality</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Fully on-chain central limit order book</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Custom HyperBFT consensus mechanism</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>EVM-compatible HyperEVM architecture</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Optimized matching engine reduces toxic flow</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Fair Launch Philosophy</h4>
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>No venture capital backing - fully self-funded</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>31% airdrop to 90,000+ users at TGE</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>No insider premine or preferential allocations</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Team tokens vest over time with community</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Bitcoin-inspired fair distribution ethos</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Market Dominance */}
-            <div className="mb-8">
-              <h3 className="text-3xl font-bold text-green-400 mb-6 text-center">Market Dynamics: From Zero to Dominance</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Volume Growth</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-2xl font-bold text-green-400">$570B</div>
-                      <div className="text-sm text-gray-400">Annual volume (25x growth)</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-bold text-green-400">$21B</div>
-                      <div className="text-sm text-gray-400">Record daily volume (Jan 2025)</div>
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Captured 68% of perp DEX market share, reducing Binance futures dominance from 90% to 58%
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Liquidity Metrics</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-2xl font-bold text-green-400">$10.1B</div>
-                      <div className="text-sm text-gray-400">Open Interest (May 2025)</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-bold text-green-400">$5.6M</div>
-                      <div className="text-sm text-gray-400">Daily fee revenue</div>
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Deep liquidity with tight spreads, earning ~$900M annualized fee revenue
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">User Adoption</h4>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-2xl font-bold text-green-400">190K+</div>
-                      <div className="text-sm text-gray-400">Unique traders total</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-bold text-green-400">18K+</div>
-                      <div className="text-sm text-gray-400">Daily active addresses</div>
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Accelerating user onboarding with real organic growth
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tokenomics & Incentive Alignment */}
-            <div className="mb-8">
-              <h3 className="text-3xl font-bold text-green-400 mb-6 text-center">Tokenomics: Community-First Design</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Supply Distribution</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Community Airdrop</span>
-                      <span className="text-green-400 font-bold">31%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Future Incentives</span>
-                      <span className="text-green-400 font-bold">38.9%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Team (Vested)</span>
-                      <span className="text-green-400 font-bold">23.8%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Foundation</span>
-                      <span className="text-green-400 font-bold">6%</span>
-                    </div>
-                    <div className="text-xs text-gray-400 mt-4">
-                      ~70% of tokens belong to community vs VCs
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-black/40 rounded-xl p-6 border border-green-500/30">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">Real Yield Model</h4>
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>HYPE staking for network security rewards</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Governance rights for protocol parameters</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Fee sharing from trading revenue</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>HLP vault profits distributed to users</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>No team take from market-making profits</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* The Lesson: What Makes Tokens Succeed vs Fail */}
-            <div className="mb-8">
-              <h3 className="text-3xl font-bold text-green-400 mb-6 text-center">The Lesson: Success vs Failure</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-red-900/20 rounded-xl p-6 border border-red-500/50">
-                  <h4 className="text-xl font-bold text-red-400 mb-4">❌ Failed Token Playbook</h4>
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>Low float (5-15%) to create artificial scarcity</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>Massive VC allocations with short vesting</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>No working product or revenue model</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>Token utility limited to speculation</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>Coordinated unlock events cause price collapse</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                      <span>Team exits with windfall profits</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 p-3 bg-red-900/30 rounded-lg">
-                    <div className="text-red-400 font-bold text-center">Result: -95.2% Average Loss</div>
-                  </div>
-                </div>
-
-                <div className="bg-green-900/20 rounded-xl p-6 border border-green-500/50">
-                  <h4 className="text-xl font-bold text-green-400 mb-4">✅ Hyperliquid's Success Formula</h4>
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Fair float (31%) for genuine price discovery</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>No VC funding, community-first philosophy</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Working product with $1.15B real revenue</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Multiple token utilities (staking, governance, fees)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Transparent vesting with aligned incentives</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>Team success tied to protocol success</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 p-3 bg-green-900/30 rounded-lg">
-                    <div className="text-green-400 font-bold text-center">Result: +1,029% Gain</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Key Takeaways */}
-            <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/50 rounded-xl p-6">
-              <h3 className="text-2xl font-bold text-blue-400 mb-4 text-center">💡 Key Takeaways for Token Success</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-300">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-400 mb-2">Build First, Token Second</div>
-                  <div>Hyperliquid spent years building a working product before launching HYPE. Revenue and users came first.</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-400 mb-2">Fair Launch Matters</div>
-                  <div>Avoiding VC dumping and prioritizing community distribution creates sustainable tokenomics.</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-400 mb-2">Real Utility Required</div>
-                  <div>Tokens need genuine use cases beyond speculation - staking, governance, fee sharing, and ecosystem participation.</div>
-                </div>
-              </div>
-            </div>
+            <p className="text-sm text-gray-400">
+              Click the "Hyperliquid Success Story" button above to see the complete analysis →
+            </p>
           </div>
         </section>
 
