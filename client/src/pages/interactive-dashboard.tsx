@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
 
@@ -25,7 +26,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  Filler
 );
 
 export default function InteractiveDashboard() {
@@ -792,16 +794,30 @@ export default function InteractiveDashboard() {
               <div className="h-80">
                 <Line 
                   data={{
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    labels: timelinePeriod === "1m" 
+                      ? ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+                      : timelinePeriod === "3m" 
+                      ? ['Month 1', 'Month 2', 'Month 3']
+                      : timelinePeriod === "6m"
+                      ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+                      : ['Q1', 'Q2', 'Q3', 'Q4'],
                     datasets: [{
-                      label: 'Average Performance',
-                      data: [-10, -25, -45, -60, -75, -85, -90, -92, -94, -95, -95.5, -96],
+                      label: 'Average Performance Decline',
+                      data: timelinePeriod === "1m" 
+                        ? [-15, -35, -55, -75]
+                        : timelinePeriod === "3m" 
+                        ? [-30, -65, -85]
+                        : timelinePeriod === "6m"
+                        ? [-10, -25, -45, -65, -80, -90]
+                        : [-45, -75, -90, -95],
                       borderColor: '#ff0040',
                       backgroundColor: 'rgba(255, 0, 64, 0.1)',
                       tension: 0.4,
+                      fill: true,
                       pointBackgroundColor: '#ff0040',
                       pointBorderColor: '#1a1a1a',
-                      pointBorderWidth: 2
+                      pointBorderWidth: 2,
+                      pointRadius: 4
                     }]
                   }}
                   options={{
