@@ -54,11 +54,124 @@ interface ProtocolData {
   risk_level: 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
+interface MonteCarloResult {
+  protocol: string;
+  scenario: string;
+  probability: number;
+  endPrice: number;
+  priceChange: number;
+  marketCap: number;
+  reasoning: string[];
+  keyDrivers: string[];
+  riskFactors: string[];
+}
+
+interface SimulationParameters {
+  protocol: ProtocolData;
+  volatility: number;
+  drift: number;
+  timeHorizon: number;
+  iterations: number;
+}
+
 export default function RevenueAnalysis() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMetric, setSelectedMetric] = useState<'revenue' | 'growth' | 'efficiency'>('revenue');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [compareToHype, setCompareToHype] = useState(true);
+  const [showMonteCarlo, setShowMonteCarlo] = useState(false);
+  const [selectedProtocol, setSelectedProtocol] = useState<string>('HYPE');
+  const [simulationResults, setSimulationResults] = useState<MonteCarloResult[]>([]);
+
+  // Monte Carlo Simulation Function
+  const runMonteCarloSimulation = (protocol: ProtocolData): MonteCarloResult[] => {
+    const scenarios = [
+      {
+        name: 'Conservative',
+        probability: 0.4,
+        volatility: 0.45,
+        drift: protocol.recommendation === 'STRONG_BUY' ? 0.15 : 
+               protocol.recommendation === 'BUY' ? 0.08 : 0.02
+      },
+      {
+        name: 'Moderate',
+        probability: 0.35,
+        volatility: 0.65,
+        drift: protocol.recommendation === 'STRONG_BUY' ? 0.35 : 
+               protocol.recommendation === 'BUY' ? 0.20 : 0.05
+      },
+      {
+        name: 'Aggressive',
+        probability: 0.25,
+        volatility: 0.85,
+        drift: protocol.recommendation === 'STRONG_BUY' ? 0.65 : 
+               protocol.recommendation === 'BUY' ? 0.40 : 0.10
+      }
+    ];
+
+    return scenarios.map(scenario => {
+      const timeHorizon = 1; // 1 year
+      const iterations = 10000;
+      const returns = [];
+
+      for (let i = 0; i < iterations; i++) {
+        let price = protocol.current_price;
+        for (let t = 0; t < 252; t++) { // 252 trading days
+          const random = Math.random() * 2 - 1; // -1 to 1
+          const dailyReturn = scenario.drift / 252 + (scenario.volatility / Math.sqrt(252)) * random;
+          price *= (1 + dailyReturn);
+        }
+        returns.push(price);
+      }
+
+      const averagePrice = returns.reduce((a, b) => a + b, 0) / returns.length;
+      const priceChange = (averagePrice / protocol.current_price - 1) * 100;
+      const marketCap = averagePrice * protocol.total_supply;
+
+      return {
+        protocol: protocol.symbol,
+        scenario: scenario.name,
+        probability: scenario.probability,
+        endPrice: averagePrice,
+        priceChange,
+        marketCap,
+        reasoning: getScenarioReasoning(protocol, scenario.name),
+        keyDrivers: getKeyDrivers(protocol, scenario.name),
+        riskFactors: getRiskFactors(protocol, scenario.name)
+      };
+    });
+  };
+
+  const getScenarioReasoning = (protocol: ProtocolData, scenario: string): string[] => {
+    const base = [
+      `Revenue multiple based on ${protocol.symbol}'s current ${protocol.pe_ratio.toFixed(1)}x P/E ratio`,
+      `Market position in ${protocol.category} sector with ${protocol.key_value_capture} model`
+    ];
+
+    if (scenario === 'Conservative') {
+      return [...base, 'Assumes market normalization and stable growth', 'Limited multiple expansion due to market maturity'];
+    } else if (scenario === 'Moderate') {
+      return [...base, 'Moderate revenue growth and some multiple expansion', 'Balanced risk-reward with sector outperformance'];
+    } else {
+      return [...base, 'High revenue growth with significant multiple expansion', 'Assumes protocol captures significant market share'];
+    }
+  };
+
+  const getKeyDrivers = (protocol: ProtocolData, scenario: string): string[] => {
+    const drivers = protocol.bull_case.slice(0, 3);
+    if (scenario === 'Aggressive') {
+      return [...drivers, 'Crypto market expansion', 'Institutional adoption acceleration'];
+    }
+    return drivers;
+  };
+
+  const getRiskFactors = (protocol: ProtocolData, scenario: string): string[] => {
+    const risks = protocol.bear_case.slice(0, 2);
+    if (scenario === 'Conservative') {
+      return [...risks, 'Market volatility', 'Regulatory uncertainty'];
+    }
+    return risks;
+  };
 
   // Comprehensive protocol analysis with investment cases
   const protocolData: ProtocolData[] = [
@@ -835,6 +948,202 @@ export default function RevenueAnalysis() {
             </div>
           </div>
         </div>
+        
+        {/* Monte Carlo Simulation Section */}
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              Monte Carlo Price Simulations
+            </h2>
+            <button
+              onClick={() => setShowMonteCarlo(!showMonteCarlo)}
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
+            >
+              {showMonteCarlo ? 'Hide Simulations' : 'Run Simulations'}
+            </button>
+          </div>
+
+          {showMonteCarlo && (
+            <div className="space-y-6">
+              {/* Protocol Selector */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
+                <h3 className="text-xl font-semibold text-white mb-4">Select Protocol for Simulation</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {protocolData.map((protocol) => (
+                    <button
+                      key={protocol.symbol}
+                      onClick={() => {
+                        setSelectedProtocol(protocol.symbol);
+                        setSimulationResults(runMonteCarloSimulation(protocol));
+                      }}
+                      className={`p-4 rounded-xl border transition-all duration-300 transform hover:scale-105 ${
+                        selectedProtocol === protocol.symbol
+                          ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/50 text-purple-300'
+                          : 'bg-slate-700/30 border-slate-600/30 text-slate-300 hover:bg-slate-600/30'
+                      }`}
+                    >
+                      <div className="text-lg font-bold">{protocol.symbol}</div>
+                      <div className="text-sm opacity-70">${protocol.current_price.toFixed(2)}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Simulation Results */}
+              {simulationResults.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {simulationResults.map((result, index) => (
+                    <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30 hover:border-purple-500/30 transition-all duration-300">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className={`text-xl font-bold ${
+                          result.scenario === 'Conservative' ? 'text-blue-400' :
+                          result.scenario === 'Moderate' ? 'text-yellow-400' : 'text-red-400'
+                        }`}>
+                          {result.scenario} Scenario
+                        </h4>
+                        <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                          result.scenario === 'Conservative' ? 'bg-blue-500/20 text-blue-400' :
+                          result.scenario === 'Moderate' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {(result.probability * 100).toFixed(0)}% Probability
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <div className="text-sm text-slate-400">End Price (1Y)</div>
+                            <div className="text-2xl font-bold text-white">${result.endPrice.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-slate-400">Price Change</div>
+                            <div className={`text-2xl font-bold ${result.priceChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {result.priceChange > 0 ? '+' : ''}{result.priceChange.toFixed(1)}%
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="text-sm text-slate-400">Market Cap</div>
+                          <div className="text-lg font-semibold text-white">
+                            ${(result.marketCap / 1000000000).toFixed(2)}B
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <div className="text-sm font-semibold text-slate-300 mb-2">Key Drivers:</div>
+                            <ul className="text-xs text-slate-400 space-y-1">
+                              {result.keyDrivers.slice(0, 2).map((driver, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <div className="w-1 h-1 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+                                  {driver}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <div className="text-sm font-semibold text-slate-300 mb-2">Risk Factors:</div>
+                            <ul className="text-xs text-slate-400 space-y-1">
+                              {result.riskFactors.slice(0, 2).map((risk, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <div className="w-1 h-1 bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
+                                  {risk}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Comparison Chart */}
+              {simulationResults.length > 0 && (
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/30">
+                  <h4 className="text-xl font-semibold text-white mb-6">1-Year Price Projection Comparison</h4>
+                  <div className="h-80">
+                    <Bar
+                      data={{
+                        labels: simulationResults.map(result => result.scenario),
+                        datasets: [
+                          {
+                            label: 'Projected Price ($)',
+                            data: simulationResults.map(result => result.endPrice),
+                            backgroundColor: [
+                              'rgba(59, 130, 246, 0.6)',
+                              'rgba(245, 158, 11, 0.6)',
+                              'rgba(239, 68, 68, 0.6)'
+                            ],
+                            borderColor: [
+                              'rgba(59, 130, 246, 1)',
+                              'rgba(245, 158, 11, 1)',
+                              'rgba(239, 68, 68, 1)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 8,
+                          }
+                        ]
+                      }}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            display: false
+                          },
+                          tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(99, 102, 241, 0.3)',
+                            borderWidth: 1,
+                            callbacks: {
+                              label: function(context: any) {
+                                const result = simulationResults[context.dataIndex];
+                                return [
+                                  `Price: $${result.endPrice.toFixed(2)}`,
+                                  `Change: ${result.priceChange > 0 ? '+' : ''}${result.priceChange.toFixed(1)}%`,
+                                  `Probability: ${(result.probability * 100).toFixed(0)}%`
+                                ];
+                              }
+                            }
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            grid: {
+                              color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                              color: 'rgba(148, 163, 184, 0.8)',
+                              callback: function(value: any) {
+                                return '$' + value.toFixed(0);
+                              }
+                            }
+                          },
+                          x: {
+                            grid: {
+                              color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                              color: 'rgba(148, 163, 184, 0.8)'
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
       </div>
     </div>
   );
