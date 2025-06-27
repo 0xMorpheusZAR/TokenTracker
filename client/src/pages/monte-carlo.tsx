@@ -60,25 +60,30 @@ export default function MonteCarlo() {
     const annualRevenue = 830e6; // $830M annual revenue
     const totalUsers = 511000; // 511K+ users
     
-    // Realistic HYPE assumptions based on actual fundamentals
-    // HYPE launched Nov 29, 2024 at ~$2, now at ~$24.60 (June 27, 2025)
-    // That's 1,130% return over 7 months, but this was explosive growth phase
+    // REALISTIC HYPE ASSUMPTIONS - Based on actual fundamentals from research document
+    // Key facts from May 2025:
+    // - Daily fees: $5.6M = $2.04B annualized revenue (vs current $830M estimate)
+    // - Market cap: $12.6B circulating ($40 price, 330M tokens)
+    // - Open Interest: $10.1B (massive liquidity)
+    // - P/E ratio: ~6.2x ($12.6B market cap / $2.04B revenue)
+    // - Fair launch, no VC dumping, organic growth
     
-    // For mature phase projections, use more conservative assumptions:
-    // 1. Revenue growth: $830M annualized, growing at realistic 20-40% annually
-    // 2. Market share: 76% of perp DEX volume, but competition increasing
-    // 3. Volatility: High but not extreme for established DeFi protocols
+    // Revenue projections based on actual trajectory:
+    const currentAnnualRevenue = 2.04e9; // $2.04B based on May 2025 $5.6M daily fees
+    const revenueGrowthRate = 0.50; // 50% growth sustainable given perp DEX market expansion
+    const projectedRevenue = currentAnnualRevenue * (1 + revenueGrowthRate * 0.42); // 5 months = 0.42 years
     
-    const revenueGrowthRate = 0.30; // 30% annual revenue growth (conservative for DeFi)
-    const currentPERatio = currentPrice * 334e6 / 830e6; // Price/Earnings based on circulating supply
-    const targetPERatio = 15; // Reasonable for profitable DeFi protocol
+    // Valuation multiples for profitable exchanges:
+    const currentPE = 6.2; // Actual P/E from document ($12.6B / $2.04B)
+    const targetPE = 8.5; // Conservative for high-growth exchange (Binance trades ~10-12x)
     
-    const fundamentalValue = (830e6 * (1 + revenueGrowthRate)) / 334e6 * (targetPERatio / currentPERatio);
+    // Fair value calculation:
+    const fundamentalValue = (projectedRevenue * targetPE) / 334e6; // Per token value
     const impliedReturn = Math.log(fundamentalValue / currentPrice);
     
-    // Realistic volatility for established DeFi protocols (60-80% vs 150%+ for new tokens)
-    const annualVolatility = 0.70; // 70% - high but reasonable for DeFi
-    const drift = impliedReturn * 0.6; // 60% of fundamental return (market efficiency discount)
+    // Realistic volatility - HYPE has shown 8x surge post-launch but stabilizing
+    const annualVolatility = 0.65; // 65% - lower than launch phase, higher than mature stocks
+    const drift = impliedReturn * 0.75; // 75% efficiency - strong fundamentals support pricing
     
     return {
       currentPrice,
@@ -144,20 +149,20 @@ export default function MonteCarlo() {
         priceChange: bearishChange,
         marketCap: bearishPrice * circulatingSupply,
         reasoning: [
-          "Competition intensifies as Binance and other CEXs improve their perp offerings",
-          "Market share declines from 76% to 60-65% due to new entrants like Jupiter, dYdX v4",
-          "Trading volumes normalize after crypto hype cycle, reducing fee income by 25-30%",
-          "Regulatory scrutiny on DeFi perps impacts institutional adoption"
+          "Market share stabilizes at 60-65% as Binance and new entrants capture some flow",
+          "Revenue growth slows to 30-40% annually as market matures",
+          "P/E multiple contracts from 6.2x to 5.5x due to increased competition",
+          "Regulatory uncertainty creates headwinds for institutional adoption"
         ],
         keyDrivers: [
-          "Increased competition from established players",
-          "Market maturation and volume normalization", 
-          "Regulatory headwinds for DeFi derivatives",
-          "User migration to lower-fee alternatives"
+          "Increased competition from Binance improvements and dYdX v4",
+          "Market maturation reduces explosive growth rates",
+          "Regulatory scrutiny on DeFi derivatives",
+          "Normal crypto market conditions without extreme bull run"
         ],
         riskFactors: [
-          "Market share erosion to 60-65%",
-          "Revenue decline due to lower volumes",
+          "Market share decline from 76% to 60-65%",
+          "Revenue growth deceleration to 30-40%",
           "Token unlock pressure",
           "Execution missteps"
         ]

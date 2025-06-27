@@ -437,13 +437,7 @@ export default function RevenueAnalysis() {
                 <span>Success Story</span>
               </a>
               
-              <a 
-                href="/monte-carlo" 
-                className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2"
-              >
-                <BarChart3 className="w-5 h-5" />
-                <span>Price Simulations</span>
-              </a>
+              {/* Price Simulations button removed per user request */}
             </div>
           </div>
           
