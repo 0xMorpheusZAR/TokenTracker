@@ -128,6 +128,7 @@ Changelog:
 - June 27, 2025: Implemented comprehensive green/black cypherpunk theme across entire website with Matrix-style animations, monospace fonts, and terminal-inspired UI elements
 - June 27, 2025: Fixed front page scrolling to natural website behavior with proper sections and smooth navigation
 - June 27, 2025: Renamed "Simulations" button to "Hype Simulation" and updated all navigation elements with cypherpunk styling
+- June 27, 2025: Completely removed cypherpunk theme from failure analysis page and updated to match revenue analysis styling with consistent gradient backgrounds, improved card designs, and clean modern UI matching the rest of the application
 ```
 
 ## User Preferences

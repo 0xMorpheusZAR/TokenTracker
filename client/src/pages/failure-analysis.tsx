@@ -257,25 +257,38 @@ export default function FailureAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      {/* Header */}
-      <header className="bg-black/80 border-b border-red-500/30 p-6 sticky top-0 z-50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900/10 to-slate-900 text-white">
+      <div className="max-w-7xl mx-auto p-8">
+        {/* Header */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          </div>
+          
+          <div className="relative flex flex-wrap items-center justify-between mb-8">
             <a 
               href="/" 
-              className="inline-flex items-center gap-3 px-4 py-2 bg-black/50 border border-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-colors"
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
             >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Dashboard
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+              <span className="font-medium">Back to Dashboard</span>
             </a>
             
-            <div className="flex gap-4">
+            <div className="flex gap-3">
+              <a 
+                href="/revenue-analysis" 
+                className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2"
+              >
+                <DollarSign className="w-5 h-5" />
+                <span>Cash Cows Analysis</span>
+              </a>
+              
               <Select value={analysisView} onValueChange={setAnalysisView}>
-                <SelectTrigger className="w-48 bg-black/50 border-red-500/30 text-white">
+                <SelectTrigger className="w-48 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-black border-red-500/30">
+                <SelectContent className="bg-slate-800 border-slate-700">
                   <SelectItem value="overview">Failure Reasons</SelectItem>
                   <SelectItem value="detailed">Economic Analysis</SelectItem>
                   <SelectItem value="comparative">Model Breakdown</SelectItem>
@@ -284,58 +297,71 @@ export default function FailureAnalysis() {
             </div>
           </div>
           
-          <div className="text-center relative z-10">
-            <h1 className="text-4xl lg:text-6xl font-black bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent mb-4">
+          <div className="relative text-center space-y-6">
+            <div className="inline-flex items-center gap-3 px-6 py-2 bg-gradient-to-r from-red-500/10 to-orange-500/10 backdrop-blur-sm rounded-full border border-red-500/20">
+              <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+              <span className="text-red-400 font-semibold uppercase tracking-wider text-sm">Failure Analysis</span>
+            </div>
+            
+            <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
               A Comprehensive Breakdown of High FDV Failures
             </h1>
+            
+            <div className="space-y-4">
+              <p className="text-3xl font-bold text-white">Economic Analysis of Systematic Tokenomics Failures</p>
+              <p className="text-xl text-slate-300 max-w-5xl mx-auto leading-relaxed">
+                Deep dive into why <span className="text-red-400 font-semibold">high FDV/low float models</span> systematically destroy investor capital through <span className="text-orange-400 font-semibold">mathematical inevitability</span> and behavioral exploitation patterns.
+              </p>
+              <div className="text-lg text-slate-400 max-w-4xl mx-auto">
+                <span className="text-yellow-400 font-semibold">Core failure mechanisms</span> • <span className="text-cyan-400 font-semibold">Economic death spiral</span> • <span className="text-purple-400 font-semibold">Model comparisons</span>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Key Insights Overview */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-black/80 border-red-500/30">
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-red-400">Model Failure Rate</h3>
                 <TrendingDown className="w-5 h-5 text-red-500" />
               </div>
               <div className="text-3xl font-bold text-red-500">95%</div>
-              <p className="text-xs text-gray-400 mt-1">Of high FDV tokens failed</p>
+              <p className="text-xs text-slate-400 mt-1">Of high FDV tokens failed</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/80 border-red-500/30">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-red-400">Capital Destroyed</h3>
                 <DollarSign className="w-5 h-5 text-red-500" />
               </div>
               <div className="text-3xl font-bold text-red-500">$58.4B</div>
-              <p className="text-xs text-gray-400 mt-1">Total value lost</p>
+              <p className="text-xs text-slate-400 mt-1">Total value lost</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/80 border-red-500/30">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-red-400">Systemic Issue</h3>
                 <Percent className="w-5 h-5 text-red-500" />
               </div>
               <div className="text-3xl font-bold text-red-500">13.2%</div>
-              <p className="text-xs text-gray-400 mt-1">Average initial float</p>
+              <p className="text-xs text-slate-400 mt-1">Average initial float</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/80 border-red-500/30">
+          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-red-400">Time to Failure</h3>
                 <Clock className="w-5 h-5 text-red-500" />
               </div>
               <div className="text-3xl font-bold text-red-500">6-18</div>
-              <p className="text-xs text-gray-400 mt-1">Months average</p>
+              <p className="text-xs text-slate-400 mt-1">Months average</p>
             </CardContent>
           </Card>
         </section>
@@ -344,7 +370,7 @@ export default function FailureAnalysis() {
           <>
             {/* Core Failure Mechanisms */}
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-black/80 border-red-500/30">
+              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
                 <CardHeader>
                   <CardTitle className="text-red-400">Core Failure Mechanisms</CardTitle>
                 </CardHeader>
@@ -353,7 +379,7 @@ export default function FailureAnalysis() {
                     <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-red-400 mb-1">Liquidity Mirage</h4>
-                      <p className="text-gray-300 text-sm">Low float creates artificial scarcity, inflating price with minimal actual demand</p>
+                      <p className="text-slate-300 text-sm">Low float creates artificial scarcity, inflating price with minimal actual demand</p>
                     </div>
                   </div>
                   
@@ -361,7 +387,7 @@ export default function FailureAnalysis() {
                     <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-red-400 mb-1">Unlock Avalanche</h4>
-                      <p className="text-gray-300 text-sm">Massive token releases create overwhelming sell pressure impossible to absorb</p>
+                      <p className="text-slate-300 text-sm">Massive token releases create overwhelming sell pressure impossible to absorb</p>
                     </div>
                   </div>
                   
@@ -369,29 +395,29 @@ export default function FailureAnalysis() {
                     <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-red-400 mb-1">Valuation Disconnect</h4>
-                      <p className="text-gray-300 text-sm">Market cap based on tiny float doesn't reflect economic reality</p>
+                      <p className="text-slate-300 text-sm">Market cap based on tiny float doesn't reflect economic reality</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-black/80 border-red-500/30">
+              <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
                 <CardHeader>
                   <CardTitle className="text-red-400">Economic Death Spiral</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-black/40 rounded-lg border border-red-500/20">
+                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
                       <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                      <span className="text-gray-300">High FDV launch with ~10-15% float</span>
+                      <span className="text-slate-300">High FDV launch with ~10-15% float</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-black/40 rounded-lg border border-red-500/20">
+                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
                       <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                      <span className="text-gray-300">Price pumps due to artificial scarcity</span>
+                      <span className="text-slate-300">Price pumps due to artificial scarcity</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-black/40 rounded-lg border border-red-500/20">
+                    <div className="flex items-center gap-3 p-3 bg-slate-800/40 rounded-lg border border-red-500/20">
                       <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                      <span className="text-gray-300">Token unlocks begin massive sell pressure</span>
+                      <span className="text-slate-300">Token unlocks begin massive sell pressure</span>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-black/40 rounded-lg border border-red-500/20">
                       <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
@@ -641,7 +667,7 @@ export default function FailureAnalysis() {
             </Card>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
