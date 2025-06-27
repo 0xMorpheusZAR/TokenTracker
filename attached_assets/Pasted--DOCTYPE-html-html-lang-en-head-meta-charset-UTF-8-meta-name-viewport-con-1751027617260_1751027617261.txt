@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Crypto Dashboard - The Death of Artificial Scarcity</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --border-color: #333;
+            --text-primary: #ffffff;
+            --text-secondary: #888;
+            --red: #ff0040;
+            --red-light: #ff6b6b;
+            --green: #00ff88;
+            --green-light: #00ffcc;
+            --blue: #0088ff;
+            --purple: #8b5cf6;
+            --yellow: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Header with Controls */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            padding: 30px 40px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1920px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .main-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: clamp(14px, 2vw, 18px);
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-tertiary);
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .control-group label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .control-group select,
+        .control-group input {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--red);
+            border-color: var(--red);
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Key Metrics Bar */
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--red);
+        }
+
+        .metric-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            opacity: 0.2;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        /* Token Grid View */
+        .tokens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .token-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .token-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--red);
+            box-shadow: 0 10px 30px rgba(255, 0, 64, 0.2);
+        }
+
+        .token-card.selected {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px var(--blue);
+        }
+
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .token-info h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .token-info .details {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .token-performance {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .token-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .token-stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .token-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .token-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Table View */
+        .table-container {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .table-container.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            color: var(--text-primary);
+        }
+
+        th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 10px;
+            opacity: 0.3;
+        }
+
+        th.sorted-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: var(--green);
+        }
+
+        th.sorted-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: var(--red);
+        }
+
+        td {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Performance Bars */
+        .performance-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .performance-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .performance-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Chart Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-btn {
+            padding: 5px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chart-btn.active {
+            background: var(--red);
+            border-color: var(--red);
+        }
+
+        canvas {
+            max-height: 400px;
+        }
+
+        /* Hyperliquid Hero Section */
+        .hype-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, var(--bg-secondary) 100%);
+            border: 2px solid var(--green);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hype-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--green) 0%, transparent 70%);
+            opacity: 0.03;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hype-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hype-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hype-title {
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .hype-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .hype-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .hype-stat {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hype-stat:hover {
+            transform: translateY(-5px);
+            border-color: var(--green);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .hype-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--green);
+            margin-bottom: 5px;
+        }
+
+        .hype-stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Comparison Mode */
+        .comparison-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100%;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            z-index: 200;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .comparison-panel.active {
+            right: 0;
+        }
+
+        .comparison-header {
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .comparison-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .comparison-content {
+            padding: 20px;
+        }
+
+        .comparison-item {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: absolute;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 300;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .tokens-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 800px;
+            }
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.live {
+            background: var(--green);
+        }
+
+        .status-indicator.cached {
+            background: var(--yellow);
+        }
+
+        .status-indicator.error {
+            background: var(--red);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Utility Classes */
+        .text-red { color: var(--red); }
+        .text-green { color: var(--green); }
+        .text-blue { color: var(--blue); }
+        .text-secondary { color: var(--text-secondary); }
+        
+        .bg-red { background: var(--red); }
+        .bg-green { background: var(--green); }
+        .bg-blue { background: var(--blue); }
+        
+        .hidden { display: none !important; }
+        .visible { display: block !important; }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <p class="text-secondary">Loading market data...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="main-title">The Death of Artificial Scarcity</h1>
+                <p class="subtitle">Real-time analysis of low float/high FDV failures vs revenue-generating success</p>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Sort By:</label>
+                    <select id="sortSelect">
+                        <option value="performance">Performance</option>
+                        <option value="marketCap">Market Cap</option>
+                        <option value="volume">Volume</option>
+                        <option value="fdv">FDV</option>
+                        <option value="float">Float %</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Filter:</label>
+                    <select id="filterSelect">
+                        <option value="all">All Tokens</option>
+                        <option value="worst">Worst Performers</option>
+                        <option value="layer2">Layer 2s</option>
+                        <option value="defi">DeFi</option>
+                        <option value="gaming">Gaming</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </button>
+                
+                <button class="btn" id="compareBtn">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Compare</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+        <!-- Key Metrics -->
+        <div class="metrics-bar" id="metricsBar">
+            <div class="metric-card">
+                <i class="fas fa-chart-line metric-icon text-red"></i>
+                <div class="metric-value text-red">-93.6%</div>
+                <div class="metric-label">Average Decline</div>
+                <div class="metric-change text-secondary">
+                    <span class="status-indicator live"></span>
+                    Live data
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <i class="fas fa-unlock metric-icon text-red"></i>
+                <div class="metric-value text-red">$155B</div>
+                <div class="metric-label">Pending Unlocks</div>
+                <div class="metric-change text-secondary">By 2030</div>
+            </div>
+            
+            <div class="metric-card">
+                <i class="fas fa-coins metric-icon"></i>
+                <div class="metric-value">12.3%</div>
+                <div class="metric-label">Avg Initial Float</div>
+                <div class="metric-change text-secondary">At launch</div>
+            </div>
+            
+            <div class="metric-card">
+                <i class="fas fa-rocket metric-icon text-green"></i>
+                <div class="metric-value text-green">+1,029%</div>
+                <div class="metric-label">HYPE Performance</div>
+                <div class="metric-change text-green">Since launch</div>
+            </div>
+            
+            <div class="metric-card">
+                <i class="fas fa-dollar-sign metric-icon text-green"></i>
+                <div class="metric-value text-green">$1.15B</div>
+                <div class="metric-label">HYPE Revenue</div>
+                <div class="metric-change text-secondary">Annual run rate</div>
+            </div>
+            
+            <div class="metric-card">
+                <i class="fas fa-users metric-icon text-green"></i>
+                <div class="metric-value text-green">190K+</div>
+                <div class="metric-label">HYPE Users</div>
+                <div class="metric-change text-secondary">Active traders</div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="grid">
+                <i class="fas fa-th"></i> Grid View
+            </button>
+            <button class="view-btn" data-view="table">
+                <i class="fas fa-table"></i> Table View
+            </button>
+            <button class="view-btn" data-view="chart">
+                <i class="fas fa-chart-bar"></i> Chart View
+            </button>
+        </div>
+
+        <!-- Token Grid -->
+        <div class="tokens-grid" id="tokensGrid">
+            <!-- Token cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Table View -->
+        <div class="table-container" id="tableView">
+            <table id="tokensTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Token</th>
+                        <th class="sortable" data-sort="symbol">Symbol</th>
+                        <th class="sortable" data-sort="exchange">Exchange</th>
+                        <th class="sortable" data-sort="listingPrice">Listing Price</th>
+                        <th class="sortable" data-sort="currentPrice">Current Price</th>
+                        <th class="sortable" data-sort="performance">Performance</th>
+                        <th class="sortable" data-sort="ath">ATH</th>
+                        <th class="sortable" data-sort="float">Float %</th>
+                        <th class="sortable" data-sort="fdv">FDV</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Table rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section" id="chartsSection">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Performance Comparison</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-chart="performance" data-type="bar">Bar</button>
+                        <button class="chart-btn" data-chart="performance" data-type="line">Line</button>
+                        <button class="chart-btn" data-chart="performance" data-type="radar">Radar</button>
+                    </div>
+                </div>
+                <canvas id="performanceChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Market Cap Distribution</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-chart="marketcap" data-type="doughnut">Doughnut</button>
+                        <button class="chart-btn" data-chart="marketcap" data-type="pie">Pie</button>
+                        <button class="chart-btn" data-chart="marketcap" data-type="polar">Polar</button>
+                    </div>
+                </div>
+                <canvas id="marketCapChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Float vs Performance</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-chart="scatter" data-type="scatter">Scatter</button>
+                        <button class="chart-btn" data-chart="scatter" data-type="bubble">Bubble</button>
+                    </div>
+                </div>
+                <canvas id="scatterChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Timeline Analysis</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-period="1m">1M</button>
+                        <button class="chart-btn" data-period="3m">3M</button>
+                        <button class="chart-btn" data-period="6m">6M</button>
+                        <button class="chart-btn" data-period="1y">1Y</button>
+                    </div>
+                </div>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Hyperliquid Hero Section -->
+        <section class="hype-section">
+            <div class="hype-content">
+                <div class="hype-header">
+                    <h2 class="hype-title">The New Paradigm: Hyperliquid</h2>
+                    <p class="hype-subtitle">Real Revenue. Real Users. Real Value.</p>
+                </div>
+                
+                <div class="hype-stats">
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">$36.50</div>
+                        <div class="hype-stat-label">Current Price</div>
+                    </div>
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">+1,029%</div>
+                        <div class="hype-stat-label">Since Launch</div>
+                    </div>
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">$12.07B</div>
+                        <div class="hype-stat-label">Market Cap</div>
+                    </div>
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">$1.15B</div>
+                        <div class="hype-stat-label">Annual Revenue</div>
+                    </div>
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">190K+</div>
+                        <div class="hype-stat-label">Active Users</div>
+                    </div>
+                    <div class="hype-stat">
+                        <div class="hype-stat-value">33.39%</div>
+                        <div class="hype-stat-label">Fair Launch Float</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Comparison Panel -->
+    <div class="comparison-panel" id="comparisonPanel">
+        <div class="comparison-header">
+            <h3>Token Comparison</h3>
+            <button class="comparison-close" id="closeComparison">&times;</button>
+        </div>
+        <div class="comparison-content" id="comparisonContent">
+            <p class="text-secondary">Select tokens to compare by clicking on them.</p>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Token data with all details from the document
+        const tokenData = [
+            {
+                id: 'portal-gaming',
+                name: 'Portal',
+                symbol: 'PORTAL',
+                exchange: 'Binance',
+                listingDate: '2024-02-29',
+                listingPrice: 3.36,
+                currentPrice: 0.031,
+                ath: 3.36,
+                float: 16.7,
+                fdv: 3.36,
+                performance: -99.1,
+                athDecline: -99.1,
+                category: 'gaming',
+                totalSupply: 1000000000,
+                circulatingSupply: 167000000
+            },
+            {
+                id: 'starknet',
+                name: 'Starknet',
+                symbol: 'STRK',
+                exchange: 'Binance',
+                listingDate: '2024-02-20',
+                listingPrice: 1.75,
+                currentPrice: 0.11,
+                ath: 4.50,
+                float: 7.3,
+                fdv: 17.5,
+                performance: -93.7,
+                athDecline: -97.6,
+                category: 'layer2',
+                totalSupply: 10000000000,
+                circulatingSupply: 730000000
+            },
+            {
+                id: 'aevo',
+                name: 'Aevo',
+                symbol: 'AEVO',
+                exchange: 'Binance/Bybit',
+                listingDate: '2024-03-13',
+                listingPrice: 3.00,
+                currentPrice: 0.082,
+                ath: 3.76,
+                float: 9.0,
+                fdv: 3.76,
+                performance: -97.3,
+                athDecline: -97.8,
+                category: 'defi',
+                totalSupply: 1000000000,
+                circulatingSupply: 90000000,
+                majorUnlock: '878M tokens (May 2024)'
+            },
+            {
+                id: 'pixels',
+                name: 'Pixels',
+                symbol: 'PIXEL',
+                exchange: 'Binance/Bybit',
+                listingDate: '2024-02-19',
+                listingPrice: 1.02,
+                currentPrice: 0.031,
+                ath: 1.017,
+                float: 15.42,
+                fdv: 5.09,
+                performance: -97.0,
+                athDecline: -97.0,
+                category: 'gaming',
+                totalSupply: 5000000000,
+                circulatingSupply: 771000000
+            },
+            {
+                id: 'saga',
+                name: 'Saga',
+                symbol: 'SAGA',
+                exchange: 'Binance',
+                listingDate: '2024-04-09',
+                listingPrice: 7.60,
+                currentPrice: 0.22,
+                ath: 10.01,
+                float: 9.0,
+                fdv: 8.8,
+                performance: -97.1,
+                athDecline: -97.8,
+                category: 'infrastructure',
+                totalSupply: 1000000000,
+                circulatingSupply: 90000000
+            },
+            {
+                id: 'renzo',
+                name: 'Renzo',
+                symbol: 'REZ',
+                exchange: 'Binance',
+                listingDate: '2024-04-30',
+                listingPrice: 0.27,
+                currentPrice: 0.028,
+                ath: 0.2782,
+                float: 11.5,
+                fdv: 3.8,
+                performance: -89.6,
+                athDecline: -89.9,
+                category: 'defi',
+                totalSupply: 10000000000,
+                circulatingSupply: 1150000000
+            },
+            {
+                id: 'manta-network',
+                name: 'Manta Network',
+                symbol: 'MANTA',
+                exchange: 'Binance',
+                listingDate: '2024-01-18',
+                listingPrice: 2.75,
+                currentPrice: 0.19,
+                ath: 4.08,
+                float: 25.1,
+                fdv: 2.75,
+                performance: -93.1,
+                athDecline: -95.3,
+                category: 'layer2',
+                totalSupply: 1000000000,
+                circulatingSupply: 251000000
+            },
+            {
+                id: 'altlayer',
+                name: 'AltLayer',
+                symbol: 'ALT',
+                exchange: 'Binance',
+                listingDate: '2024-01-25',
+                listingPrice: 0.32,
+                currentPrice: 0.030,
+                ath: 0.68,
+                float: 11.0,
+                fdv: 3.2,
+                performance: -90.6,
+                athDecline: -95.6,
+                category: 'layer2',
+                totalSupply: 10000000000,
+                circulatingSupply: 1100000000,
+                majorUnlock: '684M tokens (July 2024)'
+            },
+            {
+                id: 'ethena',
+                name: 'Ethena',
+                symbol: 'ENA',
+                exchange: 'Binance/Bybit',
+                listingDate: '2024-04-02',
+                listingPrice: 1.52,
+                currentPrice: 0.25,
+                ath: 1.52,
+                float: 9.5,
+                fdv: 22.8,
+                performance: -83.6,
+                athDecline: -83.6,
+                category: 'defi',
+                totalSupply: 15000000000,
+                circulatingSupply: 1425000000
+            },
+            {
+                id: 'omni-network',
+                name: 'Omni Network',
+                symbol: 'OMNI',
+                exchange: 'Binance',
+                listingDate: '2024-04-17',
+                listingPrice: 47.86,
+                currentPrice: 8.50,
+                ath: 47.86,
+                float: 10.4,
+                fdv: 4.7,
+                performance: -82.2,
+                athDecline: -82.2,
+                category: 'infrastructure',
+                totalSupply: 100000000,
+                circulatingSupply: 10400000
+            }
+        ];
+
+        // Hyperliquid data
+        const hypeData = {
+            id: 'hyperliquid',
+            name: 'Hyperliquid',
+            symbol: 'HYPE',
+            exchange: 'Native DEX',
+            listingDate: '2024-11-29',
+            listingPrice: 3.90,
+            currentPrice: 36.50,
+            ath: 38.00,
+            float: 33.39,
+            fdv: 36.5,
+            performance: 935.9,
+            athDecline: -3.9,
+            category: 'dex',
+            revenue: 1.15,
+            users: 190000,
+            tvl: 1.27
+        };
+
+        // Global variables
+        let selectedTokens = [];
+        let currentView = 'grid';
+        let currentSort = 'performance';
+        let currentFilter = 'all';
+        let chartInstances = {};
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                initializeDashboard();
+            }, 1500);
+        });
+
+        function initializeDashboard() {
+            renderTokenCards();
+            renderTable();
+            initializeCharts();
+            setupEventListeners();
+            updateMetrics();
+            startLiveUpdates();
+        }
+
+        // Render token cards
+        function renderTokenCards() {
+            const grid = document.getElementById('tokensGrid');
+            grid.innerHTML = '';
+            
+            const filteredTokens = filterTokens(tokenData);
+            const sortedTokens = sortTokens(filteredTokens);
+            
+            sortedTokens.forEach((token, index) => {
+                const card = createTokenCard(token, index);
+                grid.appendChild(card);
+            });
+        }
+
+        function createTokenCard(token, index) {
+            const card = document.createElement('div');
+            card.className = 'token-card fade-in';
+            card.dataset.tokenId = token.id;
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const performanceClass = token.performance < 0 ? 'text-red' : 'text-green';
+            const performanceWidth = Math.min(Math.abs(token.performance), 100);
+            
+            card.innerHTML = `
+                <div class="token-header">
+                    <div class="token-info">
+                        <h3>${token.name}</h3>
+                        <div class="details">
+                            <span>${token.symbol}</span> • 
+                            <span>${token.exchange}</span> • 
+                            <span>${new Date(token.listingDate).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                    <div class="token-performance ${performanceClass}">
+                        ${token.performance > 0 ? '+' : ''}${token.performance.toFixed(1)}%
+                    </div>
+                </div>
+                
+                <div class="token-stats">
+                    <div class="token-stat">
+                        <div class="token-stat-label">Listing Price</div>
+                        <div class="token-stat-value">$${formatPrice(token.listingPrice)}</div>
+                    </div>
+                    <div class="token-stat">
+                        <div class="token-stat-label">Current Price</div>
+                        <div class="token-stat-value ${performanceClass}">$${formatPrice(token.currentPrice)}</div>
+                    </div>
+                    <div class="token-stat">
+                        <div class="token-stat-label">Initial Float</div>
+                        <div class="token-stat-value">${token.float}%</div>
+                    </div>
+                    <div class="token-stat">
+                        <div class="token-stat-label">FDV at Launch</div>
+                        <div class="token-stat-value">$${token.fdv}B</div>
+                    </div>
+                </div>
+                
+                <div class="performance-bar">
+                    <div class="performance-fill ${token.performance < 0 ? 'bg-red' : 'bg-green'}" 
+                         style="width: ${performanceWidth}%"></div>
+                </div>
+                
+                ${token.majorUnlock ? `
+                    <div style="margin-top: 10px; font-size: 12px; color: var(--text-secondary);">
+                        <i class="fas fa-unlock"></i> Major unlock: ${token.majorUnlock}
+                    </div>
+                ` : ''}
+            `;
+            
+            card.addEventListener('click', () => toggleTokenSelection(token));
+            card.addEventListener('mouseenter', (e) => showTooltip(e, token));
+            card.addEventListener('mouseleave', hideTooltip);
+            
+            return card;
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            const filteredTokens = filterTokens(tokenData);
+            const sortedTokens = sortTokens(filteredTokens);
+            
+            sortedTokens.forEach(token => {
+                const row = createTableRow(token);
+                tbody.appendChild(row);
+            });
+        }
+
+        function createTableRow(token) {
+            const row = document.createElement('tr');
+            const performanceClass = token.performance < 0 ? 'text-red' : 'text-green';
+            
+            row.innerHTML = `
+                <td>${token.name}</td>
+                <td>${token.symbol}</td>
+                <td>${token.exchange}</td>
+                <td>$${formatPrice(token.listingPrice)}</td>
+                <td class="${performanceClass}">$${formatPrice(token.currentPrice)}</td>
+                <td class="${performanceClass}">${token.performance > 0 ? '+' : ''}${token.performance.toFixed(1)}%</td>
+                <td>$${formatPrice(token.ath)}</td>
+                <td>${token.float}%</td>
+                <td>$${token.fdv}B</td>
+                <td>
+                    <button class="btn" onclick="addToComparison('${token.id}')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            `;
+            
+            return row;
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Performance comparison chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            chartInstances.performance = new Chart(perfCtx, {
+                type: 'bar',
+                data: getPerformanceData(),
+                options: getChartOptions('bar')
+            });
+
+            // Market cap distribution
+            const mcCtx = document.getElementById('marketCapChart').getContext('2d');
+            chartInstances.marketCap = new Chart(mcCtx, {
+                type: 'doughnut',
+                data: getMarketCapData(),
+                options: getChartOptions('doughnut')
+            });
+
+            // Scatter plot
+            const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+            chartInstances.scatter = new Chart(scatterCtx, {
+                type: 'scatter',
+                data: getScatterData(),
+                options: getChartOptions('scatter')
+            });
+
+            // Timeline chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            chartInstances.timeline = new Chart(timelineCtx, {
+                type: 'line',
+                data: getTimelineData(),
+                options: getChartOptions('line')
+            });
+        }
+
+        // Chart data functions
+        function getPerformanceData() {
+            const allTokens = [...tokenData, hypeData];
+            return {
+                labels: allTokens.map(t => t.symbol),
+                datasets: [{
+                    label: 'Performance vs Listing Price',
+                    data: allTokens.map(t => t.performance),
+                    backgroundColor: allTokens.map(t => t.performance < 0 ? 'rgba(255, 0, 64, 0.8)' : 'rgba(0, 255, 136, 0.8)'),
+                    borderColor: allTokens.map(t => t.performance < 0 ? '#ff0040' : '#00ff88'),
+                    borderWidth: 2
+                }]
+            };
+        }
+
+        function getMarketCapData() {
+            const failedMcap = tokenData.reduce((sum, token) => {
+                return sum + (token.currentPrice * token.circulatingSupply / 1e9);
+            }, 0);
+            
+            const hypeMcap = 12.07; // Billions
+            
+            return {
+                labels: ['Failed Tokens Combined', 'Hyperliquid'],
+                datasets: [{
+                    data: [failedMcap.toFixed(2), hypeMcap],
+                    backgroundColor: ['rgba(255, 0, 64, 0.8)', 'rgba(0, 255, 136, 0.8)'],
+                    borderColor: ['#ff0040', '#00ff88'],
+                    borderWidth: 2
+                }]
+            };
+        }
+
+        function getScatterData() {
+            return {
+                datasets: [
+                    {
+                        label: 'Failed Tokens',
+                        data: tokenData.map(t => ({
+                            x: t.float,
+                            y: t.performance
+                        })),
+                        backgroundColor: 'rgba(255, 0, 64, 0.6)',
+                        borderColor: '#ff0040',
+                        pointRadius: 8,
+                        pointHoverRadius: 10
+                    },
+                    {
+                        label: 'Hyperliquid',
+                        data: [{
+                            x: hypeData.float,
+                            y: hypeData.performance
+                        }],
+                        backgroundColor: 'rgba(0, 255, 136, 0.8)',
+                        borderColor: '#00ff88',
+                        pointRadius: 12,
+                        pointHoverRadius: 15
+                    }
+                ]
+            };
+        }
+
+        function getTimelineData() {
+            // Simulated timeline data
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const avgPerformance = [-20, -35, -50, -65, -80, -93.6];
+            const hypePerformance = [0, 150, 350, 550, 750, 935.9];
+            
+            return {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Average Failed Token',
+                        data: avgPerformance,
+                        borderColor: '#ff0040',
+                        backgroundColor: 'rgba(255, 0, 64, 0.1)',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Hyperliquid',
+                        data: hypePerformance,
+                        borderColor: '#00ff88',
+                        backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                        tension: 0.3
+                    }
+                ]
+            };
+        }
+
+        function getChartOptions(type) {
+            const baseOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: type !== 'bar',
+                        position: 'bottom',
+                        labels: {
+                            color: '#888',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(26, 26, 26, 0.95)',
+                        borderColor: '#333',
+                        borderWidth: 1,
+                        titleColor: '#fff',
+                        bodyColor: '#888',
+                        padding: 12,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                if (type === 'scatter') {
+                                    return `Float: ${context.parsed.x}%, Performance: ${context.parsed.y}%`;
+                                }
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                }
+            };
+            
+            if (type === 'bar' || type === 'line') {
+                baseOptions.scales = {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#888',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#888'
+                        }
+                    }
+                };
+            }
+            
+            if (type === 'scatter') {
+                baseOptions.scales = {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Initial Float %',
+                            color: '#888'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#888'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Performance %',
+                            color: '#888'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#888',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                };
+            }
+            
+            return baseOptions;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // View toggle
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const view = e.currentTarget.dataset.view;
+                    switchView(view);
+                });
+            });
+            
+            // Sort and filter
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderTokenCards();
+                renderTable();
+            });
+            
+            document.getElementById('filterSelect').addEventListener('change', (e) => {
+                currentFilter = e.target.value;
+                renderTokenCards();
+                renderTable();
+            });
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', () => {
+                refreshData();
+            });
+            
+            // Compare button
+            document.getElementById('compareBtn').addEventListener('click', () => {
+                document.getElementById('comparisonPanel').classList.add('active');
+            });
+            
+            // Close comparison
+            document.getElementById('closeComparison').addEventListener('click', () => {
+                document.getElementById('comparisonPanel').classList.remove('active');
+            });
+            
+            // Table sorting
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', (e) => {
+                    const sort = e.currentTarget.dataset.sort;
+                    handleTableSort(sort, e.currentTarget);
+                });
+            });
+            
+            // Chart controls
+            document.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const chartType = e.currentTarget.dataset.type;
+                    const chartName = e.currentTarget.dataset.chart;
+                    const period = e.currentTarget.dataset.period;
+                    
+                    if (chartType && chartName) {
+                        updateChartType(chartName, chartType, e.currentTarget);
+                    } else if (period) {
+                        updateChartPeriod(period, e.currentTarget);
+                    }
+                });
+            });
+        }
+
+        // View switching
+        function switchView(view) {
+            // Update buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === view);
+            });
+            
+            // Update views
+            document.getElementById('tokensGrid').style.display = view === 'grid' ? 'grid' : 'none';
+            document.getElementById('tableView').classList.toggle('active', view === 'table');
+            document.getElementById('chartsSection').style.display = view === 'chart' ? 'grid' : 'none';
+            
+            currentView = view;
+        }
+
+        // Sorting functions
+        function sortTokens(tokens) {
+            const sorted = [...tokens];
+            
+            switch (currentSort) {
+                case 'performance':
+                    return sorted.sort((a, b) => a.performance - b.performance);
+                case 'marketCap':
+                    return sorted.sort((a, b) => (b.currentPrice * b.circulatingSupply) - (a.currentPrice * a.circulatingSupply));
+                case 'volume':
+                    return sorted.sort((a, b) => b.volume - a.volume);
+                case 'fdv':
+                    return sorted.sort((a, b) => b.fdv - a.fdv);
+                case 'float':
+                    return sorted.sort((a, b) => a.float - b.float);
+                default:
+                    return sorted;
+            }
+        }
+
+        // Filtering functions
+        function filterTokens(tokens) {
+            if (currentFilter === 'all') return tokens;
+            
+            switch (currentFilter) {
+                case 'worst':
+                    return tokens.filter(t => t.performance < -95);
+                case 'layer2':
+                    return tokens.filter(t => t.category === 'layer2');
+                case 'defi':
+                    return tokens.filter(t => t.category === 'defi');
+                case 'gaming':
+                    return tokens.filter(t => t.category === 'gaming');
+                default:
+                    return tokens;
+            }
+        }
+
+        // Table sorting
+        function handleTableSort(field, element) {
+            const isAsc = element.classList.contains('sorted-asc');
+            
+            // Remove all sort classes
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            
+            // Add new sort class
+            element.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+            
+            // Sort and re-render
+            currentSort = field;
+            renderTable();
+        }
+
+        // Token selection for comparison
+        function toggleTokenSelection(token) {
+            const card = document.querySelector(`[data-token-id="${token.id}"]`);
+            const isSelected = selectedTokens.find(t => t.id === token.id);
+            
+            if (isSelected) {
+                selectedTokens = selectedTokens.filter(t => t.id !== token.id);
+                card.classList.remove('selected');
+            } else {
+                if (selectedTokens.length < 5) {
+                    selectedTokens.push(token);
+                    card.classList.add('selected');
+                } else {
+                    showNotification('Maximum 5 tokens can be compared', 'warning');
+                }
+            }
+            
+            updateComparisonPanel();
+        }
+
+        // Update comparison panel
+        function updateComparisonPanel() {
+            const content = document.getElementById('comparisonContent');
+            
+            if (selectedTokens.length === 0) {
+                content.innerHTML = '<p class="text-secondary">Select tokens to compare by clicking on them.</p>';
+                return;
+            }
+            
+            content.innerHTML = selectedTokens.map(token => `
+                <div class="comparison-item">
+                    <h4>${token.name} (${token.symbol})</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <div class="token-stat-label">Performance</div>
+                            <div class="token-stat-value ${token.performance < 0 ? 'text-red' : 'text-green'}">
+                                ${token.performance > 0 ? '+' : ''}${token.performance.toFixed(1)}%
+                            </div>
+                        </div>
+                        <div>
+                            <div class="token-stat-label">Float</div>
+                            <div class="token-stat-value">${token.float}%</div>
+                        </div>
+                        <div>
+                            <div class="token-stat-label">Current Price</div>
+                            <div class="token-stat-value">$${formatPrice(token.currentPrice)}</div>
+                        </div>
+                        <div>
+                            <div class="token-stat-label">FDV</div>
+                            <div class="token-stat-value">$${token.fdv}B</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top: 10px; width: 100%;" onclick="removeFromComparison('${token.id}')">
+                        Remove
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Add to comparison
+        function addToComparison(tokenId) {
+            const token = tokenData.find(t => t.id === tokenId);
+            if (token) {
+                toggleTokenSelection(token);
+                document.getElementById('comparisonPanel').classList.add('active');
+            }
+        }
+
+        // Remove from comparison
+        function removeFromComparison(tokenId) {
+            selectedTokens = selectedTokens.filter(t => t.id !== tokenId);
+            const card = document.querySelector(`[data-token-id="${tokenId}"]`);
+            if (card) card.classList.remove('selected');
+            updateComparisonPanel();
+        }
+
+        // Update chart type
+        function updateChartType(chartName, type, button) {
+            // Update button states
+            button.parentElement.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            // Update chart
+            if (chartName === 'performance' && chartInstances.performance) {
+                chartInstances.performance.config.type = type;
+                chartInstances.performance.update();
+            } else if (chartName === 'marketcap' && chartInstances.marketCap) {
+                chartInstances.marketCap.config.type = type;
+                chartInstances.marketCap.update();
+            } else if (chartName === 'scatter' && chartInstances.scatter) {
+                chartInstances.scatter.config.type = type;
+                if (type === 'bubble') {
+                    // Add radius data for bubble chart
+                    chartInstances.scatter.data.datasets.forEach(dataset => {
+                        dataset.data = dataset.data.map(point => ({
+                            ...point,
+                            r: Math.random() * 20 + 5
+                        }));
+                    });
+                }
+                chartInstances.scatter.update();
+            }
+        }
+
+        // Update chart period
+        function updateChartPeriod(period, button) {
+            // Update button states
+            button.parentElement.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            // Update timeline data based on period
+            // This would fetch real data in production
+            showNotification(`Showing ${period} data`, 'info');
+        }
+
+        // Tooltip functions
+        function showTooltip(event, token) {
+            const tooltip = document.getElementById('tooltip');
+            const rect = event.currentTarget.getBoundingClientRect();
+            
+            tooltip.innerHTML = `
+                <strong>${token.name}</strong><br>
+                ATH: $${formatPrice(token.ath)}<br>
+                ATH Decline: ${token.athDecline}%<br>
+                Listing: ${new Date(token.listingDate).toLocaleDateString()}<br>
+                Category: ${token.category}
+            `;
+            
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('visible');
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            // Calculate average decline
+            const avgDecline = tokenData.reduce((sum, token) => sum + token.performance, 0) / tokenData.length;
+            document.querySelector('.metric-card:nth-child(1) .metric-value').textContent = avgDecline.toFixed(1) + '%';
+            
+            // Update HYPE metrics with latest data
+            document.querySelector('.hype-stat:nth-child(1) .hype-stat-value').textContent = '$' + hypeData.currentPrice.toFixed(2);
+            document.querySelector('.hype-stat:nth-child(2) .hype-stat-value').textContent = '+' + hypeData.performance.toFixed(0) + '%';
+        }
+
+        // Refresh data
+        function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            const icon = refreshBtn.querySelector('i');
+            
+            icon.classList.add('fa-spin');
+            showNotification('Refreshing data...', 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                showNotification('Data updated successfully', 'success');
+                updateMetrics();
+                renderTokenCards();
+                renderTable();
+            }, 2000);
+        }
+
+        // Live updates simulation
+        function startLiveUpdates() {
+            setInterval(() => {
+                // Simulate small price changes
+                tokenData.forEach(token => {
+                    const change = (Math.random() - 0.5) * 0.01;
+                    token.currentPrice *= (1 + change);
+                    token.performance = ((token.currentPrice - token.listingPrice) / token.listingPrice) * 100;
+                });
+                
+                // Update only if in grid view to avoid disruption
+                if (currentView === 'grid') {
+                    updatePricesOnly();
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // Update prices without re-rendering
+        function updatePricesOnly() {
+            document.querySelectorAll('.token-card').forEach(card => {
+                const tokenId = card.dataset.tokenId;
+                const token = tokenData.find(t => t.id === tokenId);
+                if (token) {
+                    const performanceEl = card.querySelector('.token-performance');
+                    const currentPriceEl = card.querySelector('.token-stat-value.text-red, .token-stat-value.text-green');
+                    
+                    if (performanceEl) {
+                        performanceEl.textContent = `${token.performance > 0 ? '+' : ''}${token.performance.toFixed(1)}%`;
+                        performanceEl.className = `token-performance ${token.performance < 0 ? 'text-red' : 'text-green'}`;
+                    }
+                    
+                    if (currentPriceEl) {
+                        currentPriceEl.textContent = `$${formatPrice(token.currentPrice)}`;
+                    }
+                }
+            });
+        }
+
+        // Utility functions
+        function formatPrice(price) {
+            if (price >= 1) {
+                return price.toFixed(2);
+            } else if (price >= 0.01) {
+                return price.toFixed(3);
+            } else {
+                return price.toFixed(4);
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type} slide-in`;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--green)' : type === 'warning' ? 'var(--yellow)' : 'var(--blue)'};
+                color: #000;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

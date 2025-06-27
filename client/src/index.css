@@ -24,14 +24,29 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* Dark theme colors */
-  --dark-bg: hsl(240, 10%, 7.1%);
-  --dark-card: hsl(240, 10%, 11.8%);
-  --dark-border: hsl(240, 3.7%, 17.6%);
-  --loss-red: hsl(0, 84.2%, 60.2%);
+  /* Advanced Dark Theme Colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --border-color: #333;
+  --text-primary: #ffffff;
+  --text-secondary: #888;
+  --red: #ff0040;
+  --red-light: #ff6b6b;
+  --green: #00ff88;
+  --green-light: #00ffcc;
+  --blue: #0088ff;
+  --purple: #8b5cf6;
+  --yellow: #fbbf24;
+  
+  /* Legacy dark theme colors */
+  --dark-bg: var(--bg-primary);
+  --dark-card: var(--bg-secondary);
+  --dark-border: var(--border-color);
+  --loss-red: var(--red);
   --warning-orange: hsl(25, 95%, 53.1%);
-  --gain-green: hsl(142, 76%, 36.3%);
-  --neutral-gray: hsl(215, 20.2%, 65.1%);
+  --gain-green: var(--green);
+  --neutral-gray: var(--text-secondary);
 }
 
 .dark {
@@ -111,4 +126,156 @@
   .text-neutral-gray {
     color: var(--neutral-gray);
   }
+}
+
+/* Advanced Animations */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px var(--red), 0 0 10px var(--red), 0 0 15px var(--red); }
+  50% { box-shadow: 0 0 10px var(--red), 0 0 20px var(--red), 0 0 30px var(--red); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Custom Animation Classes */
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Performance Bar Animation */
+.performance-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.performance-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient Text Effects */
+.gradient-text-red {
+  background: linear-gradient(135deg, #ff0040 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-green {
+  background: linear-gradient(135deg, #00ff88 0%, #00ffcc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 0, 64, 0.3);
+  border-color: var(--red);
+}
+
+/* Status Indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-dot.live {
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+.status-dot.error {
+  background: var(--red);
+  animation: pulse 2s infinite;
+}
+
+.status-dot.warning {
+  background: var(--yellow);
+  animation: pulse 2s infinite;
+}
+
+/* Dark scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
