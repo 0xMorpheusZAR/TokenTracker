@@ -13,7 +13,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
 
 // Register Chart.js components
 ChartJS.register(
@@ -34,6 +34,12 @@ export default function InteractiveDashboard() {
   const [filterBy, setFilterBy] = useState("all");
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Chart controls state
+  const [performanceChartType, setPerformanceChartType] = useState("bar");
+  const [floatChartType, setFloatChartType] = useState("scatter");
+  const [sectorChartType, setSectorChartType] = useState("doughnut");
+  const [timelinePeriod, setTimelinePeriod] = useState("1m");
 
   const { data: tokens } = useQuery({
     queryKey: ["/api/tokens"],
@@ -382,51 +388,113 @@ export default function InteractiveDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Token Performance</h3>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-red-600 text-white rounded text-sm">Bar</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">Line</button>
+                  <button 
+                    onClick={() => setPerformanceChartType("bar")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      performanceChartType === "bar" 
+                        ? "bg-red-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Bar
+                  </button>
+                  <button 
+                    onClick={() => setPerformanceChartType("line")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      performanceChartType === "line" 
+                        ? "bg-red-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Line
+                  </button>
                 </div>
               </div>
               <div className="h-80">
-                <Bar 
-                  data={{
-                    labels: filteredAndSortedTokens.slice(0, 8).map((token: any) => token.symbol),
-                    datasets: [{
-                      label: 'Performance %',
-                      data: filteredAndSortedTokens.slice(0, 8).map((token: any) => parseFloat(token.performancePercent || "0")),
-                      backgroundColor: filteredAndSortedTokens.slice(0, 8).map((token: any) => {
-                        const perf = parseFloat(token.performancePercent || "0");
-                        return perf < -90 ? '#ff0040' : perf < -50 ? '#ff6b6b' : '#fbbf24';
-                      }),
-                      borderColor: '#333',
-                      borderWidth: 1
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
+                {performanceChartType === "bar" ? (
+                  <Bar 
+                    data={{
+                      labels: filteredAndSortedTokens.slice(0, 8).map((token: any) => token.symbol),
+                      datasets: [{
+                        label: 'Performance %',
+                        data: filteredAndSortedTokens.slice(0, 8).map((token: any) => parseFloat(token.performancePercent || "0")),
+                        backgroundColor: filteredAndSortedTokens.slice(0, 8).map((token: any) => {
+                          const perf = parseFloat(token.performancePercent || "0");
+                          return perf < -90 ? '#ff0040' : perf < -50 ? '#ff6b6b' : '#fbbf24';
+                        }),
                         borderColor: '#333',
                         borderWidth: 1
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: false,
-                        grid: { color: '#333' },
-                        ticks: { color: '#888' }
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1
+                        }
                       },
-                      x: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#888' }
+                      scales: {
+                        y: {
+                          beginAtZero: false,
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        },
+                        x: {
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                ) : (
+                  <Line 
+                    data={{
+                      labels: filteredAndSortedTokens.slice(0, 8).map((token: any) => token.symbol),
+                      datasets: [{
+                        label: 'Performance %',
+                        data: filteredAndSortedTokens.slice(0, 8).map((token: any) => parseFloat(token.performancePercent || "0")),
+                        borderColor: '#ff0040',
+                        backgroundColor: 'rgba(255, 0, 64, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#ff0040',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: false,
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        },
+                        x: {
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        }
+                      }
+                    }}
+                  />
+                )}
               </div>
             </div>
 
@@ -435,48 +503,152 @@ export default function InteractiveDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Float vs Performance</h3>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">Scatter</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">Bubble</button>
+                  <button 
+                    onClick={() => setFloatChartType("scatter")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      floatChartType === "scatter" 
+                        ? "bg-blue-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Scatter
+                  </button>
+                  <button 
+                    onClick={() => setFloatChartType("bubble")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      floatChartType === "bubble" 
+                        ? "bg-blue-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Bubble
+                  </button>
                 </div>
               </div>
               <div className="h-80">
-                <Bar 
-                  data={{
-                    labels: filteredAndSortedTokens.slice(0, 8).map((token: any) => token.symbol),
-                    datasets: [{
-                      label: 'Initial Float %',
-                      data: filteredAndSortedTokens.slice(0, 8).map((token: any) => parseFloat(token.initialFloat || "0")),
-                      backgroundColor: '#0088ff',
-                      borderColor: '#333',
-                      borderWidth: 1
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#333',
-                        borderWidth: 1
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        grid: { color: '#333' },
-                        ticks: { color: '#888' }
+                {floatChartType === "scatter" ? (
+                  <Scatter 
+                    data={{
+                      datasets: [{
+                        label: 'Float vs Performance',
+                        data: filteredAndSortedTokens.slice(0, 8).map((token: any) => ({
+                          x: parseFloat(token.initialFloat || "0"),
+                          y: parseFloat(token.performancePercent || "0")
+                        })),
+                        backgroundColor: '#0088ff',
+                        borderColor: '#0088ff',
+                        pointRadius: 6
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1,
+                          callbacks: {
+                            title: () => 'Token Analysis',
+                            label: (context: any) => {
+                              const token = filteredAndSortedTokens[context.dataIndex];
+                              return [
+                                `${token?.symbol || 'Unknown'}`,
+                                `Float: ${context.parsed.x}%`,
+                                `Performance: ${context.parsed.y}%`
+                              ];
+                            }
+                          }
+                        }
                       },
-                      x: {
-                        grid: { color: '#333' },
-                        ticks: { color: '#888' }
+                      scales: {
+                        x: {
+                          title: {
+                            display: true,
+                            text: 'Initial Float %',
+                            color: '#888'
+                          },
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        },
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'Performance %',
+                            color: '#888'
+                          },
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                ) : (
+                  <Bubble 
+                    data={{
+                      datasets: [{
+                        label: 'Float vs Performance vs Market Cap',
+                        data: filteredAndSortedTokens.slice(0, 8).map((token: any) => ({
+                          x: parseFloat(token.initialFloat || "0"),
+                          y: parseFloat(token.performancePercent || "0"),
+                          r: Math.max(5, Math.min(25, (token.marketCap || 1000000000) / 100000000))
+                        })),
+                        backgroundColor: 'rgba(0, 136, 255, 0.6)',
+                        borderColor: '#0088ff',
+                        borderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1,
+                          callbacks: {
+                            title: () => 'Token Analysis',
+                            label: (context: any) => {
+                              const token = filteredAndSortedTokens[context.dataIndex];
+                              return [
+                                `${token?.symbol || 'Unknown'}`,
+                                `Float: ${context.parsed.x}%`,
+                                `Performance: ${context.parsed.y}%`,
+                                `Market Cap: $${((token?.marketCap || 0) / 1e9).toFixed(2)}B`
+                              ];
+                            }
+                          }
+                        }
+                      },
+                      scales: {
+                        x: {
+                          title: {
+                            display: true,
+                            text: 'Initial Float %',
+                            color: '#888'
+                          },
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        },
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'Performance %',
+                            color: '#888'
+                          },
+                          grid: { color: '#333' },
+                          ticks: { color: '#888' }
+                        }
+                      }
+                    }}
+                  />
+                )}
               </div>
             </div>
 
@@ -485,39 +657,88 @@ export default function InteractiveDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Sector Distribution</h3>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-purple-600 text-white rounded text-sm">Doughnut</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">Pie</button>
+                  <button 
+                    onClick={() => setSectorChartType("doughnut")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      sectorChartType === "doughnut" 
+                        ? "bg-purple-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Doughnut
+                  </button>
+                  <button 
+                    onClick={() => setSectorChartType("pie")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      sectorChartType === "pie" 
+                        ? "bg-purple-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    Pie
+                  </button>
                 </div>
               </div>
               <div className="h-80">
-                <Doughnut 
-                  data={{
-                    labels: ['Gaming', 'DeFi', 'Layer 2', 'Infrastructure'],
-                    datasets: [{
-                      data: [25, 35, 25, 15],
-                      backgroundColor: ['#ff0040', '#ff6b6b', '#fbbf24', '#8b5cf6'],
-                      borderColor: '#1a1a1a',
-                      borderWidth: 2
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'bottom',
-                        labels: { color: '#888' }
-                      },
-                      tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#333',
-                        borderWidth: 1
+                {sectorChartType === "doughnut" ? (
+                  <Doughnut 
+                    data={{
+                      labels: ['Gaming', 'DeFi', 'Layer 2', 'Infrastructure'],
+                      datasets: [{
+                        data: [25, 35, 25, 15],
+                        backgroundColor: ['#ff0040', '#ff6b6b', '#fbbf24', '#8b5cf6'],
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                          labels: { color: '#888' }
+                        },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                ) : (
+                  <Pie 
+                    data={{
+                      labels: ['Gaming', 'DeFi', 'Layer 2', 'Infrastructure'],
+                      datasets: [{
+                        data: [25, 35, 25, 15],
+                        backgroundColor: ['#ff0040', '#ff6b6b', '#fbbf24', '#8b5cf6'],
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                          labels: { color: '#888' }
+                        },
+                        tooltip: {
+                          backgroundColor: '#1a1a1a',
+                          titleColor: '#ffffff',
+                          bodyColor: '#ffffff',
+                          borderColor: '#333',
+                          borderWidth: 1
+                        }
+                      }
+                    }}
+                  />
+                )}
               </div>
             </div>
 
@@ -526,10 +747,46 @@ export default function InteractiveDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Price Timeline</h3>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-green-600 text-white rounded text-sm">1M</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">3M</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">6M</button>
-                  <button className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm">1Y</button>
+                  <button 
+                    onClick={() => setTimelinePeriod("1m")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      timelinePeriod === "1m" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    1M
+                  </button>
+                  <button 
+                    onClick={() => setTimelinePeriod("3m")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      timelinePeriod === "3m" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    3M
+                  </button>
+                  <button 
+                    onClick={() => setTimelinePeriod("6m")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      timelinePeriod === "6m" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    6M
+                  </button>
+                  <button 
+                    onClick={() => setTimelinePeriod("1y")}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      timelinePeriod === "1y" 
+                        ? "bg-green-600 text-white" 
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    1Y
+                  </button>
                 </div>
               </div>
               <div className="h-80">
