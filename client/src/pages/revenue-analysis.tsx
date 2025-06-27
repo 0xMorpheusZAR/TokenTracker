@@ -191,27 +191,69 @@ export default function RevenueAnalysis() {
     ? protocolData 
     : protocolData.filter(p => p.category === selectedCategory);
 
-  const topRevenueProtocols = [...protocolData]
-    .sort((a, b) => b.annualized_revenue - a.annualized_revenue)
-    .slice(0, 6);
-
-  const revenueComparisonData = {
-    labels: topRevenueProtocols.map(p => p.symbol),
-    datasets: [
-      {
-        label: 'Annualized Revenue (USD)',
-        data: topRevenueProtocols.map(p => p.annualized_revenue / 1000000), // Convert to millions
-        backgroundColor: topRevenueProtocols.map(p => 
-          p.symbol === 'HYPE' ? 'rgba(34, 197, 94, 0.8)' : 'rgba(99, 102, 241, 0.6)'
-        ),
-        borderColor: topRevenueProtocols.map(p => 
-          p.symbol === 'HYPE' ? 'rgba(34, 197, 94, 1)' : 'rgba(99, 102, 241, 1)'
-        ),
-        borderWidth: 2,
-        borderRadius: 8,
-      }
-    ]
+  // Dynamic data based on selected metric
+  const getChartData = () => {
+    const sortedData = [...filteredData];
+    
+    if (selectedMetric === 'revenue') {
+      sortedData.sort((a, b) => b.annualized_revenue - a.annualized_revenue);
+      return {
+        labels: sortedData.map(p => p.symbol),
+        datasets: [{
+          label: 'Annualized Revenue (USD)',
+          data: sortedData.map(p => p.annualized_revenue / 1000000),
+          backgroundColor: sortedData.map(p => 
+            p.symbol === 'HYPE' ? 'rgba(34, 197, 94, 0.8)' : 'rgba(99, 102, 241, 0.6)'
+          ),
+          borderColor: sortedData.map(p => 
+            p.symbol === 'HYPE' ? 'rgba(34, 197, 94, 1)' : 'rgba(99, 102, 241, 1)'
+          ),
+          borderWidth: 2,
+          borderRadius: 8,
+        }]
+      };
+    } else if (selectedMetric === 'growth') {
+      sortedData.sort((a, b) => b.revenue_growth_1y - a.revenue_growth_1y);
+      return {
+        labels: sortedData.map(p => p.symbol),
+        datasets: [{
+          label: 'Revenue Growth YoY (%)',
+          data: sortedData.map(p => p.revenue_growth_1y),
+          backgroundColor: sortedData.map(p => 
+            p.revenue_growth_1y > 100 ? 'rgba(34, 197, 94, 0.8)' : 
+            p.revenue_growth_1y > 50 ? 'rgba(251, 191, 36, 0.8)' : 'rgba(239, 68, 68, 0.6)'
+          ),
+          borderColor: sortedData.map(p => 
+            p.revenue_growth_1y > 100 ? 'rgba(34, 197, 94, 1)' : 
+            p.revenue_growth_1y > 50 ? 'rgba(251, 191, 36, 1)' : 'rgba(239, 68, 68, 1)'
+          ),
+          borderWidth: 2,
+          borderRadius: 8,
+        }]
+      };
+    } else { // efficiency
+      sortedData.sort((a, b) => a.pe_ratio - b.pe_ratio);
+      return {
+        labels: sortedData.map(p => p.symbol),
+        datasets: [{
+          label: 'P/E Ratio (Lower = Better)',
+          data: sortedData.map(p => p.pe_ratio),
+          backgroundColor: sortedData.map(p => 
+            p.pe_ratio < 15 ? 'rgba(34, 197, 94, 0.8)' : 
+            p.pe_ratio < 30 ? 'rgba(251, 191, 36, 0.8)' : 'rgba(239, 68, 68, 0.6)'
+          ),
+          borderColor: sortedData.map(p => 
+            p.pe_ratio < 15 ? 'rgba(34, 197, 94, 1)' : 
+            p.pe_ratio < 30 ? 'rgba(251, 191, 36, 1)' : 'rgba(239, 68, 68, 1)'
+          ),
+          borderWidth: 2,
+          borderRadius: 8,
+        }]
+      };
+    }
   };
+
+  const chartData = getChartData();
 
   const peRatioData = {
     labels: protocolData.map(p => p.symbol),
@@ -415,15 +457,17 @@ export default function RevenueAnalysis() {
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Revenue Comparison Chart */}
+          {/* Dynamic Chart */}
           <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50">
             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
               <BarChart3 className="w-6 h-6 text-blue-400" />
-              Annualized Revenue Comparison
+              {selectedMetric === 'revenue' ? 'Annualized Revenue Comparison' :
+               selectedMetric === 'growth' ? 'Revenue Growth Analysis' :
+               'Valuation Efficiency (P/E Ratios)'}
             </h3>
             <div className="h-80">
               <Bar 
-                data={revenueComparisonData}
+                data={chartData}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
@@ -436,7 +480,15 @@ export default function RevenueAnalysis() {
                       borderColor: '#334155',
                       borderWidth: 1,
                       callbacks: {
-                        label: (context) => `$${context.parsed.y}M annualized`
+                        label: (context) => {
+                          if (selectedMetric === 'revenue') {
+                            return `$${context.parsed.y}M annualized`;
+                          } else if (selectedMetric === 'growth') {
+                            return `${context.parsed.y.toFixed(1)}% YoY growth`;
+                          } else {
+                            return `${context.parsed.y.toFixed(1)}x P/E ratio`;
+                          }
+                        }
                       }
                     }
                   },
@@ -446,7 +498,15 @@ export default function RevenueAnalysis() {
                       grid: { color: 'rgba(148, 163, 184, 0.1)' },
                       ticks: { 
                         color: '#94a3b8',
-                        callback: (value) => `$${value}M`
+                        callback: (value) => {
+                          if (selectedMetric === 'revenue') {
+                            return `$${value}M`;
+                          } else if (selectedMetric === 'growth') {
+                            return `${value}%`;
+                          } else {
+                            return `${value}x`;
+                          }
+                        }
                       }
                     },
                     x: {
