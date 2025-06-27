@@ -9,10 +9,20 @@ import TokenTable from "@/components/token-table";
 import PerformanceChart from "@/components/performance-chart";
 import RiskIndicators from "@/components/risk-indicators";
 import UnlockCalendar from "@/components/unlock-calendar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const { data: summary, isLoading: summaryLoading } = useQuery({
     queryKey: ["/api/analytics/summary"],
@@ -77,8 +87,10 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Mobile Navigation */}
-      <nav className="lg:hidden bg-gray-900/95 border-b border-gray-800 px-4 py-3 sticky top-[76px] z-40 backdrop-blur-sm">
+      {/* Mobile Navigation - Hides on scroll */}
+      <nav className={`lg:hidden bg-gray-900/95 border-b border-gray-800 px-4 py-3 sticky top-[76px] z-40 backdrop-blur-sm transition-transform duration-300 ${
+        isScrolled ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+      }`}>
         <div className="flex gap-2 overflow-x-auto pb-2">
           <Button variant="ghost" className="bg-blue-600/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
             <TrendingDown className="w-4 h-4 mr-2" />
@@ -162,12 +174,70 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* Main Content - Scrollable Sections */}
-        <main className="flex-1 p-4 lg:p-4 lg:p-6 space-y-6 lg:space-y-8 relative z-10">
-          {/* Summary Cards Section */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white  ">Market Overview</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-4 lg:p-6">
+        {/* Main Content - Sectioned Landing Page */}
+        <main className="flex-1 relative z-10">
+          {/* Hero Section */}
+          <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-950 to-black px-4 lg:px-6">
+            <div className="max-w-6xl mx-auto text-center">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-medium border border-red-500/30">
+                  🔴 LIVE ANALYSIS
+                </div>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6">
+                <span className="bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
+                  A Comprehensive Breakdown of High FDV Failures
+                </span>
+              </h1>
+              
+              <p className="text-lg lg:text-xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+                Real-time analysis of token failures, economic breakdowns, and market dynamics using live CoinGecko Pro API data. 
+                Explore failure patterns, revenue models, and predictive simulations.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+                <a href="/revenue-analysis" className="group">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 text-base font-semibold transition-all duration-300 group-hover:scale-105">
+                    💰 Cash Cows
+                  </Button>
+                </a>
+                <a href="/hyperliquid" className="group">
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 text-base font-semibold transition-all duration-300 group-hover:scale-105">
+                    🎯 Success Story
+                  </Button>
+                </a>
+                <a href="/monte-carlo" className="group">
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 text-base font-semibold transition-all duration-300 group-hover:scale-105">
+                    📊 Hype Simulation
+                  </Button>
+                </a>
+                <a href="/failure-analysis" className="group">
+                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white py-4 px-6 text-base font-semibold transition-all duration-300 group-hover:scale-105">
+                    ⚠️ Failure Analysis
+                  </Button>
+                </a>
+              </div>
+              
+              <div className="text-sm text-gray-400 flex items-center justify-center gap-2">
+                <span>CoinGecko Pro API</span>
+                <span>•</span>
+                <span>Last updated: {new Date().toLocaleTimeString()}</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Market Overview Section */}
+          <section className="py-16 lg:py-24 px-4 lg:px-6 bg-gray-950/90">
+            <div className="max-w-6xl mx-auto space-y-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Market Overview</h2>
+                <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                  Real-time market data and failure analysis of high FDV tokens
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               <Card className="bg-gray-800/90 border-gray-700 backdrop-blur-sm">
                 <CardContent className="p-4 lg:p-6">
                   <div className="flex items-center justify-between mb-2">
@@ -230,6 +300,7 @@ export default function Dashboard() {
                   <div className="text-sm text-white/70 mt-1 ">EXTREMELY_LOW</div>
                 </CardContent>
               </Card>
+              </div>
             </div>
           </section>
 
