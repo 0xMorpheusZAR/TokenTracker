@@ -161,26 +161,66 @@ export default function PredictiveModels() {
     }
   ];
 
-  // Generate realistic predictions based on current token data
+  // Generate realistic predictions based on current token data and selected timeframe
   const generatePredictions = (tokenData: any[]): TokenPrediction[] => {
-    return tokenData.map(token => {
-      const baseVolatility = Math.abs(token.price_change_percentage_30d || 0) / 30;
+    const validPredictions = tokenData.map(token => {
+      const currentPrice = token.current_price || 0;
+      if (currentPrice === 0) return null; // Skip tokens without price data
+      
+      const revenueGrowth = token.revenue_growth_30d || 0;
+      const priceVolatility = Math.abs(token.price_change_percentage_30d || 0) / 30;
       const momentum = (token.price_change_percentage_7d || 0) * 0.6 + (token.price_change_percentage_24h || 0) * 0.4;
       
-      // Model-specific adjustments
-      const modelMultiplier = selectedModel === 'ensemble' ? 0.85 : 
-                            selectedModel === 'lstm' ? 0.92 :
-                            selectedModel === 'arima' ? 0.75 :
-                            selectedModel === 'random_forest' ? 0.80 : 0.65;
-
-      const predicted_change_7d = momentum * 0.4 + (Math.random() - 0.5) * baseVolatility * 7 * modelMultiplier;
-      const predicted_change_30d = momentum * 0.2 + (Math.random() - 0.5) * baseVolatility * 30 * modelMultiplier;
-
-      const predicted_price_7d = token.current_price * (1 + predicted_change_7d / 100);
-      const predicted_price_30d = token.current_price * (1 + predicted_change_30d / 100);
+      // Model-specific accuracy and adjustments
+      const modelConfig = {
+        ensemble: { accuracy: 0.85, volatilityFactor: 0.7 },
+        lstm: { accuracy: 0.92, volatilityFactor: 0.6 },
+        arima: { accuracy: 0.75, volatilityFactor: 0.8 },
+        random_forest: { accuracy: 0.80, volatilityFactor: 0.75 },
+        momentum: { accuracy: 0.65, volatilityFactor: 0.9 }
+      };
+      
+      const config = modelConfig[selectedModel as keyof typeof modelConfig] || modelConfig.ensemble;
+      
+      // Advanced mode incorporates revenue metrics, standard mode is simpler
+      const complexityFactor = showAdvanced ? 1.2 : 0.8;
+      const revenueFactor = showAdvanced ? revenueGrowth * 0.01 : 0;
+      
+      // Timeframe-specific predictions
+      let predictedPrice7d = currentPrice;
+      let predictedPrice30d = currentPrice;
+      let predictedPrice90d = currentPrice;
+      let predictedChange7d = 0;
+      let predictedChange30d = 0;
+      
+      if (timeframe === '7d' || timeframe === '30d' || timeframe === '90d') {
+        const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
+        const baseChange = (momentum * 0.3 + revenueFactor) * complexityFactor;
+        const volatilityAdjustment = (Math.random() - 0.5) * priceVolatility * days * config.volatilityFactor;
+        
+        const totalChange = baseChange + volatilityAdjustment;
+        
+        if (days === 7) {
+          predictedChange7d = totalChange;
+          predictedPrice7d = currentPrice * (1 + totalChange / 100);
+        } else if (days === 30) {
+          predictedChange30d = totalChange;
+          predictedPrice30d = currentPrice * (1 + totalChange / 100);
+          // Also calculate 7d as interim
+          predictedChange7d = totalChange * 0.3;
+          predictedPrice7d = currentPrice * (1 + predictedChange7d / 100);
+        } else {
+          // 90d selected
+          predictedChange30d = totalChange * 0.4;
+          predictedChange7d = totalChange * 0.15;
+          predictedPrice90d = currentPrice * (1 + totalChange / 100);
+          predictedPrice30d = currentPrice * (1 + predictedChange30d / 100);
+          predictedPrice7d = currentPrice * (1 + predictedChange7d / 100);
+        }
+      }
 
       const confidence_score = Math.max(0.3, Math.min(0.95, 
-        0.8 - Math.abs(baseVolatility) * 0.1 + (selectedModel === 'ensemble' ? 0.1 : 0)
+        config.accuracy - Math.abs(priceVolatility) * 0.05
       ));
 
       // Generate realistic signals based on token performance
@@ -195,25 +235,27 @@ export default function PredictiveModels() {
       if (token.price_change_percentage_30d < -20) bearish_signals.push('Extended downtrend');
       if (token.ath_change_percentage < -50) bearish_signals.push('Significant ATH decline');
 
-      const recommendation = predicted_change_30d > 15 ? 'STRONG_BUY' :
-                           predicted_change_30d > 5 ? 'BUY' :
-                           predicted_change_30d > -5 ? 'HOLD' :
-                           predicted_change_30d > -15 ? 'SELL' : 'STRONG_SELL';
+      const recommendation = predictedChange30d > 15 ? 'STRONG_BUY' :
+                           predictedChange30d > 5 ? 'BUY' :
+                           predictedChange30d > -5 ? 'HOLD' :
+                           predictedChange30d > -15 ? 'SELL' : 'STRONG_SELL';
 
       return {
         symbol: token.symbol?.toUpperCase() || 'UNKNOWN',
         model_id: selectedModel,
-        predicted_price_7d,
-        predicted_price_30d,
-        predicted_change_7d,
-        predicted_change_30d,
+        predicted_price_7d: predictedPrice7d,
+        predicted_price_30d: predictedPrice30d,
+        predicted_change_7d: predictedChange7d,
+        predicted_change_30d: predictedChange30d,
         confidence_score,
         risk_factors: bearish_signals.slice(0, 3),
         bullish_signals: bullish_signals.slice(0, 3),
         bearish_signals: bearish_signals.slice(0, 2),
         recommendation
       };
-    });
+    }).filter(Boolean);
+    
+    return validPredictions as TokenPrediction[];
   };
 
   // Generate volatility forecasts
@@ -243,20 +285,27 @@ export default function PredictiveModels() {
     });
   };
 
-  const predictions = useMemo(() => generatePredictions(tokens), [tokens, selectedModel]);
-  const volatilityForecasts = useMemo(() => generateVolatilityForecasts(tokens), [tokens]);
+  const predictions = useMemo(() => {
+    if (!tokens || !Array.isArray(tokens) || tokens.length === 0) return [];
+    return generatePredictions(tokens);
+  }, [tokens, selectedModel, timeframe, showAdvanced]);
   
-  const selectedTokenPrediction = predictions.find(p => p.symbol === selectedToken);
-  const selectedTokenVolatility = volatilityForecasts.find(v => v.symbol === selectedToken);
+  const volatilityForecasts = useMemo(() => {
+    if (!tokens || !Array.isArray(tokens) || tokens.length === 0) return [];
+    return generateVolatilityForecasts(tokens);
+  }, [tokens]);
+  
+  const selectedTokenPrediction = predictions?.find(p => p?.symbol === selectedToken);
+  const selectedTokenVolatility = volatilityForecasts?.find(v => v?.symbol === selectedToken);
 
   const currentModel = models.find(m => m.id === selectedModel);
 
   // Chart data for prediction visualization
   const predictionChartData = useMemo(() => {
-    if (!selectedTokenPrediction) return null;
+    if (!selectedTokenPrediction || !tokens || !Array.isArray(tokens)) return null;
 
     const currentToken = tokens.find(t => t.symbol?.toUpperCase() === selectedToken);
-    if (!currentToken) return null;
+    if (!currentToken || !currentToken.current_price) return null;
 
     const labels = ['Current', '7 Days', '30 Days'];
     const actualPrices = [
@@ -299,6 +348,30 @@ export default function PredictiveModels() {
       ]
     };
   }, [selectedTokenPrediction, selectedToken, tokens]);
+
+  // Loading state
+  if (!tokens || tokens.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading protocol data from Dune Analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure selected token exists in the available tokens
+  const availableTokens = tokens.filter(token => token.current_price > 0);
+  const currentSelectedToken = availableTokens.find(token => token.symbol?.toUpperCase() === selectedToken);
+  
+  if (!currentSelectedToken && availableTokens.length > 0) {
+    // Auto-select first available token
+    const firstAvailable = availableTokens[0].symbol?.toUpperCase();
+    if (firstAvailable && firstAvailable !== selectedToken) {
+      setSelectedToken(firstAvailable);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -392,9 +465,9 @@ export default function PredictiveModels() {
               onChange={(e) => setSelectedToken(e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/30 rounded-xl text-white focus:outline-none focus:border-purple-500/50"
             >
-              {tokens.map((token: any) => (
+              {availableTokens.map((token: any) => (
                 <option key={token.symbol} value={token.symbol?.toUpperCase()}>
-                  {token.symbol?.toUpperCase()} - {token.name}
+                  {token.symbol?.toUpperCase()} - {token.protocol_name || token.name}
                 </option>
               ))}
             </select>
