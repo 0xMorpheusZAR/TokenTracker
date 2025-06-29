@@ -82,10 +82,26 @@ export default function Dashboard() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4">
             Deep analysis of the $58.4B market cap destruction caused by failed tokenomics models. 
             Real-time data, predictive modeling, and comprehensive breakdowns.
           </p>
+
+          {/* Creator Attribution */}
+          <div className="flex justify-center mb-8 sm:mb-12">
+            <a 
+              href="https://x.com/0xMorpheusXBT" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-gray-800/50 hover:border-gray-700/50 transition-all duration-300 hover:transform hover:-translate-y-0.5"
+            >
+              <span className="text-xs sm:text-sm text-gray-500 group-hover:text-gray-400">Created by</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white transition-colors">@0xMorpheusXBT</span>
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 group-hover:text-gray-300 transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          </div>
 
           {/* Action Grid - Mobile First */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
