@@ -302,33 +302,42 @@ export default function MonteCarlo() {
 
   const chartOptions: any = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
         labels: {
-          color: 'white',
+          color: '#e5e7eb',
           font: {
-            size: 12
-          }
+            size: 14,
+            weight: '600'
+          },
+          padding: 20
         }
       },
       title: {
         display: true,
         text: 'HYPE Price Scenarios - End of Year 2025',
-        color: 'white',
+        color: '#f3f4f6',
         font: {
-          size: 16,
+          size: 20,
           weight: 'bold'
+        },
+        padding: {
+          top: 10,
+          bottom: 30
         }
       },
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: 'white',
-        bodyColor: 'white',
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: 'rgba(17, 24, 39, 0.95)',
+        titleColor: '#f3f4f6',
+        bodyColor: '#e5e7eb',
+        borderColor: 'rgba(75, 85, 99, 0.5)',
         borderWidth: 1,
+        padding: 12,
+        displayColors: true,
         callbacks: {
           label: function(context: any) {
             return `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
@@ -339,22 +348,30 @@ export default function MonteCarlo() {
     scales: {
       x: {
         ticks: {
-          color: 'rgb(156, 163, 175)'
+          color: '#d1d5db',
+          font: {
+            size: 12
+          }
         },
         grid: {
-          color: 'rgba(156, 163, 175, 0.1)'
+          color: 'rgba(75, 85, 99, 0.2)',
+          drawBorder: false
         }
       },
       y: {
         beginAtZero: false,
         ticks: {
-          color: 'rgb(156, 163, 175)',
+          color: '#d1d5db',
+          font: {
+            size: 12
+          },
           callback: function(value: any) {
             return '$' + value.toFixed(0);
           }
         },
         grid: {
-          color: 'rgba(156, 163, 175, 0.1)'
+          color: 'rgba(75, 85, 99, 0.2)',
+          drawBorder: false
         }
       }
     },
@@ -451,13 +468,21 @@ export default function MonteCarlo() {
         )}
 
         {/* Price Chart */}
-        {simulationResults.length > 0 && (
-          <div className="bg-gray-900 rounded-xl p-6 mb-8 border border-gray-800">
-            <div className="h-96">
+        <div className="bg-gray-900 rounded-xl p-6 mb-8 border border-gray-800">
+          {simulationResults.length > 0 ? (
+            <div className="h-96 bg-gray-950/50 rounded-lg p-4">
               <Line data={generateChartData()!} options={chartOptions} />
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="h-96 bg-gray-950/50 rounded-lg p-4 flex items-center justify-center">
+              <div className="text-center">
+                <div className="inline-block w-12 h-12 border-4 border-gray-600 border-t-blue-400 rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-400 text-lg">Loading price simulation chart...</p>
+                <p className="text-gray-500 text-sm mt-2">Running 10,000 Monte Carlo simulations</p>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Scenario Results */}
         {simulationResults.length > 0 && (
