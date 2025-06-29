@@ -57,6 +57,22 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
+      {/* Creator Attribution - Top Bar */}
+      <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 py-4 text-center shadow-2xl border-b-2 border-white/20">
+        <a 
+          href="https://x.com/0xMorpheusXBT" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 text-white hover:text-yellow-300 transition-all duration-300 transform hover:scale-105"
+        >
+          <span className="text-xl font-semibold">Created by</span>
+          <span className="text-2xl font-bold">@0xMorpheusXBT</span>
+          <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+
       {/* Animated Gradient Background */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 -z-10">
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/10 via-transparent to-blue-900/10 animate-pulse"></div>
@@ -64,7 +80,7 @@ export default function Dashboard() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12 pt-20">
         <div className="max-w-6xl mx-auto text-center w-full">
           {/* Status Badge */}
           <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-3 py-1.5 mb-6 sm:mb-8">
