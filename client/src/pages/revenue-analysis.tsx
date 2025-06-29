@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle, Sparkles, Shield, Rocket } from "lucide-react";
-import { Line, Bar, Pie, Radar, Scatter } from "react-chartjs-2";
+import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle } from "lucide-react";
+import { Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,8 +13,7 @@ import {
   Tooltip,
   Legend,
   ArcElement,
-  Filler,
-  RadialLinearScale
+  Filler
 } from "chart.js";
 
 ChartJS.register(
@@ -27,8 +26,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
-  Filler,
-  RadialLinearScale
+  Filler
 );
 
 interface ProtocolData {
@@ -54,24 +52,6 @@ interface ProtocolData {
   recommendation: 'STRONG_BUY' | 'BUY' | 'HOLD' | 'SELL' | 'STRONG_SELL';
   target_price: number;
   risk_level: 'LOW' | 'MEDIUM' | 'HIGH';
-  // New fields for enhanced data
-  total_value_locked?: number;
-  active_users?: number;
-  revenue_per_user?: number;
-  market_share?: number;
-  tvl_to_revenue_ratio?: number;
-  user_growth_30d?: number;
-  projected_revenue_eoy?: number;
-  revenue_rank?: number;
-}
-
-interface RevenuePrediction {
-  protocol: string;
-  currentRevenue: number;
-  projectedRevenue: number;
-  growthRate: number;
-  confidence: number;
-  drivers: string[];
 }
 
 // Monte Carlo interfaces removed per user request
@@ -85,7 +65,7 @@ export default function RevenueAnalysis() {
 
   // Monte Carlo functions removed per user request
 
-  // Comprehensive protocol analysis with investment cases and enhanced metrics
+  // Comprehensive protocol analysis with investment cases
   const protocolData: ProtocolData[] = [
     {
       symbol: 'HYPE',
@@ -105,14 +85,6 @@ export default function RevenueAnalysis() {
       price_change_30d: 15.8,
       price_change_90d: 245.6,
       price_change_1y: 1029.5,
-      total_value_locked: 2100000000,
-      active_users: 511000,
-      revenue_per_user: 2249,
-      market_share: 76,
-      tvl_to_revenue_ratio: 1.83,
-      user_growth_30d: 18.5,
-      projected_revenue_eoy: 1380000000,
-      revenue_rank: 1,
       bull_case: [
         'Dominant 76% market share in perp trading with growing user base (511K+ users)',
         '$1.15B annualized revenue with direct fee burns creating deflationary pressure',
@@ -148,14 +120,6 @@ export default function RevenueAnalysis() {
       pe_ratio: 84.4,
       price_change_30d: -8.2,
       price_change_90d: 12.5,
-      total_value_locked: 7300000000,
-      active_users: 1250000,
-      revenue_per_user: 144,
-      market_share: 42,
-      tvl_to_revenue_ratio: 40.6,
-      user_growth_30d: -5.2,
-      projected_revenue_eoy: 165000000,
-      revenue_rank: 3,
       price_change_1y: 45.8,
       bull_case: [
         'Largest DEX by volume with proven product-market fit',
@@ -716,316 +680,6 @@ export default function RevenueAnalysis() {
           </div>
         </div>
 
-
-
-        {/* New Enhanced Analytics Section */}
-        <div className="mt-12 space-y-8">
-          {/* Revenue Per User Analysis */}
-          <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Users className="w-6 h-6 text-purple-400" />
-              Revenue Efficiency Analysis
-            </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Revenue Per User Chart */}
-              <div className="h-80">
-                <Bar 
-                  data={{
-                    labels: protocolData.map(p => p.symbol),
-                    datasets: [{
-                      label: 'Revenue Per User (Annual)',
-                      data: protocolData.map(p => p.revenue_per_user || 0),
-                      backgroundColor: protocolData.map((_, i) => {
-                        const colors = [
-                          'rgba(34, 197, 94, 0.8)',
-                          'rgba(59, 130, 246, 0.8)',
-                          'rgba(168, 85, 247, 0.8)',
-                          'rgba(251, 146, 60, 0.8)',
-                          'rgba(99, 102, 241, 0.8)'
-                        ];
-                        return colors[i % colors.length];
-                      }),
-                      borderColor: protocolData.map((_, i) => {
-                        const colors = [
-                          'rgb(34, 197, 94)',
-                          'rgb(59, 130, 246)',
-                          'rgb(168, 85, 247)',
-                          'rgb(251, 146, 60)',
-                          'rgb(99, 102, 241)'
-                        ];
-                        return colors[i % colors.length];
-                      }),
-                      borderWidth: 2
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        titleColor: '#e2e8f0',
-                        bodyColor: '#e2e8f0',
-                        borderColor: '#334155',
-                        borderWidth: 1,
-                        callbacks: {
-                          label: (context) => `$${context.parsed.y.toLocaleString()} per user`
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                        ticks: { 
-                          color: '#94a3b8',
-                          callback: (value) => `$${value.toLocaleString()}`
-                        }
-                      },
-                      x: {
-                        grid: { display: false },
-                        ticks: { color: '#94a3b8' }
-                      }
-                    }
-                  }}
-                />
-              </div>
-              
-              {/* TVL to Revenue Efficiency */}
-              <div className="h-80">
-                <Scatter 
-                  data={{
-                    datasets: [{
-                      label: 'TVL to Revenue Efficiency',
-                      data: protocolData.map(p => ({
-                        x: p.tvl_to_revenue_ratio || 0,
-                        y: p.annualized_revenue / 1000000
-                      })),
-                      backgroundColor: 'rgba(99, 102, 241, 0.6)',
-                      borderColor: 'rgb(99, 102, 241)',
-                      borderWidth: 2,
-                      pointRadius: 8,
-                      pointHoverRadius: 10
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        titleColor: '#e2e8f0',
-                        bodyColor: '#e2e8f0',
-                        borderColor: '#334155',
-                        borderWidth: 1,
-                        callbacks: {
-                          label: (context) => {
-                            const protocol = protocolData[context.dataIndex];
-                            return [
-                              `${protocol.symbol}`,
-                              `TVL/Revenue: ${context.parsed.x.toFixed(1)}x`,
-                              `Annual Revenue: $${context.parsed.y.toFixed(0)}M`
-                            ];
-                          }
-                        }
-                      }
-                    },
-                    scales: {
-                      x: {
-                        title: {
-                          display: true,
-                          text: 'TVL to Revenue Ratio',
-                          color: '#94a3b8'
-                        },
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                        ticks: { 
-                          color: '#94a3b8',
-                          callback: (value) => `${value}x`
-                        }
-                      },
-                      y: {
-                        title: {
-                          display: true,
-                          text: 'Annual Revenue ($M)',
-                          color: '#94a3b8'
-                        },
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                        ticks: { 
-                          color: '#94a3b8',
-                          callback: (value) => `$${value}M`
-                        }
-                      }
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Revenue Projections & Predictive Modeling */}
-          <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <Rocket className="w-6 h-6 text-green-400" />
-              2025 Revenue Projections
-            </h3>
-            <div className="h-80">
-              <Line 
-                data={{
-                  labels: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025'],
-                  datasets: protocolData.slice(0, 3).map((p, i) => ({
-                    label: p.symbol,
-                    data: [
-                      p.annualized_revenue / 4000000,
-                      (p.annualized_revenue * (1 + p.revenue_growth_30d / 100 / 4)) / 4000000,
-                      (p.annualized_revenue * (1 + p.revenue_growth_30d / 100 / 2)) / 4000000,
-                      (p.projected_revenue_eoy || p.annualized_revenue * 1.2) / 4000000
-                    ],
-                    borderColor: ['rgb(34, 197, 94)', 'rgb(59, 130, 246)', 'rgb(168, 85, 247)'][i],
-                    backgroundColor: ['rgba(34, 197, 94, 0.1)', 'rgba(59, 130, 246, 0.1)', 'rgba(168, 85, 247, 0.1)'][i],
-                    borderWidth: 3,
-                    tension: 0.3,
-                    fill: true
-                  }))
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      position: 'top',
-                      labels: {
-                        color: '#e2e8f0',
-                        font: { size: 12 }
-                      }
-                    },
-                    tooltip: {
-                      backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                      titleColor: '#e2e8f0',
-                      bodyColor: '#e2e8f0',
-                      borderColor: '#334155',
-                      borderWidth: 1,
-                      callbacks: {
-                        label: (context) => `${context.dataset.label}: $${(context.parsed.y * 4).toFixed(0)}M quarterly`
-                      }
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                      ticks: { 
-                        color: '#94a3b8',
-                        callback: (value) => `$${value * 4}M`
-                      }
-                    },
-                    x: {
-                      grid: { display: false },
-                      ticks: { color: '#94a3b8' }
-                    }
-                  }
-                }}
-              />
-            </div>
-            <div className="mt-6 grid grid-cols-3 gap-4">
-              {protocolData.slice(0, 3).map(p => (
-                <div key={p.symbol} className="text-center bg-slate-800/50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-400 mb-1">{p.symbol} EOY Target</div>
-                  <div className="text-2xl font-bold text-green-400">
-                    ${((p.projected_revenue_eoy || p.annualized_revenue * 1.2) / 1000000).toFixed(0)}M
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {(((p.projected_revenue_eoy || p.annualized_revenue * 1.2) - p.annualized_revenue) / p.annualized_revenue * 100).toFixed(0)}% growth
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Market Share & Competition Analysis */}
-          <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-              <PieChart className="w-6 h-6 text-cyan-400" />
-              Market Dominance Analysis
-            </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="h-80">
-                <Pie 
-                  data={{
-                    labels: protocolData.map(p => p.symbol),
-                    datasets: [{
-                      data: protocolData.map(p => p.market_share || 10),
-                      backgroundColor: [
-                        'rgba(34, 197, 94, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(168, 85, 247, 0.8)',
-                        'rgba(251, 146, 60, 0.8)',
-                        'rgba(99, 102, 241, 0.8)'
-                      ],
-                      borderColor: [
-                        'rgb(34, 197, 94)',
-                        'rgb(59, 130, 246)',
-                        'rgb(168, 85, 247)',
-                        'rgb(251, 146, 60)',
-                        'rgb(99, 102, 241)'
-                      ],
-                      borderWidth: 2
-                    }]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'right',
-                        labels: {
-                          color: '#e2e8f0',
-                          font: { size: 12 }
-                        }
-                      },
-                      tooltip: {
-                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                        titleColor: '#e2e8f0',
-                        bodyColor: '#e2e8f0',
-                        borderColor: '#334155',
-                        borderWidth: 1,
-                        callbacks: {
-                          label: (context) => `${context.parsed}% market share`
-                        }
-                      }
-                    }
-                  }}
-                />
-              </div>
-              
-              {/* Growth Metrics */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-white mb-4">Growth Metrics</h4>
-                {protocolData.slice(0, 5).map(p => (
-                  <div key={p.symbol} className="bg-slate-800/50 p-4 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-white font-medium">{p.symbol}</span>
-                      <span className={`text-sm ${p.user_growth_30d && p.user_growth_30d > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {p.user_growth_30d ? `${p.user_growth_30d > 0 ? '+' : ''}${p.user_growth_30d.toFixed(1)}%` : 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-400">
-                      <span>{p.active_users ? `${(p.active_users / 1000).toFixed(0)}K users` : 'N/A'}</span>
-                      <span>{p.revenue_per_user ? `$${p.revenue_per_user.toFixed(0)}/user` : 'N/A'}</span>
-                    </div>
-                    <div className="mt-2 bg-slate-700/50 rounded-full h-2 overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000"
-                        style={{ width: `${Math.min(100, (p.user_growth_30d || 0) + 50)}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
 
 
         {/* Analysis Summary */}
