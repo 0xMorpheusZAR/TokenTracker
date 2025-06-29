@@ -266,30 +266,46 @@ export default function FailureAnalysis() {
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
           </div>
           
-          <div className="relative flex flex-wrap items-center justify-between mb-8">
+          <div className="relative mb-8">
             <a 
               href="/" 
-              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1 mb-6"
             >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-medium">Back to Dashboard</span>
             </a>
-            
-            <div className="flex gap-3">
-              <Select value={analysisView} onValueChange={setAnalysisView}>
-                <SelectTrigger className="w-48 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="overview">Failure Reasons</SelectItem>
-                  <SelectItem value="detailed">Economic Analysis</SelectItem>
-                  <SelectItem value="comparative">Model Breakdown</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
           
           <div className="relative text-center space-y-6">
+            {/* View Selector */}
+            <div className="flex justify-center mb-8">
+              <Select value={analysisView} onValueChange={setAnalysisView}>
+                <SelectTrigger className="w-64 bg-slate-800/60 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white font-medium transition-all duration-300">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="overview" className="text-white hover:bg-slate-700">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-orange-400" />
+                      <span>Failure Reasons</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="detailed" className="text-white hover:bg-slate-700">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-red-400" />
+                      <span>Economic Analysis</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="comparative" className="text-white hover:bg-slate-700">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-4 h-4 text-emerald-400" />
+                      <span>Model Breakdown</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
             <div className="inline-flex items-center gap-3 px-6 py-2 bg-gradient-to-r from-red-500/10 to-orange-500/10 backdrop-blur-sm rounded-full border border-red-500/20">
               <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
               <span className="text-red-400 font-semibold uppercase tracking-wider text-sm">Failure Analysis</span>
