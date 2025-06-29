@@ -269,7 +269,7 @@ export default function FailureAnalysis() {
           <div className="relative flex flex-wrap items-center justify-between mb-8">
             <a 
               href="/" 
-              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-white hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 hover:border-slate-600/50 text-slate-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1"
             >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-medium">Back to Dashboard</span>
@@ -313,8 +313,9 @@ export default function FailureAnalysis() {
 
         {/* Executive Summary Cards */}
         <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-orange-500/30 transition-all duration-300">
-            <CardContent className="p-6">
+          <Card className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <CardContent className="relative p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-orange-400">Economic Model</h3>
                 <TrendingDown className="w-5 h-5 text-orange-500" />
@@ -324,8 +325,9 @@ export default function FailureAnalysis() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/30 transition-all duration-300">
-            <CardContent className="p-6">
+          <Card className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <CardContent className="relative p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-red-400">Supply Dynamics</h3>
                 <AlertTriangle className="w-5 h-5 text-red-500" />
@@ -335,8 +337,9 @@ export default function FailureAnalysis() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
-            <CardContent className="p-6">
+          <Card className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-yellow-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-yellow-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <CardContent className="relative p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-yellow-400">Market Psychology</h3>
                 <Users className="w-5 h-5 text-yellow-500" />
@@ -346,8 +349,9 @@ export default function FailureAnalysis() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-            <CardContent className="p-6">
+          <Card className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <CardContent className="relative p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-purple-400">Outcome</h3>
                 <Target className="w-5 h-5 text-purple-500" />
@@ -361,14 +365,15 @@ export default function FailureAnalysis() {
         {analysisView === "overview" && (
           <div className="space-y-12">
             {/* The High FDV Model Explained */}
-            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-              <CardHeader>
+            <Card className="group relative bg-gradient-to-br from-slate-900/90 to-slate-800/60 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/30 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <CardHeader className="relative">
                 <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
                   <AlertTriangle className="w-6 h-6 text-orange-400" />
                   The High FDV/Low Float Model
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="relative space-y-6">
                 <div className="prose prose-invert max-w-none">
                   <p className="text-white text-lg leading-relaxed">
                     The high Fully Diluted Valuation (FDV) with low initial float model has become a dominant tokenomics structure in crypto. 
@@ -409,14 +414,15 @@ export default function FailureAnalysis() {
             </Card>
 
             {/* Core Economic Failures */}
-            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-              <CardHeader>
+            <Card className="group relative bg-gradient-to-br from-slate-900/90 to-slate-800/60 backdrop-blur-xl border border-slate-700/50 hover:border-red-500/30 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <CardHeader className="relative">
                 <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
                   <DollarSign className="w-6 h-6 text-red-400" />
                   Economic Failure Mechanisms
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8">
+              <CardContent className="relative space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-6">
                     <div className="flex items-center gap-3 mb-4">
@@ -520,14 +526,15 @@ export default function FailureAnalysis() {
             </Card>
 
             {/* Behavioral Economics */}
-            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-              <CardHeader>
+            <Card className="group relative bg-gradient-to-br from-slate-900/90 to-slate-800/60 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/30 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <CardHeader className="relative">
                 <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
                   <Users className="w-6 h-6 text-green-400" />
                   Behavioral Exploitation Patterns
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="relative space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div>
                     <h4 className="text-lg font-semibold text-green-400 mb-4">Psychological Mechanisms</h4>
@@ -595,14 +602,15 @@ export default function FailureAnalysis() {
         {analysisView === "comparative" && (
           <div className="space-y-12">
             {/* Model Comparison */}
-            <Card className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-              <CardHeader>
+            <Card className="group relative bg-gradient-to-br from-slate-900/90 to-slate-800/60 backdrop-blur-xl border border-slate-700/50 hover:border-emerald-500/30 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <CardHeader className="relative">
                 <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
                   <Target className="w-6 h-6 text-emerald-400" />
                   Tokenomics Model Comparison
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-slate-800/50">
