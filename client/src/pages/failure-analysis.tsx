@@ -55,14 +55,12 @@ interface TokenFailureData {
 }
 
 export default function FailureAnalysis() {
-  const [selectedToken, setSelectedToken] = useState("all");
+  const [selectedModel, setSelectedModel] = useState("low-float");
   const [analysisView, setAnalysisView] = useState("overview");
+  const [simulationRunning, setSimulationRunning] = useState(false);
+  const [interactiveMode, setInteractiveMode] = useState(false);
 
-  const { data: tokens, isLoading } = useQuery({
-    queryKey: ["/api/tokens"],
-  });
-
-  const { data: analyticsData } = useQuery({
+  const { data: analyticsData, isLoading } = useQuery({
     queryKey: ["/api/analytics/summary"],
   });
 
@@ -243,7 +241,23 @@ export default function FailureAnalysis() {
     }]
   };
 
-  const selectedTokenData = selectedToken === "all" ? null : failureData.find(t => t.symbol === selectedToken);
+  const getModelDescription = (model: string) => {
+    switch (model) {
+      case "low-float":
+        return "Low Float/High FDV model - Tokens with less than 20% initial circulation";
+      case "aggressive-vesting":
+        return "Aggressive vesting schedules with monthly unlocks exceeding 10% of supply";
+      case "team-heavy":
+        return "Team/investor allocation exceeding 50% of total supply";
+      default:
+        return "";
+    }
+  };
+
+  const selectedModelData = selectedModel === "all" ? null : {
+    name: selectedModel,
+    description: getModelDescription(selectedModel)
+  };
 
   if (isLoading) {
     return (
