@@ -87,21 +87,7 @@ export default function Dashboard() {
             Real-time data, predictive modeling, and comprehensive breakdowns.
           </p>
 
-          {/* Creator Attribution */}
-          <div className="flex justify-center mb-8 sm:mb-12">
-            <a 
-              href="https://x.com/0xMorpheusXBT" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:scale-105"
-            >
-              <span className="text-sm sm:text-base text-gray-300 group-hover:text-white">Created by</span>
-              <span className="text-sm sm:text-base font-bold text-white">@0xMorpheusXBT</span>
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:text-blue-300 transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
-          </div>
+
 
           {/* Action Grid - Mobile First */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
@@ -396,9 +382,21 @@ export default function Dashboard() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-black/50 border-t border-gray-800/50">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-400 text-xs sm:text-sm">
+      <footer className="relative z-10 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-black border-t border-gray-800">
+        <div className="max-w-7xl mx-auto text-center space-y-6">
+          <a 
+            href="https://x.com/0xMorpheusXBT" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 font-medium"
+          >
+            <span className="text-lg">Created by</span>
+            <span className="text-xl font-bold">@0xMorpheusXBT</span>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <p className="text-gray-400 text-sm">
             Real-time cryptocurrency failure analytics • Updated every 30 seconds
           </p>
         </div>
