@@ -93,11 +93,11 @@ export default function Dashboard() {
               href="https://x.com/0xMorpheusXBT" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900/50 backdrop-blur-sm rounded-full border border-gray-800/50 hover:border-gray-700/50 transition-all duration-300 hover:transform hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:scale-105"
             >
-              <span className="text-xs sm:text-sm text-gray-500 group-hover:text-gray-400">Created by</span>
-              <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white transition-colors">@0xMorpheusXBT</span>
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 group-hover:text-gray-300 transition-colors" viewBox="0 0 24 24" fill="currentColor">
+              <span className="text-sm sm:text-base text-gray-300 group-hover:text-white">Created by</span>
+              <span className="text-sm sm:text-base font-bold text-white">@0xMorpheusXBT</span>
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 group-hover:text-blue-300 transition-colors" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
               </svg>
             </a>
