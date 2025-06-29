@@ -30,15 +30,6 @@ export default function HyperliquidAnalysis() {
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-medium">Back to Dashboard</span>
             </a>
-            
-            <a 
-              href="/monte-carlo" 
-              className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <Target className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Price Simulations</span>
-            </a>
           </div>
           
           <div className="relative text-center space-y-6">
