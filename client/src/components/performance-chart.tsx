@@ -221,17 +221,17 @@ export default function PerformanceChart() {
 
   return (
     <Card className="bg-dark-card border-dark-border">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Token Performance vs Unlock Events</CardTitle>
-          <div className="flex space-x-2">
+      <CardHeader className="px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <CardTitle className="text-base sm:text-lg">Token Performance vs Unlock Events</CardTitle>
+          <div className="flex space-x-1 sm:space-x-2">
             {["1M", "3M", "1Y", "ALL"].map((period) => (
               <Button
                 key={period}
                 variant={timeframe === period ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setTimeframe(period)}
-                className={timeframe === period ? "bg-warning-orange/20 text-warning-orange" : "text-neutral-gray hover:bg-dark-bg"}
+                className={`text-xs sm:text-sm px-2 sm:px-3 ${timeframe === period ? "bg-warning-orange/20 text-warning-orange" : "text-neutral-gray hover:bg-dark-bg"}`}
               >
                 {period}
               </Button>
@@ -239,8 +239,8 @@ export default function PerformanceChart() {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-80">
+      <CardContent className="px-2 sm:px-6">
+        <div className="h-64 sm:h-80">
           <Line data={chartData} options={options} />
         </div>
       </CardContent>

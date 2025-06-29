@@ -246,86 +246,86 @@ export default function InteractiveDashboard() {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto p-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-            <div className="flex-1 space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-red-400 text-sm font-medium uppercase tracking-wider">Live Analysis</span>
+        <div className="relative max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-8">
+            <div className="flex-1 space-y-2 sm:space-y-4">
+              <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-red-400 text-xs sm:text-sm font-medium uppercase tracking-wider">Live Analysis</span>
               </div>
               
-              <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-4 leading-tight tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-orange-400 to-red-500 mb-2 sm:mb-4 leading-tight tracking-tight">
                 A Comprehensive Breakdown of High FDV Failures
               </h1>
               
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 pt-1 sm:pt-2">
                 <div className="flex items-center gap-2 text-green-400">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">CoinGecko Pro API</span>
+                  <span className="text-xs sm:text-sm font-medium">CoinGecko Pro API</span>
                 </div>
-                <div className="w-1 h-4 bg-slate-600"></div>
-                <div className="text-slate-400 text-sm">
+                <div className="hidden sm:block w-0.5 h-4 bg-slate-600"></div>
+                <div className="text-slate-400 text-xs sm:text-sm">
                   Last updated: {new Date().toLocaleTimeString()}
                 </div>
               </div>
             </div>
             
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
                 <a 
                   href="/revenue-analysis" 
-                  className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center gap-2 overflow-hidden"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <DollarSign className="w-5 h-5 relative z-10" />
+                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                   <span className="relative z-10">Cash Cows</span>
                 </a>
                 
                 <a 
                   href="/hyperliquid" 
-                  className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center gap-2 overflow-hidden"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Rocket className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Success Story</span>
+                  <Rocket className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                  <span className="relative z-10">Success</span>
                 </a>
                 
                 <a 
                   href="/monte-carlo" 
-                  className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center gap-2 overflow-hidden"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <BarChart3 className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Hype Simulation</span>
+                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                  <span className="relative z-10">Simulation</span>
                 </a>
                 
                 <a 
                   href="/failure-analysis" 
-                  className="group relative px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/25 flex items-center gap-2 overflow-hidden"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <TrendingDown className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Failure Analysis</span>
+                  <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                  <span className="relative z-10">Failures</span>
                 </a>
                 
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="group relative px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-2 overflow-hidden disabled:cursor-not-allowed"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden disabled:cursor-not-allowed col-span-2 sm:col-span-1"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <RefreshCw className={`w-5 h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
                   <span className="relative z-10">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </button>
               </div>
               
-              <div className="flex gap-3">
-                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
-                  <label className="text-sm text-slate-400 font-medium">Sort:</label>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
+                  <label className="text-xs sm:text-sm text-slate-400 font-medium">Sort:</label>
                   <select 
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="ml-2 bg-transparent text-white border-none outline-none text-sm font-medium cursor-pointer"
+                    className="ml-1 sm:ml-2 bg-transparent text-white border-none outline-none text-xs sm:text-sm font-medium cursor-pointer"
                   >
                     <option value="performance" className="bg-slate-800">Performance</option>
                     <option value="marketCap" className="bg-slate-800">Market Cap</option>
@@ -333,12 +333,12 @@ export default function InteractiveDashboard() {
                   </select>
                 </div>
                 
-                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
-                  <label className="text-sm text-slate-400 font-medium">Filter:</label>
+                <div className="group relative bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300">
+                  <label className="text-xs sm:text-sm text-slate-400 font-medium">Filter:</label>
                   <select 
                     value={filterBy}
                     onChange={(e) => setFilterBy(e.target.value)}
-                    className="ml-2 bg-transparent text-white border-none outline-none text-sm font-medium cursor-pointer"
+                    className="ml-1 sm:ml-2 bg-transparent text-white border-none outline-none text-xs sm:text-sm font-medium cursor-pointer"
                   >
                     <option value="all" className="bg-slate-800">All Tokens</option>
                     <option value="worst" className="bg-slate-800">Worst Performers</option>
@@ -353,34 +353,34 @@ export default function InteractiveDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-12">
-          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-12">
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
-              <TrendingDown className="w-8 h-8 text-red-500" />
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-red-500" />
             </div>
             <div className="relative z-10">
-              <div className="text-3xl font-black text-red-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-black text-red-400 mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">
                 {(summary as any)?.averageLoss || "-95.2"}%
               </div>
-              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Average Decline</div>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="text-xs sm:text-sm text-slate-400 font-semibold uppercase tracking-wider mb-1 sm:mb-3">Average Decline</div>
+              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="font-medium">Live data</span>
               </div>
             </div>
           </div>
           
-          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border border-slate-700/50 hover:border-red-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-red-500/10 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
-              <Unlock className="w-8 h-8 text-red-500" />
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+              <Unlock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-red-500" />
             </div>
             <div className="relative z-10">
-              <div className="text-3xl font-black text-red-400 mb-2 group-hover:scale-110 transition-transform duration-300">$155B</div>
-              <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Pending Unlocks</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-black text-red-400 mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">$155B</div>
+              <div className="text-xs sm:text-sm text-slate-400 font-semibold uppercase tracking-wider mb-1 sm:mb-3">Pending Unlocks</div>
               <div className="text-xs text-slate-500 font-medium">By 2030</div>
             </div>
           </div>
@@ -439,39 +439,42 @@ export default function InteractiveDashboard() {
         </div>
 
         {/* View Toggle */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-2 sm:gap-4 mb-6 overflow-x-auto pb-2">
           <button 
             onClick={() => setViewMode("grid")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg border transition-all duration-300 whitespace-nowrap text-xs sm:text-sm ${
               viewMode === "grid" 
                 ? "bg-red-600 border-red-500 text-white" 
                 : "bg-gray-800 border-gray-700 text-gray-400 hover:border-red-500"
             }`}
           >
-            <Grid3X3 className="w-4 h-4" />
-            Grid View
+            <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Grid View</span>
+            <span className="inline sm:hidden">Grid</span>
           </button>
           <button 
             onClick={() => setViewMode("table")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg border transition-all duration-300 whitespace-nowrap text-xs sm:text-sm ${
               viewMode === "table" 
                 ? "bg-red-600 border-red-500 text-white" 
                 : "bg-gray-800 border-gray-700 text-gray-400 hover:border-red-500"
             }`}
           >
-            <Table className="w-4 h-4" />
-            Table View
+            <Table className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Table View</span>
+            <span className="inline sm:hidden">Table</span>
           </button>
           <button 
             onClick={() => setViewMode("chart")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg border transition-all duration-300 whitespace-nowrap text-xs sm:text-sm ${
               viewMode === "chart" 
                 ? "bg-red-600 border-red-500 text-white" 
                 : "bg-gray-800 border-gray-700 text-gray-400 hover:border-red-500"
             }`}
           >
-            <BarChart3 className="w-4 h-4" />
-            Chart View
+            <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Chart View</span>
+            <span className="inline sm:hidden">Charts</span>
           </button>
         </div>
 

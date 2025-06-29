@@ -75,6 +75,14 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply dark;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
 
   body {
@@ -82,10 +90,17 @@
     background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #001a00 50%, #000000 75%, #0a0a0a 100%);
     background-attachment: fixed;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
   }
 
-  html {
-    @apply dark;
+  /* Prevent horizontal scroll on mobile */
+  @media (max-width: 640px) {
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
   }
 }
 
