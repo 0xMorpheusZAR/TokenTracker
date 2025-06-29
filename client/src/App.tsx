@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import InteractiveDashboard from "@/pages/interactive-dashboard";
 import HyperliquidAnalysis from "@/pages/hyperliquid-analysis";
-import MonteCarlo from "@/pages/monte-carlo-new";
+import MonteCarlo from "@/pages/monte-carlo";
 import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 
