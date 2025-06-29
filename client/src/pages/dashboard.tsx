@@ -64,17 +64,17 @@ export default function Dashboard() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto text-center w-full">
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-4 py-2 mb-8">
+          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-3 py-1.5 mb-6 sm:mb-8">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-red-400 text-sm font-medium">LIVE MARKET ANALYSIS</span>
+            <span className="text-red-400 text-xs sm:text-sm font-medium">LIVE MARKET ANALYSIS</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black mb-8 leading-none">
-            <span className="block text-white mb-4">CRYPTO</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8 leading-tight">
+            <span className="block text-white mb-2 sm:mb-4">CRYPTO</span>
             <span className="block bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
               FAILURE
             </span>
@@ -82,93 +82,91 @@ export default function Dashboard() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
             Deep analysis of the $58.4B market cap destruction caused by failed tokenomics models. 
             Real-time data, predictive modeling, and comprehensive breakdowns.
           </p>
 
-          {/* Action Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            <a href="/revenue-analysis" className="group">
-              <div className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-blue-500/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:border-blue-400/50">
-                <div className="text-3xl mb-3">💰</div>
-                <h3 className="text-lg font-bold text-blue-300 mb-2">Cash Cows</h3>
-                <p className="text-sm text-gray-400">Revenue-generating protocols</p>
+          {/* Action Grid - Mobile First */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+            <a href="/revenue-analysis" className="group w-full">
+              <div className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-blue-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:scale-105 transition-all duration-300 hover:border-blue-400/50 w-full">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">💰</div>
+                <h3 className="text-base sm:text-lg font-bold text-blue-300 mb-1 sm:mb-2">Cash Cows</h3>
+                <p className="text-xs sm:text-sm text-gray-400">Revenue-generating protocols</p>
               </div>
             </a>
             
-            <a href="/hyperliquid" className="group">
-              <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 border border-green-500/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:border-green-400/50">
-                <div className="text-3xl mb-3">🎯</div>
-                <h3 className="text-lg font-bold text-green-300 mb-2">Success Story</h3>
-                <p className="text-sm text-gray-400">Hyperliquid case study</p>
+            <a href="/hyperliquid" className="group w-full">
+              <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 border border-green-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:scale-105 transition-all duration-300 hover:border-green-400/50 w-full">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">🎯</div>
+                <h3 className="text-base sm:text-lg font-bold text-green-300 mb-1 sm:mb-2">Success Story</h3>
+                <p className="text-xs sm:text-sm text-gray-400">Hyperliquid case study</p>
               </div>
             </a>
             
-            <a href="/monte-carlo" className="group">
-              <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:border-purple-400/50">
-                <div className="text-3xl mb-3">📊</div>
-                <h3 className="text-lg font-bold text-purple-300 mb-2">Simulations</h3>
-                <p className="text-sm text-gray-400">Monte Carlo modeling</p>
+            <a href="/monte-carlo" className="group w-full">
+              <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-purple-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:scale-105 transition-all duration-300 hover:border-purple-400/50 w-full">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">📊</div>
+                <h3 className="text-base sm:text-lg font-bold text-purple-300 mb-1 sm:mb-2">Simulations</h3>
+                <p className="text-xs sm:text-sm text-gray-400">Monte Carlo modeling</p>
               </div>
             </a>
             
-            <a href="/failure-analysis" className="group">
-              <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 border border-red-500/30 rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:border-red-400/50">
-                <div className="text-3xl mb-3">⚠️</div>
-                <h3 className="text-lg font-bold text-red-300 mb-2">Failures</h3>
-                <p className="text-sm text-gray-400">Economic breakdowns</p>
+            <a href="/failure-analysis" className="group w-full">
+              <div className="bg-gradient-to-br from-red-600/20 to-red-800/20 border border-red-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:scale-105 transition-all duration-300 hover:border-red-400/50 w-full">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">⚠️</div>
+                <h3 className="text-base sm:text-lg font-bold text-red-300 mb-1 sm:mb-2">Failures</h3>
+                <p className="text-xs sm:text-sm text-gray-400">Economic breakdowns</p>
               </div>
             </a>
           </div>
 
-          {/* API Status */}
-          <div className="flex items-center justify-center gap-4 text-sm text-gray-400 mb-8">
+          {/* API Status - Mobile Responsive */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-8">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span>CoinGecko Pro API</span>
             </div>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Last updated: {new Date().toLocaleTimeString()}</span>
           </div>
 
           {/* Scroll Indicator */}
           <button 
             onClick={scrollToOverview}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors group touch-manipulation"
           >
-            <span className="text-sm">Explore Data</span>
-            <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+            <span className="text-xs sm:text-sm">Explore Data</span>
+            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-y-1 transition-transform" />
           </button>
         </div>
       </section>
 
       {/* Market Overview Section */}
-      <section id="overview" className="relative z-10 py-24 px-4 lg:px-8 bg-gradient-to-b from-transparent to-gray-950/50">
+      <section id="overview" className="relative z-10 py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-gray-950/50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6">
               <span className="text-white">Market </span>
               <span className="bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">Overview</span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4">
               Real-time analysis of failed tokenomics and market destruction
             </p>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {/* Stats Grid - Mobile First */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12 lg:mb-16">
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-400">Total Tokens</div>
-                      <div className="text-2xl font-bold text-white">{summary?.totalTokens || 10}</div>
-                    </div>
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                    <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-400">Total Tokens</div>
+                    <div className="text-xl sm:text-2xl font-bold text-white">{summary?.totalTokens || 10}</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">Tracked failures</div>
@@ -176,16 +174,14 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                      <AlertTriangle className="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-400">Failure Rate</div>
-                      <div className="text-2xl font-bold text-red-400">{summary?.failureRate || '95.2%'}</div>
-                    </div>
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-400">Failure Rate</div>
+                    <div className="text-xl sm:text-2xl font-bold text-red-400">{summary?.failureRate || '95.2%'}</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">Average decline from ATH</div>
@@ -193,16 +189,14 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                      <DollarSign className="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-400">Market Cap Lost</div>
-                      <div className="text-2xl font-bold text-red-400">{summary?.totalMarketCapLost || '$58.4B'}</div>
-                    </div>
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-400">Market Cap Lost</div>
+                    <div className="text-xl sm:text-2xl font-bold text-red-400">{summary?.totalMarketCapLost || '$58.4B'}</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">Total destruction</div>
@@ -210,16 +204,14 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-400">Avg Initial Float</div>
-                      <div className="text-2xl font-bold text-red-400">{summary?.averageInitialFloat || '13.2%'}</div>
-                    </div>
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                    <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-400">Avg Initial Float</div>
+                    <div className="text-xl sm:text-2xl font-bold text-red-400">{summary?.averageInitialFloat || '13.2%'}</div>
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">Extremely low</div>
@@ -227,67 +219,82 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Data Visualization Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {/* Data Visualization Grid - Mobile Stack */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
             {/* Performance Chart */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 order-2 lg:order-1">
               <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="text-white flex items-center gap-2 text-base sm:text-lg">
+                    <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
                     Performance Analysis
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   <PerformanceChart />
                 </CardContent>
               </Card>
             </div>
 
             {/* Top Failures */}
-            <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <TrendingDown className="w-5 h-5" />
+            <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm order-1 lg:order-2">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-white flex items-center gap-2 text-base sm:text-lg">
+                  <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" />
                   Worst Performers
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {topFailures?.slice(0, 5).map((token: any) => (
-                    <div key={token.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold">
-                          {token.symbol.charAt(0)}
+              <CardContent className="pt-0">
+                <div className="space-y-3 sm:space-y-4">
+                  {topFailures?.slice?.(0, 5).map((token: any) => (
+                    <div key={token.id} className="flex items-center justify-between p-2 sm:p-3 bg-gray-800/50 rounded-lg">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold">
+                          {token.symbol?.charAt(0) || 'T'}
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-white">{token.symbol}</div>
-                          <div className="text-xs text-gray-400">{token.name}</div>
+                          <div className="text-xs sm:text-sm font-medium text-white">{token.symbol || 'TOKEN'}</div>
+                          <div className="text-xs text-gray-400">{token.name || 'Token Name'}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm font-bold text-red-400">
+                        <div className="text-xs sm:text-sm font-bold text-red-400">
                           {token.priceChange30d ? `${token.priceChange30d.toFixed(1)}%` : '-93.7%'}
                         </div>
                         <div className="text-xs text-gray-400">30d</div>
                       </div>
                     </div>
-                  ))}
+                  )) || [
+                    // Fallback data when API is loading
+                    <div key="1" className="flex items-center justify-between p-2 sm:p-3 bg-gray-800/50 rounded-lg">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold">P</div>
+                        <div>
+                          <div className="text-xs sm:text-sm font-medium text-white">PORTAL</div>
+                          <div className="text-xs text-gray-400">Portal Token</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs sm:text-sm font-bold text-red-400">-96.3%</div>
+                        <div className="text-xs text-gray-400">30d</div>
+                      </div>
+                    </div>
+                  ]}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Risk Indicators */}
-          <div className="mb-16">
+          {/* Risk Indicators - Mobile Responsive */}
+          <div className="mb-8 sm:mb-12 lg:mb-16">
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-white flex items-center gap-2 text-base sm:text-lg">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
                   Risk Assessment
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <RiskIndicators />
               </CardContent>
             </Card>
@@ -296,29 +303,29 @@ export default function Dashboard() {
       </section>
 
       {/* API Status Section */}
-      <section className="relative z-10 py-16 px-4 lg:px-8 bg-gray-950/80">
+      <section className="relative z-10 py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gray-950/80">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">Data Sources</h2>
-            <p className="text-gray-400">Real-time data integration status</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">Data Sources</h2>
+            <p className="text-sm sm:text-base text-gray-400">Real-time data integration status</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <Database className="w-5 h-5 text-green-400" />
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <Database className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                   </div>
                   <div>
-                    <div className="font-semibold text-white">CoinGecko Pro</div>
-                    <div className="text-sm text-gray-400">Market Data API</div>
+                    <div className="text-sm sm:text-base font-semibold text-white">CoinGecko Pro</div>
+                    <div className="text-xs sm:text-sm text-gray-400">Market Data API</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <Badge 
                     variant={coinGeckoStatus?.connected ? "default" : "destructive"} 
-                    className={coinGeckoStatus?.connected ? "bg-green-500/20 text-green-400" : ""}
+                    className={`text-xs ${coinGeckoStatus?.connected ? "bg-green-500/20 text-green-400" : ""}`}
                   >
                     {coinGeckoStatus?.connected ? 'Connected' : 'Offline'}
                   </Badge>
@@ -330,18 +337,18 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-blue-400" />
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   </div>
                   <div>
-                    <div className="font-semibold text-white">Dune Analytics</div>
-                    <div className="text-sm text-gray-400">On-chain Data</div>
+                    <div className="text-sm sm:text-base font-semibold text-white">Dune Analytics</div>
+                    <div className="text-xs sm:text-sm text-gray-400">On-chain Data</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Badge variant="default" className="bg-blue-500/20 text-blue-400">
+                  <Badge variant="default" className="bg-blue-500/20 text-blue-400 text-xs">
                     Connected
                   </Badge>
                   <div className="text-xs text-gray-400">Analytics</div>
@@ -350,18 +357,18 @@ export default function Dashboard() {
             </Card>
 
             <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                    <Cpu className="w-5 h-5 text-purple-400" />
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
                   </div>
                   <div>
-                    <div className="font-semibold text-white">Monte Carlo</div>
-                    <div className="text-sm text-gray-400">Simulation Engine</div>
+                    <div className="text-sm sm:text-base font-semibold text-white">Monte Carlo</div>
+                    <div className="text-xs sm:text-sm text-gray-400">Simulation Engine</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Badge variant="default" className="bg-purple-500/20 text-purple-400">
+                  <Badge variant="default" className="bg-purple-500/20 text-purple-400 text-xs">
                     Active
                   </Badge>
                   <div className="text-xs text-gray-400">GBM Model</div>
@@ -373,9 +380,9 @@ export default function Dashboard() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-8 px-4 lg:px-8 bg-black/50 border-t border-gray-800/50">
+      <footer className="relative z-10 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-black/50 border-t border-gray-800/50">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm">
             Real-time cryptocurrency failure analytics • Updated every 30 seconds
           </p>
         </div>
