@@ -427,16 +427,6 @@ export default function RevenueAnalysis() {
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
               <span className="font-medium">Back to Dashboard</span>
             </a>
-            
-            <div className="flex gap-3">
-              <a 
-                href="/failure-analysis" 
-                className="group relative px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/25 flex items-center gap-2"
-              >
-                <AlertTriangle className="w-5 h-5" />
-                <span>Failure Analysis</span>
-              </a>
-            </div>
           </div>
           
           <div className="relative text-center space-y-6">
