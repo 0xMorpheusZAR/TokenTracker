@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle } from "lucide-react";
+import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -531,6 +531,10 @@ export default function RevenueAnalysis() {
               <div className="text-3xl font-black text-green-400 mb-2">$1.67B</div>
               <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Total Revenue</div>
               <div className="text-xs text-green-400 font-medium">Combined annualized</div>
+              <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <ArrowUpRight className="w-3 h-3 text-green-500" />
+                +42.3% QoQ
+              </div>
             </div>
           </div>
 
@@ -543,6 +547,10 @@ export default function RevenueAnalysis() {
               <div className="text-3xl font-black text-blue-400 mb-2">28.5x</div>
               <div className="text-sm text-slate-400 font-semibold uppercase tracking-wider mb-3">Avg P/E Ratio</div>
               <div className="text-xs text-blue-400 font-medium">Revenue multiple</div>
+              <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <ArrowDownRight className="w-3 h-3 text-yellow-500" />
+                vs 45x S&P Tech
+              </div>
             </div>
           </div>
 

@@ -129,6 +129,9 @@ Changelog:
 - June 27, 2025: Fixed front page scrolling to natural website behavior with proper sections and smooth navigation
 - June 27, 2025: Renamed "Simulations" button to "Hype Simulation" and updated all navigation elements with cypherpunk styling
 - June 27, 2025: Completely removed cypherpunk theme from failure analysis page and updated to match revenue analysis styling with consistent gradient backgrounds, improved card designs, and clean modern UI matching the rest of the application
+- June 27, 2025: Added creator attribution (@0xMorpheusXBT) with prominent Twitter/X link in dashboard header and footer
+- June 27, 2025: Enhanced failure analysis page with improved dropdown placement and visual hierarchy
+- June 27, 2025: Transformed entire site with world-class crypto analyst features including professional market status indicators, advanced risk metrics, Fear & Greed Index, Unlock Pressure indicators, Liquidity Risk analysis, enhanced metric cards with real-time data, professional token risk analysis dashboard, and institutional-grade comparative metrics across all pages
 ```
 
 ## User Preferences
