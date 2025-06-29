@@ -1,6 +1,45 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp } from "drizzle-orm/pg-core";
+import { 
+  pgTable, 
+  text, 
+  serial, 
+  integer, 
+  boolean, 
+  decimal, 
+  timestamp,
+  varchar,
+  jsonb,
+  index,
+  bigint,
+  real
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Session storage table for Replit Auth
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// User storage table for Replit Auth and subscriptions
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().notNull(),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  stripeCustomerId: varchar("stripe_customer_id").unique(),
+  stripeSubscriptionId: varchar("stripe_subscription_id").unique(),
+  subscriptionStatus: varchar("subscription_status", { length: 50 }),
+  subscriptionTier: varchar("subscription_tier", { length: 50 }).default("free"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 export const tokens = pgTable("tokens", {
   id: serial("id").primaryKey(),
@@ -53,6 +92,8 @@ export const insertPriceHistorySchema = createInsertSchema(priceHistory).omit({
   id: true,
 });
 
+export type UpsertUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
 export type Token = typeof tokens.$inferSelect;
 export type InsertToken = z.infer<typeof insertTokenSchema>;
 export type UnlockEvent = typeof unlockEvents.$inferSelect;

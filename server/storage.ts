@@ -2,15 +2,24 @@ import {
   tokens, 
   unlockEvents, 
   priceHistory,
+  users,
   type Token, 
   type InsertToken,
   type UnlockEvent,
   type InsertUnlockEvent,
   type PriceHistory,
-  type InsertPriceHistory
+  type InsertPriceHistory,
+  type User,
+  type UpsertUser
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, sql, and, gte } from "drizzle-orm";
 
 export interface IStorage {
+  // User operations (for Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  
   // Token operations
   getAllTokens(): Promise<Token[]>;
   getTokenById(id: number): Promise<Token | undefined>;
@@ -34,6 +43,7 @@ export class MemStorage implements IStorage {
   private tokens: Map<number, Token>;
   private unlockEvents: Map<number, UnlockEvent>;
   private priceHistory: Map<number, PriceHistory>;
+  private users: Map<string, User>;
   private currentTokenId: number;
   private currentUnlockEventId: number;
   private currentPriceHistoryId: number;
@@ -42,11 +52,35 @@ export class MemStorage implements IStorage {
     this.tokens = new Map();
     this.unlockEvents = new Map();
     this.priceHistory = new Map();
+    this.users = new Map();
     this.currentTokenId = 1;
     this.currentUnlockEventId = 1;
     this.currentPriceHistoryId = 1;
     
     this.initializeData();
+  }
+
+  // User operations
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const user: User = {
+      id: userData.id,
+      email: userData.email !== undefined ? userData.email : null,
+      firstName: userData.firstName !== undefined ? userData.firstName : null,
+      lastName: userData.lastName !== undefined ? userData.lastName : null,
+      profileImageUrl: userData.profileImageUrl !== undefined ? userData.profileImageUrl : null,
+      stripeCustomerId: userData.stripeCustomerId !== undefined ? userData.stripeCustomerId : null,
+      stripeSubscriptionId: userData.stripeSubscriptionId !== undefined ? userData.stripeSubscriptionId : null,
+      subscriptionStatus: userData.subscriptionStatus !== undefined ? userData.subscriptionStatus : null,
+      subscriptionTier: userData.subscriptionTier !== undefined ? userData.subscriptionTier : null,
+      createdAt: userData.createdAt !== undefined ? userData.createdAt : null,
+      updatedAt: userData.updatedAt !== undefined ? userData.updatedAt : null,
+    };
+    this.users.set(user.id, user);
+    return user;
   }
 
   private initializeData() {
@@ -305,4 +339,109 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // Token operations
+  async getAllTokens(): Promise<Token[]> {
+    return await db.select().from(tokens);
+  }
+
+  async getTokenById(id: number): Promise<Token | undefined> {
+    const [token] = await db.select().from(tokens).where(eq(tokens.id, id));
+    return token;
+  }
+
+  async getTokenBySymbol(symbol: string): Promise<Token | undefined> {
+    const [token] = await db.select().from(tokens).where(eq(tokens.symbol, symbol));
+    return token;
+  }
+
+  async createToken(insertToken: InsertToken): Promise<Token> {
+    const [token] = await db.insert(tokens).values(insertToken).returning();
+    return token;
+  }
+
+  // Unlock event operations
+  async getUnlockEventsByTokenId(tokenId: number): Promise<UnlockEvent[]> {
+    return await db.select().from(unlockEvents).where(eq(unlockEvents.tokenId, tokenId));
+  }
+
+  async createUnlockEvent(insertEvent: InsertUnlockEvent): Promise<UnlockEvent> {
+    const [event] = await db.insert(unlockEvents).values(insertEvent).returning();
+    return event;
+  }
+
+  // Price history operations
+  async getPriceHistoryByTokenId(tokenId: number): Promise<PriceHistory[]> {
+    return await db.select().from(priceHistory).where(eq(priceHistory.tokenId, tokenId));
+  }
+
+  async createPriceHistory(insertHistory: InsertPriceHistory): Promise<PriceHistory> {
+    const [history] = await db.insert(priceHistory).values(insertHistory).returning();
+    return history;
+  }
+
+  // Analytics
+  async getTopFailures(): Promise<Token[]> {
+    return await db
+      .select()
+      .from(tokens)
+      .orderBy(sql`CAST(${tokens.performancePercent} AS REAL) ASC`)
+      .limit(5);
+  }
+
+  async getUpcomingUnlocks(): Promise<(UnlockEvent & { token: Token })[]> {
+    const results = await db
+      .select({
+        id: unlockEvents.id,
+        tokenId: unlockEvents.tokenId,
+        unlockDate: unlockEvents.unlockDate,
+        tokensUnlocked: unlockEvents.tokensUnlocked,
+        percentOfSupply: unlockEvents.percentOfSupply,
+        priceImpact: unlockEvents.priceImpact,
+        description: unlockEvents.description,
+        token: tokens,
+      })
+      .from(unlockEvents)
+      .innerJoin(tokens, eq(unlockEvents.tokenId, tokens.id))
+      .where(gte(unlockEvents.unlockDate, sql`NOW()`))
+      .orderBy(unlockEvents.unlockDate);
+
+    return results.map(result => ({
+      id: result.id,
+      tokenId: result.tokenId,
+      unlockDate: result.unlockDate,
+      tokensUnlocked: result.tokensUnlocked,
+      percentOfSupply: result.percentOfSupply,
+      priceImpact: result.priceImpact,
+      description: result.description,
+      token: result.token,
+    }));
+  }
+}
+
+// Use DatabaseStorage for production, MemStorage for development
+export const storage = process.env.NODE_ENV === 'production' 
+  ? new DatabaseStorage() 
+  : new MemStorage();
