@@ -649,11 +649,9 @@ export default function InterestingProjects() {
       <header className="relative z-20 border-b border-slate-800/50 backdrop-blur-sm bg-slate-950/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                <ArrowLeft className="w-5 h-5" />
-                <span className="font-medium">Back to Dashboard</span>
-              </a>
+            <Link href="/" className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">Back to Dashboard</span>
             </Link>
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 ${currentProject.color.bgAccent} rounded-full animate-pulse`}></div>
