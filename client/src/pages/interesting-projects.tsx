@@ -143,9 +143,9 @@ export default function InterestingProjects() {
   if (selectedProject === 'estatex' && estatexLiveData) {
     projects.estatex.metrics = [
       { label: "Current Price", value: `$${estatexLiveData.currentPrice?.toFixed(6) || '0.00'}` },
-      { label: "Circulating Market Cap", value: formatNumber(estatexLiveData.marketCap || 0) },
       { label: "Fully Diluted Valuation", value: formatNumber(estatexLiveData.fullyDilutedValuation || 0) },
-      { label: "24h Change", value: `${estatexLiveData.priceChange24h?.toFixed(2) || '0'}%` }
+      { label: "24h Change", value: `${estatexLiveData.priceChange24h?.toFixed(2) || '0'}%` },
+      { label: "Since TGE", value: `${estatexLiveData.tgeData?.percentageFromTGE >= 0 ? '+' : ''}${estatexLiveData.tgeData?.percentageFromTGE?.toFixed(0) || '0'}%` }
     ];
   }
 
