@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
+import SiteFooter from "@/components/site-footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -775,6 +776,7 @@ export default function FailureAnalysis() {
           </div>
         )}
       </div>
+      <SiteFooter />
     </div>
   );
 }

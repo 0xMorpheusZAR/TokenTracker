@@ -26,6 +26,7 @@ import {
 import PerformanceChart from '@/components/performance-chart';
 import RiskIndicators from '@/components/risk-indicators';
 import UnlockCalendar from '@/components/unlock-calendar';
+import SiteFooter from '@/components/site-footer';
 
 export default function Dashboard() {
   const [scrollY, setScrollY] = useState(0);
@@ -496,6 +497,7 @@ export default function Dashboard() {
           </p>
         </div>
       </footer>
+      <SiteFooter />
     </div>
   );
 }

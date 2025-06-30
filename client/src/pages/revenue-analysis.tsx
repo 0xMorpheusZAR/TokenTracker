@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Users, Zap, Target, BarChart3, PieChart, Activity, AlertTriangle, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Line, Bar, Pie } from "react-chartjs-2";
+import SiteFooter from "@/components/site-footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -735,6 +736,7 @@ export default function RevenueAnalysis() {
         {/* Monte Carlo section removed per user request */}
         
       </div>
+      <SiteFooter />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { ArrowLeft, Video, Database, Cpu, Shield, Users, TrendingUp, Globe, Zap,
 import { Link } from "wouter";
 import { Line, Bar } from "react-chartjs-2";
 import { useQuery } from "@tanstack/react-query";
+import SiteFooter from "@/components/site-footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -842,6 +843,7 @@ export default function InterestingProjects() {
           </div>
         </div>
       </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Trophy, Rocket, Zap, CheckCircle2, ExternalLink, Users, Star, Award, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import SiteFooter from "@/components/site-footer";
 
 export default function BlofinCompetition() {
   const [activeTab, setActiveTab] = useState<'overview' | 'about' | 'rules'>('overview');
@@ -452,6 +453,7 @@ export default function BlofinCompetition() {
           </div>
         </div>
       </footer>
+      <SiteFooter />
     </div>
   );
 }

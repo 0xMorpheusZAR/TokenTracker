@@ -62,7 +62,7 @@ export async function setupAuth(app: Express) {
       }
 
       // Check Whop membership
-      const hasWhopAccess = await checkWhopMembership(profile.id);
+      const hasWhopAccess = await checkWhopMembership(profile.id, profile.username, profile.discriminator);
       
       if (!hasWhopAccess) {
         return done(null, false, { message: 'You must be a member of Miles High Club Discord to access this platform.' });
@@ -118,10 +118,21 @@ export const isAuthenticated: RequestHandler = (req, res, next) => {
   res.status(401).json({ message: 'Unauthorized - Please login through Miles High Club Discord' });
 };
 
+// Whitelist of authorized Discord handles for testing
+const AUTHORIZED_DISCORD_HANDLES: string[] = [
+  "boughtsol200"
+];
+
 // Check Whop membership (placeholder - needs actual implementation)
-async function checkWhopMembership(discordId: string): Promise<boolean> {
+async function checkWhopMembership(discordId: string, username: string, discriminator?: string): Promise<boolean> {
+  // For testing: Check whitelist first
+  const handle = discriminator ? `${username}#${discriminator}` : username;
+  if (AUTHORIZED_DISCORD_HANDLES.includes(handle)) {
+    return true;
+  }
+
   // TODO: Implement actual Whop API check
-  // For now, this is a placeholder that always returns true
   // In production, this should verify the user's Discord ID against Whop's API
-  return true;
+  // For now, return false to enforce whitelist
+  return false;
 }
