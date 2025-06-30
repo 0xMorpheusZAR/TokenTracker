@@ -1,7 +1,18 @@
 import { useState } from "react";
-import { ArrowLeft, Video, Database, Cpu, Shield, Users, TrendingUp, Globe, Zap, Award, CheckCircle2, ExternalLink } from "lucide-react";
-import { Link } from "wouter";
+import { 
+  ArrowLeft, Video, Database, Cpu, Shield, Users, TrendingUp, Globe, Zap, Award, CheckCircle2, ExternalLink,
+  ChevronDown, Home, Wallet, CreditCard, Building, Blocks, FileCode2, Network, Scale, Coins, Building2
+} from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { Line, Bar } from "react-chartjs-2";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { projectsData, type ProjectData } from '@/lib/interesting-projects-data';
+import { useQuery } from '@tanstack/react-query';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,8 +38,33 @@ ChartJS.register(
   Filler
 );
 
+const iconMap: Record<string, any> = {
+  Network, Shield, Video, Scale, Cpu, Coins, Building2, Users,
+  Blocks, Home, FileCode2, TrendingUp, Wallet, CreditCard, Building
+};
+
 export default function RainmakerAnalysis() {
   const [activeTab, setActiveTab] = useState<'overview' | 'technology' | 'tokenomics'>('overview');
+  const [selectedProject, setSelectedProject] = useState<string>('raiinmaker');
+  const [, navigate] = useLocation();
+  
+  const project = projectsData[selectedProject];
+  
+  // Query for live token price if project has a symbol
+  const { data: tokenData } = useQuery({
+    queryKey: ['/api/coingecko/price', project.symbol],
+    queryFn: async () => {
+      if (project.symbol === 'ESX') {
+        const response = await fetch(`/api/coingecko/detailed?symbols=estatex`);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data?.[0];
+      }
+      return null;
+    },
+    enabled: project.symbol === 'ESX',
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
 
   // Mock data for AI video market size
   const marketData = {
@@ -117,6 +153,26 @@ export default function RainmakerAnalysis() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* Project Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg transition-colors border border-purple-500/20">
+                  <span className="text-white font-medium">{project.name}</span>
+                  <ChevronDown className="w-4 h-4 text-purple-400" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-slate-900 border-slate-700">
+                  {Object.entries(projectsData).map(([key, proj]) => (
+                    <DropdownMenuItem
+                      key={key}
+                      onClick={() => setSelectedProject(key)}
+                      className="flex items-center justify-between cursor-pointer hover:bg-slate-800"
+                    >
+                      <span className="text-white">{proj.name}</span>
+                      <span className="text-xs text-purple-400 ml-2">{proj.symbol}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <span className="text-xs text-slate-500">Last updated: {new Date().toLocaleTimeString()}</span>
             </div>
           </div>
@@ -136,18 +192,28 @@ export default function RainmakerAnalysis() {
             </div>
             
             <h1 className="text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 mb-4 leading-tight tracking-tight">
-              Raiinmaker: The Cinematic AI Revolution
+              {project.name}: {project.tagline}
             </h1>
             
             <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4">
-              Solving the <span className="text-purple-400 font-semibold">Hollywood-quality data gap</span> in AI video generation through decentralized crowdsourcing and ethical infrastructure
+              {project.description}
             </p>
             
-            {/* TGE Event Banner */}
+            {/* TGE Event Banner / Token Price */}
             <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 mb-6 border border-purple-500/30 max-w-2xl mx-auto">
               <div className="flex items-center justify-center gap-4">
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
-                <span className="text-white font-semibold">Token Generation Event: TBA</span>
+                {tokenData && project.symbol === 'ESX' ? (
+                  <div className="flex items-center gap-6">
+                    <span className="text-white font-semibold">${project.symbol} Price: ${tokenData.current_price?.toFixed(4)}</span>
+                    <span className={`text-sm font-medium ${tokenData.price_change_percentage_24h > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {tokenData.price_change_percentage_24h > 0 ? '+' : ''}{tokenData.price_change_percentage_24h?.toFixed(2)}%
+                    </span>
+                    <span className="text-sm text-slate-400">MCap: ${(tokenData.market_cap / 1e6).toFixed(1)}M</span>
+                  </div>
+                ) : (
+                  <span className="text-white font-semibold">{project.tgeStatus}</span>
+                )}
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
               </div>
             </div>
@@ -155,7 +221,7 @@ export default function RainmakerAnalysis() {
             {/* Official Links */}
             <div className="flex justify-center gap-4 mb-8">
               <a 
-                href="https://www.raiinmaker.com/" 
+                href={project.website} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg font-medium hover:bg-purple-600/30 transition-colors flex items-center gap-2 border border-purple-500/30"
@@ -164,33 +230,33 @@ export default function RainmakerAnalysis() {
                 Official Website
               </a>
               <a 
-                href="https://x.com/raiinmakerapp" 
+                href={project.twitter} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg font-medium hover:bg-purple-600/30 transition-colors flex items-center gap-2 border border-purple-500/30"
               >
                 <Users className="w-4 h-4" />
-                @raiinmakerapp
+                Twitter/X
               </a>
             </div>
 
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
               <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20">
-                <div className="text-2xl font-bold text-purple-400">$231.5B</div>
-                <div className="text-xs text-slate-400">2030 Market Size</div>
+                <div className="text-2xl font-bold text-purple-400">{project.keyMetric1.value}</div>
+                <div className="text-xs text-slate-400">{project.keyMetric1.label}</div>
               </div>
               <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20">
-                <div className="text-2xl font-bold text-purple-400">95/100</div>
-                <div className="text-xs text-slate-400">Data Quality Score</div>
+                <div className="text-2xl font-bold text-purple-400">{project.keyMetric2.value}</div>
+                <div className="text-xs text-slate-400">{project.keyMetric2.label}</div>
               </div>
               <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20">
-                <div className="text-2xl font-bold text-purple-400">TRAIIN</div>
-                <div className="text-xs text-slate-400">Video Platform</div>
+                <div className="text-2xl font-bold text-purple-400">{project.keyMetric3.value}</div>
+                <div className="text-xs text-slate-400">{project.keyMetric3.label}</div>
               </div>
               <div className="bg-slate-900/50 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20">
-                <div className="text-2xl font-bold text-purple-400">Aethir</div>
-                <div className="text-xs text-slate-400">GPU Partner</div>
+                <div className="text-2xl font-bold text-purple-400">{project.keyMetric4.value}</div>
+                <div className="text-xs text-slate-400">{project.keyMetric4.label}</div>
               </div>
             </div>
           </div>
