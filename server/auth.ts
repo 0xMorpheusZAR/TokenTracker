@@ -48,7 +48,7 @@ export async function setupAuth(app: Express) {
   console.log('- Callback URL:', callbackURL);
 
   // Discord OAuth Strategy
-  passport.use(new DiscordStrategy({
+  const strategy = new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID || 'your-discord-client-id',
     clientSecret: process.env.DISCORD_CLIENT_SECRET || 'your-discord-client-secret',
     callbackURL: callbackURL,
@@ -82,7 +82,9 @@ export async function setupAuth(app: Express) {
     } catch (error) {
       return done(error);
     }
-  }));
+  });
+  
+  passport.use(strategy);
 
   passport.serializeUser((user: any, done) => {
     done(null, user.id);
