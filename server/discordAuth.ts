@@ -6,9 +6,13 @@ const router = Router();
 // Generate OAuth URL manually
 export function generateDiscordOAuthURL(host: string) {
   const clientId = process.env.DISCORD_CLIENT_ID;
-  const redirectUri = `https://${host}/api/auth/discord/callback`;
+  // Use the Replit domain directly to ensure consistency
+  const replitDomain = process.env.REPLIT_DOMAINS?.split(',')[0] || host;
+  const redirectUri = `https://${replitDomain}/api/auth/discord/callback`;
   const scope = 'identify email guilds';
   const state = crypto.randomBytes(16).toString('hex');
+  
+  console.log('Generating Discord OAuth URL with redirect URI:', redirectUri);
   
   const params = new URLSearchParams({
     client_id: clientId!,
@@ -54,8 +58,10 @@ router.get('/auth/discord/callback', async (req, res) => {
   
   try {
     // Exchange code for tokens
-    const host = req.get('host') || '';
-    const redirectUri = `https://${host}/api/auth/discord/callback`;
+    const replitDomain = process.env.REPLIT_DOMAINS?.split(',')[0] || req.get('host') || '';
+    const redirectUri = `https://${replitDomain}/api/auth/discord/callback`;
+    
+    console.log('Discord callback - using redirect URI:', redirectUri);
     
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
@@ -109,6 +115,18 @@ router.get('/auth/discord/callback', async (req, res) => {
     console.error('Discord auth error:', error);
     res.redirect('/login?error=auth_failed');
   }
+});
+
+// Temporary test login route - REMOVE IN PRODUCTION
+router.post('/auth/test-login', (req, res) => {
+  req.session!.user = {
+    id: '1230786606722711622',
+    username: 'boughtsol200.',
+    discriminator: '',
+    avatar: null,
+    email: 'test@example.com'
+  };
+  res.json({ success: true });
 });
 
 export default router;
