@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import { cryptoRankService } from "./services/cryptorank";
 import { coinGeckoService } from "./services/coingecko";
 import { duneService } from "./services/dune";
+import { whopService } from "./services/whop";
+import { discordService } from "./services/discord";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -491,6 +493,167 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Failed to fetch Dune query:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Discord Authentication Routes
+  app.get("/api/auth/discord", async (req, res) => {
+    try {
+      // Generate CSRF state token
+      const state = Math.random().toString(36).substring(7);
+      
+      // Store state in session for verification
+      req.session.discordState = state;
+      
+      // Get Discord OAuth URL
+      const authUrl = discordService.getAuthorizationUrl(state);
+      
+      res.json({ authUrl });
+    } catch (error) {
+      console.error("Failed to generate Discord auth URL:", error);
+      res.status(500).json({ error: "Failed to generate authentication URL" });
+    }
+  });
+
+  app.get("/api/auth/discord/callback", async (req, res) => {
+    try {
+      const { code, state } = req.query;
+      
+      // Verify state for CSRF protection
+      if (!state || state !== req.session.discordState) {
+        return res.status(400).json({ error: "Invalid state parameter" });
+      }
+      
+      // Clear state from session
+      delete req.session.discordState;
+      
+      if (!code) {
+        return res.status(400).json({ error: "No authorization code provided" });
+      }
+      
+      // Exchange code for token
+      const tokenData = await discordService.exchangeCodeForToken(code as string);
+      if (!tokenData) {
+        return res.status(500).json({ error: "Failed to exchange code for token" });
+      }
+      
+      // Get user info
+      const discordUser = await discordService.getUserInfo(tokenData.access_token);
+      if (!discordUser) {
+        return res.status(500).json({ error: "Failed to get Discord user info" });
+      }
+      
+      // Check Miles High Club membership via Whop
+      const membership = await whopService.checkMembership(discordUser.id);
+      
+      // Store auth data in session
+      req.session.discordAuth = {
+        user: discordUser,
+        accessToken: tokenData.access_token,
+        refreshToken: tokenData.refresh_token,
+        expiresAt: Date.now() + (tokenData.expires_in * 1000),
+        hasMHCMembership: !!membership,
+        membershipDetails: membership
+      };
+      
+      // Redirect to dashboard with success
+      res.redirect("/?auth=success");
+    } catch (error) {
+      console.error("Discord auth callback error:", error);
+      res.redirect("/?auth=error");
+    }
+  });
+
+  app.get("/api/auth/status", async (req, res) => {
+    try {
+      const discordAuth = req.session.discordAuth;
+      
+      if (!discordAuth) {
+        return res.json({ authenticated: false });
+      }
+      
+      // Check if token is expired
+      if (Date.now() > discordAuth.expiresAt) {
+        // Try to refresh token
+        const newToken = await discordService.refreshAccessToken(discordAuth.refreshToken);
+        if (newToken) {
+          req.session.discordAuth = {
+            ...discordAuth,
+            accessToken: newToken.access_token,
+            refreshToken: newToken.refresh_token,
+            expiresAt: Date.now() + (newToken.expires_in * 1000)
+          };
+        } else {
+          delete req.session.discordAuth;
+          return res.json({ authenticated: false });
+        }
+      }
+      
+      res.json({
+        authenticated: true,
+        user: {
+          id: discordAuth.user.id,
+          username: discordAuth.user.username,
+          avatar: discordAuth.user.avatar,
+          globalName: discordAuth.user.global_name
+        },
+        hasMHCMembership: discordAuth.hasMHCMembership,
+        membershipDetails: discordAuth.membershipDetails
+      });
+    } catch (error) {
+      console.error("Failed to check auth status:", error);
+      res.status(500).json({ error: "Failed to check authentication status" });
+    }
+  });
+
+  app.post("/api/auth/logout", async (req, res) => {
+    try {
+      delete req.session.discordAuth;
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to logout:", error);
+      res.status(500).json({ error: "Failed to logout" });
+    }
+  });
+
+  app.get("/api/auth/verify-membership", async (req, res) => {
+    try {
+      const discordAuth = req.session.discordAuth;
+      
+      if (!discordAuth) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      // Re-check membership status
+      const membership = await whopService.checkMembership(discordAuth.user.id);
+      
+      // Update session
+      req.session.discordAuth.hasMHCMembership = !!membership;
+      req.session.discordAuth.membershipDetails = membership;
+      
+      res.json({
+        hasMembership: !!membership,
+        membershipDetails: membership
+      });
+    } catch (error) {
+      console.error("Failed to verify membership:", error);
+      res.status(500).json({ error: "Failed to verify membership" });
+    }
+  });
+
+  // Service status endpoints
+  app.get("/api/services/status", async (req, res) => {
+    try {
+      res.json({
+        coingecko: coinGeckoService.getConnectionStatus(),
+        cryptorank: { connected: cryptoRankService.isConnected() },
+        dune: duneService.getConnectionStatus(),
+        discord: discordService.getConnectionStatus(),
+        whop: whopService.getConnectionStatus()
+      });
+    } catch (error) {
+      console.error("Failed to check services status:", error);
+      res.status(500).json({ error: "Failed to check services status" });
     }
   });
 

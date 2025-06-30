@@ -15,6 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
+import { DiscordAuth } from "@/components/discord-auth";
 
 // Register Chart.js components
 ChartJS.register(
@@ -339,6 +340,10 @@ export default function InteractiveDashboard() {
                   <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
                   <span className="relative z-10">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </button>
+                
+                <div className="col-span-2 sm:col-span-1">
+                  <DiscordAuth />
+                </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
