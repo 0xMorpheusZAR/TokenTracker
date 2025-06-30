@@ -98,14 +98,32 @@ export async function setupAuth(app: Express) {
   });
 
   // Auth routes
-  app.get('/api/auth/discord', passport.authenticate('discord'));
+  app.get('/api/auth/discord', (req, res, next) => {
+    console.log('Discord auth initiated');
+    passport.authenticate('discord')(req, res, next);
+  });
 
   app.get('/api/auth/discord/callback', 
-    passport.authenticate('discord', { 
-      failureRedirect: '/login?error=access_denied' 
-    }),
-    (req, res) => {
-      res.redirect('/');
+    (req, res, next) => {
+      console.log('Discord callback received:', req.query);
+      passport.authenticate('discord', (err, user, info) => {
+        if (err) {
+          console.error('Discord auth error:', err);
+          return res.redirect('/login?error=auth_failed');
+        }
+        if (!user) {
+          console.error('Discord auth failed:', info);
+          return res.redirect('/login?error=access_denied');
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            console.error('Login error:', err);
+            return res.redirect('/login?error=login_failed');
+          }
+          console.log('User logged in successfully:', user.username);
+          return res.redirect('/');
+        });
+      })(req, res, next);
     }
   );
 
