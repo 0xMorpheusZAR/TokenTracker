@@ -113,7 +113,7 @@ export default function RainmakerAnalysis() {
               </Link>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                <span className="text-purple-400 font-semibold">AI Infrastructure Analysis</span>
+                <span className="text-purple-400 font-semibold">Interesting Projects</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -139,9 +139,40 @@ export default function RainmakerAnalysis() {
               Raiinmaker: The Cinematic AI Revolution
             </h1>
             
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8">
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4">
               Solving the <span className="text-purple-400 font-semibold">Hollywood-quality data gap</span> in AI video generation through decentralized crowdsourcing and ethical infrastructure
             </p>
+            
+            {/* TGE Event Banner */}
+            <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 mb-6 border border-purple-500/30 max-w-2xl mx-auto">
+              <div className="flex items-center justify-center gap-4">
+                <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
+                <span className="text-white font-semibold">Token Generation Event: January 2nd</span>
+                <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
+              </div>
+            </div>
+            
+            {/* Official Links */}
+            <div className="flex justify-center gap-4 mb-8">
+              <a 
+                href="https://www.raiinmaker.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg font-medium hover:bg-purple-600/30 transition-colors flex items-center gap-2 border border-purple-500/30"
+              >
+                <Globe className="w-4 h-4" />
+                Official Website
+              </a>
+              <a 
+                href="https://x.com/raiinmakerapp" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg font-medium hover:bg-purple-600/30 transition-colors flex items-center gap-2 border border-purple-500/30"
+              >
+                <Users className="w-4 h-4" />
+                @raiinmakerapp
+              </a>
+            </div>
 
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-5xl mx-auto">

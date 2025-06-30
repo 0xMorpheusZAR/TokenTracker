@@ -314,7 +314,7 @@ export default function InteractiveDashboard() {
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <Video className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
-                  <span className="relative z-10">Rainmaker</span>
+                  <span className="relative z-10">Projects</span>
                 </a>
                 
                 <button
