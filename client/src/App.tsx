@@ -10,14 +10,13 @@ import MonteCarlo from "@/pages/monte-carlo";
 import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 import RainmakerAnalysis from "@/pages/rainmaker-analysis";
-import Terminal from "@/pages/terminal";
 
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Terminal} />
+      <Route path="/" component={InteractiveDashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/interactive" component={InteractiveDashboard} />
       <Route path="/hyperliquid" component={HyperliquidAnalysis} />
