@@ -9,6 +9,7 @@ import HyperliquidAnalysis from "@/pages/hyperliquid-analysis";
 import MonteCarlo from "@/pages/monte-carlo";
 import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
+import RainmakerAnalysis from "@/pages/rainmaker-analysis";
 
 import NotFound from "@/pages/not-found";
 
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/monte-carlo" component={MonteCarlo} />
       <Route path="/revenue-analysis" component={RevenueAnalysis} />
       <Route path="/failure-analysis" component={FailureAnalysis} />
+      <Route path="/rainmaker" component={RainmakerAnalysis} />
       <Route component={NotFound} />
     </Switch>
   );

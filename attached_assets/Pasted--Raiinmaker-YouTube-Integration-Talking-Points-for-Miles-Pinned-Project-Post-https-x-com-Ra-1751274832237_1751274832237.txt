@@ -1,0 +1,62 @@
+🎥  Raiinmaker YouTube Integration - Talking Points for Miles
+Pinned Project Post: https://x.com/Raiinmakerapp/status/1935367996597485617
+1. Project Overview (hook)
+“Everyone’s talking about AI-generated video. Sora. Runway. Pika. But here’s the truth: we’re not even close to Hollywood quality. And the problem isn’t just the models. It’s the data.”
+
+AI-generated cinematic video is the next big frontier, and as the race toward Hollywood-level output accelerates, one obstacle stands in the way: high-quality data. That’s where RAIN steps in. Unlike models trained on low-grade, scraped, or synthetic clips, RAIN crowdsources rich, real-world footage, giving AI the natural, frame-to-frame motion consistency true cinema demands.
+
+Even better, RAIN’s mission is to reward the community for supplying this data, building a decentralised AI network where anyone can contribute footage, validate content, run validator nodes, and earn crypto in return. 
+
+3. Cinematic Data Gap Angle (Blog Insight)
+
+There’s a great blog from Raiinmaker’s VP of Engineering that breaks it down:
+
+As OpenAI’s head of security Lilian Weng notes, video is far harder than images because models must understand how things move, not just how they look. 
+
+Cinematic video is the final boss of generative AI.
+Most models rely on scraped or synthetic data, it’s not enough. Models like Sora still struggle with realistic motion, physics, or coherent scenes.
+What’s missing is metadata-rich, real-world footage, exactly what Raiinmaker is sourcing via TRAIIN VIDEO fills the data gap, unlocking Hollywood-level AI output.
+
+Link: https://www.raiinmaker.com/thecitiizen/884f18dd-8b09-438e-a0b2-66bc010726e3
+
+
+4. Ethical Positioning
+
+Raiinmaker isn’t just solving a data gap, it’s also building ethical AI infrastructure. Every contribution is human-validated and written on-chain. So unlike other models, you can trace where the data came from and who gets rewarded.
+
+Raiinmaker isn’t just building better AI, they’re building ethical AI infrastructure.
+This hits at a much bigger trend: decentralised AI networks, ownership of data, and rewards for contribution.
+You’re not just training the next cinematic model, you’re part of it.
+
+
+5. Founder / Credibility Angle
+
+It’s not a random crypto project, Raiinmaker was founded by J.D. Seraphine, a legit Hollywood producer and financed / produced Hesher with Natalie Portman.
+
+https://www.imdb.com/name/nm5333905/
+https://www.allmovie.com/movie/hesher-am20798/cast-crew
+
+And it’s backed by Nolan Bushnell, the guy who founded Atari. So this is led by passionate builders with vision and intimate connection to the industry 
+
+Nolan Bushnell: https://en.wikipedia.org/wiki/Nolan_Bushnell
+
+
+6. Partnership Highlight
+
+“They just partnered with Aethir, one of the biggest names in decentralized GPU compute, to power TRAIIN VIDEO. So now they’ve got the data layer and the compute layer sorted.”
+Read more: https://www.raiinmaker.com/thecitiizen/b61173f0-d0fa-4bd3-82d5-61ff8a7a233f
+
+7. YouTube Show Concept Idea (pitch for Miles)
+
+“This could be a powerful YouTube short or longer episode - ‘The Race for Cinematic AI.’
+Episode Ideas
+Hook
+Current Landscape
+Core Problem
+Raiinmaker’s Solution
+Ethical Infrastructure Angle
+Founder / Credibility Angle
+Partnership Highlight
+Wrap-Up POV
+
+
