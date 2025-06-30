@@ -83,7 +83,8 @@ export class CoinGeckoService {
       'ENA': 'ethena',
       'OMNI': 'omni-network',
       'HYPE': 'hyperliquid',
-      'W': 'wormhole'
+      'W': 'wormhole',
+      'ESX': 'estatex'
     };
     
     return tokenMap[symbol.toUpperCase()] || symbol.toLowerCase();

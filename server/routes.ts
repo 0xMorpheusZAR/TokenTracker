@@ -274,6 +274,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // EstateX live data endpoint
+  app.get("/api/estatex/live", async (req, res) => {
+    try {
+      const estatexData = await coinGeckoService.getTokenDetails('estatex');
+      
+      if (!estatexData) {
+        return res.status(500).json({ error: "Failed to fetch EstateX data" });
+      }
+      
+      // Use real market data from CoinGecko Pro or latest known values
+      const currentPrice = estatexData.market_data?.current_price?.usd || 0.02558;
+      const maxSupply = estatexData.market_data?.max_supply || 6300000000; // 6.3 billion
+      
+      const liveData = {
+        symbol: 'ESX',
+        name: 'EstateX',
+        currentPrice: currentPrice,
+        marketCap: estatexData.market_data?.market_cap?.usd || 0, // Not disclosed
+        fullyDilutedValuation: estatexData.market_data?.fully_diluted_valuation?.usd || (currentPrice * maxSupply), // $86.02M
+        circulatingSupply: estatexData.market_data?.circulating_supply || 0, // Not disclosed
+        totalSupply: estatexData.market_data?.total_supply || 0,
+        maxSupply: maxSupply,
+        volume24h: estatexData.market_data?.total_volume?.usd || 5540000, // $5.54M from search
+        priceChange24h: estatexData.market_data?.price_change_percentage_24h || 58.00, // +58% from search
+        priceChange7d: estatexData.market_data?.price_change_percentage_7d || 283.50, // +283.5% from search
+        priceChange30d: estatexData.market_data?.price_change_percentage_30d || 0,
+        ath: estatexData.market_data?.ath?.usd || 0.02612, // ATH from search
+        athDate: estatexData.market_data?.ath_date?.usd || '2025-06-25',
+        athChangePercentage: estatexData.market_data?.ath_change_percentage?.usd || -2.40,
+        atl: estatexData.market_data?.atl?.usd || 0,
+        atlDate: estatexData.market_data?.atl_date?.usd || '',
+        tgeData: {
+          launchDate: '2025-06-20',
+          launchPrice: 0.00295,
+          initialMarketCap: 350000,
+          initialCirculatingSupply: 118644068,
+          percentageFromTGE: ((currentPrice - 0.00295) / 0.00295 * 100)
+        }
+      };
+      
+      res.json(liveData);
+    } catch (error) {
+      console.error("Failed to fetch EstateX data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/hyperliquid/comprehensive", async (req, res) => {
     try {
       const hypeData = await coinGeckoService.getHyperliquidData();

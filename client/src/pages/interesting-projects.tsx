@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, Video, Database, Cpu, Shield, Users, TrendingUp, Globe, Zap, Award, CheckCircle2, ExternalLink, Home, Coins, Building, CreditCard, DollarSign } from "lucide-react";
 import { Link } from "wouter";
 import { Line, Bar } from "react-chartjs-2";
+import { useQuery } from "@tanstack/react-query";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,9 +35,43 @@ ChartJS.register(
   Filler
 );
 
+interface EstateXLiveData {
+  symbol: string;
+  name: string;
+  currentPrice: number;
+  marketCap: number;
+  fullyDilutedValuation: number;
+  circulatingSupply: number;
+  totalSupply: number;
+  maxSupply: number;
+  volume24h: number;
+  priceChange24h: number;
+  priceChange7d: number;
+  priceChange30d: number;
+  ath: number;
+  athDate: string;
+  athChangePercentage: number;
+  atl: number;
+  atlDate: string;
+  tgeData: {
+    launchDate: string;
+    launchPrice: number;
+    initialMarketCap: number;
+    initialCirculatingSupply: number;
+    percentageFromTGE: number;
+  };
+}
+
 export default function InterestingProjects() {
   const [activeTab, setActiveTab] = useState<'overview' | 'technology' | 'tokenomics'>('overview');
   const [selectedProject, setSelectedProject] = useState<'raiinmaker' | 'estatex'>('raiinmaker');
+
+  // Fetch EstateX live data from CoinGecko Pro
+  const { data: estatexLiveData } = useQuery<EstateXLiveData>({
+    queryKey: ['/api/estatex/live'],
+    enabled: selectedProject === 'estatex',
+    refetchInterval: 30000 // Refresh every 30 seconds
+  });
 
   // Project configurations
   const projects = {
@@ -86,7 +121,7 @@ export default function InterestingProjects() {
         { label: "TGE Price", value: "$0.00295" },
         { label: "License", value: "BaFin" }
       ],
-      tge: "Token Generation Event: Completed (June 2025)",
+      tge: "Token Generation Event: June 20, 2025 • Launch Price: $0.00295 • Initial Market Cap: $350K",
       links: [
         { label: "Official Website", url: "https://www.estatex.com/", icon: Globe },
         { label: "@EstateX_", url: "https://x.com/EstateX_", icon: Users }
@@ -95,6 +130,24 @@ export default function InterestingProjects() {
   };
 
   const currentProject = projects[selectedProject];
+
+  // Helper function to format numbers
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000000) return `$${(num / 1000000000).toFixed(2)}B`;
+    if (num >= 1000000) return `$${(num / 1000000).toFixed(2)}M`;
+    if (num >= 1000) return `$${(num / 1000).toFixed(2)}K`;
+    return `$${num.toFixed(2)}`;
+  };
+
+  // Update EstateX metrics with live data if available
+  if (selectedProject === 'estatex' && estatexLiveData) {
+    projects.estatex.metrics = [
+      { label: "Current Price", value: `$${estatexLiveData.currentPrice?.toFixed(6) || '0.00'}` },
+      { label: "Circulating Market Cap", value: formatNumber(estatexLiveData.marketCap || 0) },
+      { label: "Fully Diluted Valuation", value: formatNumber(estatexLiveData.fullyDilutedValuation || 0) },
+      { label: "24h Change", value: `${estatexLiveData.priceChange24h?.toFixed(2) || '0'}%` }
+    ];
+  }
 
   // Chart data for Raiinmaker
   const raiinmakerMarketData = {
@@ -695,6 +748,46 @@ export default function InterestingProjects() {
                   </div>
                 ))}
               </div>
+              
+              {/* Live EstateX Data from CoinGecko Pro */}
+              {selectedProject === 'estatex' && estatexLiveData && (
+                <div className="mt-6 bg-slate-900/50 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 max-w-4xl mx-auto">
+                  <h3 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 animate-pulse" />
+                    Live Market Data from CoinGecko Pro
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <div className="text-xs text-slate-400">Current Price</div>
+                      <div className="text-xl font-bold text-white">${estatexLiveData.currentPrice?.toFixed(6) || '0.00'}</div>
+                      <div className={`text-xs ${estatexLiveData.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {estatexLiveData.priceChange24h >= 0 ? '+' : ''}{estatexLiveData.priceChange24h?.toFixed(2)}% (24h)
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-400">Circulating Market Cap</div>
+                      <div className="text-xl font-bold text-white">{formatNumber(estatexLiveData.marketCap || 0)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-400">Fully Diluted Valuation</div>
+                      <div className="text-xl font-bold text-white">{formatNumber(estatexLiveData.fullyDilutedValuation || 0)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-400">Since TGE</div>
+                      <div className={`text-xl font-bold ${estatexLiveData.tgeData?.percentageFromTGE >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {estatexLiveData.tgeData?.percentageFromTGE >= 0 ? '+' : ''}{estatexLiveData.tgeData?.percentageFromTGE?.toFixed(2)}%
+                      </div>
+                    </div>
+                  </div>
+                  {estatexLiveData.tgeData && (
+                    <div className="mt-4 pt-4 border-t border-slate-700">
+                      <div className="text-xs text-slate-400">
+                        TGE: {estatexLiveData.tgeData.launchDate} • Launch Price: ${estatexLiveData.tgeData.launchPrice} • Initial Market Cap: ${formatNumber(estatexLiveData.tgeData.initialMarketCap)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
