@@ -134,7 +134,6 @@ Changelog:
 - June 27, 2025: Transformed entire site with world-class crypto analyst features including professional market status indicators, advanced risk metrics, Fear & Greed Index, Unlock Pressure indicators, Liquidity Risk analysis, enhanced metric cards with real-time data, professional token risk analysis dashboard, and institutional-grade comparative metrics across all pages
 - June 30, 2025: Added comprehensive Rainmaker Analysis section showcasing AI infrastructure for cinematic video generation, featuring Hollywood-quality data solutions, decentralized network architecture, ethical AI framework, strategic partnerships with Aethir, and investment analysis for the $231.5B AI video market by 2030
 - June 30, 2025: Renamed "Rainmaker" section to "Interesting Projects", added official website link (raiinmaker.com), Twitter/X profile (@raiinmakerapp), and updated TGE status to "TBA"
-- June 30, 2025: Created new modular "Interesting Projects" page with dropdown menu supporting multiple projects. Added EstateX as second project with real-time ESX token price integration via CoinGecko Pro API. Projects now accessible at /projects route with dynamic content switching
 ```
 
 ## User Preferences

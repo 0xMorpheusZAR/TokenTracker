@@ -309,7 +309,7 @@ export default function InteractiveDashboard() {
                 </a>
                 
                 <a 
-                  href="/projects" 
+                  href="/rainmaker" 
                   className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
