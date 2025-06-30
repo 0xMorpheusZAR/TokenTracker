@@ -5,13 +5,10 @@ import { cryptoRankService } from "./services/cryptorank";
 import { coinGeckoService } from "./services/coingecko";
 import { duneService } from "./services/dune";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
-import { setupAuth, isAuthenticated } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup authentication middleware
-  await setupAuth(app);
   // Get all tokens with real-time CoinGecko data
-  app.get("/api/tokens", isAuthenticated, async (req, res) => {
+  app.get("/api/tokens", async (req, res) => {
     try {
       const baseTokens = await storage.getAllTokens();
       

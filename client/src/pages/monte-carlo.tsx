@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, TrendingUp, TrendingDown, Target, BarChart3, Calculator, DollarSign } from "lucide-react";
 import { runAdvancedMonteCarloSimulation, calculateFundamentalDrift } from "@/lib/monte-carlo-gbm";
 import { Line } from "react-chartjs-2";
-import SiteFooter from "@/components/site-footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -611,7 +610,6 @@ export default function MonteCarlo() {
           </div>
         )}
       </div>
-      <SiteFooter />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, decimal, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -59,30 +59,3 @@ export type UnlockEvent = typeof unlockEvents.$inferSelect;
 export type InsertUnlockEvent = z.infer<typeof insertUnlockEventSchema>;
 export type PriceHistory = typeof priceHistory.$inferSelect;
 export type InsertPriceHistory = z.infer<typeof insertPriceHistorySchema>;
-
-// Authentication tables
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
-
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  discordId: varchar("discord_id").unique().notNull(),
-  username: varchar("username").notNull(),
-  discriminator: varchar("discriminator"),
-  avatar: varchar("avatar"),
-  email: varchar("email").unique(),
-  whopSubscriptionId: varchar("whop_subscription_id"),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;

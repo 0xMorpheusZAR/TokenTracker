@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { TrendingUp, ArrowLeft, DollarSign, Users, Rocket, Shield, Zap, Target } from "lucide-react";
-import SiteFooter from "@/components/site-footer";
 
 export default function HyperliquidAnalysis() {
   const { data: hyperliquidData } = useQuery({
@@ -565,7 +564,6 @@ export default function HyperliquidAnalysis() {
           <p className="mt-2">Hyperliquid represents the future of tokenomics - community-first, utility-driven, and revenue-generating.</p>
         </div>
       </div>
-      <SiteFooter />
     </div>
   );
 }

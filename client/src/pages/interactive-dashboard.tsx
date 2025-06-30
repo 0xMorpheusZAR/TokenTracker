@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy } from "lucide-react";
-import SiteFooter from "@/components/site-footer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -1126,7 +1125,6 @@ export default function InteractiveDashboard() {
           </p>
         </div>
       </div>
-      <SiteFooter />
     </div>
   );
 }

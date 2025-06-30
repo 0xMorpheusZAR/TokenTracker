@@ -2,18 +2,13 @@ import {
   tokens, 
   unlockEvents, 
   priceHistory,
-  users,
   type Token, 
   type InsertToken,
   type UnlockEvent,
   type InsertUnlockEvent,
   type PriceHistory,
-  type InsertPriceHistory,
-  type User,
-  type InsertUser
+  type InsertPriceHistory
 } from "@shared/schema";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Token operations
@@ -33,12 +28,6 @@ export interface IStorage {
   // Analytics
   getTopFailures(): Promise<Token[]>;
   getUpcomingUnlocks(): Promise<(UnlockEvent & { token: Token })[]>;
-  
-  // User operations
-  getUserById(id: string): Promise<User | undefined>;
-  getUserByDiscordId(discordId: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -313,23 +302,6 @@ export class MemStorage implements IStorage {
       const token = tokens.find(t => t.id === event.tokenId);
       return { ...event, token: token! };
     }).filter(event => event.token);
-  }
-
-  // User operations - temporarily returning undefined for auth setup
-  async getUserById(id: string): Promise<User | undefined> {
-    return undefined;
-  }
-
-  async getUserByDiscordId(discordId: string): Promise<User | undefined> {
-    return undefined;
-  }
-
-  async createUser(user: InsertUser): Promise<User> {
-    return user as User;
-  }
-
-  async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
-    return undefined;
   }
 }
 
