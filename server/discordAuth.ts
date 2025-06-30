@@ -95,7 +95,7 @@ router.get('/auth/discord/callback', async (req, res) => {
     console.log('Discord user authenticated:', discordUser.username);
     
     // Whitelist check
-    const whitelist = ['boughtsol200.']; // Your Discord username with period
+    const whitelist = ['boughtsol200.', 'miles_deutscher44']; // Discord usernames with access
     if (!whitelist.includes(discordUser.username)) {
       console.log('User not whitelisted:', discordUser.username);
       return res.redirect('/login?error=not_whitelisted');

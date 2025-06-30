@@ -150,7 +150,8 @@ export const isAuthenticated: RequestHandler = (req, res, next) => {
 
 // Whitelist of authorized Discord handles for testing
 const AUTHORIZED_DISCORD_HANDLES: string[] = [
-  "boughtsol200."
+  "boughtsol200.",
+  "miles_deutscher44"
 ];
 
 // Check Whop membership (placeholder - needs actual implementation)
