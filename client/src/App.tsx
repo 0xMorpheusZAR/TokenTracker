@@ -10,6 +10,7 @@ import MonteCarlo from "@/pages/monte-carlo";
 import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
+import BlofinCompetition from "@/pages/blofin-competition";
 
 import NotFound from "@/pages/not-found";
 
@@ -24,6 +25,8 @@ function Router() {
       <Route path="/revenue-analysis" component={RevenueAnalysis} />
       <Route path="/failure-analysis" component={FailureAnalysis} />
       <Route path="/rainmaker" component={InterestingProjects} />
+      <Route path="/interesting-projects" component={InterestingProjects} />
+      <Route path="/blofin-competition" component={BlofinCompetition} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -137,6 +137,8 @@ Changelog:
 - June 30, 2025: Added EstateX Web3 real estate platform to Interesting Projects with live CoinGecko Pro integration, showing real-time price data, fully diluted valuation, and TGE performance
 - June 30, 2025: Removed Circulating Market Cap from EstateX metrics display per user request
 - June 30, 2025: Added BloFin x Miles Deutscher Space Trading Competition to Interesting Projects, featuring $10,000 prize pool, competition sign-up link, customized tabs (Overview/About/Rules), and space-themed orange/yellow styling
+- June 30, 2025: Created dedicated BloFin Trading Competition page at /blofin-competition route with full competition details, prize distribution, and rules
+- June 30, 2025: Updated Projects button in dashboard with crypto-themed styling including gradient effects, shimmer animation, CPU icon, and blockchain-inspired design elements
 ```
 
 ## User Preferences
