@@ -147,7 +147,7 @@ export default function RainmakerAnalysis() {
             <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 mb-6 border border-purple-500/30 max-w-2xl mx-auto">
               <div className="flex items-center justify-center gap-4">
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
-                <span className="text-white font-semibold">Token Generation Event: July 2nd</span>
+                <span className="text-white font-semibold">Token Generation Event: TBA</span>
                 <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
               </div>
             </div>
