@@ -140,6 +140,7 @@ Changelog:
 - June 30, 2025: Created dedicated BloFin Trading Competition page at /blofin-competition route with full competition details, prize distribution, and rules
 - June 30, 2025: Updated Projects button in dashboard with crypto-themed styling including gradient effects, shimmer animation, CPU icon, and blockchain-inspired design elements
 - June 30, 2025: Changed Projects button text from "PROJECTS" to "Projects" to match other button styling
+- June 30, 2025: Removed BloFin from Interesting Projects dropdown and added dedicated BloFin button to main dashboard with orange/amber gradient styling and Trophy icon
 ```
 
 ## User Preferences

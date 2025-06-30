@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu } from "lucide-react";
+import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -317,6 +317,17 @@ export default function InteractiveDashboard() {
                   <Cpu className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">Projects</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-75"></div>
+                </a>
+                
+                <a 
+                  href="/blofin-competition" 
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-orange-600/80 via-amber-600/80 to-yellow-600/80 hover:from-orange-500 hover:via-amber-500 hover:to-yellow-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-orange-500/20 hover:border-orange-400/40"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400/0 via-orange-400/20 to-orange-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
+                  <span className="relative z-10">BloFin</span>
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <button
