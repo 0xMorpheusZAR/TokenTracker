@@ -37,21 +37,11 @@ export async function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Get the full callback URL using Replit domain
-  const replitDomain = process.env.REPLIT_DOMAINS?.split(',')[0] || 'localhost:5000';
-  const protocol = replitDomain.includes('localhost') ? 'http' : 'https';
-  const callbackURL = `${protocol}://${replitDomain}/api/auth/discord/callback`;
-  
-  console.log('Discord OAuth Configuration:');
-  console.log('- Client ID:', process.env.DISCORD_CLIENT_ID ? 'Set' : 'Not set');
-  console.log('- Client Secret:', process.env.DISCORD_CLIENT_SECRET ? 'Set' : 'Not set');
-  console.log('- Callback URL:', callbackURL);
-
   // Discord OAuth Strategy
-  const strategy = new DiscordStrategy({
+  passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID || 'your-discord-client-id',
     clientSecret: process.env.DISCORD_CLIENT_SECRET || 'your-discord-client-secret',
-    callbackURL: callbackURL,
+    callbackURL: process.env.DISCORD_CALLBACK_URL || '/api/auth/discord/callback',
     scope: ['identify', 'email', 'guilds']
   }, async (accessToken, refreshToken, profile, done) => {
     try {
@@ -82,9 +72,7 @@ export async function setupAuth(app: Express) {
     } catch (error) {
       return done(error);
     }
-  });
-  
-  passport.use(strategy);
+  }));
 
   passport.serializeUser((user: any, done) => {
     done(null, user.id);
@@ -100,32 +88,14 @@ export async function setupAuth(app: Express) {
   });
 
   // Auth routes
-  app.get('/api/auth/discord', (req, res, next) => {
-    console.log('Discord auth initiated');
-    passport.authenticate('discord')(req, res, next);
-  });
+  app.get('/api/auth/discord', passport.authenticate('discord'));
 
   app.get('/api/auth/discord/callback', 
-    (req, res, next) => {
-      console.log('Discord callback received:', req.query);
-      passport.authenticate('discord', (err, user, info) => {
-        if (err) {
-          console.error('Discord auth error:', err);
-          return res.redirect('/login?error=auth_failed');
-        }
-        if (!user) {
-          console.error('Discord auth failed:', info);
-          return res.redirect('/login?error=access_denied');
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            console.error('Login error:', err);
-            return res.redirect('/login?error=login_failed');
-          }
-          console.log('User logged in successfully:', user.username);
-          return res.redirect('/');
-        });
-      })(req, res, next);
+    passport.authenticate('discord', { 
+      failureRedirect: '/login?error=access_denied' 
+    }),
+    (req, res) => {
+      res.redirect('/');
     }
   );
 
@@ -150,8 +120,7 @@ export const isAuthenticated: RequestHandler = (req, res, next) => {
 
 // Whitelist of authorized Discord handles for testing
 const AUTHORIZED_DISCORD_HANDLES: string[] = [
-  "boughtsol200.",
-  "miles_deutscher44"
+  "boughtsol200"
 ];
 
 // Check Whop membership (placeholder - needs actual implementation)

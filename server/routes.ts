@@ -5,52 +5,11 @@ import { cryptoRankService } from "./services/cryptorank";
 import { coinGeckoService } from "./services/coingecko";
 import { duneService } from "./services/dune";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
-import discordAuthRouter from "./discordAuth";
-import session from "express-session";
-import connectPg from "connect-pg-simple";
-
-// Simple authentication middleware
-const isAuthenticated = (req: any, res: any, next: any) => {
-  if (req.session?.user) {
-    return next();
-  }
-  res.status(401).json({ message: "Unauthorized - Please login through Discord" });
-};
+import { setupAuth, isAuthenticated } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup session management (required for Discord OAuth)
-  const pgStore = connectPg(session);
-  const sessionStore = new pgStore({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
-    ttl: 7 * 24 * 60 * 60 * 1000,
-    tableName: "sessions",
-  });
-  
-  app.set("trust proxy", 1);
-  app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key-here-change-in-production',
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    },
-  }));
-  
-  // Use manual Discord OAuth routes
-  app.use('/api', discordAuthRouter);
-  
-  // Auth check route
-  app.get('/api/auth/user', (req, res) => {
-    if (req.session?.user) {
-      res.json(req.session.user);
-    } else {
-      res.status(401).json({ message: "Unauthorized - Please login through Discord" });
-    }
-  });
+  // Setup authentication middleware
+  await setupAuth(app);
   // Get all tokens with real-time CoinGecko data
   app.get("/api/tokens", isAuthenticated, async (req, res) => {
     try {

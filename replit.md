@@ -147,6 +147,4 @@ Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
-Discord handle: boughtsol200. (with period at the end)
-Additional whitelist user: miles_deutscher44
 ```
