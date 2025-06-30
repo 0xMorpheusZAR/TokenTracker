@@ -315,7 +315,7 @@ export default function InteractiveDashboard() {
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-purple-400/20 to-purple-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <Cpu className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10 tracking-wider">PROJECTS</span>
+                  <span className="relative z-10">Projects</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 

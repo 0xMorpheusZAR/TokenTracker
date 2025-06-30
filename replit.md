@@ -139,6 +139,7 @@ Changelog:
 - June 30, 2025: Added BloFin x Miles Deutscher Space Trading Competition to Interesting Projects, featuring $10,000 prize pool, competition sign-up link, customized tabs (Overview/About/Rules), and space-themed orange/yellow styling
 - June 30, 2025: Created dedicated BloFin Trading Competition page at /blofin-competition route with full competition details, prize distribution, and rules
 - June 30, 2025: Updated Projects button in dashboard with crypto-themed styling including gradient effects, shimmer animation, CPU icon, and blockchain-inspired design elements
+- June 30, 2025: Changed Projects button text from "PROJECTS" to "Projects" to match other button styling
 ```
 
 ## User Preferences
