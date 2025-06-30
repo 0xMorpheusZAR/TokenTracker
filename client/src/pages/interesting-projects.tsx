@@ -756,17 +756,13 @@ export default function InterestingProjects() {
                     <Zap className="w-5 h-5 animate-pulse" />
                     Live Market Data from CoinGecko Pro
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <div className="text-xs text-slate-400">Current Price</div>
                       <div className="text-xl font-bold text-white">${estatexLiveData.currentPrice?.toFixed(6) || '0.00'}</div>
                       <div className={`text-xs ${estatexLiveData.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {estatexLiveData.priceChange24h >= 0 ? '+' : ''}{estatexLiveData.priceChange24h?.toFixed(2)}% (24h)
                       </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-400">Circulating Market Cap</div>
-                      <div className="text-xl font-bold text-white">{formatNumber(estatexLiveData.marketCap || 0)}</div>
                     </div>
                     <div>
                       <div className="text-xs text-slate-400">Fully Diluted Valuation</div>
