@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy, Zap } from "lucide-react";
+import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -329,17 +329,6 @@ export default function InteractiveDashboard() {
                   <Trophy className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">BloFin</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-75"></div>
-                </a>
-
-                <a 
-                  href="/defi-terminal" 
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-violet-600/80 via-indigo-600/80 to-purple-600/80 hover:from-violet-500 hover:via-indigo-500 hover:to-purple-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-violet-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-violet-500/20 hover:border-violet-400/40"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-400/0 via-violet-400/20 to-violet-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10">MEV Scanner</span>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-violet-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <button

@@ -3,7 +3,6 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { WagmiProvider, RainbowKitProvider, config, mevScannerTheme } from "@/lib/web3";
 import Dashboard from "@/pages/dashboard";
 import InteractiveDashboard from "@/pages/interactive-dashboard";
 import HyperliquidAnalysis from "@/pages/hyperliquid-analysis";
@@ -12,7 +11,6 @@ import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
 import BlofinCompetition from "@/pages/blofin-competition";
-import DeFiTerminal from "@/pages/defi-terminal";
 
 import NotFound from "@/pages/not-found";
 
@@ -29,7 +27,6 @@ function Router() {
       <Route path="/rainmaker" component={InterestingProjects} />
       <Route path="/interesting-projects" component={InterestingProjects} />
       <Route path="/blofin-competition" component={BlofinCompetition} />
-      <Route path="/defi-terminal" component={DeFiTerminal} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -37,16 +34,12 @@ function Router() {
 
 function App() {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={mevScannerTheme}>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
