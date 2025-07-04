@@ -153,6 +153,7 @@ Changelog:
 - July 4, 2025: Integrated comprehensive DefiLlama Pro API service with full backend implementation including TVL tracking, token unlocks, protocol revenue analysis, yield farming data, derivatives volume, stablecoin metrics, and comprehensive token analytics - providing access to 1M API credits and real-time DeFi ecosystem data
 - July 4, 2025: Built DEX Intelligence dashboard with real-time data from CoinGecko and DefiLlama showing trending DEX pools, whale transactions, protocol metrics, and volume statistics
 - July 4, 2025: Fixed data integration issues - filtered DEX pools to show realistic TVL values ($100K-$5B range), improved error handling for API calls, and enhanced data display accuracy
+- July 4, 2025: Added "Buying Opportunities" feature showing on-chain pools with surging metrics, high APY opportunities, and volume explosions - includes dedicated tab with opportunity alerts and risk scores
 ```
 
 ## User Preferences

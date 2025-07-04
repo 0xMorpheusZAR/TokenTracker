@@ -124,22 +124,41 @@ export default function DexIntelligence() {
     refetchInterval: autoRefresh ? 60000 : false,
   });
 
-  // Process data for trending pools
-  const trendingPools: DexPool[] = trendingPoolsData.slice(0, 10).map((pool: any) => ({
-    id: pool.id,
-    name: pool.name,
-    chain: pool.chain,
-    tvl: pool.tvl,
-    volume24h: pool.volumeUsd1d || 0,
-    volumeChange: pool.volumeUsd7d > 0 
-      ? ((pool.volumeUsd1d - pool.volumeUsd7d/7) / (pool.volumeUsd7d/7)) * 100 
-      : 0,
-    fees24h: pool.apyBase || 0,
-    apy: pool.apy,
-    ilRisk: pool.ilRisk,
-    tokens: pool.name.includes('-') ? pool.name.split('-') : [pool.name],
-    priceChange: 0
-  }));
+  // Process data for trending pools with proper volume calculation
+  const trendingPools: DexPool[] = trendingPoolsData.slice(0, 10).map((pool: any) => {
+    // Calculate volume change
+    let volumeChange = 0;
+    if (pool.volumeUsd7d && pool.volumeUsd7d > 0) {
+      const avgDaily7d = pool.volumeUsd7d / 7;
+      volumeChange = avgDaily7d > 0 ? ((pool.volumeUsd1d - avgDaily7d) / avgDaily7d) * 100 : 0;
+    } else if (pool.volumeUsd1d > 0) {
+      // If no 7d data but has 1d data, show as new/surging
+      volumeChange = 100;
+    }
+    
+    return {
+      id: pool.id,
+      name: pool.name,
+      chain: pool.chain,
+      tvl: pool.tvl,
+      volume24h: pool.volumeUsd1d || 0,
+      volumeChange: volumeChange,
+      fees24h: pool.apyBase || 0,
+      apy: pool.apy,
+      ilRisk: pool.ilRisk,
+      tokens: pool.name.includes('-') ? pool.name.split('-') : [pool.name],
+      priceChange: 0
+    };
+  });
+  
+  // Identify buying opportunities - pools with surging metrics
+  const buyingOpportunities = trendingPools.filter((pool) => {
+    return (
+      pool.volumeChange > 50 || // Volume surging >50%
+      (pool.apy > 20 && pool.tvl > 1000000) || // High APY with decent TVL
+      (pool.volume24h > 1000000 && pool.volumeChange > 20) // High volume with growth
+    );
+  }).slice(0, 5);
 
   // Calculate total DEX TVL from protocol metrics
   const totalDexTvl = protocolMetricsData.reduce((sum: number, p: any) => sum + (p.tvl || 0), 0);
@@ -292,10 +311,21 @@ export default function DexIntelligence() {
         </Card>
       </div>
 
+      {/* Buying Opportunities Alert */}
+      {buyingOpportunities.length > 0 && (
+        <Alert className="mb-6 bg-gradient-to-r from-green-900/50 to-emerald-900/50 border-green-600">
+          <ZapIcon className="h-4 w-4" />
+          <AlertDescription>
+            <strong>🔥 Hot Opportunities:</strong> {buyingOpportunities.length} pools showing surging metrics!
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Main Dashboard Tabs */}
       <Tabs defaultValue="trending" className="space-y-4">
         <TabsList className="bg-gray-800/50 border-gray-700">
           <TabsTrigger value="trending">Trending Pools</TabsTrigger>
+          <TabsTrigger value="opportunities">Buying Opportunities</TabsTrigger>
           <TabsTrigger value="whales">Whale Tracker</TabsTrigger>
           <TabsTrigger value="protocols">Protocol Analytics</TabsTrigger>
           <TabsTrigger value="alerts">Smart Alerts</TabsTrigger>
@@ -374,6 +404,133 @@ export default function DexIntelligence() {
                   <div className="h-[300px]">
                     <Line data={volumeChartData} options={chartOptions} />
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Buying Opportunities */}
+        <TabsContent value="opportunities">
+          <div className="space-y-6">
+            <Card className="bg-gradient-to-br from-green-900/50 to-emerald-800/50 border-green-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ZapIcon className="h-5 w-5 text-green-400" />
+                  On-Chain Buying Opportunities
+                </CardTitle>
+                <CardDescription>Pools with surging metrics and high potential</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {buyingOpportunities.length > 0 ? (
+                  <div className="space-y-4">
+                    {buyingOpportunities.map((pool) => (
+                      <div key={pool.id} className="p-4 bg-gradient-to-r from-green-900/20 to-emerald-900/20 rounded-lg border border-green-700/50 hover:border-green-600 transition-all">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="font-semibold text-lg flex items-center gap-2">
+                              {pool.name}
+                              <Badge variant="outline" className="text-xs bg-green-900/50">{pool.chain}</Badge>
+                            </h4>
+                            <p className="text-sm text-gray-400">TVL: ${(pool.tvl / 1e6).toFixed(2)}M</p>
+                          </div>
+                          <div className="text-right">
+                            <Badge className="bg-green-600/50 text-green-200">
+                              <TrendingUpIcon className="h-3 w-3 mr-1" />
+                              Opportunity
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div className="bg-gray-900/50 p-2 rounded">
+                            <p className="text-xs text-gray-400">Volume Change</p>
+                            <p className={`font-bold ${pool.volumeChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {pool.volumeChange > 0 ? '+' : ''}{pool.volumeChange.toFixed(1)}%
+                            </p>
+                          </div>
+                          <div className="bg-gray-900/50 p-2 rounded">
+                            <p className="text-xs text-gray-400">APY</p>
+                            <p className="font-bold text-green-400">{pool.apy.toFixed(2)}%</p>
+                          </div>
+                          <div className="bg-gray-900/50 p-2 rounded">
+                            <p className="text-xs text-gray-400">24h Volume</p>
+                            <p className="font-bold">${(pool.volume24h / 1e6).toFixed(2)}M</p>
+                          </div>
+                          <div className="bg-gray-900/50 p-2 rounded">
+                            <p className="text-xs text-gray-400">Risk Score</p>
+                            <p className={`font-bold ${pool.ilRisk < -5 ? 'text-red-400' : 'text-yellow-400'}`}>
+                              {Math.abs(pool.ilRisk).toFixed(1)}%
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-3 flex items-center gap-2 text-xs text-green-400">
+                          <ActivityIcon className="h-3 w-3" />
+                          <span>
+                            {pool.volumeChange > 100 ? 'Volume exploding!' : 
+                             pool.apy > 50 ? 'High yield opportunity!' :
+                             'Strong momentum detected'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <ActivityIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No significant opportunities detected at the moment.</p>
+                    <p className="text-sm mt-2">Check back soon as market conditions change!</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Opportunity Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-gray-800/50 border-gray-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Top Gainer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {buyingOpportunities.length > 0 ? (
+                    <>
+                      <p className="font-bold">{buyingOpportunities[0].name}</p>
+                      <p className="text-xs text-green-400">
+                        +{buyingOpportunities[0].volumeChange.toFixed(1)}% volume
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-gray-400">-</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-800/50 border-gray-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Highest APY</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {buyingOpportunities.length > 0 ? (
+                    <>
+                      <p className="font-bold">
+                        {[...buyingOpportunities].sort((a, b) => b.apy - a.apy)[0].apy.toFixed(2)}%
+                      </p>
+                      <p className="text-xs text-gray-400">Annual yield</p>
+                    </>
+                  ) : (
+                    <p className="text-gray-400">-</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-800/50 border-gray-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Total Opportunities</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="font-bold text-green-400">{buyingOpportunities.length}</p>
+                  <p className="text-xs text-gray-400">Active signals</p>
                 </CardContent>
               </Card>
             </div>
