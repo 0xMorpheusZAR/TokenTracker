@@ -11,6 +11,7 @@ import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
 import BlofinCompetition from "@/pages/blofin-competition";
+import DexIntelligence from "@/pages/dex-intelligence";
 
 import NotFound from "@/pages/not-found";
 
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/rainmaker" component={InterestingProjects} />
       <Route path="/interesting-projects" component={InterestingProjects} />
       <Route path="/blofin-competition" component={BlofinCompetition} />
+      <Route path="/dex-intelligence" component={DexIntelligence} />
       <Route component={NotFound} />
     </Switch>
   );

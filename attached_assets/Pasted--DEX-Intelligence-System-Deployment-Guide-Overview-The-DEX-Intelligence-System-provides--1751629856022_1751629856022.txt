@@ -1,0 +1,580 @@
+# DEX Intelligence System - Deployment Guide
+
+## Overview
+
+The DEX Intelligence System provides real-time on-chain analytics for decentralized exchanges using CoinGecko Pro API data. This guide covers deployment, configuration, and usage.
+
+## System Architecture
+
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  CoinGecko API  │────▶│  Backend Service │────▶│     Redis       │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                                │                           │
+                                ▼                           ▼
+                        ┌──────────────────┐     ┌─────────────────┐
+                        │  WebSocket Server│     │   PostgreSQL    │
+                        └──────────────────┘     └─────────────────┘
+                                │
+                                ▼
+                        ┌──────────────────┐
+                        │  React Dashboard │
+                        └──────────────────┘
+```
+
+## Prerequisites
+
+- Node.js 18+ or Python 3.9+
+- Redis 6.0+
+- PostgreSQL 13+ (optional, for historical data)
+- CoinGecko Pro API key
+- 4GB+ RAM recommended
+- Ubuntu 20.04+ or similar Linux distribution
+
+## Installation
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/yourusername/dex-intelligence
+cd dex-intelligence
+```
+
+### 2. Environment Configuration
+
+Create `.env` file:
+
+```env
+# API Keys
+COINGECKO_API_KEY=your_coingecko_pro_api_key
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# PostgreSQL Configuration (optional)
+DATABASE_URL=postgresql://user:password@localhost:5432/dex_intelligence
+
+# WebSocket Configuration
+WS_PORT=8765
+WS_HOST=0.0.0.0
+
+# Alert Configuration
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+DISCORD_WEBHOOK_URL=your_discord_webhook_url
+
+# Analytics Configuration
+WHALE_THRESHOLD_USD=100000
+VOLUME_EXPLOSION_THRESHOLD=200  # 200% increase
+IL_WARNING_THRESHOLD=-10  # -10% IL
+
+# Rate Limiting
+API_RATE_LIMIT=300  # requests per minute
+CACHE_TTL=60  # seconds
+```
+
+### 3. Install Dependencies
+
+#### Node.js Implementation
+
+```bash
+npm install
+# or
+yarn install
+```
+
+#### Python Implementation
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 4. Database Setup
+
+#### Redis
+
+```bash
+# Install Redis
+sudo apt update
+sudo apt install redis-server
+
+# Configure Redis
+sudo nano /etc/redis/redis.conf
+# Set: maxmemory 2gb
+# Set: maxmemory-policy allkeys-lru
+
+# Start Redis
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
+```
+
+#### PostgreSQL (Optional)
+
+```bash
+# Install PostgreSQL
+sudo apt install postgresql postgresql-contrib
+
+# Create database
+sudo -u postgres psql
+CREATE DATABASE dex_intelligence;
+CREATE USER dex_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE dex_intelligence TO dex_user;
+\q
+
+# Run migrations
+npm run migrate
+# or
+python manage.py migrate
+```
+
+## Deployment
+
+### Development Mode
+
+```bash
+# Node.js
+npm run dev
+
+# Python
+python main.py
+```
+
+### Production Deployment
+
+#### Using PM2 (Node.js)
+
+```bash
+# Install PM2
+npm install -g pm2
+
+# Start services
+pm2 start ecosystem.config.js
+
+# Save PM2 configuration
+pm2 save
+pm2 startup
+```
+
+`ecosystem.config.js`:
+
+```javascript
+module.exports = {
+  apps: [
+    {
+      name: 'dex-intelligence-api',
+      script: './src/server.js',
+      instances: 2,
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000
+      },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      log_file: './logs/combined.log',
+      time: true
+    },
+    {
+      name: 'dex-intelligence-ws',
+      script: './src/websocket.js',
+      instances: 1,
+      env: {
+        NODE_ENV: 'production',
+        WS_PORT: 8765
+      }
+    }
+  ]
+};
+```
+
+#### Using Systemd (Python)
+
+Create `/etc/systemd/system/dex-intelligence.service`:
+
+```ini
+[Unit]
+Description=DEX Intelligence Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/dex-intelligence
+Environment="PATH=/home/ubuntu/dex-intelligence/venv/bin"
+ExecStart=/home/ubuntu/dex-intelligence/venv/bin/python main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Start service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable dex-intelligence
+sudo systemctl start dex-intelligence
+```
+
+### Docker Deployment
+
+`Dockerfile`:
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+
+EXPOSE 3000 8765
+
+CMD ["node", "src/server.js"]
+```
+
+`docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+      - "8765:8765"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: dex_intelligence
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  postgres_data:
+```
+
+## Monitoring & Alerts
+
+### Health Checks
+
+Create health check endpoint:
+
+```javascript
+app.get('/health', async (req, res) => {
+  const health = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now(),
+    services: {
+      redis: await checkRedis(),
+      api: await checkAPI(),
+      websocket: checkWebSocket()
+    }
+  };
+  
+  res.status(200).json(health);
+});
+```
+
+### Prometheus Metrics
+
+```javascript
+const prometheus = require('prom-client');
+
+// Create metrics
+const httpRequestDuration = new prometheus.Histogram({
+  name: 'http_request_duration_ms',
+  help: 'Duration of HTTP requests in ms',
+  labelNames: ['method', 'route', 'status_code']
+});
+
+const activeConnections = new prometheus.Gauge({
+  name: 'websocket_active_connections',
+  help: 'Number of active WebSocket connections'
+});
+
+const whaleTransactions = new prometheus.Counter({
+  name: 'whale_transactions_total',
+  help: 'Total number of whale transactions detected',
+  labelNames: ['type', 'pool']
+});
+```
+
+### Alert Configuration
+
+```javascript
+// Telegram Alerts
+const sendTelegramAlert = async (message) => {
+  await axios.post(
+    `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+    {
+      chat_id: TELEGRAM_CHAT_ID,
+      text: message,
+      parse_mode: 'HTML'
+    }
+  );
+};
+
+// Discord Alerts
+const sendDiscordAlert = async (embed) => {
+  await axios.post(DISCORD_WEBHOOK_URL, {
+    embeds: [embed]
+  });
+};
+
+// Alert Rules
+const alertRules = {
+  volumeExplosion: (pool) => pool.volumeChange > 500,
+  whaleAccumulation: (tx) => tx.amount > 1000000 && tx.type === 'buy',
+  ilWarning: (pool) => pool.impermanentLoss < -15,
+  newPoolExplosion: (pool) => pool.age < 86400 && pool.volume24h > 10000000
+};
+```
+
+## API Endpoints
+
+### REST API
+
+```
+GET /api/v1/pools/trending
+  Query params:
+    - network: ethereum|arbitrum|optimism|polygon|base
+    - limit: number (default: 20)
+    - timeframe: 5m|1h|24h|7d
+
+GET /api/v1/pools/:address
+  Returns detailed pool analytics
+
+GET /api/v1/whales/transactions
+  Query params:
+    - pool: pool address
+    - limit: number
+    - threshold: minimum USD value
+
+GET /api/v1/analytics/il
+  Returns impermanent loss data for pools
+
+GET /api/v1/holders/:token
+  Returns holder distribution metrics
+
+POST /api/v1/alerts/subscribe
+  Body: {
+    type: 'whale'|'volume'|'il',
+    threshold: number,
+    webhook: string
+  }
+```
+
+### WebSocket API
+
+```javascript
+// Connect
+const ws = new WebSocket('ws://localhost:8765');
+
+// Subscribe to updates
+ws.send(JSON.stringify({
+  type: 'subscribe',
+  channels: ['trending_pools', 'whale_alerts', 'anomalies']
+}));
+
+// Receive updates
+ws.on('message', (data) => {
+  const message = JSON.parse(data);
+  switch(message.type) {
+    case 'pools_update':
+      updatePools(message.data);
+      break;
+    case 'whale_alert':
+      showWhaleAlert(message.data);
+      break;
+    case 'anomaly':
+      handleAnomaly(message.data);
+      break;
+  }
+});
+```
+
+## Performance Optimization
+
+### Caching Strategy
+
+```javascript
+// Multi-level caching
+const cacheStrategy = {
+  trending_pools: {
+    ttl: 30,  // seconds
+    priority: 'high'
+  },
+  pool_details: {
+    ttl: 60,
+    priority: 'medium'
+  },
+  holder_data: {
+    ttl: 300,
+    priority: 'low'
+  }
+};
+
+// Cache warming
+const warmCache = async () => {
+  const networks = ['ethereum', 'arbitrum'];
+  for (const network of networks) {
+    await getTrendingPools(network);
+  }
+};
+
+// Run cache warming on startup
+setInterval(warmCache, 60000);
+```
+
+### Rate Limiting
+
+```javascript
+const rateLimit = require('express-rate-limit');
+
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per minute
+  message: 'Too many requests, please try again later.'
+});
+
+app.use('/api/', apiLimiter);
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **API Rate Limits**
+   ```bash
+   Error: 429 Too Many Requests
+   Solution: Implement exponential backoff and caching
+   ```
+
+2. **WebSocket Connection Drops**
+   ```javascript
+   // Implement reconnection logic
+   const reconnect = () => {
+     setTimeout(() => {
+       ws = new WebSocket(WS_URL);
+       setupHandlers();
+     }, 5000);
+   };
+   ```
+
+3. **Memory Leaks**
+   ```bash
+   # Monitor memory usage
+   pm2 monit
+   
+   # Set memory limits
+   pm2 start app.js --max-memory-restart 1G
+   ```
+
+### Debugging
+
+Enable debug logging:
+
+```bash
+DEBUG=dex:* npm start
+```
+
+View logs:
+
+```bash
+# PM2 logs
+pm2 logs dex-intelligence-api
+
+# System logs
+tail -f /var/log/dex-intelligence/app.log
+```
+
+## Security Considerations
+
+1. **API Key Security**
+   - Never commit API keys to version control
+   - Use environment variables
+   - Rotate keys regularly
+
+2. **Input Validation**
+   ```javascript
+   const validatePoolAddress = (address) => {
+     return /^0x[a-fA-F0-9]{40}$/.test(address);
+   };
+   ```
+
+3. **Rate Limiting**
+   - Implement per-IP rate limiting
+   - Use Redis for distributed rate limiting
+
+4. **CORS Configuration**
+   ```javascript
+   app.use(cors({
+     origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+     credentials: true
+   }));
+   ```
+
+## Maintenance
+
+### Daily Tasks
+- Monitor API usage and rate limits
+- Check alert functionality
+- Review error logs
+
+### Weekly Tasks
+- Update trending algorithms
+- Clean up old cache data
+- Backup configuration
+
+### Monthly Tasks
+- Update dependencies
+- Review and optimize queries
+- Analyze performance metrics
+
+## Support
+
+For issues or questions:
+- GitHub Issues: [github.com/yourusername/dex-intelligence/issues]
+- Documentation: [docs.dexintelligence.io]
+- Discord: [discord.gg/dexintel]

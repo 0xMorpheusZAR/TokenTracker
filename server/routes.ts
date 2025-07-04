@@ -690,6 +690,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // DEX Intelligence endpoints
+  app.get("/api/dex/trending-pools", async (req, res) => {
+    try {
+      const { chain = 'all' } = req.query;
+      
+      // Get yield pools from DefiLlama
+      const yieldsResponse: any = await defiLlamaService.getYieldPools();
+      
+      // Handle the response structure
+      let pools: any[] = [];
+      if (yieldsResponse) {
+        if (Array.isArray(yieldsResponse)) {
+          pools = yieldsResponse;
+        } else if (yieldsResponse.data && Array.isArray(yieldsResponse.data)) {
+          pools = yieldsResponse.data;
+        } else if (yieldsResponse.status === 'success' && yieldsResponse.data) {
+          pools = yieldsResponse.data;
+        }
+      }
+      
+      // Filter by chain if specified
+      if (chain !== 'all' && pools.length > 0) {
+        pools = pools.filter((pool: any) => 
+          pool.chain && pool.chain.toLowerCase() === (chain as string).toLowerCase()
+        );
+      }
+      
+      // Sort by TVL and take top 20
+      const trendingPools = pools
+        .filter((pool: any) => pool.tvlUsd > 0)
+        .sort((a: any, b: any) => b.tvlUsd - a.tvlUsd)
+        .slice(0, 20)
+        .map((pool: any) => ({
+          id: pool.pool,
+          name: pool.symbol,
+          project: pool.project,
+          chain: pool.chain,
+          tvl: pool.tvlUsd,
+          apy: pool.apy,
+          apyBase: pool.apyBase,
+          apyReward: pool.apyReward,
+          rewardTokens: pool.rewardTokens || [],
+          poolMeta: pool.poolMeta,
+          ilRisk: pool.il7d || 0,
+          volumeUsd1d: pool.volumeUsd1d || 0,
+          volumeUsd7d: pool.volumeUsd7d || 0
+        }));
+      
+      res.json(trendingPools);
+    } catch (error: any) {
+      console.error('Error fetching trending pools:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch trending pools', 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/dex/whale-transactions", async (req, res) => {
+    try {
+      const { limit = 20 } = req.query;
+      
+      // For now, return mock data as real whale tracking requires on-chain data
+      // In production, this would connect to blockchain nodes or services like Dune Analytics
+      const mockWhaleTransactions = [
+        {
+          id: '1',
+          type: 'buy',
+          amount: 2500000,
+          token: 'USDC',
+          pool: 'USDC-ETH',
+          timestamp: Date.now() - 300000,
+          impact: 2.5,
+          walletCategory: 'Smart Money',
+          txHash: '0x1234...',
+          gasUsed: 250000
+        },
+        {
+          id: '2',
+          type: 'sell',
+          amount: 1800000,
+          token: 'WETH',
+          pool: 'WETH-USDT',
+          timestamp: Date.now() - 600000,
+          impact: -1.8,
+          walletCategory: 'Institution',
+          txHash: '0x5678...',
+          gasUsed: 180000
+        },
+        {
+          id: '3',
+          type: 'buy',
+          amount: 950000,
+          token: 'ARB',
+          pool: 'ARB-ETH',
+          timestamp: Date.now() - 900000,
+          impact: 1.2,
+          walletCategory: 'Whale',
+          txHash: '0x9abc...',
+          gasUsed: 220000
+        }
+      ];
+      
+      res.json(mockWhaleTransactions.slice(0, parseInt(limit as string)));
+    } catch (error: any) {
+      console.error('Error fetching whale transactions:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch whale transactions', 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/dex/protocol-metrics", async (_req, res) => {
+    try {
+      // Get protocols and revenue data
+      const [protocols, revenueData] = await Promise.all([
+        defiLlamaService.getAllProtocols(),
+        defiLlamaService.getFeesAndRevenue('dailyRevenue')
+      ]);
+      
+      if (!protocols || !revenueData) {
+        return res.json([]);
+      }
+      
+      // Get DEX protocols only
+      const dexProtocols = protocols
+        .filter((p: any) => 
+          p.category === 'Dexes' || 
+          p.name.toLowerCase().includes('swap') ||
+          p.name.toLowerCase().includes('dex')
+        )
+        .slice(0, 10);
+      
+      // Enhance with revenue data
+      const enhancedProtocols = dexProtocols.map((protocol: any) => {
+        const revenueInfo = revenueData.protocols?.[protocol.name];
+        return {
+          protocol: protocol.name,
+          tvl: protocol.tvl,
+          volume24h: protocol.volume || 0,
+          fees24h: revenueInfo?.total24h || 0,
+          revenue24h: revenueInfo?.revenue24h || 0,
+          users24h: protocol.activeUsers || 0,
+          chains: protocol.chains || [],
+          change1d: protocol.change_1d || 0,
+          dominance: 0 // Will calculate after
+        };
+      });
+      
+      // Calculate dominance
+      const totalTvl = enhancedProtocols.reduce((sum: number, p: any) => sum + p.tvl, 0);
+      enhancedProtocols.forEach((p: any) => {
+        p.dominance = totalTvl > 0 ? (p.tvl / totalTvl) * 100 : 0;
+      });
+      
+      res.json(enhancedProtocols);
+    } catch (error: any) {
+      console.error('Error fetching protocol metrics:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch protocol metrics', 
+        message: error.message 
+      });
+    }
+  });
+
+  app.get("/api/dex/volume-stats", async (_req, res) => {
+    try {
+      // Get derivatives volume data for DEX volume insights
+      const volumeData = await defiLlamaService.getDerivativesOverview();
+      
+      if (!volumeData) {
+        return res.json({
+          total24h: 0,
+          change24h: 0,
+          topProtocols: []
+        });
+      }
+      
+      res.json({
+        total24h: volumeData.total24h || 0,
+        change24h: volumeData.change24h || 0,
+        topProtocols: volumeData.protocols?.slice(0, 5) || []
+      });
+    } catch (error: any) {
+      console.error('Error fetching volume stats:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch volume stats', 
+        message: error.message 
+      });
+    }
+  });
+
   // Discord Authentication Routes
   app.get("/api/auth/discord", async (req, res) => {
     try {
