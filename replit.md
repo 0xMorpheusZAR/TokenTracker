@@ -48,6 +48,9 @@ The application uses a normalized schema with three core entities:
 ### External Integrations
 - **CryptoRank API**: Service for fetching real-time token unlock data and vesting schedules
 - **CoinGecko API**: Primary data source for accurate real-time and historical price data
+- **DefiLlama Pro API**: Comprehensive DeFi data source providing TVL tracking, protocol revenue analysis, token unlocks, yield farming data, derivatives volume, stablecoin metrics, and real-time DeFi ecosystem analytics
+- **Discord OAuth2**: Authentication system for Miles High Club membership verification
+- **Whop API**: Read-only membership verification for premium features
 - **API Key Management**: Environment-based configuration for external services
 
 ### UI Components
@@ -103,6 +106,10 @@ The application uses a normalized schema with three core entities:
 - **DATABASE_URL**: PostgreSQL connection string (required)
 - **CRYPTORANK_API_KEY**: CryptoRank API authentication for unlock data
 - **COINGECKO_PRO_API_KEY**: CoinGecko Pro API for enhanced pricing data
+- **DEFILLAMA_API_KEY**: DefiLlama Pro API for comprehensive DeFi data (1M credits)
+- **DISCORD_CLIENT_ID**: Discord OAuth2 application client ID
+- **DISCORD_CLIENT_SECRET**: Discord OAuth2 application secret
+- **WHOP_API_KEY**: Whop API for membership verification (read-only)
 - **NODE_ENV**: Environment-specific behavior
 
 ## Changelog
@@ -143,6 +150,7 @@ Changelog:
 - June 30, 2025: Removed BloFin from Interesting Projects dropdown and added dedicated BloFin button to main dashboard with orange/amber gradient styling and Trophy icon
 - June 30, 2025: Integrated Discord Authentication with Whop API for Miles High Club membership verification - includes Discord OAuth2 login, Whop membership checking (read-only), session management, and Discord authentication UI component in dashboard
 - July 4, 2025: Removed Discord Login button from main dashboard per user request
+- July 4, 2025: Integrated comprehensive DefiLlama Pro API service with full backend implementation including TVL tracking, token unlocks, protocol revenue analysis, yield farming data, derivatives volume, stablecoin metrics, and comprehensive token analytics - providing access to 1M API credits and real-time DeFi ecosystem data
 ```
 
 ## User Preferences

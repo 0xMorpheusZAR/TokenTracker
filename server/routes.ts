@@ -6,6 +6,7 @@ import { coinGeckoService } from "./services/coingecko";
 import { duneService } from "./services/dune";
 import { whopService } from "./services/whop";
 import { discordService } from "./services/discord";
+import { defiLlamaService } from "./services/defillama";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -492,6 +493,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(queryResult);
     } catch (error) {
       console.error("Failed to fetch Dune query:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // DefiLlama API routes
+  app.get("/api/defillama/status", async (req, res) => {
+    try {
+      const status = defiLlamaService.getConnectionStatus();
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check DefiLlama status" });
+    }
+  });
+
+  app.get("/api/defillama/protocols", async (req, res) => {
+    try {
+      const protocols = await defiLlamaService.getAllProtocols();
+      
+      if (!protocols) {
+        return res.status(500).json({ error: "Failed to fetch protocols from DefiLlama" });
+      }
+      
+      res.json(protocols);
+    } catch (error) {
+      console.error("Failed to fetch DefiLlama protocols:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/protocol/:protocol", async (req, res) => {
+    try {
+      const protocol = req.params.protocol;
+      const protocolData = await defiLlamaService.getProtocolDetails(protocol);
+      
+      if (!protocolData) {
+        return res.status(404).json({ error: "Protocol not found" });
+      }
+      
+      res.json(protocolData);
+    } catch (error) {
+      console.error("Failed to fetch protocol details:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/unlocks", async (req, res) => {
+    try {
+      const unlocks = await defiLlamaService.getAllTokenUnlocks();
+      
+      if (!unlocks) {
+        return res.status(500).json({ error: "Failed to fetch token unlocks" });
+      }
+      
+      res.json(unlocks);
+    } catch (error) {
+      console.error("Failed to fetch token unlocks:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/unlocks/:geckoId", async (req, res) => {
+    try {
+      const geckoId = req.params.geckoId;
+      const unlocks = await defiLlamaService.getTokenUnlocks(geckoId);
+      
+      if (!unlocks) {
+        return res.status(404).json({ error: "Token unlocks not found" });
+      }
+      
+      res.json(unlocks);
+    } catch (error) {
+      console.error("Failed to fetch token unlock details:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/fees", async (req, res) => {
+    try {
+      const dataType = (req.query.dataType as 'dailyFees' | 'dailyRevenue') || 'dailyRevenue';
+      const feesData = await defiLlamaService.getFeesAndRevenue(dataType);
+      
+      if (!feesData) {
+        return res.status(500).json({ error: "Failed to fetch fees data" });
+      }
+      
+      res.json(feesData);
+    } catch (error) {
+      console.error("Failed to fetch fees data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/revenue/:protocol", async (req, res) => {
+    try {
+      const protocol = req.params.protocol;
+      const revenueData = await defiLlamaService.getProtocolRevenue(protocol);
+      
+      if (!revenueData) {
+        return res.status(404).json({ error: "Protocol revenue data not found" });
+      }
+      
+      res.json(revenueData);
+    } catch (error) {
+      console.error("Failed to fetch protocol revenue:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/yields", async (req, res) => {
+    try {
+      const yields = await defiLlamaService.getYieldPools();
+      
+      if (!yields) {
+        return res.status(500).json({ error: "Failed to fetch yield data" });
+      }
+      
+      res.json(yields);
+    } catch (error) {
+      console.error("Failed to fetch yield data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/derivatives", async (req, res) => {
+    try {
+      const derivatives = await defiLlamaService.getDerivativesOverview();
+      
+      if (!derivatives) {
+        return res.status(500).json({ error: "Failed to fetch derivatives data" });
+      }
+      
+      res.json(derivatives);
+    } catch (error) {
+      console.error("Failed to fetch derivatives data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/derivatives/:protocol", async (req, res) => {
+    try {
+      const protocol = req.params.protocol;
+      const derivativesData = await defiLlamaService.getDerivativesProtocol(protocol);
+      
+      if (!derivativesData) {
+        return res.status(404).json({ error: "Protocol derivatives data not found" });
+      }
+      
+      res.json(derivativesData);
+    } catch (error) {
+      console.error("Failed to fetch protocol derivatives:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/chains", async (req, res) => {
+    try {
+      const chains = await defiLlamaService.getChainTVLs();
+      
+      if (!chains) {
+        return res.status(500).json({ error: "Failed to fetch chain TVL data" });
+      }
+      
+      res.json(chains);
+    } catch (error) {
+      console.error("Failed to fetch chain TVLs:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/analytics/:symbol", async (req, res) => {
+    try {
+      const symbol = req.params.symbol;
+      const geckoId = req.query.geckoId as string;
+      
+      const analytics = await defiLlamaService.getTokenAnalytics(symbol, geckoId);
+      res.json(analytics);
+    } catch (error) {
+      console.error("Failed to fetch token analytics:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/defillama/usage", async (req, res) => {
+    try {
+      const usage = await defiLlamaService.getApiUsage();
+      
+      if (!usage) {
+        return res.status(500).json({ error: "Failed to fetch API usage data" });
+      }
+      
+      res.json(usage);
+    } catch (error) {
+      console.error("Failed to fetch API usage:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
