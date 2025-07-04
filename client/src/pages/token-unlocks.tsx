@@ -145,7 +145,7 @@ export default function TokenUnlocks() {
   const sortedUnlocks = [...filteredUnlocks].sort((a, b) => {
     switch (sortBy) {
       case 'date': return (a.daysUntil || 0) - (b.daysUntil || 0);
-      case 'impact': return b.dilutionPercentage - a.dilutionPercentage;
+      case 'impact': return (b.dilutionPercentage || 0) - (a.dilutionPercentage || 0);
       case 'value': return (b.value_usd || 0) - (a.value_usd || 0);
       default: return 0;
     }
@@ -285,7 +285,7 @@ export default function TokenUnlocks() {
                 <div>
                   <p className="text-sm text-gray-400">Avg Dilution</p>
                   <p className="text-2xl font-bold text-purple-400">
-                    {(sortedUnlocks.reduce((sum, u) => sum + u.dilutionPercentage, 0) / sortedUnlocks.length || 0).toFixed(1)}%
+                    {(sortedUnlocks.reduce((sum, u) => sum + (u.dilutionPercentage || 0), 0) / sortedUnlocks.length || 0).toFixed(1)}%
                   </p>
                 </div>
                 <Percent className="w-8 h-8 text-purple-400" />
@@ -366,7 +366,7 @@ export default function TokenUnlocks() {
                               <div>
                                 <p className="text-gray-400">Dilution</p>
                                 <p className="font-medium text-orange-400">
-                                  {unlock.dilutionPercentage.toFixed(2)}%
+                                  {(unlock.dilutionPercentage || 0).toFixed(2)}%
                                 </p>
                               </div>
                               <div>

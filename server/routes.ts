@@ -812,7 +812,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             surgeType
           };
         })
-        .filter(s => s.userGrowth > 10);
+        .filter((s: any) => s.userGrowth > 10);
 
       res.json(surges);
     } catch (error) {
