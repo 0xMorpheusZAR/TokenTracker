@@ -688,7 +688,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate flows and detect anomalies
       const flows = protocols
-        .filter(p => !chain || chain === 'all' || p.chains?.includes(chain as string))
+        .filter(p => !chain || chain === 'all' || p.chain === chain || p.chains?.includes(chain as string))
         .slice(0, 50)
         .map(protocol => {
           // Calculate synthetic flow data based on TVL changes

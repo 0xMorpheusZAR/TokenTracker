@@ -96,9 +96,11 @@ export default function SmartMoneyFlow() {
     queryKey: ['/api/smart-money/surges', selectedChain, selectedTimeframe],
   });
 
-  const { data: chains } = useQuery<string[]>({
+  const { data: chainsData } = useQuery<any[]>({
     queryKey: ['/api/defillama/chains'],
   });
+
+  const chains = chainsData?.map(chain => chain.name) || [];
 
   const anomalies = flowData?.filter(f => f.isAnomaly) || [];
   const topInflows = flowData?.sort((a, b) => b.inflowUSD24h - a.inflowUSD24h).slice(0, 10) || [];
@@ -106,18 +108,18 @@ export default function SmartMoneyFlow() {
 
   // Chart data for flow visualization
   const flowChartData = {
-    labels: topInflows.slice(0, 7).map(f => f.protocol),
+    labels: topInflows.slice(0, 7).map(f => f.protocol) || [],
     datasets: [
       {
         label: 'Inflows',
-        data: topInflows.slice(0, 7).map(f => f.inflowUSD24h),
+        data: topInflows.slice(0, 7).map(f => f.inflowUSD24h) || [],
         backgroundColor: 'rgba(74, 222, 128, 0.5)',
         borderColor: 'rgb(74, 222, 128)',
         borderWidth: 2,
       },
       {
         label: 'Outflows',
-        data: topInflows.slice(0, 7).map(f => -f.outflowUSD24h),
+        data: topInflows.slice(0, 7).map(f => -f.outflowUSD24h) || [],
         backgroundColor: 'rgba(248, 113, 113, 0.5)',
         borderColor: 'rgb(248, 113, 113)',
         borderWidth: 2,
@@ -127,10 +129,10 @@ export default function SmartMoneyFlow() {
 
   // Chain distribution chart
   const chainDistribution = {
-    labels: chains?.slice(0, 8) || [],
+    labels: chains.slice(0, 8),
     datasets: [
       {
-        data: chains?.slice(0, 8).map(() => Math.random() * 100) || [],
+        data: chains.slice(0, 8).map(() => Math.random() * 100),
         backgroundColor: [
           'rgba(59, 130, 246, 0.8)',
           'rgba(147, 51, 234, 0.8)',
@@ -168,10 +170,8 @@ export default function SmartMoneyFlow() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/">
-              <a className="text-gray-400 hover:text-gray-200 transition-colors">
-                ← Back to Dashboard
-              </a>
+            <Link href="/" className="text-gray-400 hover:text-gray-200 transition-colors">
+              ← Back to Dashboard
             </Link>
             <Brain className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
