@@ -12,6 +12,7 @@ import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
 import BlofinCompetition from "@/pages/blofin-competition";
 import SmartMoneyFlow from "@/pages/smart-money-flow";
+import TokenUnlocks from "@/pages/token-unlocks";
 
 import NotFound from "@/pages/not-found";
 
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/interesting-projects" component={InterestingProjects} />
       <Route path="/blofin-competition" component={BlofinCompetition} />
       <Route path="/smart-money-flow" component={SmartMoneyFlow} />
+      <Route path="/token-unlocks" component={TokenUnlocks} />
       <Route component={NotFound} />
     </Switch>
   );
