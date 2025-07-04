@@ -330,22 +330,11 @@ export default function InteractiveDashboard() {
                   <span className="relative z-10">BloFin</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
-
-                <a 
-                  href="/dex-intelligence" 
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80 hover:from-cyan-500 hover:via-blue-500 hover:to-indigo-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-400/40"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/20 to-cyan-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Cpu className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10">DEX Intel</span>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-75"></div>
-                </a>
                 
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-gray-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden disabled:cursor-not-allowed"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden disabled:cursor-not-allowed"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
