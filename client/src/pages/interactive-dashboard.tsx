@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy } from "lucide-react";
+import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy, Zap } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -329,6 +329,17 @@ export default function InteractiveDashboard() {
                   <Trophy className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">BloFin</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-75"></div>
+                </a>
+                
+                <a 
+                  href="/mev-dashboard" 
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-emerald-600/80 via-green-600/80 to-teal-600/80 hover:from-emerald-500 hover:via-green-500 hover:to-teal-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-emerald-500/20 hover:border-emerald-400/40"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/0 via-emerald-400/20 to-emerald-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
+                  <span className="relative z-10">MEV Bot</span>
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <button

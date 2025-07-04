@@ -7,6 +7,7 @@ import { duneService } from "./services/dune";
 import { whopService } from "./services/whop";
 import { discordService } from "./services/discord";
 import { defiLlamaService } from "./services/defillama";
+import { mevDetectorService } from "./services/mev-detector";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -851,6 +852,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // MEV Bot Endpoints
+  app.get("/api/mev/opportunities", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 20;
+      const opportunities = await mevDetectorService.getRecentOpportunities(limit);
+      res.json(opportunities);
+    } catch (error) {
+      console.error("Failed to fetch MEV opportunities:", error);
+      res.status(500).json({ error: "Failed to fetch opportunities" });
+    }
+  });
+
+  app.get("/api/mev/stats", async (req, res) => {
+    try {
+      const stats = await mevDetectorService.getOpportunityStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Failed to fetch MEV stats:", error);
+      res.status(500).json({ error: "Failed to fetch stats" });
+    }
+  });
+
+  app.post("/api/mev/scanner/start", async (req, res) => {
+    try {
+      await mevDetectorService.startScanning();
+      res.json({ status: "started", message: "MEV scanner started successfully" });
+    } catch (error) {
+      console.error("Failed to start MEV scanner:", error);
+      res.status(500).json({ error: "Failed to start scanner" });
+    }
+  });
+
+  app.post("/api/mev/scanner/stop", async (req, res) => {
+    try {
+      mevDetectorService.stopScanning();
+      res.json({ status: "stopped", message: "MEV scanner stopped successfully" });
+    } catch (error) {
+      console.error("Failed to stop MEV scanner:", error);
+      res.status(500).json({ error: "Failed to stop scanner" });
+    }
+  });
+
+  app.get("/api/mev/gas-prices", async (req, res) => {
+    try {
+      const { db } = await import("./db");
+      const { gasPrices } = await import("@shared/schema");
+      const { sql } = await import("drizzle-orm");
+      
+      const prices = await db
+        .select()
+        .from(gasPrices)
+        .orderBy(sql`updated_at DESC`)
+        .limit(10);
+      
+      res.json(prices);
+    } catch (error) {
+      console.error("Failed to fetch gas prices:", error);
+      res.status(500).json({ error: "Failed to fetch gas prices" });
+    }
+  });
+
   const httpServer = createServer(app);
+  
+  // Start MEV scanner automatically
+  mevDetectorService.startScanning();
+  
   return httpServer;
 }
