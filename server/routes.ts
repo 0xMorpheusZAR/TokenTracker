@@ -717,26 +717,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }
       
-      // Sort by TVL and take top 20
-      const trendingPools = pools
-        .filter((pool: any) => pool.tvlUsd > 0)
+      // Filter DEX pools only and sort by TVL
+      const dexPools = pools
+        .filter((pool: any) => {
+          // Filter for DEX pools with reasonable TVL
+          // Skip single-asset staking pools and focus on liquidity pools
+          const isDexPool = pool.symbol && pool.symbol.includes('-') && 
+                           pool.project && pool.project !== 'lido' && 
+                           pool.project !== 'ether.fi-stake' &&
+                           pool.project !== 'wasabi';
+          const hasReasonableTvl = pool.tvlUsd > 100000 && pool.tvlUsd < 5000000000; // Less than $5B
+          
+          return isDexPool && hasReasonableTvl && pool.project;
+        })
         .sort((a: any, b: any) => b.tvlUsd - a.tvlUsd)
-        .slice(0, 20)
-        .map((pool: any) => ({
-          id: pool.pool,
-          name: pool.symbol,
-          project: pool.project,
-          chain: pool.chain,
-          tvl: pool.tvlUsd,
-          apy: pool.apy,
-          apyBase: pool.apyBase,
-          apyReward: pool.apyReward,
-          rewardTokens: pool.rewardTokens || [],
-          poolMeta: pool.poolMeta,
-          ilRisk: pool.il7d || 0,
-          volumeUsd1d: pool.volumeUsd1d || 0,
-          volumeUsd7d: pool.volumeUsd7d || 0
-        }));
+        .slice(0, 20);
+      
+      const trendingPools = dexPools.map((pool: any) => ({
+        id: pool.pool,
+        name: pool.symbol,
+        project: pool.project,
+        chain: pool.chain,
+        tvl: pool.tvlUsd,
+        apy: parseFloat(pool.apy) || 0,
+        apyBase: parseFloat(pool.apyBase) || 0,
+        apyReward: parseFloat(pool.apyReward) || 0,
+        rewardTokens: pool.rewardTokens || [],
+        poolMeta: pool.poolMeta,
+        ilRisk: pool.il7d || 0,
+        volumeUsd1d: pool.volumeUsd1d || 0,
+        volumeUsd7d: pool.volumeUsd7d || 0
+      }));
       
       res.json(trendingPools);
     } catch (error: any) {
@@ -825,20 +836,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .slice(0, 10);
       
       // Enhance with revenue data
-      const enhancedProtocols = dexProtocols.map((protocol: any) => {
-        const revenueInfo = revenueData.protocols?.[protocol.name];
-        return {
-          protocol: protocol.name,
-          tvl: protocol.tvl,
-          volume24h: protocol.volume || 0,
-          fees24h: revenueInfo?.total24h || 0,
-          revenue24h: revenueInfo?.revenue24h || 0,
-          users24h: protocol.activeUsers || 0,
-          chains: protocol.chains || [],
-          change1d: protocol.change_1d || 0,
-          dominance: 0 // Will calculate after
-        };
-      });
+      const enhancedProtocols = await Promise.all(
+        dexProtocols.map(async (protocol: any) => {
+          // Try to get revenue data for this specific protocol
+          let fees24h = 0;
+          let revenue24h = 0;
+          
+          // First try aggregated data which is more reliable
+          if (revenueData && revenueData.protocols) {
+            const revenueInfo = revenueData.protocols[protocol.name] || 
+                              revenueData.protocols[protocol.module] ||
+                              revenueData.protocols[protocol.slug];
+            if (revenueInfo) {
+              fees24h = revenueInfo.total24h || revenueInfo.totalDataChart24h || 0;
+              revenue24h = revenueInfo.revenue24h || revenueInfo.totalRevenue24h || 0;
+            }
+          }
+          
+          // Skip individual protocol fetches to avoid 400 errors
+          // The aggregated data should be sufficient
+          
+          return {
+            protocol: protocol.name,
+            tvl: protocol.tvl || 0,
+            volume24h: protocol.volume || 0,
+            fees24h: fees24h,
+            revenue24h: revenue24h,
+            users24h: protocol.activeUsers || 0,
+            chains: protocol.chains || [],
+            change1d: protocol.change_1d || 0,
+            dominance: 0 // Will calculate after
+          };
+        })
+      );
       
       // Calculate dominance
       const totalTvl = enhancedProtocols.reduce((sum: number, p: any) => sum + p.tvl, 0);

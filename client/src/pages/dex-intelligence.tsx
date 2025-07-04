@@ -113,7 +113,7 @@ export default function DexIntelligence() {
   });
 
   // Fetch volume stats
-  const { data: volumeStats = { total24h: 0, change24h: 0 } } = useQuery({
+  const { data: volumeStats = { total24h: 0, change24h: 0 } } = useQuery<{total24h: number, change24h: number}>({
     queryKey: ['/api/dex/volume-stats'],
     refetchInterval: autoRefresh ? 30000 : false,
   });
@@ -131,18 +131,22 @@ export default function DexIntelligence() {
     chain: pool.chain,
     tvl: pool.tvl,
     volume24h: pool.volumeUsd1d || 0,
-    volumeChange: ((pool.volumeUsd1d - pool.volumeUsd7d/7) / (pool.volumeUsd7d/7)) * 100 || 0,
+    volumeChange: pool.volumeUsd7d > 0 
+      ? ((pool.volumeUsd1d - pool.volumeUsd7d/7) / (pool.volumeUsd7d/7)) * 100 
+      : 0,
     fees24h: pool.apyBase || 0,
     apy: pool.apy,
     ilRisk: pool.ilRisk,
-    tokens: pool.name.split('-'),
+    tokens: pool.name.includes('-') ? pool.name.split('-') : [pool.name],
     priceChange: 0
   }));
 
-  // Calculate total DEX TVL
-  const totalDexTvl = protocolsData
-    .filter((p: any) => p.category === 'Dexes')
-    .reduce((sum: number, p: any) => sum + (p.tvl || 0), 0);
+  // Calculate total DEX TVL from protocol metrics
+  const totalDexTvl = protocolMetricsData.reduce((sum: number, p: any) => sum + (p.tvl || 0), 0);
+  
+  // Calculate 24h volume from volume stats
+  const total24hVolume = (volumeStats as any)?.total24h || 0;
+  const volumeChange24h = (volumeStats as any)?.change24h || 0;
 
 
 
@@ -258,8 +262,12 @@ export default function DexIntelligence() {
             <CardTitle className="text-sm font-medium">24h Volume</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$8.42B</div>
-            <p className="text-xs text-green-400 mt-1">+18.2% (24h)</p>
+            <div className="text-2xl font-bold">
+              ${(total24hVolume / 1e9).toFixed(2)}B
+            </div>
+            <p className={`text-xs mt-1 ${volumeChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {volumeChange24h >= 0 ? '+' : ''}{volumeChange24h.toFixed(1)}% (24h)
+            </p>
           </CardContent>
         </Card>
 
