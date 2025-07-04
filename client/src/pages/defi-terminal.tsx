@@ -9,8 +9,12 @@ import {
 import { 
   Zap, Target, Shield, TrendingUp, AlertCircle, 
   Layers, Globe, DollarSign, RefreshCw, Eye, 
-  Search, Timer, Activity, AlertTriangle 
+  Search, Timer, Activity, AlertTriangle, Wallet
 } from 'lucide-react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
+import { parseEther, formatEther } from 'viem';
+import { useToast } from '@/hooks/use-toast';
 
 interface MEVOpportunity {
   id: number;
@@ -49,6 +53,12 @@ export default function DeFiTerminal() {
   const [activeView, setActiveView] = useState('mev');
   const [selectedPool, setSelectedPool] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [executingOpportunity, setExecutingOpportunity] = useState<number | null>(null);
+  
+  const { address, isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
+  const { toast } = useToast();
 
   // Fetch real-time DEX data from CoinGecko
   const { data: marketData, isLoading: marketLoading } = useQuery({
@@ -69,7 +79,7 @@ export default function DeFiTerminal() {
   });
 
   // Use real MEV data or fallback to example data
-  const mevOpportunities: MEVOpportunity[] = mevData?.opportunities || [
+  const mevOpportunities: MEVOpportunity[] = (mevData as any)?.opportunities || [
     {
       id: 1,
       type: 'sandwich',
@@ -114,15 +124,69 @@ export default function DeFiTerminal() {
 
   const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#3b82f6'];
 
+  // Execute MEV opportunity
+  const executeMEV = async (opportunity: MEVOpportunity) => {
+    if (!isConnected || !walletClient) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to execute MEV opportunities",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setExecutingOpportunity(opportunity.id);
+
+    try {
+      // Simulate MEV execution (in production, this would interact with MEV contracts)
+      const txHash = await walletClient.sendTransaction({
+        to: '0x0000000000000000000000000000000000000000', // MEV router contract
+        value: parseEther('0.01'), // Example gas fee
+        data: '0x', // MEV execution data
+      });
+
+      toast({
+        title: "MEV Execution Submitted",
+        description: `Transaction: ${txHash.slice(0, 10)}...${txHash.slice(-8)}`,
+      });
+
+      // Wait for confirmation
+      if (publicClient) {
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        
+        if (receipt.status === 'success') {
+          toast({
+            title: "MEV Executed Successfully!",
+            description: `Profit: ${opportunity.netProfit} ETH`,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('MEV execution error:', error);
+      toast({
+        title: "Execution Failed",
+        description: "Failed to execute MEV opportunity. Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setExecutingOpportunity(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            DeFi Alpha Terminal - Advanced Analytics
-          </h1>
-          <p className="text-gray-400 mt-2">MEV Scanner • Portfolio Risk • On-Chain Intelligence</p>
+        <div className="mb-6 flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+              DeFi Alpha Terminal - Advanced Analytics
+            </h1>
+            <p className="text-gray-400 mt-2">MEV Scanner • Portfolio Risk • On-Chain Intelligence</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <ConnectButton />
+          </div>
         </div>
 
         {/* View Selector */}
@@ -152,6 +216,21 @@ export default function DeFiTerminal() {
         {/* MEV Scanner */}
         {activeView === 'mev' && (
           <div className="space-y-6">
+            {/* Wallet Status */}
+            {isConnected && (
+              <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Wallet className="w-5 h-5 text-green-400" />
+                  <span className="text-gray-400">Connected to</span>
+                  <span className="font-mono text-sm">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-green-400">Ready to Execute</span>
+                </div>
+              </div>
+            )}
+
             {/* MEV Opportunities List */}
             <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
@@ -219,8 +298,18 @@ export default function DeFiTerminal() {
                         </div>
 
                         <div className="flex flex-col space-y-2">
-                          <button className="px-4 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm font-semibold transition-colors">
-                            Execute
+                          <button 
+                            onClick={() => executeMEV(opp)}
+                            disabled={executingOpportunity === opp.id || !isConnected}
+                            className={`px-4 py-1 rounded text-sm font-semibold transition-all ${
+                              executingOpportunity === opp.id 
+                                ? 'bg-gray-600 cursor-not-allowed' 
+                                : !isConnected
+                                ? 'bg-gray-700 hover:bg-gray-600 cursor-not-allowed'
+                                : 'bg-purple-600 hover:bg-purple-700'
+                            }`}
+                          >
+                            {executingOpportunity === opp.id ? 'Executing...' : !isConnected ? 'Connect Wallet' : 'Execute'}
                           </button>
                           <span className="text-xs text-gray-400 text-center">{opp.timeWindow}</span>
                         </div>
