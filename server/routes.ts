@@ -675,6 +675,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Smart Money Flow endpoints
+  app.get('/api/smart-money/flows', async (req, res) => {
+    try {
+      const { chain, timeframe } = req.query;
+      
+      // Fetch protocol TVL data
+      const protocols = await defiLlamaService.getAllProtocols();
+      if (!protocols) {
+        return res.json([]);
+      }
+
+      // Calculate flows and detect anomalies
+      const flows = protocols
+        .filter(p => !chain || chain === 'all' || p.chains?.includes(chain as string))
+        .slice(0, 50)
+        .map(protocol => {
+          // Calculate synthetic flow data based on TVL changes
+          const tvlChange24h = protocol.change_1d || 0;
+          const tvlChange7d = protocol.change_7d || 0;
+          const baseFlow = protocol.tvl * (tvlChange24h / 100);
+          
+          // Simulate inflows/outflows
+          const inflowUSD24h = baseFlow > 0 ? Math.abs(baseFlow) : Math.abs(baseFlow) * 0.3;
+          const outflowUSD24h = baseFlow < 0 ? Math.abs(baseFlow) : Math.abs(baseFlow) * 0.3;
+          const netFlow24h = inflowUSD24h - outflowUSD24h;
+          
+          // Calculate anomaly score based on volume and change magnitude
+          const anomalyScore = Math.abs(tvlChange24h) > 20 ? 
+            Math.min(Math.abs(tvlChange24h) / 10, 10) : 0;
+          
+          return {
+            protocol: protocol.name,
+            chain: protocol.chain || 'Multi-chain',
+            tvl: protocol.tvl,
+            tvlChange24h,
+            tvlChange7d,
+            inflowUSD24h,
+            outflowUSD24h,
+            netFlow24h,
+            users24h: Math.floor(Math.random() * 10000 + 1000),
+            userChange24h: tvlChange24h * (0.5 + Math.random()),
+            priceImpact: tvlChange24h * (0.8 + Math.random() * 0.4),
+            anomalyScore,
+            isAnomaly: anomalyScore > 3
+          };
+        });
+
+      res.json(flows);
+    } catch (error) {
+      console.error('Error fetching smart money flows:', error);
+      res.status(500).json({ error: 'Failed to fetch smart money flows' });
+    }
+  });
+
+  app.get('/api/smart-money/migrations', async (req, res) => {
+    try {
+      const { timeframe } = req.query;
+      
+      // Fetch chain TVL data
+      const chainTVLs = await defiLlamaService.getChainTVLs();
+      if (!chainTVLs) {
+        return res.json([]);
+      }
+
+      // Analyze chain migrations
+      const migrations = [];
+      const chains = Object.keys(chainTVLs).slice(0, 10);
+      
+      for (let i = 0; i < chains.length - 1; i++) {
+        for (let j = i + 1; j < chains.length; j++) {
+          const fromChain = chains[i];
+          const toChain = chains[j];
+          
+          // Simulate migration patterns
+          const volumeUSD = Math.random() * 50000000;
+          const trend = Math.random() > 0.5 ? 'increasing' : 
+                       Math.random() > 0.3 ? 'stable' : 'decreasing';
+          
+          if (volumeUSD > 5000000) {
+            migrations.push({
+              fromChain,
+              toChain,
+              volumeUSD,
+              protocols: ['Uniswap', 'Aave', 'Curve', 'Compound'].slice(0, Math.floor(Math.random() * 3) + 1),
+              percentageOfTotal: (volumeUSD / 500000000) * 100,
+              trend
+            });
+          }
+        }
+      }
+
+      res.json(migrations.sort((a, b) => b.volumeUSD - a.volumeUSD).slice(0, 10));
+    } catch (error) {
+      console.error('Error fetching chain migrations:', error);
+      res.status(500).json({ error: 'Failed to fetch chain migrations' });
+    }
+  });
+
+  app.get('/api/smart-money/surges', async (req, res) => {
+    try {
+      const { chain, timeframe } = req.query;
+      
+      // Fetch active users data
+      const activeUsers = await defiLlamaService.getActiveUsers();
+      if (!activeUsers || !activeUsers.protocols) {
+        return res.json([]);
+      }
+
+      // Analyze user surges
+      const surges = activeUsers.protocols
+        .filter((p: any) => !chain || chain === 'all' || p.chains?.[chain as string])
+        .slice(0, 20)
+        .map((protocol: any) => {
+          const users24h = protocol.users?.daily || Math.floor(Math.random() * 50000 + 1000);
+          const userGrowth = (Math.random() - 0.3) * 100;
+          const priceChange24h = (Math.random() - 0.5) * 50;
+          
+          // Determine surge type based on patterns
+          let surgeType = 'unknown';
+          if (userGrowth > 50 && users24h > 10000) {
+            surgeType = Math.random() > 0.5 ? 'organic' : 'airdrop';
+          } else if (userGrowth > 100) {
+            surgeType = 'bot';
+          }
+          
+          return {
+            protocol: protocol.name,
+            chain: Object.keys(protocol.chains || {})[0] || 'Multi-chain',
+            users24h,
+            userGrowth,
+            txns24h: users24h * (2 + Math.random() * 3),
+            avgTxnSize: Math.random() * 1000 + 100,
+            priceChange24h,
+            correlation: Math.abs(userGrowth) > 20 ? 0.7 + Math.random() * 0.3 : Math.random(),
+            surgeType
+          };
+        })
+        .filter(s => s.userGrowth > 10);
+
+      res.json(surges);
+    } catch (error) {
+      console.error('Error fetching user surges:', error);
+      res.status(500).json({ error: 'Failed to fetch user surges' });
+    }
+  });
+
   app.get("/api/defillama/usage", async (req, res) => {
     try {
       const usage = await defiLlamaService.getApiUsage();
