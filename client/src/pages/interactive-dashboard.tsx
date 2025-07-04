@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy, Brain, Lock } from "lucide-react";
+import { TrendingDown, RefreshCw, BarChart3, Grid3X3, Table, Unlock, DollarSign, Users, Rocket, LineChart, Video, Cpu, Trophy } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -329,28 +329,6 @@ export default function InteractiveDashboard() {
                   <Trophy className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">BloFin</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-75"></div>
-                </a>
-                
-                <a 
-                  href="/smart-money-flow" 
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600/80 via-teal-600/80 to-emerald-600/80 hover:from-cyan-500 hover:via-teal-500 hover:to-emerald-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-400/40"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/20 to-cyan-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Brain className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10">Smart Money</span>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-75"></div>
-                </a>
-                
-                <a 
-                  href="/token-unlocks" 
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-rose-600/80 via-red-600/80 to-pink-600/80 hover:from-rose-500 hover:via-red-500 hover:to-pink-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-red-500/20 hover:border-red-400/40"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/0 via-red-400/20 to-red-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(239,68,68,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Unlock className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10">Unlocks</span>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <button
