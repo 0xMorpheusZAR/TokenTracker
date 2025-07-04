@@ -5,7 +5,7 @@ import {
   TrendingUp, TrendingDown, AlertCircle, Activity, 
   ArrowUpRight, ArrowDownRight, Cpu, Users, 
   DollarSign, BarChart3, Eye, Zap, ArrowLeftRight,
-  Wallet, Shield, Brain
+  Wallet, Shield, Brain, ExternalLink, Target
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -78,10 +78,23 @@ interface UserSurge {
   surgeType: 'organic' | 'bot' | 'airdrop' | 'unknown';
 }
 
+interface TradingSignal {
+  protocol: string;
+  chain: string;
+  signal: 'BUY' | 'SELL' | 'HOLD';
+  strength: 'STRONG' | 'MEDIUM' | 'WEAK';
+  reason: string;
+  confidence: number;
+  targetPrice?: number;
+  stopLoss?: number;
+  tradingUrl?: string;
+  chartUrl?: string;
+}
+
 export default function SmartMoneyFlow() {
   const [selectedChain, setSelectedChain] = useState<string>('all');
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('24h');
-  const [activeTab, setActiveTab] = useState<string>('anomalies');
+  const [activeTab, setActiveTab] = useState<string>('signals');
 
   // Fetch smart money flow data
   const { data: flowData, isLoading: flowLoading } = useQuery<FlowData[]>({
@@ -105,6 +118,59 @@ export default function SmartMoneyFlow() {
   const anomalies = flowData?.filter(f => f.isAnomaly) || [];
   const topInflows = flowData?.sort((a, b) => b.inflowUSD24h - a.inflowUSD24h).slice(0, 10) || [];
   const topOutflows = flowData?.sort((a, b) => b.outflowUSD24h - a.outflowUSD24h).slice(0, 10) || [];
+
+  // Generate trading signals based on anomalies
+  const generateSignals = (): TradingSignal[] => {
+    if (!flowData) return [];
+    
+    return flowData
+      .filter(f => f.isAnomaly)
+      .map(flow => {
+        let signal: 'BUY' | 'SELL' | 'HOLD' = 'HOLD';
+        let strength: 'STRONG' | 'MEDIUM' | 'WEAK' = 'WEAK';
+        let reason = '';
+        let confidence = 0;
+
+        // Analyze flow patterns
+        const netFlowRatio = flow.netFlow24h / flow.tvl;
+        const userGrowthNormalized = flow.userChange24h / 100;
+        
+        if (flow.anomalyScore > 5) {
+          if (flow.netFlow24h > 0 && flow.priceImpact < -5) {
+            signal = 'BUY';
+            strength = flow.anomalyScore > 7 ? 'STRONG' : 'MEDIUM';
+            reason = `Strong inflows (+$${(flow.inflowUSD24h / 1e6).toFixed(1)}M) despite ${flow.priceImpact.toFixed(1)}% price drop`;
+            confidence = Math.min(flow.anomalyScore * 10, 90);
+          } else if (flow.netFlow24h < 0 && flow.priceImpact > 5) {
+            signal = 'SELL';
+            strength = flow.anomalyScore > 7 ? 'STRONG' : 'MEDIUM';
+            reason = `Heavy outflows (-$${(flow.outflowUSD24h / 1e6).toFixed(1)}M) with overvalued price`;
+            confidence = Math.min(flow.anomalyScore * 10, 90);
+          } else if (flow.userChange24h > 50 && flow.netFlow24h > 0) {
+            signal = 'BUY';
+            strength = 'MEDIUM';
+            reason = `User surge (+${flow.userChange24h.toFixed(0)}%) with positive flows`;
+            confidence = Math.min(60 + flow.anomalyScore * 5, 85);
+          }
+        }
+
+        return {
+          protocol: flow.protocol,
+          chain: flow.chain,
+          signal,
+          strength,
+          reason,
+          confidence,
+          tradingUrl: `https://app.uniswap.org/#/swap?chain=${flow.chain.toLowerCase()}`,
+          chartUrl: `https://dexscreener.com/search?q=${flow.protocol}`
+        };
+      })
+      .filter(s => s.signal !== 'HOLD')
+      .sort((a, b) => b.confidence - a.confidence)
+      .slice(0, 10);
+  };
+
+  const tradingSignals = generateSignals();
 
   // Chart data for flow visualization
   const flowChartData = {
@@ -264,11 +330,106 @@ export default function SmartMoneyFlow() {
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList className="bg-gray-900/50 border-gray-800">
+            <TabsTrigger value="signals">Trading Signals</TabsTrigger>
             <TabsTrigger value="anomalies">Flow Anomalies</TabsTrigger>
             <TabsTrigger value="migrations">Chain Migrations</TabsTrigger>
             <TabsTrigger value="surges">User Surges</TabsTrigger>
             <TabsTrigger value="overview">Flow Overview</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="signals" className="space-y-4">
+            <Card className="bg-gray-900/50 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5 text-yellow-400" />
+                  AI-Generated Trading Signals
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tradingSignals.length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">
+                    <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>No strong trading signals detected based on current flow anomalies.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {tradingSignals.map((signal, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className={`p-4 rounded-lg border ${
+                          signal.signal === 'BUY' 
+                            ? 'bg-green-900/20 border-green-500/30' 
+                            : 'bg-red-900/20 border-red-500/30'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h4 className="font-semibold text-lg">{signal.protocol}</h4>
+                              <Badge 
+                                variant={signal.signal === 'BUY' ? 'default' : 'destructive'} 
+                                className={`${
+                                  signal.signal === 'BUY' 
+                                    ? 'bg-green-600 text-white' 
+                                    : 'bg-red-600 text-white'
+                                }`}
+                              >
+                                {signal.signal}
+                              </Badge>
+                              <Badge 
+                                variant="outline" 
+                                className={`
+                                  ${signal.strength === 'STRONG' ? 'border-yellow-500 text-yellow-400' : ''}
+                                  ${signal.strength === 'MEDIUM' ? 'border-blue-500 text-blue-400' : ''}
+                                  ${signal.strength === 'WEAK' ? 'border-gray-500 text-gray-400' : ''}
+                                `}
+                              >
+                                {signal.strength}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-400 mb-1">{signal.chain}</p>
+                            <p className="text-gray-300 mb-3">{signal.reason}</p>
+                            <div className="flex items-center gap-4">
+                              <div className="text-sm">
+                                <span className="text-gray-400">Confidence: </span>
+                                <span className={`font-semibold ${
+                                  signal.confidence > 70 ? 'text-green-400' : 
+                                  signal.confidence > 50 ? 'text-yellow-400' : 'text-orange-400'
+                                }`}>
+                                  {signal.confidence}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <a
+                              href={signal.tradingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 px-3 py-1 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors text-sm"
+                            >
+                              Trade <ExternalLink className="w-3 h-3" />
+                            </a>
+                            <a
+                              href={signal.chartUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 px-3 py-1 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors text-sm"
+                            >
+                              Chart <BarChart3 className="w-3 h-3" />
+                            </a>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="anomalies" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
