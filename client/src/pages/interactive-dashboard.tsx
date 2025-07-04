@@ -15,7 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
-import { DiscordAuth } from "@/components/discord-auth";
+
 
 // Register Chart.js components
 ChartJS.register(
@@ -334,16 +334,12 @@ export default function InteractiveDashboard() {
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden disabled:cursor-not-allowed col-span-2 sm:col-span-1"
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 disabled:from-slate-600 disabled:to-slate-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden disabled:cursor-not-allowed"
                 >
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 relative z-10 ${isRefreshing ? 'animate-spin' : ''}`} />
                   <span className="relative z-10">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </button>
-                
-                <div className="col-span-2 sm:col-span-1">
-                  <DiscordAuth />
-                </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
