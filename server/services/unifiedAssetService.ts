@@ -75,11 +75,12 @@ export class UnifiedAssetService {
   async getUnifiedAssetData(coinId: string): Promise<UnifiedAssetData | null> {
     try {
       // Fetch data from multiple sources in parallel
-      const [coinGeckoData, trendingData, protocolData, unlockData] = await Promise.all([
+      const [coinGeckoData, trendingData, protocolData, unlockData, liquidityData] = await Promise.all([
         this.fetchCoinGeckoData(coinId),
         this.fetchTrendingStatus(coinId),
         this.fetchDefiLlamaProtocolData(coinId),
-        this.fetchUnlockData(coinId)
+        this.fetchUnlockData(coinId),
+        this.fetchLiquidityData(coinId)
       ]);
 
       if (!coinGeckoData) {
@@ -87,14 +88,22 @@ export class UnifiedAssetService {
       }
 
       // Combine all data sources
+      // Transform price history to the expected format
+      const priceHistory = coinGeckoData.sparkline_in_7d?.price 
+        ? coinGeckoData.sparkline_in_7d.price.map((price: number, index: number) => [
+            Date.now() - (168 - index) * 3600000, // 168 hours = 7 days
+            price
+          ])
+        : [];
+
       const unifiedData: UnifiedAssetData = {
         // Basic Info
         id: coinGeckoData.id,
-        symbol: coinGeckoData.symbol.toUpperCase(),
+        symbol: coinGeckoData.symbol,
         name: coinGeckoData.name,
         image: coinGeckoData.image,
         
-        // Market Data
+        // Market Data (matching interface field names)
         currentPrice: coinGeckoData.current_price,
         marketCap: coinGeckoData.market_cap,
         fullyDilutedValuation: coinGeckoData.fully_diluted_valuation || 0,
@@ -112,7 +121,7 @@ export class UnifiedAssetService {
         
         // Category & Trends
         categories: coinGeckoData.categories || [],
-        isTrending: trendingData,
+        isTrending: trendingData || false,
         
         // DeFi Metrics
         tvl: protocolData?.tvl || null,
@@ -121,8 +130,8 @@ export class UnifiedAssetService {
         activeUsersChange24h: protocolData?.activeUsersChange24h || null,
         
         // Liquidity Data
-        totalLiquidity: protocolData?.liquidity || null,
-        topLiquidityPools: protocolData?.topPools || null,
+        totalLiquidity: liquidityData?.totalLiquidity || null,
+        topLiquidityPools: liquidityData?.topPools || null,
         
         // Token Unlocks
         nextUnlock: unlockData?.nextUnlock || null,
@@ -135,7 +144,7 @@ export class UnifiedAssetService {
         revenue30d: protocolData?.revenue30d || null,
         
         // Historical Data
-        priceHistory: coinGeckoData.sparkline_in_7d?.price || null,
+        priceHistory: priceHistory,
         tvlHistory: protocolData?.tvlHistory || null
       };
 
