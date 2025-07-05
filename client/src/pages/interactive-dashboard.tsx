@@ -15,6 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
+import { AssetDashboardModal } from '@/components/AssetDashboardModal';
 
 
 // Register Chart.js components
@@ -46,6 +47,10 @@ export default function InteractiveDashboard() {
   const [floatChartType, setFloatChartType] = useState("scatter");
   const [sectorChartType, setSectorChartType] = useState("doughnut");
   const [timelinePeriod, setTimelinePeriod] = useState("1m");
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState<{ id: string; name: string; symbol: string } | null>(null);
 
   const { data: tokens } = useQuery({
     queryKey: ["/api/tokens"],
@@ -138,6 +143,32 @@ export default function InteractiveDashboard() {
         ? prev.filter(id => id !== tokenId)
         : [...prev, tokenId]
     );
+  };
+
+  const openAssetDashboard = (token: any) => {
+    // Map the token symbol to CoinGecko ID
+    const symbolToCoinGeckoId: { [key: string]: string } = {
+      'PORTAL': 'portal',
+      'STRK': 'starknet',
+      'AEVO': 'aevo',
+      'PIXEL': 'pixels',
+      'SAGA': 'saga',
+      'REZ': 'renzo',
+      'MANTA': 'manta-network',
+      'ALT': 'altlayer',
+      'ENA': 'ethena',
+      'W': 'wormhole',
+      'OMNI': 'omni-network',
+      'HYPE': 'hyperliquid'
+    };
+    
+    const coinGeckoId = symbolToCoinGeckoId[token.symbol] || token.symbol.toLowerCase();
+    setSelectedCoin({
+      id: coinGeckoId,
+      name: token.name,
+      symbol: token.symbol
+    });
+    setIsModalOpen(true);
   };
 
   const getPerformanceColor = (performance: string) => {
@@ -507,7 +538,7 @@ export default function InteractiveDashboard() {
             {filteredAndSortedTokens.map((token: any, index: number) => (
               <div 
                 key={token.id}
-                onClick={() => toggleTokenSelection(token.id)}
+                onClick={() => openAssetDashboard(token)}
                 className={`bg-gray-900 border rounded-xl p-6 transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-xl ${
                   selectedTokens.includes(token.id) 
                     ? "border-blue-500 shadow-blue-500/20" 
@@ -584,7 +615,7 @@ export default function InteractiveDashboard() {
                     <tr 
                       key={token.id}
                       className="border-t border-gray-800 hover:bg-gray-800/50 transition-colors cursor-pointer"
-                      onClick={() => toggleTokenSelection(token.id)}
+                      onClick={() => openAssetDashboard(token)}
                     >
                       <td className="p-4">
                         <div>
@@ -1126,6 +1157,17 @@ export default function InteractiveDashboard() {
           </p>
         </div>
       </div>
+      
+      {/* Unified Asset Dashboard Modal */}
+      {selectedCoin && (
+        <AssetDashboardModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          coinId={selectedCoin.id}
+          coinName={selectedCoin.name}
+          coinSymbol={selectedCoin.symbol}
+        />
+      )}
     </div>
   );
 }

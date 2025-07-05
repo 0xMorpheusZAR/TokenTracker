@@ -690,6 +690,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Unified Asset Dashboard endpoint
+  app.get("/api/unified-asset/:coinId", async (req, res) => {
+    try {
+      const { coinId } = req.params;
+      const { unifiedAssetService } = await import('./services/unifiedAssetService.js');
+      const data = await unifiedAssetService.getUnifiedAssetData(coinId);
+      
+      if (!data) {
+        return res.status(404).json({ error: 'Asset data not found' });
+      }
+      
+      res.json(data);
+    } catch (error) {
+      console.error("Failed to fetch unified asset data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Discord Authentication Routes
   app.get("/api/auth/discord", async (req, res) => {
     try {
