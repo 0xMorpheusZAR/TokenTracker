@@ -12,6 +12,7 @@ import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
 import BlofinCompetition from "@/pages/blofin-competition";
 import UnifiedAssetDashboard from "@/pages/unified-asset-dashboard-v2";
+import { EthenaDashboard } from "@/pages/ethena-dashboard";
 
 import NotFound from "@/pages/not-found";
 
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/interesting-projects" component={InterestingProjects} />
       <Route path="/blofin-competition" component={BlofinCompetition} />
       <Route path="/unified-asset-dashboard" component={UnifiedAssetDashboard} />
+      <Route path="/ethena-dashboard" component={EthenaDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

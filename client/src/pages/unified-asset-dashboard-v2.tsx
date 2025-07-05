@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 import { 
   Activity, DollarSign, TrendingUp, Lock, 
   Coins, Users, BarChart3, Droplets, 
@@ -74,6 +76,7 @@ function formatPercentage(num: number | null | undefined): string {
 
 export default function UnifiedAssetDashboardV2() {
   const [selectedToken, setSelectedToken] = useState("hyperliquid");
+  const [, setLocation] = useLocation();
 
   // Fetch comprehensive token data
   const { data: tokenData, isLoading, error } = useQuery({
@@ -189,18 +192,28 @@ export default function UnifiedAssetDashboardV2() {
             </p>
           </div>
           
-          <Select value={selectedToken} onValueChange={setSelectedToken}>
-            <SelectTrigger className="w-[250px] bg-slate-800/50 border-slate-700 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {availableTokens.map((token) => (
-                <SelectItem key={token.id} value={token.id}>
-                  {token.name} ({token.symbol})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select value={selectedToken} onValueChange={setSelectedToken}>
+              <SelectTrigger className="w-[250px] bg-slate-800/50 border-slate-700 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {availableTokens.map((token) => (
+                  <SelectItem key={token.id} value={token.id}>
+                    {token.name} ({token.symbol})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedToken === "ethena" && (
+              <Button
+                onClick={() => setLocation("/ethena-dashboard")}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+              >
+                View Protocol Dashboard
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Token Header Info */}

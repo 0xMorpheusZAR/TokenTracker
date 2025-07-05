@@ -748,6 +748,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Ethena protocol specific endpoints
+  app.get("/api/defillama/protocol/ethena", async (_req, res) => {
+    try {
+      const ethenaData = await defiLlamaService.getEthenaProtocolData();
+      res.json(ethenaData || {});
+    } catch (error) {
+      console.error('Error fetching Ethena protocol data:', error);
+      res.status(500).json({ error: "Failed to fetch Ethena protocol data" });
+    }
+  });
+
+  // Get ENA token price from CoinGecko
+  app.get("/api/coingecko/ethena-price", async (_req, res) => {
+    try {
+      const tokenData = await coinGeckoService.getMarketData(['ethena']);
+      const enaData = tokenData?.[0] || null;
+      
+      res.json({
+        price: enaData?.current_price || 0,
+        marketCap: enaData?.market_cap || 0,
+        fdv: enaData?.fully_diluted_valuation || 0,
+        volume24h: enaData?.total_volume || 0,
+        priceChange24h: enaData?.price_change_percentage_24h || 0,
+        circulatingSupply: enaData?.circulating_supply || 0,
+        totalSupply: enaData?.total_supply || 0
+      });
+    } catch (error) {
+      console.error('Error fetching ENA price:', error);
+      res.json({
+        price: 0,
+        marketCap: 0,
+        fdv: 0,
+        volume24h: 0,
+        priceChange24h: 0,
+        circulatingSupply: 0,
+        totalSupply: 0
+      });
+    }
+  });
+
   // Discord Authentication Routes
   app.get("/api/auth/discord", async (req, res) => {
     try {

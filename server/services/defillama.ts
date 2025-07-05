@@ -425,6 +425,77 @@ export class DefiLlamaService {
   }
 
   /**
+   * Get protocol-specific TVL data with token breakdown
+   */
+  async getProtocolTVLBreakdown(protocol: string): Promise<any | null> {
+    return this.fetchData(`/tvl/${protocol}`);
+  }
+
+  /**
+   * Get protocol yields data
+   */
+  async getProtocolYields(protocol: string): Promise<any | null> {
+    return this.fetchData(`/yields/${protocol}`);
+  }
+
+  /**
+   * Get protocol-specific unlocks data
+   */
+  async getProtocolUnlocks(protocol: string): Promise<any | null> {
+    return this.fetchData(`/unlocks/${protocol}`);
+  }
+
+  /**
+   * Get comprehensive Ethena protocol data
+   */
+  async getEthenaProtocolData(): Promise<any> {
+    try {
+      const [
+        protocolData,
+        tvlBreakdown,
+        feesData,
+        yieldsData,
+        unlocksData,
+        allYieldPools
+      ] = await Promise.all([
+        this.getProtocolDetails('ethena'),
+        this.getProtocolTVLBreakdown('ethena'),
+        this.getProtocolRevenue('ethena'),
+        this.getProtocolYields('ethena'),
+        this.getProtocolUnlocks('ethena'),
+        this.getYieldPools()
+      ]);
+
+      // Filter Ethena-specific yield pools
+      const ethenaYields = allYieldPools?.filter(pool => 
+        pool.project?.toLowerCase() === 'ethena' || 
+        pool.symbol?.toLowerCase().includes('usde') ||
+        pool.symbol?.toLowerCase().includes('usdtb')
+      ) || [];
+
+      return {
+        protocol: protocolData,
+        tvlBreakdown,
+        fees: feesData,
+        yields: ethenaYields,
+        unlocks: unlocksData,
+        metrics: {
+          tvl: protocolData?.tvl || 0,
+          mcap: protocolData?.mcap || 0,
+          fdv: protocolData?.fdv || 0,
+          fees24h: feesData?.totalFees24h || 0,
+          revenue24h: feesData?.totalRevenue24h || 0,
+          feesAnnualized: (feesData?.totalFees24h || 0) * 365,
+          revenueAnnualized: (feesData?.totalRevenue24h || 0) * 365
+        }
+      };
+    } catch (error) {
+      console.error('Error fetching Ethena protocol data:', error);
+      return null;
+    }
+  }
+
+  /**
    * Get comprehensive token analytics data
    */
   async getTokenAnalytics(symbol: string, geckoId?: string): Promise<any> {
