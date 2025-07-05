@@ -148,18 +148,36 @@ export class UnifiedAssetService {
 
   private async fetchCoinGeckoData(coinId: string): Promise<any | null> {
     try {
-      // First get detailed market data
-      const marketData = await coinGeckoService.getMarketData([coinId]);
-      if (!marketData || marketData.length === 0) {
+      // Get detailed token data directly
+      const detailData = await coinGeckoService.getTokenDetails(coinId);
+      if (!detailData) {
         return null;
       }
 
-      // Get additional details including categories
-      const detailData = await coinGeckoService.getTokenDetails(coinId);
+      // Extract market data from the detailed response
+      const marketData = detailData.market_data;
       
       return {
-        ...marketData[0],
-        categories: detailData?.categories || []
+        id: detailData.id,
+        symbol: detailData.symbol,
+        name: detailData.name,
+        image: detailData.image?.large || detailData.image?.small || '',
+        current_price: marketData?.current_price?.usd || 0,
+        market_cap: marketData?.market_cap?.usd || 0,
+        fully_diluted_valuation: marketData?.fully_diluted_valuation?.usd || 0,
+        total_volume: marketData?.total_volume?.usd || 0,
+        price_change_percentage_24h: marketData?.price_change_percentage_24h || 0,
+        price_change_percentage_7d: marketData?.price_change_percentage_7d || 0,
+        price_change_percentage_30d: marketData?.price_change_percentage_30d || 0,
+        circulating_supply: marketData?.circulating_supply || 0,
+        total_supply: marketData?.total_supply || 0,
+        max_supply: marketData?.max_supply || null,
+        ath: marketData?.ath?.usd || 0,
+        ath_date: marketData?.ath_date?.usd || '',
+        atl: marketData?.atl?.usd || 0,
+        atl_date: marketData?.atl_date?.usd || '',
+        categories: detailData.categories || [],
+        sparkline_in_7d: marketData?.sparkline_7d || null
       };
     } catch (error) {
       console.error('Error fetching CoinGecko data:', error);
@@ -248,13 +266,18 @@ export class UnifiedAssetService {
     try {
       // Get yield pools to find liquidity data
       const pools = await defiLlamaService.getYieldPools();
-      if (!pools) return null;
+      if (!pools || !Array.isArray(pools)) return null;
 
       // Filter pools for this token
-      const tokenPools = pools.filter(pool => 
-        pool.symbol.toLowerCase().includes(coinId.toLowerCase()) ||
-        pool.underlyingTokens?.some(t => t.toLowerCase().includes(coinId.toLowerCase()))
-      );
+      const tokenPools = pools.filter(pool => {
+        if (!pool || typeof pool !== 'object') return false;
+        
+        const symbolMatch = pool.symbol && pool.symbol.toLowerCase().includes(coinId.toLowerCase());
+        const underlyingMatch = Array.isArray(pool.underlyingTokens) && 
+          pool.underlyingTokens.some(t => t && t.toLowerCase().includes(coinId.toLowerCase()));
+        
+        return symbolMatch || underlyingMatch;
+      });
 
       if (tokenPools.length === 0) return null;
 
@@ -264,9 +287,9 @@ export class UnifiedAssetService {
         .sort((a, b) => (b.tvlUsd || 0) - (a.tvlUsd || 0))
         .slice(0, 5)
         .map(pool => ({
-          pool: pool.symbol,
+          pool: pool.symbol || 'Unknown',
           liquidity: pool.tvlUsd || 0,
-          chain: pool.chain
+          chain: pool.chain || 'Unknown'
         }));
 
       return { totalLiquidity, topPools };

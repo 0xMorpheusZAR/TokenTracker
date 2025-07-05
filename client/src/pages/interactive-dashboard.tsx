@@ -15,7 +15,6 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Bar, Doughnut, Scatter, Bubble, Pie } from 'react-chartjs-2';
-import { AssetDashboardModal } from '@/components/AssetDashboardModal';
 
 
 // Register Chart.js components
@@ -47,10 +46,6 @@ export default function InteractiveDashboard() {
   const [floatChartType, setFloatChartType] = useState("scatter");
   const [sectorChartType, setSectorChartType] = useState("doughnut");
   const [timelinePeriod, setTimelinePeriod] = useState("1m");
-  
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCoin, setSelectedCoin] = useState<{ id: string; name: string; symbol: string } | null>(null);
 
   const { data: tokens } = useQuery({
     queryKey: ["/api/tokens"],
@@ -145,31 +140,7 @@ export default function InteractiveDashboard() {
     );
   };
 
-  const openAssetDashboard = (token: any) => {
-    // Map the token symbol to CoinGecko ID
-    const symbolToCoinGeckoId: { [key: string]: string } = {
-      'PORTAL': 'portal',
-      'STRK': 'starknet',
-      'AEVO': 'aevo',
-      'PIXEL': 'pixels',
-      'SAGA': 'saga',
-      'REZ': 'renzo',
-      'MANTA': 'manta-network',
-      'ALT': 'altlayer',
-      'ENA': 'ethena',
-      'W': 'wormhole',
-      'OMNI': 'omni-network',
-      'HYPE': 'hyperliquid'
-    };
-    
-    const coinGeckoId = symbolToCoinGeckoId[token.symbol] || token.symbol.toLowerCase();
-    setSelectedCoin({
-      id: coinGeckoId,
-      name: token.name,
-      symbol: token.symbol
-    });
-    setIsModalOpen(true);
-  };
+
 
   const getPerformanceColor = (performance: string) => {
     const perf = parseFloat(performance);
@@ -349,6 +320,17 @@ export default function InteractiveDashboard() {
                   <Cpu className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">Projects</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-75"></div>
+                </a>
+                
+                <a 
+                  href="/unified-asset-dashboard" 
+                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-600/80 via-blue-600/80 to-cyan-600/80 hover:from-indigo-500 hover:via-blue-500 hover:to-cyan-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-blue-500/20 hover:border-blue-400/40"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/20 to-blue-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
+                  <span className="relative z-10">Asset Dashboard</span>
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <a 
@@ -538,7 +520,7 @@ export default function InteractiveDashboard() {
             {filteredAndSortedTokens.map((token: any, index: number) => (
               <div 
                 key={token.id}
-                onClick={() => openAssetDashboard(token)}
+                onClick={() => toggleTokenSelection(token.id)}
                 className={`bg-gray-900 border rounded-xl p-6 transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-xl ${
                   selectedTokens.includes(token.id) 
                     ? "border-blue-500 shadow-blue-500/20" 
@@ -615,7 +597,7 @@ export default function InteractiveDashboard() {
                     <tr 
                       key={token.id}
                       className="border-t border-gray-800 hover:bg-gray-800/50 transition-colors cursor-pointer"
-                      onClick={() => openAssetDashboard(token)}
+                      onClick={() => toggleTokenSelection(token.id)}
                     >
                       <td className="p-4">
                         <div>
@@ -1158,16 +1140,7 @@ export default function InteractiveDashboard() {
         </div>
       </div>
       
-      {/* Unified Asset Dashboard Modal */}
-      {selectedCoin && (
-        <AssetDashboardModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          coinId={selectedCoin.id}
-          coinName={selectedCoin.name}
-          coinSymbol={selectedCoin.symbol}
-        />
-      )}
+
     </div>
   );
 }
