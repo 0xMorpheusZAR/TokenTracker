@@ -74,27 +74,41 @@ interface UnifiedAssetData {
 export class UnifiedAssetService {
   async getUnifiedAssetData(coinId: string): Promise<UnifiedAssetData | null> {
     try {
-      // Fetch data from multiple sources in parallel
-      const [coinGeckoData, trendingData, protocolData, unlockData, liquidityData] = await Promise.all([
-        this.fetchCoinGeckoData(coinId),
-        this.fetchTrendingStatus(coinId),
-        this.fetchDefiLlamaProtocolData(coinId),
-        this.fetchUnlockData(coinId),
-        this.fetchLiquidityData(coinId)
-      ]);
-
+      // First fetch CoinGecko data to get the symbol
+      const coinGeckoData = await this.fetchCoinGeckoData(coinId);
       if (!coinGeckoData) {
         return null;
       }
 
-      // Combine all data sources
-      // Transform price history to the expected format
-      const priceHistory = coinGeckoData.sparkline_in_7d?.price 
-        ? coinGeckoData.sparkline_in_7d.price.map((price: number, index: number) => [
-            Date.now() - (168 - index) * 3600000, // 168 hours = 7 days
-            price
-          ])
-        : [];
+      // Now fetch all other data in parallel
+      const [
+        trendingData, 
+        protocolData, 
+        unlockData, 
+        liquidityData,
+        tokenProtocolsData,
+        historicalLiquidityData,
+        yieldsData
+      ] = await Promise.all([
+        this.fetchTrendingStatus(coinId),
+        this.fetchDefiLlamaProtocolData(coinId),
+        this.fetchUnlockData(coinGeckoData.id), // Use gecko ID for unlocks
+        this.fetchLiquidityData(coinId),
+        this.fetchTokenProtocolUsage(coinGeckoData.symbol),
+        this.fetchHistoricalLiquidity(coinGeckoData.symbol),
+        this.fetchYieldOpportunities(coinGeckoData.symbol)
+      ]);
+
+      // Transform price history from historical data or sparkline
+      let priceHistory: Array<[number, number]> = [];
+      if (coinGeckoData.historical_data?.prices) {
+        priceHistory = coinGeckoData.historical_data.prices;
+      } else if (coinGeckoData.sparkline_in_7d?.price) {
+        priceHistory = coinGeckoData.sparkline_in_7d.price.map((price: number, index: number) => [
+          Date.now() - (168 - index) * 3600000, // 168 hours = 7 days
+          price
+        ]);
+      }
 
       const unifiedData: UnifiedAssetData = {
         // Basic Info
@@ -103,7 +117,7 @@ export class UnifiedAssetService {
         name: coinGeckoData.name,
         image: coinGeckoData.image,
         
-        // Market Data (matching interface field names)
+        // Market Data
         currentPrice: coinGeckoData.current_price,
         marketCap: coinGeckoData.market_cap,
         fullyDilutedValuation: coinGeckoData.fully_diluted_valuation || 0,
@@ -124,14 +138,14 @@ export class UnifiedAssetService {
         isTrending: trendingData || false,
         
         // DeFi Metrics
-        tvl: protocolData?.tvl || null,
+        tvl: protocolData?.tvl || tokenProtocolsData?.totalTvl || null,
         tvlChange24h: protocolData?.tvlChange24h || null,
         activeUsers: protocolData?.activeUsers || null,
         activeUsersChange24h: protocolData?.activeUsersChange24h || null,
         
         // Liquidity Data
-        totalLiquidity: liquidityData?.totalLiquidity || null,
-        topLiquidityPools: liquidityData?.topPools || null,
+        totalLiquidity: liquidityData?.totalLiquidity || historicalLiquidityData?.currentLiquidity || null,
+        topLiquidityPools: liquidityData?.topPools || yieldsData?.topPools || null,
         
         // Token Unlocks
         nextUnlock: unlockData?.nextUnlock || null,
@@ -163,6 +177,9 @@ export class UnifiedAssetService {
         return null;
       }
 
+      // Also fetch historical price data for better charts
+      const historicalData = await coinGeckoService.getTokenHistory(coinId, 365);
+
       // Extract market data from the detailed response
       const marketData = detailData.market_data;
       
@@ -178,6 +195,7 @@ export class UnifiedAssetService {
         price_change_percentage_24h: marketData?.price_change_percentage_24h || 0,
         price_change_percentage_7d: marketData?.price_change_percentage_7d || 0,
         price_change_percentage_30d: marketData?.price_change_percentage_30d || 0,
+        price_change_percentage_1y: marketData?.price_change_percentage_1y || 0,
         circulating_supply: marketData?.circulating_supply || 0,
         total_supply: marketData?.total_supply || 0,
         max_supply: marketData?.max_supply || null,
@@ -186,7 +204,11 @@ export class UnifiedAssetService {
         atl: marketData?.atl?.usd || 0,
         atl_date: marketData?.atl_date?.usd || '',
         categories: detailData.categories || [],
-        sparkline_in_7d: marketData?.sparkline_7d || null
+        sparkline_in_7d: marketData?.sparkline_7d || null,
+        historical_data: historicalData,
+        market_cap_rank: detailData.market_cap_rank || null,
+        description: detailData.description?.en || '',
+        links: detailData.links || {}
       };
     } catch (error) {
       console.error('Error fetching CoinGecko data:', error);
@@ -298,12 +320,84 @@ export class UnifiedAssetService {
         .map(pool => ({
           pool: pool.symbol || 'Unknown',
           liquidity: pool.tvlUsd || 0,
-          chain: pool.chain || 'Unknown'
+          chain: pool.chain || 'Unknown',
+          apy: pool.apy || 0
         }));
 
       return { totalLiquidity, topPools };
     } catch (error) {
       console.error('Error fetching liquidity data:', error);
+      return null;
+    }
+  }
+
+  private async fetchTokenProtocolUsage(symbol: string): Promise<any | null> {
+    try {
+      const data = await defiLlamaService.getTokenProtocols(symbol);
+      if (!data) return null;
+
+      // Calculate total TVL from protocols using this token
+      const totalTvl = data.reduce((sum: number, protocol: any) => 
+        sum + (protocol.amount || 0), 0
+      );
+
+      return { 
+        totalTvl,
+        protocolCount: data.length,
+        protocols: data
+      };
+    } catch (error) {
+      console.error('Error fetching token protocol usage:', error);
+      return null;
+    }
+  }
+
+  private async fetchHistoricalLiquidity(symbol: string): Promise<any | null> {
+    try {
+      const data = await defiLlamaService.getHistoricalLiquidity(symbol);
+      if (!data) return null;
+
+      return {
+        currentLiquidity: data.liquidity || 0,
+        liquidityHistory: data.historical || []
+      };
+    } catch (error) {
+      console.error('Error fetching historical liquidity:', error);
+      return null;
+    }
+  }
+
+  private async fetchYieldOpportunities(symbol: string): Promise<any | null> {
+    try {
+      const pools = await defiLlamaService.getYieldPools();
+      if (!pools || !Array.isArray(pools)) return null;
+
+      // Filter for yield opportunities for this token
+      const tokenYields = pools.filter(pool => {
+        if (!pool || typeof pool !== 'object') return false;
+        return pool.symbol && pool.symbol.toLowerCase().includes(symbol.toLowerCase());
+      });
+
+      if (tokenYields.length === 0) return null;
+
+      // Sort by APY and get top opportunities
+      const topPools = tokenYields
+        .sort((a, b) => (b.apy || 0) - (a.apy || 0))
+        .slice(0, 10)
+        .map(pool => ({
+          pool: pool.pool || pool.symbol,
+          project: pool.project,
+          chain: pool.chain,
+          liquidity: pool.tvlUsd || 0,
+          apy: pool.apy || 0,
+          apyBase: pool.apyBase || 0,
+          apyReward: pool.apyReward || 0,
+          rewardTokens: pool.rewardTokens || []
+        }));
+
+      return { topPools };
+    } catch (error) {
+      console.error('Error fetching yield opportunities:', error);
       return null;
     }
   }

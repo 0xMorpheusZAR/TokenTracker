@@ -11,7 +11,7 @@ import RevenueAnalysis from "@/pages/revenue-analysis";
 import FailureAnalysis from "@/pages/failure-analysis";
 import InterestingProjects from "@/pages/interesting-projects";
 import BlofinCompetition from "@/pages/blofin-competition";
-import UnifiedAssetDashboard from "@/pages/unified-asset-dashboard";
+import UnifiedAssetDashboard from "@/pages/unified-asset-dashboard-v2";
 
 import NotFound from "@/pages/not-found";
 

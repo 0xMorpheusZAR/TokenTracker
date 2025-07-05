@@ -708,6 +708,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Additional market overview endpoint for unified dashboard
+  app.get("/api/defi/market-overview", async (_req, res) => {
+    try {
+      const [protocols, chains, stablecoins] = await Promise.all([
+        defiLlamaService.getAllProtocols(),
+        defiLlamaService.getChainTVLs(),
+        defiLlamaService.getStablecoins()
+      ]);
+
+      const overview = {
+        totalProtocols: protocols?.length || 0,
+        totalChains: chains ? Object.keys(chains).length : 0,
+        totalStablecoinMcap: stablecoins?.reduce((sum, s) => sum + (s.circulating || 0), 0) || 0,
+        topProtocolsByTVL: protocols?.sort((a, b) => (b.tvl || 0) - (a.tvl || 0)).slice(0, 10) || []
+      };
+
+      res.json(overview);
+    } catch (error) {
+      console.error('Error fetching market overview:', error);
+      res.json({
+        totalProtocols: 0,
+        totalChains: 0,
+        totalStablecoinMcap: 0,
+        topProtocolsByTVL: []
+      });
+    }
+  });
+
+  // CoinGecko historical data endpoint for charts
+  app.get("/api/coingecko/history/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const historicalData = await coinGeckoService.getTokenHistory(id, 365);
+      res.json(historicalData || { prices: [] });
+    } catch (error) {
+      console.error('Error fetching historical data:', error);
+      res.json({ prices: [] });
+    }
+  });
+
   // Discord Authentication Routes
   app.get("/api/auth/discord", async (req, res) => {
     try {

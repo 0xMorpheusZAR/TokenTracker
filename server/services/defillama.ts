@@ -373,6 +373,58 @@ export class DefiLlamaService {
   }
 
   /**
+   * Get token emissions/unlock data for a specific token
+   */
+  async getTokenEmissions(geckoId: string): Promise<any | null> {
+    try {
+      const data = await this.fetchData(`/api/emission/${geckoId}`);
+      return data;
+    } catch (error) {
+      console.error('Error fetching token emissions:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get historical liquidity data for a token
+   */
+  async getHistoricalLiquidity(tokenSymbol: string): Promise<any | null> {
+    try {
+      const data = await this.fetchData(`/api/historicalLiquidity/${tokenSymbol}`);
+      return data;
+    } catch (error) {
+      console.error('Error fetching historical liquidity:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get token usage across protocols
+   */
+  async getTokenProtocols(symbol: string): Promise<any | null> {
+    try {
+      const data = await this.fetchData(`/api/tokenProtocols/${symbol}`);
+      return data;
+    } catch (error) {
+      console.error('Error fetching token protocols:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all emissions/unlocks data
+   */
+  async getAllEmissions(): Promise<any | null> {
+    try {
+      const data = await this.fetchData('/api/emissions');
+      return data;
+    } catch (error) {
+      console.error('Error fetching all emissions:', error);
+      return null;
+    }
+  }
+
+  /**
    * Get comprehensive token analytics data
    */
   async getTokenAnalytics(symbol: string, geckoId?: string): Promise<any> {
