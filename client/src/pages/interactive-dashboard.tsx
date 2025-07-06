@@ -140,8 +140,6 @@ export default function InteractiveDashboard() {
     );
   };
 
-
-
   const getPerformanceColor = (performance: string) => {
     const perf = parseFloat(performance);
     if (perf < -90) return "text-red-500";
@@ -320,17 +318,6 @@ export default function InteractiveDashboard() {
                   <Cpu className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
                   <span className="relative z-10">Projects</span>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-75"></div>
-                </a>
-                
-                <a 
-                  href="/unified-asset-dashboard" 
-                  className="group relative px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-indigo-600/80 via-blue-600/80 to-cyan-600/80 hover:from-indigo-500 hover:via-blue-500 hover:to-cyan-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/40 flex items-center justify-center gap-1 sm:gap-2 overflow-hidden backdrop-blur-sm border border-blue-500/20 hover:border-blue-400/40"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/20 to-blue-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 group-hover:animate-pulse" />
-                  <span className="relative z-10">Asset Dashboard</span>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-pulse opacity-75"></div>
                 </a>
                 
                 <a 
@@ -1139,8 +1126,6 @@ export default function InteractiveDashboard() {
           </p>
         </div>
       </div>
-      
-
     </div>
   );
 }

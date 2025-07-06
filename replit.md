@@ -48,9 +48,6 @@ The application uses a normalized schema with three core entities:
 ### External Integrations
 - **CryptoRank API**: Service for fetching real-time token unlock data and vesting schedules
 - **CoinGecko API**: Primary data source for accurate real-time and historical price data
-- **DefiLlama Pro API**: Comprehensive DeFi data source providing TVL tracking, protocol revenue analysis, token unlocks, yield farming data, derivatives volume, stablecoin metrics, and real-time DeFi ecosystem analytics
-- **Discord OAuth2**: Authentication system for Miles High Club membership verification
-- **Whop API**: Read-only membership verification for premium features
 - **API Key Management**: Environment-based configuration for external services
 
 ### UI Components
@@ -106,10 +103,6 @@ The application uses a normalized schema with three core entities:
 - **DATABASE_URL**: PostgreSQL connection string (required)
 - **CRYPTORANK_API_KEY**: CryptoRank API authentication for unlock data
 - **COINGECKO_PRO_API_KEY**: CoinGecko Pro API for enhanced pricing data
-- **DEFILLAMA_API_KEY**: DefiLlama Pro API for comprehensive DeFi data (1M credits)
-- **DISCORD_CLIENT_ID**: Discord OAuth2 application client ID
-- **DISCORD_CLIENT_SECRET**: Discord OAuth2 application secret
-- **WHOP_API_KEY**: Whop API for membership verification (read-only)
 - **NODE_ENV**: Environment-specific behavior
 
 ## Changelog
@@ -150,13 +143,6 @@ Changelog:
 - June 30, 2025: Removed BloFin from Interesting Projects dropdown and added dedicated BloFin button to main dashboard with orange/amber gradient styling and Trophy icon
 - June 30, 2025: Integrated Discord Authentication with Whop API for Miles High Club membership verification - includes Discord OAuth2 login, Whop membership checking (read-only), session management, and Discord authentication UI component in dashboard
 - July 4, 2025: Removed Discord Login button from main dashboard per user request
-- July 4, 2025: Integrated comprehensive DefiLlama Pro API service with full backend implementation including TVL tracking, token unlocks, protocol revenue analysis, yield farming data, derivatives volume, stablecoin metrics, and comprehensive token analytics - providing access to 1M API credits and real-time DeFi ecosystem data
-- July 5, 2025: Created Unified Asset Dashboard at /unified-asset-dashboard route providing comprehensive token analytics with real-time market data from CoinGecko, DeFi metrics from DefiLlama (TVL, active users), liquidity analysis, token unlock schedules, and protocol revenue/fees - featuring 4 main metric cards matching PDF design specifications
-- July 5, 2025: Implemented unified asset data aggregation service that combines CoinGecko and DefiLlama data sources for comprehensive token analysis
-- July 5, 2025: Added "Asset Dashboard" navigation button to main dashboard with blue gradient styling for easy access to unified analytics
-- July 5, 2025: Completely rebuilt Unified Asset Dashboard V2 with masterful comprehensive analytics including 6 specialized tabs (Overview, DeFi Analytics, Liquidity, Vesting/Unlocks, Yield Farming, Advanced), real-time price charts with 30-day history, TVL breakdown visualizations, active user metrics, P/E ratio calculations, liquidity pool analysis with APY, token vesting schedules from DefiLlama, yield farming opportunities, on-chain metrics, and risk assessment - all fetching real data from CoinGecko Pro and DefiLlama Pro APIs
-- July 5, 2025: Enhanced DefiLlama service with comprehensive endpoints for token emissions/unlocks, historical liquidity, token protocol usage, yield pools, and integrated multiple data sources for complete DeFi analytics
-- July 5, 2025: Added new API endpoints for market overview and historical price data to support advanced charting and analytics in the unified dashboard
 ```
 
 ## User Preferences
