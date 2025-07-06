@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 /**
  * Whop API Service for Miles High Club membership verification
  * Provides read-only access to check user membership status
@@ -134,7 +136,6 @@ export class WhopService {
   verifyWebhookSignature(payload: string, signature: string): boolean {
     // Implement webhook signature verification
     // This would use HMAC-SHA256 with your webhook secret
-    const crypto = require('crypto');
     const webhookSecret = process.env.WHOP_WEBHOOK_SECRET || '';
     
     const expectedSignature = crypto
