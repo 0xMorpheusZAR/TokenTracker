@@ -74,63 +74,64 @@ export class DefiLlamaService {
 
   async getProtocolRevenues(): Promise<ProtocolRevenue[] | null> {
     try {
-      // Fetch fees data from the overview endpoint
-      const feesResponse = await fetch(`${this.baseUrl}/overview/fees`, {
+      // Create a map to aggregate all protocol data
+      const protocolMap = new Map<string, ProtocolRevenue>();
+
+      // Fetch fees data
+      const feesResponse = await fetch(`${this.baseUrl}/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true`, {
         headers: this.getHeaders(),
       });
 
-      if (!feesResponse.ok) {
-        console.error('Failed to fetch fees overview:', feesResponse.status);
-        return [];
-      }
+      if (feesResponse.ok) {
+        const feesData = await feesResponse.json();
+        if (feesData.protocols && Array.isArray(feesData.protocols)) {
+          feesData.protocols.forEach((protocol: any) => {
+            const id = protocol.module || protocol.name?.toLowerCase().replace(/\s+/g, '-') || '';
+            const protocolRevenue: ProtocolRevenue = {
+              id,
+              name: protocol.name || '',
+              displayName: protocol.displayName || protocol.name || '',
+              logo: protocol.logo,
+              category: protocol.category || 'DeFi',
+              chains: protocol.chains || [],
+              revenue24h: protocol.dailyRevenue || protocol.total24h || 0,
+              revenue7d: protocol.revenue7d || protocol.total7d || 0,
+              revenue30d: protocol.revenue30d || protocol.total30d || 0,
+              totalRevenue: protocol.totalRevenue || protocol.totalAllTime || 0,
+              fees24h: protocol.dailyFees || protocol.total24h || 0,
+              fees7d: protocol.total7d || 0,
+              fees30d: protocol.total30d || 0,
+              holdersRevenue24h: protocol.dailyHoldersRevenue || 0,
+              holdersRevenue7d: protocol.holdersRevenue7d || 0,
+              holdersRevenue30d: protocol.holdersRevenue30d || 0,
+              earnings24h: protocol.dailyProtocolRevenue || 0,
+              earnings7d: protocol.protocolRevenue7d || 0,
+              earnings30d: protocol.protocolRevenue30d || 0,
+              userFees24h: protocol.dailyUserFees || 0,
+              supplySideRevenue24h: protocol.dailySupplySideRevenue || 0,
+              protocolRevenue24h: protocol.dailyProtocolRevenue || 0,
+              tvl: protocol.tvl || 0,
+              change24h: protocol.change_1d || 0,
+              change7d: protocol.change_7d || 0,
+              change30d: protocol.change_1m || 0,
+            };
 
-      const feesData = await feesResponse.json();
-      const protocols: ProtocolRevenue[] = [];
+            // If revenue is 0, use fees as revenue (common for DEXs and lending protocols)
+            if (protocolRevenue.revenue24h === 0 && protocolRevenue.fees24h > 0) {
+              protocolRevenue.revenue24h = protocolRevenue.fees24h;
+              protocolRevenue.revenue7d = protocolRevenue.fees7d;
+              protocolRevenue.revenue30d = protocolRevenue.fees30d;
+            }
 
-      // Process protocols from the fees data
-      if (feesData.protocols && Array.isArray(feesData.protocols)) {
-        for (const protocol of feesData.protocols) {
-          const protocolRevenue: ProtocolRevenue = {
-            id: protocol.module || protocol.name?.toLowerCase().replace(/\s+/g, '-') || '',
-            name: protocol.name || '',
-            displayName: protocol.displayName || protocol.name || '',
-            logo: protocol.logo,
-            category: protocol.category || 'DeFi',
-            chains: protocol.chains || [],
-            revenue24h: protocol.dailyRevenue || 0,
-            revenue7d: protocol.revenue7d || 0,
-            revenue30d: protocol.revenue30d || 0,
-            totalRevenue: protocol.totalRevenue || 0,
-            fees24h: protocol.dailyFees || protocol.total24h || 0,
-            fees7d: protocol.total7d || 0,
-            fees30d: protocol.total30d || 0,
-            holdersRevenue24h: protocol.dailyHoldersRevenue || 0,
-            holdersRevenue7d: protocol.holdersRevenue7d || 0,
-            holdersRevenue30d: protocol.holdersRevenue30d || 0,
-            earnings24h: protocol.dailyProtocolRevenue || 0,
-            earnings7d: protocol.protocolRevenue7d || 0,
-            earnings30d: protocol.protocolRevenue30d || 0,
-            userFees24h: protocol.dailyUserFees || 0,
-            supplySideRevenue24h: protocol.dailySupplySideRevenue || 0,
-            protocolRevenue24h: protocol.dailyProtocolRevenue || 0,
-            tvl: protocol.tvl || 0,
-            change24h: protocol.change_1d || 0,
-            change7d: protocol.change_7d || 0,
-            change30d: protocol.change_1m || 0,
-          };
-
-          // Calculate P/E ratio if market cap is available
-          if (protocol.mcap && protocolRevenue.fees30d > 0) {
-            protocolRevenue.mcapToFees = protocol.mcap / (protocolRevenue.fees30d * 12);
-            protocolRevenue.peRatio = protocolRevenue.mcapToFees;
-          }
-
-          protocols.push(protocolRevenue);
+            protocolMap.set(id, protocolRevenue);
+          });
         }
       }
 
-      // Sort protocols by 24h fees
-      protocols.sort((a, b) => (b.fees24h || 0) - (a.fees24h || 0));
+      // Convert map to array and sort by revenue/fees
+      const protocols = Array.from(protocolMap.values())
+        .filter(p => p.revenue24h > 0 || p.fees24h > 0)
+        .sort((a, b) => (b.revenue24h || 0) - (a.revenue24h || 0));
 
       return protocols;
     } catch (error) {
@@ -144,7 +145,7 @@ export class DefiLlamaService {
   async getCategoryRevenues(): Promise<CategoryRevenue[] | null> {
     try {
       const protocols = await this.getProtocolRevenues();
-      if (!protocols) return null;
+      if (!protocols || protocols.length === 0) return [];
 
       // Group protocols by category
       const categoryMap = new Map<string, ProtocolRevenue[]>();
@@ -160,9 +161,9 @@ export class DefiLlamaService {
       // Calculate category revenues
       const categoryRevenues: CategoryRevenue[] = Array.from(categoryMap.entries())
         .map(([category, protocols]) => {
-          const totalRevenue24h = protocols.reduce((sum, p) => sum + p.revenue24h, 0);
-          const totalRevenue7d = protocols.reduce((sum, p) => sum + p.revenue7d, 0);
-          const totalRevenue30d = protocols.reduce((sum, p) => sum + p.revenue30d, 0);
+          const totalRevenue24h = protocols.reduce((sum, p) => sum + (p.revenue24h || 0), 0);
+          const totalRevenue7d = protocols.reduce((sum, p) => sum + (p.revenue7d || 0), 0);
+          const totalRevenue30d = protocols.reduce((sum, p) => sum + (p.revenue30d || 0), 0);
           
           return {
             category,
@@ -170,22 +171,25 @@ export class DefiLlamaService {
             totalRevenue7d,
             totalRevenue30d,
             protocolCount: protocols.length,
-            topProtocols: protocols.slice(0, 5), // Top 5 protocols per category
+            topProtocols: protocols
+              .sort((a, b) => (b.revenue24h || 0) - (a.revenue24h || 0))
+              .slice(0, 5), // Top 5 protocols per category
           };
         })
-        .sort((a, b) => b.totalRevenue24h - a.totalRevenue24h);
+        .filter(cat => cat.totalRevenue24h > 0 || cat.totalRevenue7d > 0 || cat.totalRevenue30d > 0)
+        .sort((a, b) => (b.totalRevenue24h || 0) - (a.totalRevenue24h || 0));
 
       return categoryRevenues;
     } catch (error) {
       console.error('Error calculating category revenues:', error);
-      return null;
+      return [];
     }
   }
 
   async getChainRevenues(): Promise<ChainRevenue[] | null> {
     try {
       const protocols = await this.getProtocolRevenues();
-      if (!protocols) return null;
+      if (!protocols || protocols.length === 0) return [];
 
       // Group revenues by chain
       const chainMap = new Map<string, { revenue24h: number; revenue7d: number; revenue30d: number; protocols: Set<string> }>();
@@ -202,9 +206,9 @@ export class DefiLlamaService {
           }
           
           const chainData = chainMap.get(chain)!;
-          chainData.revenue24h += protocol.revenue24h;
-          chainData.revenue7d += protocol.revenue7d;
-          chainData.revenue30d += protocol.revenue30d;
+          chainData.revenue24h += protocol.revenue24h || 0;
+          chainData.revenue7d += protocol.revenue7d || 0;
+          chainData.revenue30d += protocol.revenue30d || 0;
           chainData.protocols.add(protocol.id);
         });
       });
@@ -218,12 +222,13 @@ export class DefiLlamaService {
           revenue30d: data.revenue30d,
           protocolCount: data.protocols.size,
         }))
-        .sort((a, b) => b.revenue24h - a.revenue24h);
+        .filter(chain => chain.revenue24h > 0 || chain.revenue7d > 0 || chain.revenue30d > 0)
+        .sort((a, b) => (b.revenue24h || 0) - (a.revenue24h || 0));
 
       return chainRevenues;
     } catch (error) {
       console.error('Error calculating chain revenues:', error);
-      return null;
+      return [];
     }
   }
 
