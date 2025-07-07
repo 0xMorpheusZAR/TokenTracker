@@ -146,6 +146,9 @@ Changelog:
 - July 6, 2025: Created comprehensive README.md file for GitHub repository with project overview, features, tech stack, installation instructions, and contributing guidelines
 - July 7, 2025: Updated Hyperliquid analysis page to display live real-time price data from CoinGecko API for current price, market cap, and annual revenue metrics
 - July 7, 2025: Rewrote DefiLlama Pro API documentation (docs/defillama_pro_api_summary.md) based on official OpenAPI specification - includes comprehensive endpoint reference with 15+ categories, detailed parameter documentation, and usage notes
+- July 7, 2025: Fixed DefiLlama service to properly fetch revenue data from all endpoints (fees, revenue, holders revenue, earnings) and display comprehensive metrics for 1,100+ protocols
+- July 7, 2025: Enhanced revenue dashboard with TVL data integration from DefiLlama protocols API, optimized view switching performance with useMemo, and improved loading states
+- July 7, 2025: Created comprehensive dashboard documentation (README-dashboard.md) for GitHub repository including detailed feature descriptions, architecture overview, setup instructions, API documentation, development guidelines, and future roadmap
 ```
 
 ## User Preferences
