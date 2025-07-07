@@ -116,11 +116,11 @@ export default function HyperliquidAnalysis() {
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                $36.8
+                ${((hyperliquidData as any)?.realTimeMetrics?.currentPrice || 36.8).toFixed(1)}
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Current Price</div>
               <div className="text-xs text-green-400 mt-1">
-                +1,129% since launch
+                +{((hyperliquidData as any)?.realTimeMetrics?.priceChangeSinceLaunch || 1129).toFixed(0)}% since launch
               </div>
             </div>
             
@@ -134,18 +134,18 @@ export default function HyperliquidAnalysis() {
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                $12.3B
+                ${((hyperliquidData as any)?.realTimeMetrics?.marketCap ? ((hyperliquidData as any).realTimeMetrics.marketCap / 1e9).toFixed(1) : "12.3")}B
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Market Cap</div>
-              <div className="text-xs text-gray-400 mt-1">$36.7B FDV</div>
+              <div className="text-xs text-gray-400 mt-1">${((hyperliquidData as any)?.realTimeMetrics?.fdv ? ((hyperliquidData as any).realTimeMetrics.fdv / 1e9).toFixed(1) : "36.7")}B FDV</div>
             </div>
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="text-3xl font-black text-green-400">
-                $830M
+                ${((hyperliquidData as any)?.fundamentals?.annualRevenue ? ((hyperliquidData as any).fundamentals.annualRevenue / 1e6).toFixed(0) : "830")}M
               </div>
               <div className="text-xs text-gray-400 uppercase tracking-wide">Annual Revenue</div>
-              <div className="text-xs text-green-400 mt-1">$772M to holders</div>
+              <div className="text-xs text-green-400 mt-1">${((hyperliquidData as any)?.fundamentals?.annualRevenue ? (((hyperliquidData as any).fundamentals.annualRevenue * 0.93) / 1e6).toFixed(0) : "772")}M to holders</div>
             </div>
             
             <div className="text-center bg-black/40 p-6 rounded-xl border border-green-500/50 hover:border-green-400 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl">

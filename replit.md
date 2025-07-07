@@ -144,6 +144,7 @@ Changelog:
 - June 30, 2025: Integrated Discord Authentication with Whop API for Miles High Club membership verification - includes Discord OAuth2 login, Whop membership checking (read-only), session management, and Discord authentication UI component in dashboard
 - July 4, 2025: Removed Discord Login button from main dashboard per user request
 - July 6, 2025: Created comprehensive README.md file for GitHub repository with project overview, features, tech stack, installation instructions, and contributing guidelines
+- July 7, 2025: Updated Hyperliquid analysis page to display live real-time price data from CoinGecko API for current price, market cap, and annual revenue metrics
 ```
 
 ## User Preferences
