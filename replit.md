@@ -145,6 +145,7 @@ Changelog:
 - July 4, 2025: Removed Discord Login button from main dashboard per user request
 - July 6, 2025: Created comprehensive README.md file for GitHub repository with project overview, features, tech stack, installation instructions, and contributing guidelines
 - July 7, 2025: Updated Hyperliquid analysis page to display live real-time price data from CoinGecko API for current price, market cap, and annual revenue metrics
+- July 7, 2025: Rewrote DefiLlama Pro API documentation (docs/defillama_pro_api_summary.md) based on official OpenAPI specification - includes comprehensive endpoint reference with 15+ categories, detailed parameter documentation, and usage notes
 ```
 
 ## User Preferences

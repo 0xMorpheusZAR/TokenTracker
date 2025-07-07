@@ -6,6 +6,7 @@ import { coinGeckoService } from "./services/coingecko";
 import { duneService } from "./services/dune";
 import { whopService } from "./services/whop";
 import { discordService } from "./services/discord";
+import { defiLlamaService } from "./services/defillama";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -649,11 +650,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cryptorank: { connected: cryptoRankService.isConnected() },
         dune: duneService.getConnectionStatus(),
         discord: discordService.getConnectionStatus(),
-        whop: whopService.getConnectionStatus()
+        whop: whopService.getConnectionStatus(),
+        defillama: defiLlamaService.getConnectionStatus()
       });
     } catch (error) {
       console.error("Failed to check services status:", error);
       res.status(500).json({ error: "Failed to check services status" });
+    }
+  });
+
+  // DefiLlama Revenue Analytics endpoints
+  app.get("/api/defillama/protocol-revenues", async (req, res) => {
+    try {
+      const revenues = await defiLlamaService.getProtocolRevenues();
+      if (!revenues) {
+        return res.status(500).json({ error: "Failed to fetch protocol revenues" });
+      }
+      res.json(revenues);
+    } catch (error) {
+      console.error("Failed to fetch protocol revenues:", error);
+      res.status(500).json({ error: "Failed to fetch protocol revenues" });
+    }
+  });
+
+  app.get("/api/defillama/category-revenues", async (req, res) => {
+    try {
+      const categoryRevenues = await defiLlamaService.getCategoryRevenues();
+      if (!categoryRevenues) {
+        return res.status(500).json({ error: "Failed to fetch category revenues" });
+      }
+      res.json(categoryRevenues);
+    } catch (error) {
+      console.error("Failed to fetch category revenues:", error);
+      res.status(500).json({ error: "Failed to fetch category revenues" });
+    }
+  });
+
+  app.get("/api/defillama/chain-revenues", async (req, res) => {
+    try {
+      const chainRevenues = await defiLlamaService.getChainRevenues();
+      if (!chainRevenues) {
+        return res.status(500).json({ error: "Failed to fetch chain revenues" });
+      }
+      res.json(chainRevenues);
+    } catch (error) {
+      console.error("Failed to fetch chain revenues:", error);
+      res.status(500).json({ error: "Failed to fetch chain revenues" });
+    }
+  });
+
+  app.get("/api/defillama/protocol/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const details = await defiLlamaService.getProtocolDetails(id);
+      if (!details) {
+        return res.status(404).json({ error: "Protocol not found" });
+      }
+      res.json(details);
+    } catch (error) {
+      console.error("Failed to fetch protocol details:", error);
+      res.status(500).json({ error: "Failed to fetch protocol details" });
+    }
+  });
+
+  app.get("/api/defillama/active-users", async (req, res) => {
+    try {
+      const users = await defiLlamaService.getActiveUsers();
+      if (!users) {
+        return res.status(500).json({ error: "Failed to fetch active users" });
+      }
+      res.json(users);
+    } catch (error) {
+      console.error("Failed to fetch active users:", error);
+      res.status(500).json({ error: "Failed to fetch active users" });
     }
   });
 
