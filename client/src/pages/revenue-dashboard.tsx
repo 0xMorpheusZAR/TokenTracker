@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ArrowLeft, TrendingUp, DollarSign, BarChart3, PieChart, Activity, Layers, FileText } from "lucide-react";
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
@@ -78,6 +78,14 @@ export default function RevenueDashboard() {
     return `$${revenue.toFixed(2)}`;
   };
 
+  const formatTVL = (tvl: number) => {
+    if (!tvl || tvl === 0) return '-';
+    if (tvl >= 1e9) return `$${(tvl / 1e9).toFixed(2)}B`;
+    if (tvl >= 1e6) return `$${(tvl / 1e6).toFixed(2)}M`;
+    if (tvl >= 1e3) return `$${(tvl / 1e3).toFixed(2)}K`;
+    return `$${tvl.toFixed(2)}`;
+  };
+
   const getRevenueByTimeframe = (item: any) => {
     switch (timeframe) {
       case '24h': return item.revenue24h || item.totalRevenue24h || 0;
@@ -127,7 +135,33 @@ export default function RevenueDashboard() {
   };
 
   // Calculate total revenue
-  const totalRevenue = categoryRevenues?.reduce((sum, cat) => sum + getRevenueByTimeframe(cat), 0) || 0;
+  const totalRevenue = useMemo(() => {
+    return categoryRevenues?.reduce((sum, cat) => sum + getRevenueByTimeframe(cat), 0) || 0;
+  }, [categoryRevenues, timeframe]);
+
+  // Memoize sorted protocols for better performance
+  const sortedProtocols = useMemo(() => {
+    if (!protocolRevenues) return [];
+    return [...protocolRevenues].sort((a, b) => {
+      const aRevenue = getRevenueByTimeframe(a);
+      const bRevenue = getRevenueByTimeframe(b);
+      return bRevenue - aRevenue;
+    });
+  }, [protocolRevenues, timeframe]);
+
+  // Show loading only on initial load
+  const isInitialLoading = categoriesLoading && !categoryRevenues && !protocolRevenues && !chainRevenues;
+
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading revenue data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
@@ -275,7 +309,7 @@ export default function RevenueDashboard() {
           <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
             <h3 className="text-xl font-bold mb-4">Top Revenue Generators</h3>
             <div className="space-y-3 max-h-[400px] overflow-y-auto">
-              {protocolRevenues?.slice(0, 10).map((protocol, index) => (
+              {sortedProtocols.slice(0, 10).map((protocol, index) => (
                 <div key={protocol.id} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg hover:bg-gray-900/70 transition-colors">
                   <div className="flex items-center gap-3">
                     <span className="text-lg font-bold text-gray-400">#{index + 1}</span>
@@ -356,7 +390,7 @@ export default function RevenueDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {protocolRevenues?.map((protocol) => (
+                  {sortedProtocols.map((protocol) => (
                     <tr key={protocol.id} className="border-b border-gray-700/50 hover:bg-gray-700/20">
                       <td className="py-3 px-4 font-medium">{protocol.displayName}</td>
                       <td className="py-3 px-4 text-gray-400">{protocol.category}</td>
@@ -364,7 +398,7 @@ export default function RevenueDashboard() {
                       <td className="py-3 px-4 text-right text-green-400">{formatRevenue(protocol.revenue24h)}</td>
                       <td className="py-3 px-4 text-right text-blue-400">{formatRevenue(protocol.revenue7d)}</td>
                       <td className="py-3 px-4 text-right text-purple-400">{formatRevenue(protocol.revenue30d)}</td>
-                      <td className="py-3 px-4 text-right text-gray-400">{protocol.tvl ? formatRevenue(protocol.tvl) : '-'}</td>
+                      <td className="py-3 px-4 text-right text-gray-400">{formatTVL(protocol.tvl || 0)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -77,10 +77,39 @@ export class DefiLlamaService {
       // Create a map to aggregate all protocol data
       const protocolMap = new Map<string, ProtocolRevenue>();
 
-      // Fetch fees data
-      const feesResponse = await fetch(`${this.baseUrl}/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true`, {
-        headers: this.getHeaders(),
-      });
+      // Fetch fees data and protocols data in parallel
+      const [feesResponse, protocolsResponse] = await Promise.all([
+        fetch(`${this.baseUrl}/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true`, {
+          headers: this.getHeaders(),
+        }),
+        fetch(`${this.baseUrl}/protocols`, {
+          headers: this.getHeaders(),
+        })
+      ]);
+
+      // Create TVL map from protocols data
+      const tvlMap = new Map<string, number>();
+      const nameToTvlMap = new Map<string, number>();
+      if (protocolsResponse.ok) {
+        const protocolsData = await protocolsResponse.json();
+        protocolsData.forEach((protocol: any) => {
+          const slug = protocol.slug || '';
+          const name = protocol.name || '';
+          const tvl = protocol.tvl || 0;
+          
+          // Map by both slug and name for better matching
+          if (slug) tvlMap.set(slug, tvl);
+          if (name) {
+            nameToTvlMap.set(name.toLowerCase(), tvl);
+            nameToTvlMap.set(name, tvl);
+          }
+          
+          // Also map common variations
+          if (slug.includes('-')) {
+            tvlMap.set(slug.replace(/-/g, ''), tvl);
+          }
+        });
+      }
 
       if (feesResponse.ok) {
         const feesData = await feesResponse.json();
@@ -110,7 +139,7 @@ export class DefiLlamaService {
               userFees24h: protocol.dailyUserFees || 0,
               supplySideRevenue24h: protocol.dailySupplySideRevenue || 0,
               protocolRevenue24h: protocol.dailyProtocolRevenue || 0,
-              tvl: protocol.tvl || 0,
+              tvl: tvlMap.get(id) || tvlMap.get(protocol.module) || nameToTvlMap.get(protocol.name) || nameToTvlMap.get(protocol.name?.toLowerCase()) || protocol.tvl || 0,
               change24h: protocol.change_1d || 0,
               change7d: protocol.change_7d || 0,
               change30d: protocol.change_1m || 0,
