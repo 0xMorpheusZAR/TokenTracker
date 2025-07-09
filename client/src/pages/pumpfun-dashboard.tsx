@@ -459,8 +459,8 @@ export default function PumpfunDashboard() {
                         <AnimatedValue value={pumpfunMetrics.expectedRaise} format="currency" />
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Activity className="h-3 w-3 text-purple-400" />
-                        <p className="text-xs text-gray-500">Public sale target</p>
+                        <TrendingDown className="h-3 w-3 text-orange-400" />
+                        <p className="text-xs text-gray-500">Reduced from $1B</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -490,7 +490,7 @@ export default function PumpfunDashboard() {
                     <CardContent>
                       <p className="text-3xl font-bold text-yellow-400">
                         <AnimatedValue 
-                          value={pumpfunMetrics.tgeValuation / pumpfunMetrics.totalRevenue} 
+                          value={5.59} 
                           suffix="x"
                           format="number"
                         />
@@ -903,19 +903,19 @@ export default function PumpfunDashboard() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span className="text-gray-200">$600M+ rotated from existing altcoins</span>
+                      <span className="text-gray-200">Revenue down 86% from February highs</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span className="text-gray-200">5-15% average altcoin drawdown</span>
+                      <span className="text-gray-200">Seen as "exit liquidity" play by critics</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span className="text-gray-200">Memecoin sector drops 20-30%</span>
+                      <span className="text-gray-200">$600M sale despite earning $700M+ in fees</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span className="text-gray-200">$PUMP dumps 50%+ post-launch</span>
+                      <span className="text-gray-200">Post-sale dump likely as hype fades</span>
                     </li>
                   </ul>
 
@@ -945,25 +945,25 @@ export default function PumpfunDashboard() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span className="text-gray-200">Fresh capital enters from sidelines</span>
+                      <span className="text-gray-200">"Everyone complained but still aped in"</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span className="text-gray-200">0-3% minimal altcoin impact</span>
+                      <span className="text-gray-200">FOMO drives $600M quick sellout</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span className="text-gray-200">Revenue sharing attracts investors</span>
+                      <span className="text-gray-200">24% community allocation builds trust</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span className="text-gray-200">$PUMP appreciates 2-3x on fundamentals</span>
+                      <span className="text-gray-200">5.59x revenue multiple "cheap for crypto"</span>
                     </li>
                   </ul>
 
                   <div className="p-3 bg-green-900/30 rounded-lg">
                     <p className="text-xs text-green-300">
-                      Opportunity: Undervalued at 6x revenue multiple
+                      Opportunity: 5.59x revenue multiple - relatively modest for crypto
                     </p>
                   </div>
                 </CardContent>
@@ -1158,28 +1158,29 @@ export default function PumpfunDashboard() {
                     <div className="p-3 bg-gray-800/50 rounded-lg">
                       <p className="text-sm font-medium mb-1">Revenue Foundation</p>
                       <p className="text-xs text-gray-400">$715.36M total revenue generated</p>
-                      <p className="text-xs text-gray-400">Peak daily: $14M (Jan 2025)</p>
+                      <p className="text-xs text-gray-400">5.59x valuation-to-revenue multiple</p>
+                      <p className="text-xs text-gray-400">"Undervalued in traditional markets"</p>
                     </div>
                     
                     <div className="p-3 bg-gray-800/50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Valuation Models</p>
-                      <p className="text-xs text-gray-400">Messari fair value: $7B FDV</p>
-                      <p className="text-xs text-gray-400">OTC trading: $7-8B implied</p>
-                      <p className="text-xs text-gray-400">Trading desk projections: Up to $10B</p>
+                      <p className="text-sm font-medium mb-1">Community-Centric Launch</p>
+                      <p className="text-xs text-gray-400">33% tokens via ICO (reduced from 25% plan)</p>
+                      <p className="text-xs text-gray-400">24% reserved for community initiatives</p>
+                      <p className="text-xs text-gray-400">Emphasis on "inclusive" tokenomics</p>
                     </div>
 
                     <div className="p-3 bg-gray-800/50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Platform Metrics</p>
-                      <p className="text-xs text-gray-400">15M+ tokens minted</p>
-                      <p className="text-xs text-gray-400">$4.5B+ combined market cap</p>
-                      <p className="text-xs text-gray-400">Millions of active wallets</p>
+                      <p className="text-sm font-medium mb-1">Platform Scale</p>
+                      <p className="text-xs text-gray-400">11M+ tokens created during 2024-25</p>
+                      <p className="text-xs text-gray-400">Proven viral growth track record</p>
+                      <p className="text-xs text-gray-400">Large user base ready to participate</p>
                     </div>
                   </div>
 
                   <div className="p-3 bg-green-900/30 rounded-lg">
                     <p className="text-sm font-semibold text-green-300 mb-1">Bull Thesis</p>
                     <p className="text-xs text-green-200">
-                      $4B FDV = 6x revenue multiple (cheap for crypto)
+                      "Ground-floor opportunity in a project with viral potential"
                     </p>
                   </div>
                 </CardContent>
@@ -1193,50 +1194,74 @@ export default function PumpfunDashboard() {
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div className="p-3 bg-gray-800/50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Competition Risk</p>
+                      <p className="text-sm font-medium mb-1">Revenue Collapse</p>
+                      <p className="text-xs text-gray-400">Revenue down 86% from February highs</p>
+                      <p className="text-xs text-gray-400">"It's over for them, and they know it"</p>
                       <p className="text-xs text-gray-400">Lost 70% market share to Bonk.fun</p>
-                      <p className="text-xs text-gray-400">Revenue declining: $14M → $1M daily</p>
                     </div>
                     
                     <div className="p-3 bg-gray-800/50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Valuation Concerns</p>
-                      <p className="text-xs text-gray-400">$4B starting FDV limits upside</p>
-                      <p className="text-xs text-gray-400">BONK at $1.8B offers better risk/reward</p>
-                      <p className="text-xs text-gray-400">High bot activity inflates metrics</p>
+                      <p className="text-sm font-medium mb-1">Investor Skepticism</p>
+                      <p className="text-xs text-gray-400">Dragonfly's Haseeb Qureshi questions timing</p>
+                      <p className="text-xs text-gray-400">Critics call it "exit liquidity" play</p>
+                      <p className="text-xs text-gray-400">Reduced raise from $1B to $600M</p>
                     </div>
 
                     <div className="p-3 bg-gray-800/50 rounded-lg">
-                      <p className="text-sm font-medium mb-1">Market Risks</p>
-                      <p className="text-xs text-gray-400">Memecoin frenzy cooling</p>
-                      <p className="text-xs text-gray-400">No clear value accrual mechanism</p>
-                      <p className="text-xs text-gray-400">History of high-FDV dumps</p>
+                      <p className="text-sm font-medium mb-1">Community Backlash</p>
+                      <p className="text-xs text-gray-400">"A snake...not good for ecosystem"</p>
+                      <p className="text-xs text-gray-400">Seen as cash-grab after earning $700M</p>
+                      <p className="text-xs text-gray-400">Platform relevance questioned</p>
                     </div>
                   </div>
 
                   <div className="p-3 bg-red-900/30 rounded-lg">
                     <p className="text-sm font-semibold text-red-300 mb-1">Bear Thesis</p>
                     <p className="text-xs text-red-200">
-                      "Asymmetric bet skewed to the downside"
+                      "Waning fad attempting late-stage liquidity grab"
                     </p>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Community Sentiment */}
+            {/* Market Sentiment Analysis */}
             <Card className="bg-gray-800/30 border-gray-700">
               <CardHeader>
-                <CardTitle>Community Sentiment Analysis</CardTitle>
+                <CardTitle>Market Sentiment Analysis</CardTitle>
+                <CardDescription>
+                  Conflicted narrative between official messaging and critics
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
                     <div>
-                      <p className="font-medium">Excitement Level</p>
-                      <p className="text-sm text-gray-400">Most anticipated TGE in a long time</p>
+                      <p className="font-medium text-gray-100">Official Narrative</p>
+                      <p className="text-sm text-gray-400">"Inclusive community ownership"</p>
+                    </div>
+                    <Badge variant="outline" className="border-green-500 text-green-400">
+                      Bullish
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-100">Institutional View</p>
+                      <p className="text-sm text-gray-400">Dragonfly Capital: "Cautious perspective"</p>
+                    </div>
+                    <Badge variant="outline" className="border-yellow-500 text-yellow-400">
+                      Skeptical
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-100">Community Response</p>
+                      <p className="text-sm text-gray-400">"Everyone complained, but still aped in"</p>
                     </div>
                     <Badge variant="outline" className="border-purple-500 text-purple-400">
-                      High FOMO
+                      FOMO
                     </Badge>
                   </div>
 
