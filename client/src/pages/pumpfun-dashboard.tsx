@@ -493,49 +493,7 @@ export default function PumpfunDashboard() {
                   </div>
                 </div>
 
-                {/* Top 100 Altcoins List */}
-                <div>
-                  <ScrollArea className="h-[600px]">
-                    <div className="space-y-2">
-                      {top100Drawdowns.map((token, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:bg-gray-800/70 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg font-bold text-gray-500 w-8">
-                              #{token.rank}
-                            </span>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <p className="font-semibold">{token.symbol}</p>
-                                <Badge variant="outline" className="text-xs">
-                                  {token.category}
-                                </Badge>
-                              </div>
-                              <p className="text-xs text-gray-400">{token.token}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className={`text-lg font-bold ${
-                              selectedScenario === 'bearish' ? 'text-red-400' :
-                              selectedScenario === 'neutral' ? 'text-yellow-400' :
-                              'text-green-400'
-                            }`}>
-                              -{token.drawdownPercent.toFixed(1)}%
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              ${formatNumber(token.currentPrice)} → ${formatNumber(token.projectedPrice)}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Impact: ${formatNumber(token.impactValue)}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
+
 
                     <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
                       <p className="text-sm text-gray-400 mb-2">Total Market Impact (Top 100)</p>
