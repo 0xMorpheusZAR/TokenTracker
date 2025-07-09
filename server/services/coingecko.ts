@@ -246,6 +246,40 @@ export class CoinGeckoService {
     }
   }
 
+  async getTop100Altcoins(): Promise<any> {
+    try {
+      const apiUrl = this.getApiUrl();
+      const params = new URLSearchParams({
+        vs_currency: 'usd',
+        order: 'market_cap_desc',
+        per_page: '100',
+        page: '1',
+        price_change_percentage: '1h,24h,7d,30d',
+        sparkline: 'false'
+      });
+
+      const url = `${apiUrl}/coins/markets?${params}`;
+      console.log('Fetching top 100 altcoins from:', url);
+
+      const response = await fetch(url, {
+        headers: this.getHeaders(),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`CoinGecko API error: ${response.status} - ${errorText}`);
+        return null;
+      }
+
+      const data = await response.json();
+      console.log(`Fetched top 100 altcoins`);
+      return data.slice(0, 100);
+    } catch (error) {
+      console.error('Failed to fetch top 100 altcoins:', error);
+      return null;
+    }
+  }
+
   getConnectionStatus(): { connected: boolean; tier: string; rateLimit: string } {
     if (this.isProUser) {
       return {

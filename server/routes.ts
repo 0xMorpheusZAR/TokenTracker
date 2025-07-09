@@ -277,6 +277,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get top 100 altcoins with drawdown data
+  app.get("/api/coingecko/top100", async (req, res) => {
+    try {
+      const top100Data = await coinGeckoService.getTop100Altcoins();
+      
+      if (!top100Data) {
+        return res.status(500).json({ error: "Failed to fetch top 100 altcoins" });
+      }
+      
+      res.json(top100Data);
+    } catch (error) {
+      console.error("Failed to fetch top 100 altcoins:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // EstateX live data endpoint
   app.get("/api/estatex/live", async (req, res) => {
     try {

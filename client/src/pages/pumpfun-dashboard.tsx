@@ -47,6 +47,16 @@ export default function PumpfunDashboard() {
     queryKey: ['/api/coingecko/detailed'],
   });
 
+  // Fetch top 100 altcoins data
+  const { data: top100Data, isLoading: loadingTop100 } = useQuery({
+    queryKey: ['/api/coingecko/top100'],
+    queryFn: async () => {
+      const response = await fetch('/api/coingecko/top100');
+      if (!response.ok) throw new Error('Failed to fetch top 100 altcoins');
+      return response.json();
+    },
+  });
+
   // Chart configuration
   const chartOptions: ChartOptions<any> = {
     responsive: true,
@@ -80,34 +90,130 @@ export default function PumpfunDashboard() {
     }
   };
 
-  // Calculate altcoin drawdown scenarios
-  const calculateDrawdowns = () => {
-    if (!altcoinData) return [];
+  // Calculate altcoin drawdown scenarios for Top 100
+  const calculateTop100Drawdowns = () => {
+    if (!top100Data) return [];
 
     const scenarios = {
-      bearish: { min: 0.05, max: 0.15 }, // 5-15% drawdown
-      neutral: { min: 0.02, max: 0.08 }, // 2-8% drawdown
-      bullish: { min: 0, max: 0.03 } // 0-3% drawdown
+      bearish: { 
+        defi: { min: 0.10, max: 0.25 },       // DeFi: 10-25% drawdown
+        meme: { min: 0.30, max: 0.75 },       // Meme: 30-75% drawdown
+        layer1: { min: 0.05, max: 0.15 },     // Layer 1: 5-15% drawdown
+        layer2: { min: 0.08, max: 0.20 },     // Layer 2: 8-20% drawdown
+        gaming: { min: 0.15, max: 0.35 },     // Gaming: 15-35% drawdown
+        ai: { min: 0.12, max: 0.30 },         // AI: 12-30% drawdown
+        other: { min: 0.10, max: 0.25 }       // Other: 10-25% drawdown
+      },
+      neutral: { 
+        defi: { min: 0.03, max: 0.10 },       // DeFi: 3-10% drawdown
+        meme: { min: 0.10, max: 0.30 },       // Meme: 10-30% drawdown
+        layer1: { min: 0.02, max: 0.08 },     // Layer 1: 2-8% drawdown
+        layer2: { min: 0.04, max: 0.12 },     // Layer 2: 4-12% drawdown
+        gaming: { min: 0.05, max: 0.15 },     // Gaming: 5-15% drawdown
+        ai: { min: 0.05, max: 0.15 },         // AI: 5-15% drawdown
+        other: { min: 0.04, max: 0.12 }       // Other: 4-12% drawdown
+      },
+      bullish: { 
+        defi: { min: 0, max: 0.05 },          // DeFi: 0-5% drawdown
+        meme: { min: 0.02, max: 0.10 },       // Meme: 2-10% drawdown
+        layer1: { min: 0, max: 0.03 },        // Layer 1: 0-3% drawdown
+        layer2: { min: 0, max: 0.05 },        // Layer 2: 0-5% drawdown
+        gaming: { min: 0.01, max: 0.08 },     // Gaming: 1-8% drawdown
+        ai: { min: 0.01, max: 0.08 },         // AI: 1-8% drawdown
+        other: { min: 0, max: 0.05 }          // Other: 0-5% drawdown
+      }
     };
 
-    return altcoinData.map((token: any) => {
-      const scenario = scenarios[selectedScenario];
+    // Categorize tokens
+    const categorizeToken = (categories: string[], symbol: string) => {
+      if (!categories || categories.length === 0) {
+        // Use symbol-based categorization for common tokens
+        if (['BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'ATOM'].includes(symbol.toUpperCase())) return 'layer1';
+        if (['MATIC', 'ARB', 'OP', 'IMX', 'STRK', 'MANTA'].includes(symbol.toUpperCase())) return 'layer2';
+        if (['SHIB', 'DOGE', 'PEPE', 'FLOKI', 'BONK', 'WIF'].includes(symbol.toUpperCase())) return 'meme';
+        if (['UNI', 'AAVE', 'MKR', 'COMP', 'CRV', 'SNX'].includes(symbol.toUpperCase())) return 'defi';
+        if (['AXS', 'SAND', 'MANA', 'ENJ', 'GALA', 'IMX'].includes(symbol.toUpperCase())) return 'gaming';
+        if (['RNDR', 'FET', 'OCEAN', 'AGI', 'NMR'].includes(symbol.toUpperCase())) return 'ai';
+        return 'other';
+      }
+      
+      const categoryMap: Record<string, string[]> = {
+        layer1: ['Smart Contract Platform', 'Proof of Stake', 'Layer 1'],
+        layer2: ['Scaling', 'Layer 2', 'Rollup', 'Zero Knowledge'],
+        meme: ['Meme', 'Dog Coins', 'Community'],
+        defi: ['DeFi', 'Decentralized Exchange', 'Lending', 'Yield', 'AMM'],
+        gaming: ['Gaming', 'GameFi', 'Metaverse', 'Play to Earn'],
+        ai: ['AI', 'Artificial Intelligence', 'Machine Learning', 'Data']
+      };
+
+      for (const [key, keywords] of Object.entries(categoryMap)) {
+        if (categories.some(cat => keywords.some(keyword => cat.toLowerCase().includes(keyword.toLowerCase())))) {
+          return key;
+        }
+      }
+      return 'other';
+    };
+
+    return top100Data.map((token: any) => {
+      const category = categorizeToken(token.categories, token.symbol);
+      const scenario = scenarios[selectedScenario][category];
       const drawdownPercent = Math.random() * (scenario.max - scenario.min) + scenario.min;
       
       return {
+        rank: token.market_cap_rank,
         token: token.name,
         symbol: token.symbol.toUpperCase(),
         currentPrice: token.current_price,
         drawdownPercent: drawdownPercent * 100,
         marketCap: token.market_cap,
+        category,
         scenario: selectedScenario,
         projectedPrice: token.current_price * (1 - drawdownPercent),
-        impactValue: token.market_cap * drawdownPercent
+        impactValue: token.market_cap * drawdownPercent,
+        priceChange24h: token.price_change_percentage_24h,
+        volume24h: token.total_volume
       };
     }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
   };
 
-  const drawdowns = calculateDrawdowns();
+  // Calculate sectoral drawdowns
+  const calculateSectoralDrawdowns = () => {
+    const drawdowns = calculateTop100Drawdowns();
+    if (!drawdowns.length) return [];
+
+    const sectors = ['layer1', 'layer2', 'defi', 'meme', 'gaming', 'ai', 'other'];
+    const sectorMap: Record<string, string> = {
+      layer1: 'Layer 1 Blockchains',
+      layer2: 'Layer 2 Scaling',
+      defi: 'DeFi Protocols',
+      meme: 'Memecoins',
+      gaming: 'Gaming & Metaverse',
+      ai: 'AI & Data',
+      other: 'Other'
+    };
+
+    return sectors.map(sector => {
+      const sectorTokens = drawdowns.filter(t => t.category === sector);
+      if (!sectorTokens.length) return null;
+
+      const totalMarketCap = sectorTokens.reduce((sum, t) => sum + t.marketCap, 0);
+      const avgDrawdown = sectorTokens.reduce((sum, t) => sum + t.drawdownPercent, 0) / sectorTokens.length;
+      const totalImpact = sectorTokens.reduce((sum, t) => sum + t.impactValue, 0);
+
+      return {
+        sector,
+        name: sectorMap[sector],
+        tokenCount: sectorTokens.length,
+        totalMarketCap,
+        avgDrawdown,
+        totalImpact,
+        topTokens: sectorTokens.slice(0, 5)
+      };
+    }).filter(s => s !== null);
+  };
+
+  const top100Drawdowns = calculateTop100Drawdowns();
+  const sectoralDrawdowns = calculateSectoralDrawdowns();
 
   // $TRUMP impact data
   const trumpImpact = {
@@ -289,9 +395,9 @@ export default function PumpfunDashboard() {
           <TabsContent value="drawdown-scenarios" className="space-y-6">
             <Card className="bg-gray-800/30 border-gray-700">
               <CardHeader>
-                <CardTitle>Altcoin Drawdown Simulation</CardTitle>
+                <CardTitle>Top 100 Altcoin Drawdown Simulation</CardTitle>
                 <CardDescription>
-                  Select a scenario to see potential impact on altcoins
+                  Analyzing potential impact of $PUMP TGE on the top 100 cryptocurrencies by market cap
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -302,7 +408,7 @@ export default function PumpfunDashboard() {
                     className="flex items-center gap-2"
                   >
                     <TrendingDown className="h-4 w-4" />
-                    Bearish (5-15%)
+                    Bearish Scenario
                   </Button>
                   <Button
                     variant={selectedScenario === 'neutral' ? 'secondary' : 'outline'}
@@ -310,7 +416,7 @@ export default function PumpfunDashboard() {
                     className="flex items-center gap-2"
                   >
                     <Activity className="h-4 w-4" />
-                    Neutral (2-8%)
+                    Neutral Scenario
                   </Button>
                   <Button
                     variant={selectedScenario === 'bullish' ? 'default' : 'outline'}
@@ -318,51 +424,130 @@ export default function PumpfunDashboard() {
                     className="flex items-center gap-2"
                   >
                     <TrendingUp className="h-4 w-4" />
-                    Bullish (0-3%)
+                    Bullish Scenario
                   </Button>
                 </div>
 
-                <ScrollArea className="h-[400px]">
-                  <div className="space-y-3">
-                    {drawdowns.map((token, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700"
-                      >
-                        <div className="flex items-center gap-4">
-                          <span className="text-2xl font-bold text-gray-500">
-                            #{index + 1}
-                          </span>
-                          <div>
-                            <p className="font-semibold">{token.symbol}</p>
-                            <p className="text-sm text-gray-400">{token.token}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className={`text-lg font-bold ${
-                            selectedScenario === 'bearish' ? 'text-red-400' :
-                            selectedScenario === 'neutral' ? 'text-yellow-400' :
-                            'text-green-400'
-                          }`}>
-                            -{token.drawdownPercent.toFixed(1)}%
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            ${formatNumber(token.impactValue)} impact
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-
-                <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
-                  <p className="text-sm text-gray-400 mb-2">Total Market Impact</p>
-                  <p className="text-2xl font-bold">
-                    ${formatNumber(
-                      drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
-                    )}
+                {/* Scenario Description */}
+                <div className="mb-6 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                  <p className="text-sm text-gray-300 mb-2">
+                    <strong>{selectedScenario.charAt(0).toUpperCase() + selectedScenario.slice(1)} Scenario:</strong>
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {selectedScenario === 'bearish' && 
+                      "$PUMP launches at $4B FDV causing massive liquidity rotation. Memecoins crash 30-75%, DeFi down 10-25%, Layer 1s hold relatively stable at 5-15% drawdown."
+                    }
+                    {selectedScenario === 'neutral' && 
+                      "Market absorbs $PUMP launch with moderate rotation. Memecoins see 10-30% decline, DeFi protocols 3-10%, while Layer 1s remain resilient with 2-8% impact."
+                    }
+                    {selectedScenario === 'bullish' && 
+                      "Fresh capital enters crypto for $PUMP. Minimal impact on altcoins with memecoins down only 2-10%, DeFi 0-5%, and Layer 1s virtually unchanged."
+                    }
                   </p>
                 </div>
+
+                {/* Loading State */}
+                {loadingTop100 ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <div className="w-12 h-12 border-4 border-gray-700 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+                    <p className="text-gray-400">Loading Top 100 altcoins data...</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Sectoral Breakdown */}
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold mb-4">Sectoral Drawdown Analysis</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {sectoralDrawdowns.map((sector: any) => (
+                      <Card key={sector.sector} className="bg-gray-900/50 border-gray-700">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm flex items-center justify-between">
+                            {sector.name}
+                            <Badge variant="outline" className="ml-2">
+                              {sector.tokenCount} tokens
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            <div>
+                              <p className="text-xs text-gray-400">Avg Drawdown</p>
+                              <p className={`text-lg font-bold ${
+                                selectedScenario === 'bearish' ? 'text-red-400' :
+                                selectedScenario === 'neutral' ? 'text-yellow-400' :
+                                'text-green-400'
+                              }`}>
+                                -{sector.avgDrawdown.toFixed(1)}%
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400">Total Impact</p>
+                              <p className="text-sm font-medium">
+                                ${formatNumber(sector.totalImpact)}
+                              </p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Top 100 Altcoins List */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Top 100 Altcoins Drawdown Scenarios</h3>
+                  <ScrollArea className="h-[600px]">
+                    <div className="space-y-2">
+                      {top100Drawdowns.map((token, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700 hover:bg-gray-800/70 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg font-bold text-gray-500 w-8">
+                              #{token.rank}
+                            </span>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold">{token.symbol}</p>
+                                <Badge variant="outline" className="text-xs">
+                                  {token.category}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-gray-400">{token.token}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className={`text-lg font-bold ${
+                              selectedScenario === 'bearish' ? 'text-red-400' :
+                              selectedScenario === 'neutral' ? 'text-yellow-400' :
+                              'text-green-400'
+                            }`}>
+                              -{token.drawdownPercent.toFixed(1)}%
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              ${formatNumber(token.currentPrice)} → ${formatNumber(token.projectedPrice)}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Impact: ${formatNumber(token.impactValue)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+
+                    <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
+                      <p className="text-sm text-gray-400 mb-2">Total Market Impact (Top 100)</p>
+                      <p className="text-2xl font-bold">
+                        ${formatNumber(
+                          top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
+                        )}
+                      </p>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
