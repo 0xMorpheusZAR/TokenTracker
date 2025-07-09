@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { 
   AlertTriangle, TrendingDown, TrendingUp, DollarSign, Activity, 
   ChevronRight, RefreshCw, Info, Clock, Zap, Target,
-  BarChart3, PieChart, TrendingUp as TrendUp, Users
+  BarChart3, PieChart, TrendingUp as TrendUp, Users, ArrowLeft
 } from "lucide-react";
 import { Line, Bar, Doughnut, Radar } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
@@ -306,6 +307,25 @@ export default function PumpfunDashboard() {
       {/* Main Container with better padding */}
       <div className="relative px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
+          {/* Back to Dashboard Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6"
+          >
+            <Link href="/">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="group text-gray-400 hover:text-gray-100 hover:bg-gray-800/50 transition-all"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                Back to Dashboard
+              </Button>
+            </Link>
+          </motion.div>
+
           {/* Header Section with improved spacing */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
