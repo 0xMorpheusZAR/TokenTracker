@@ -98,6 +98,11 @@ export default function PumpfunDashboard() {
   const { data: altcoinData, isLoading: loadingAltcoins } = useQuery({
     queryKey: ['/api/coingecko/detailed'],
   });
+  
+  // Fetch BONK token data
+  const { data: bonkData, isLoading: loadingBonk } = useQuery({
+    queryKey: ['/api/coingecko/market/bonk'],
+  });
 
   // Fetch top 100 altcoins data
   const { data: top100Data, isLoading: loadingTop100 } = useQuery({
@@ -344,66 +349,7 @@ export default function PumpfunDashboard() {
             </div>
           </motion.div>
 
-          {/* Executive Summary */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-12"
-          >
-            <Card className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border-gray-700/50 shadow-xl">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-xl font-semibold text-gray-100">
-                  <Target className="h-5 w-5 text-purple-400" />
-                  Executive Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <p className="text-base leading-7 text-gray-200">
-                    With Pump.fun's 30-day revenue reaching{' '}
-                    <span className="font-semibold text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
-                      $827.46M
-                    </span>{' '}
-                    (foundation revenue:{' '}
-                    <span className="font-semibold text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
-                      $715.36M
-                    </span>
-                    ), the anticipated $PUMP TGE presents a critical market liquidity test.
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 bg-green-400 rounded-full" />
-                        <span className="text-sm font-medium text-gray-300">Market Valuation</span>
-                      </div>
-                      <p className="text-gray-100 font-medium">$4B FDV vs $715.36M Revenue</p>
-                      <p className="text-sm text-gray-400 mt-1">5.6x revenue multiple</p>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full" />
-                        <span className="text-sm font-medium text-gray-300">Competition Risk</span>
-                      </div>
-                      <p className="text-gray-100 font-medium">Lost 70% market share</p>
-                      <p className="text-sm text-gray-400 mt-1">to Bonk.fun platform</p>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 bg-red-400 rounded-full" />
-                        <span className="text-sm font-medium text-gray-300">Launch Risk</span>
-                      </div>
-                      <p className="text-gray-100 font-medium">High-FDV launch</p>
-                      <p className="text-sm text-gray-400 mt-1">in volatile market conditions</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+
 
           {/* Key Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -1089,42 +1035,77 @@ export default function PumpfunDashboard() {
                 {/* BONK Token Performance */}
                 <Card className="bg-gray-900/50 border-gray-700">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base">BONK Token Performance</CardTitle>
+                    <CardTitle className="text-base text-gray-100">BONK Token Performance</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-400">Market Cap</p>
-                        <p className="text-lg font-bold text-green-400">$1.8B</p>
+                    {loadingBonk ? (
+                      <div className="space-y-3">
+                        <div className="h-8 bg-gray-800 rounded animate-pulse" />
+                        <div className="h-8 bg-gray-800 rounded animate-pulse" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-400">7-Day Performance</p>
-                        <p className="text-lg font-bold text-green-400">+50%</p>
+                    ) : bonkData ? (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-400">Market Cap</p>
+                            <p className="text-lg font-bold text-green-400">
+                              ${bonkData.market_cap ? (bonkData.market_cap / 1e9).toFixed(2) + 'B' : 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-400">7-Day Performance</p>
+                            <p className={`text-lg font-bold ${
+                              bonkData.price_change_percentage_7d > 0 ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                              {bonkData.price_change_percentage_7d 
+                                ? `${bonkData.price_change_percentage_7d > 0 ? '+' : ''}${bonkData.price_change_percentage_7d.toFixed(2)}%`
+                                : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mt-3">
+                          <div>
+                            <p className="text-sm text-gray-400">Current Price</p>
+                            <p className="text-sm font-medium text-gray-200">
+                              ${bonkData.current_price ? bonkData.current_price.toFixed(8) : 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-400">24h Volume</p>
+                            <p className="text-sm font-medium text-gray-200">
+                              ${bonkData.total_volume ? (bonkData.total_volume / 1e6).toFixed(2) + 'M' : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4 p-3 bg-green-900/20 rounded-lg">
+                          <p className="text-xs text-green-300">
+                            BONK benefits from fee buybacks and burns, creating sustainable value
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center text-gray-400 py-4">
+                        Failed to load BONK data
                       </div>
-                    </div>
-                    <div className="mt-4 p-3 bg-green-900/20 rounded-lg">
-                      <p className="text-xs text-green-300">
-                        BONK benefits from fee buybacks and burns, creating sustainable value
-                      </p>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
 
                 {/* Pump.fun's Response */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Pump.fun's Counter-Strategy</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Pump.fun's Counter-Strategy</h3>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
-                      <span>Expanding to Ethereum (EVM) chains</span>
+                      <span className="text-gray-200">Expanding to Ethereum (EVM) chains</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
-                      <span>New features: Subscription model, social functions, order books</span>
+                      <span className="text-gray-200">New features: Subscription model, social functions, order books</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
-                      <span>$PUMP token launch to regain momentum</span>
+                      <span className="text-gray-200">$PUMP token launch to regain momentum</span>
                     </li>
                   </ul>
                 </div>
