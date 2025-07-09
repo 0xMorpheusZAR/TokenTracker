@@ -219,14 +219,19 @@ export default function PumpfunDashboard() {
   const top100Drawdowns = calculateTop100Drawdowns();
   const sectoralDrawdowns = calculateSectoralDrawdowns();
 
-  // $TRUMP impact data
+  // $TRUMP impact data from Jan 17, 2025 event
   const trumpImpact = {
-    totalLiquidityDrained: 7500000000, // $7.5B
-    ethDrawdown: 8.1, // 8.1%
-    altcoinAvgDrawdown: 12.5, // 12.5% average
-    memecoinsDrawdown: 75, // 75% average for memecoins
+    totalLiquidityDrained: 7500000000, // $7.5B in altcoin market cap evaporated
+    ethDrawdown: 8, // 8% drop from $3,494 to $3,130
+    ethStartPrice: 3494,
+    ethEndPrice: 3130,
+    solPeakPrice: 275, // SOL hit new ATH
+    altcoinAvgDrawdown: 7, // high single-digit percentages for top-100
+    memecoinsDrawdown: 75, // 70-80% average decline
     duration: 48, // hours
-    peakMarketCap: 70000000000 // $70B
+    peakFDV: 70000000000, // $70B fully diluted value
+    melaniaPeakVal: 1900000000, // $1.9B peak
+    melaniaDropPercent: 90 // 90% collapse from peak
   };
 
   // Pump.fun metrics
@@ -330,66 +335,191 @@ export default function PumpfunDashboard() {
                   The $TRUMP Liquidity Blackhole Event
                 </CardTitle>
                 <CardDescription>
-                  Analysis of the January 17, 2025 market impact
+                  How Donald Trump's memecoin launch on January 17, 2025 created a massive liquidity vacuum in crypto markets
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Key Impact Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Liquidity Drained</p>
+                    <p className="text-sm text-gray-400 mb-1">Altcoin Market Cap Lost</p>
                     <p className="text-2xl font-bold text-red-400">
                       {formatCurrency(trumpImpact.totalLiquidityDrained)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">In 48 hours</p>
+                    <p className="text-xs text-gray-500 mt-1">Evaporated in minutes</p>
                   </div>
                   <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
-                    <p className="text-sm text-gray-400 mb-1">ETH Drawdown</p>
+                    <p className="text-sm text-gray-400 mb-1">$TRUMP Peak FDV</p>
                     <p className="text-2xl font-bold text-orange-400">
-                      -{trumpImpact.ethDrawdown}%
+                      {formatCurrency(trumpImpact.peakFDV)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">$3,494 → $3,130</p>
+                    <p className="text-xs text-gray-500 mt-1">Within 48 hours</p>
                   </div>
                   <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Memecoin Collapse</p>
+                    <p className="text-sm text-gray-400 mb-1">Memecoin Carnage</p>
                     <p className="text-2xl font-bold text-yellow-400">
                       -{trumpImpact.memecoinsDrawdown}%
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">Average decline</p>
+                    <p className="text-xs text-gray-500 mt-1">70-80% from highs</p>
+                  </div>
+                  <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
+                    <p className="text-sm text-gray-400 mb-1">Top-100 Avg Drop</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      -{trumpImpact.altcoinAvgDrawdown}%
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">High single-digits</p>
                   </div>
                 </div>
 
-                {/* Impact Timeline */}
+                {/* Major Token Impacts */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
+                  <h3 className="text-lg font-semibold mb-4">Major Token Impacts</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="bg-gray-900/50 border-gray-700">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center justify-between">
+                          <span>Ethereum (ETH)</span>
+                          <Badge variant="destructive" className="text-xs">
+                            -{trumpImpact.ethDrawdown}%
+                          </Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-400">Price Impact</p>
+                            <p className="text-lg font-bold">
+                              ${trumpImpact.ethStartPrice.toLocaleString()} → ${trumpImpact.ethEndPrice.toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-400">Duration</p>
+                            <p className="text-lg font-bold">48 hours</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 p-2 bg-red-900/20 rounded">
+                          <p className="text-xs text-red-300">
+                            ETH suffered as traders sold to chase $TRUMP gains
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="bg-gray-900/50 border-gray-700">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center justify-between">
+                          <span>Solana (SOL)</span>
+                          <Badge variant="default" className="text-xs bg-green-600">
+                            New ATH
+                          </Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-400">Peak Price</p>
+                            <p className="text-lg font-bold text-green-400">
+                              ${trumpImpact.solPeakPrice}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-400">Reason</p>
+                            <p className="text-lg font-bold">$TRUMP Host</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 p-2 bg-green-900/20 rounded">
+                          <p className="text-xs text-green-300">
+                            SOL benefited as the blockchain hosting $TRUMP
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* The MELANIA Follow-up */}
+                <Card className="bg-gray-900/50 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-base">The $MELANIA Follow-up Collapse</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-400">Launch Date</p>
+                        <p className="text-base font-semibold">Jan 19, 2025</p>
+                        <p className="text-xs text-gray-500">2 days after $TRUMP</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Peak Valuation</p>
+                        <p className="text-base font-semibold text-yellow-400">
+                          {formatCurrency(trumpImpact.melaniaPeakVal)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Collapse</p>
+                        <p className="text-base font-semibold text-red-400">
+                          -{trumpImpact.melaniaDropPercent}%
+                        </p>
+                        <p className="text-xs text-gray-500">From peak</p>
+                      </div>
+                    </div>
+                    <div className="p-3 bg-red-900/20 rounded-lg">
+                      <p className="text-xs text-red-300">
+                        $MELANIA briefly hit $1.9B valuation before collapsing 90%, exemplifying the extreme volatility
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Market Dynamics */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Liquidity Blackhole Dynamics</h3>
                   <div className="space-y-3">
                     <div className="flex items-start gap-4">
                       <div className="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
                       <div className="flex-1">
-                        <p className="font-medium">Hour 0-6: Initial Frenzy</p>
+                        <p className="font-medium">Immediate Capital Rotation</p>
                         <p className="text-sm text-gray-400">
-                          $TRUMP launches, immediate sell-off in altcoins begins. SOL surges to ATH.
+                          Traders dumped altcoin holdings en masse to chase $TRUMP, creating a "liquidity blackhole" that sucked $7.5B from the altcoin market
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
                       <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
                       <div className="flex-1">
-                        <p className="font-medium">Hour 6-24: Peak Rotation</p>
+                        <p className="font-medium">Sector-Based Impact</p>
                         <p className="text-sm text-gray-400">
-                          Maximum liquidity drain, ETH drops 5%, smaller alts down 15-20%.
+                          Memecoins crashed 70-80% as speculative capital fled. Large-caps like ETH dropped ~8%. Only SOL and select Trump-related tokens gained
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
                       <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
                       <div className="flex-1">
-                        <p className="font-medium">Hour 24-48: Continued Pressure</p>
+                        <p className="font-medium">Market Cap Concentration</p>
                         <p className="text-sm text-gray-400">
-                          $TRUMP hits $70B FDV, total altcoin market cap down $7.5B.
+                          $TRUMP became top-15 crypto overnight with $70B FDV. This extreme concentration drained liquidity from hundreds of smaller projects
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-2 h-2 rounded-full bg-purple-500 mt-2"></div>
+                      <div className="flex-1">
+                        <p className="font-medium">Post-Event Correction</p>
+                        <p className="text-sm text-gray-400">
+                          After the frenzy, crypto entered a correction. ETH fell ~40% from Dec to late Feb. $TRUMP itself eventually dropped 80% from peak
                         </p>
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Key Takeaway */}
+                <div className="p-4 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg border border-red-800/50">
+                  <h4 className="font-semibold mb-2 text-red-300">Key Lesson: The Cost of FOMO</h4>
+                  <p className="text-sm text-gray-300">
+                    The $TRUMP launch became a textbook liquidity blackhole event. In just 48 hours, it demonstrated how a single high-profile token can temporarily drain billions from the broader market, causing widespread drawdowns across all sectors except the hosting blockchain.
+                  </p>
                 </div>
               </CardContent>
             </Card>
