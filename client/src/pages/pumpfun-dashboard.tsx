@@ -457,41 +457,62 @@ export default function PumpfunDashboard() {
                     {/* Sectoral Breakdown */}
                     <div className="mb-6">
                       <h3 className="text-lg font-semibold mb-4">Sectoral Drawdown Analysis</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {sectoralDrawdowns.map((sector: any) => (
-                      <Card key={sector.sector} className="bg-gray-900/50 border-gray-700">
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-sm flex items-center justify-between">
-                            {sector.name}
-                            <Badge variant="outline" className="ml-2">
-                              {sector.tokenCount} tokens
-                            </Badge>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2">
-                            <div>
-                              <p className="text-xs text-gray-400">Avg Drawdown</p>
-                              <p className={`text-lg font-bold ${
-                                selectedScenario === 'bearish' ? 'text-red-400' :
-                                selectedScenario === 'neutral' ? 'text-yellow-400' :
-                                'text-green-400'
-                              }`}>
-                                -{sector.avgDrawdown.toFixed(1)}%
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400">Total Impact</p>
-                              <p className="text-sm font-medium">
-                                ${formatNumber(sector.totalImpact)}
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
+                          <Card key={sector.sector} className="bg-gray-900/50 border-gray-700">
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-sm">
+                                {sector.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="text-xs text-gray-400">Avg Drawdown</p>
+                                    <p className={`text-lg font-bold ${
+                                      selectedScenario === 'bearish' ? 'text-red-400' :
+                                      selectedScenario === 'neutral' ? 'text-yellow-400' :
+                                      'text-green-400'
+                                    }`}>
+                                      -{sector.avgDrawdown.toFixed(1)}%
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Total Impact</p>
+                                    <p className="text-sm font-medium">
+                                      ${formatNumber(sector.totalImpact)}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Top 10 Tokens */}
+                                <div>
+                                  <p className="text-xs text-gray-400 mb-2">Top 10 Tokens</p>
+                                  <div className="space-y-1">
+                                    {sector.topTokens.slice(0, 10).map((token: any, idx: number) => (
+                                      <div key={idx} className="flex items-center justify-between text-xs">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-gray-500">{idx + 1}.</span>
+                                          <span className="font-medium">{token.symbol}</span>
+                                        </div>
+                                        <span className={`font-medium ${
+                                          selectedScenario === 'bearish' ? 'text-red-400' :
+                                          selectedScenario === 'neutral' ? 'text-yellow-400' :
+                                          'text-green-400'
+                                        }`}>
+                                          -{token.drawdownPercent.toFixed(1)}%
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
 
 
 
