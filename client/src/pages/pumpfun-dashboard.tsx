@@ -358,152 +358,35 @@ export default function PumpfunDashboard() {
                   </div>
                 </div>
 
-                {/* Visual Blackhole Illustration */}
-                <div className="bg-gradient-to-br from-gray-900 via-red-950/20 to-gray-900 rounded-xl p-8 border border-red-800/30 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-radial from-red-900/20 via-transparent to-transparent opacity-50"></div>
-                  
-                  <h3 className="text-lg font-semibold mb-6 relative z-10">Liquidity Blackhole Visualization</h3>
-                  
-                  {/* Central Blackhole */}
-                  <div className="relative flex items-center justify-center mb-8">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-64 h-64 rounded-full bg-gradient-radial from-red-900/60 via-red-950/40 to-transparent animate-pulse"></div>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-48 h-48 rounded-full bg-gradient-radial from-red-800/80 via-red-900/60 to-transparent animate-pulse animation-delay-200"></div>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-32 h-32 rounded-full bg-gradient-radial from-red-700 via-red-800 to-red-900 shadow-2xl shadow-red-900/50 flex items-center justify-center">
-                        <div className="text-center">
-                          <p className="text-2xl font-bold text-white">$TRUMP</p>
-                          <p className="text-xs text-red-200">$70B FDV</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Orbiting Assets Being Drained */}
-                    <div className="absolute w-80 h-80 rounded-full border border-gray-700/30 animate-spin-slow">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2">
-                        <div className="bg-blue-900/80 rounded-lg px-3 py-1.5 text-xs font-medium border border-blue-700/50">
-                          <p className="text-blue-300">ETH</p>
-                          <p className="text-blue-400">-8.1%</p>
-                        </div>
-                      </div>
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2">
-                        <div className="bg-purple-900/80 rounded-lg px-3 py-1.5 text-xs font-medium border border-purple-700/50">
-                          <p className="text-purple-300">DeFi</p>
-                          <p className="text-purple-400">-15%</p>
-                        </div>
-                      </div>
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2">
-                        <div className="bg-yellow-900/80 rounded-lg px-3 py-1.5 text-xs font-medium border border-yellow-700/50">
-                          <p className="text-yellow-300">Memes</p>
-                          <p className="text-yellow-400">-75%</p>
-                        </div>
-                      </div>
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2">
-                        <div className="bg-green-900/80 rounded-lg px-3 py-1.5 text-xs font-medium border border-green-700/50">
-                          <p className="text-green-300">L1s</p>
-                          <p className="text-green-400">-12%</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Liquidity Flow Lines */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                      <defs>
-                        <linearGradient id="flowGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="rgb(239, 68, 68)" stopOpacity="0.8" />
-                        </linearGradient>
-                        <linearGradient id="flowGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgb(168, 85, 247)" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="rgb(239, 68, 68)" stopOpacity="0.8" />
-                        </linearGradient>
-                        <linearGradient id="flowGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgb(250, 204, 21)" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="rgb(239, 68, 68)" stopOpacity="0.8" />
-                        </linearGradient>
-                        <linearGradient id="flowGradient4" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgb(34, 197, 94)" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="rgb(239, 68, 68)" stopOpacity="0.8" />
-                        </linearGradient>
-                      </defs>
-                      
-                      {/* Animated flow paths */}
-                      <path d="M 160 40 Q 200 120 200 160" stroke="url(#flowGradient1)" strokeWidth="2" fill="none" opacity="0.6">
-                        <animate attributeName="stroke-dasharray" values="0 100;100 0" dur="2s" repeatCount="indefinite" />
-                      </path>
-                      <path d="M 160 280 Q 200 200 200 160" stroke="url(#flowGradient2)" strokeWidth="2" fill="none" opacity="0.6">
-                        <animate attributeName="stroke-dasharray" values="0 100;100 0" dur="2s" repeatCount="indefinite" />
-                      </path>
-                      <path d="M 40 160 Q 120 160 160 160" stroke="url(#flowGradient3)" strokeWidth="2" fill="none" opacity="0.6">
-                        <animate attributeName="stroke-dasharray" values="0 100;100 0" dur="2s" repeatCount="indefinite" />
-                      </path>
-                      <path d="M 280 160 Q 240 160 200 160" stroke="url(#flowGradient4)" strokeWidth="2" fill="none" opacity="0.6">
-                        <animate attributeName="stroke-dasharray" values="0 100;100 0" dur="2s" repeatCount="indefinite" />
-                      </path>
-                    </svg>
-                  </div>
-                  
-                  {/* Legend */}
-                  <div className="flex items-center justify-center gap-6 text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-500 to-red-500"></div>
-                      <span className="text-gray-400">Liquidity Flow</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-700"></div>
-                      <span className="text-gray-400">$TRUMP Core</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-900/40"></div>
-                      <span className="text-gray-400">Impact Zone</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Impact Timeline */}
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
                   <div className="space-y-3">
                     <div className="flex items-start gap-4">
-                      <div className="relative">
-                        <div className="w-3 h-3 rounded-full bg-red-500 mt-1.5"></div>
-                        <div className="absolute inset-0 w-3 h-3 rounded-full bg-red-500 animate-ping"></div>
-                      </div>
+                      <div className="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
                       <div className="flex-1">
                         <p className="font-medium">Hour 0-6: Initial Frenzy</p>
                         <p className="text-sm text-gray-400">
                           $TRUMP launches, immediate sell-off in altcoins begins. SOL surges to ATH.
                         </p>
-                        <div className="mt-2 h-1 bg-gradient-to-r from-red-600 to-red-800 rounded-full w-1/3"></div>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="relative">
-                        <div className="w-3 h-3 rounded-full bg-orange-500 mt-1.5"></div>
-                        <div className="absolute inset-0 w-3 h-3 rounded-full bg-orange-500 animate-ping animation-delay-200"></div>
-                      </div>
+                      <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
                       <div className="flex-1">
                         <p className="font-medium">Hour 6-24: Peak Rotation</p>
                         <p className="text-sm text-gray-400">
                           Maximum liquidity drain, ETH drops 5%, smaller alts down 15-20%.
                         </p>
-                        <div className="mt-2 h-1 bg-gradient-to-r from-orange-600 to-orange-800 rounded-full w-2/3"></div>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="relative">
-                        <div className="w-3 h-3 rounded-full bg-yellow-500 mt-1.5"></div>
-                        <div className="absolute inset-0 w-3 h-3 rounded-full bg-yellow-500 animate-ping animation-delay-400"></div>
-                      </div>
+                      <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
                       <div className="flex-1">
                         <p className="font-medium">Hour 24-48: Continued Pressure</p>
                         <p className="text-sm text-gray-400">
                           $TRUMP hits $70B FDV, total altcoin market cap down $7.5B.
                         </p>
-                        <div className="mt-2 h-1 bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-full w-full"></div>
                       </div>
                     </div>
                   </div>
