@@ -231,7 +231,7 @@ export default function PumpfunDashboard() {
 
   // Pump.fun metrics
   const pumpfunMetrics = {
-    totalRevenue: 700000000, // $700M total
+    totalRevenue: 715360000, // $715.36M total
     peakDailyRevenue: 14000000, // $14M peak
     currentDailyRevenue: 1000000, // $1M current
     tgeValuation: 4000000000, // $4B FDV
