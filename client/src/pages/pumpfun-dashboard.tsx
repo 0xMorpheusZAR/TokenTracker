@@ -572,24 +572,29 @@ export default function PumpfunDashboard() {
             <Card className="bg-gray-800/30 border-gray-700">
               <CardHeader>
                 <CardTitle>Platform Statistics</CardTitle>
+                <CardDescription>Cumulative performance as of July 7, 2025</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
+                  <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
+                    <p className="text-sm text-gray-400">Total Fees Generated</p>
+                    <p className="text-2xl font-bold text-purple-400">$827.46M</p>
+                    <p className="text-xs text-gray-500 mt-1">All-time cumulative</p>
+                  </div>
+                  <div className="bg-blue-900/20 rounded-lg p-4 border border-blue-800/50">
+                    <p className="text-sm text-gray-400">Total Revenue</p>
+                    <p className="text-2xl font-bold text-blue-400">$715.36M</p>
+                    <p className="text-xs text-gray-500 mt-1">Platform earnings</p>
+                  </div>
+                  <div className="bg-green-900/20 rounded-lg p-4 border border-green-800/50">
+                    <p className="text-sm text-gray-400">Revenue Ratio</p>
+                    <p className="text-2xl font-bold text-green-400">86.5%</p>
+                    <p className="text-xs text-gray-500 mt-1">Revenue/Fees</p>
+                  </div>
+                  <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
                     <p className="text-sm text-gray-400">Tokens Created</p>
-                    <p className="text-xl font-bold">11M+</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Combined Market Cap</p>
-                    <p className="text-xl font-bold">$4.5B+</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Peak Daily Revenue</p>
-                    <p className="text-xl font-bold">$14M</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Current Daily Revenue</p>
-                    <p className="text-xl font-bold">$1M</p>
+                    <p className="text-2xl font-bold text-orange-400">11M+</p>
+                    <p className="text-xs text-gray-500 mt-1">Since launch</p>
                   </div>
                 </div>
               </CardContent>
