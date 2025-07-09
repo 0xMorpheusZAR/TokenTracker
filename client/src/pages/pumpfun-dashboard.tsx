@@ -1258,6 +1258,7 @@ export default function PumpfunDashboard() {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );
