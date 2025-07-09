@@ -1,15 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, TrendingDown, TrendingUp, DollarSign, Activity, ChevronRight } from "lucide-react";
-import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { 
+  AlertTriangle, TrendingDown, TrendingUp, DollarSign, Activity, 
+  ChevronRight, RefreshCw, Info, Clock, Zap, Target,
+  BarChart3, PieChart, TrendingUp as TrendUp, Users
+} from "lucide-react";
+import { Line, Bar, Doughnut, Radar } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber, formatCurrency } from "@/lib/utils";
 
 interface PumpfunRevenue {
@@ -28,9 +35,54 @@ interface AltcoinDrawdown {
   scenario: 'bearish' | 'bullish' | 'neutral';
 }
 
+// Animated number component
+const AnimatedValue = ({ value, format = 'number', prefix = '', suffix = '', className = '' }: any) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useEffect(() => {
+    const startValue = displayValue;
+    const endValue = value;
+    const duration = 2000;
+    const startTime = Date.now();
+    
+    const animate = () => {
+      const now = Date.now();
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const current = startValue + (endValue - startValue) * easeOutQuart;
+      
+      setDisplayValue(current);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [value]);
+  
+  const formatValue = () => {
+    if (format === 'currency') {
+      return formatCurrency(displayValue);
+    } else if (format === 'percent') {
+      return `${displayValue.toFixed(1)}%`;
+    } else if (format === 'number') {
+      return formatNumber(displayValue);
+    }
+    return displayValue.toFixed(0);
+  };
+  
+  return (
+    <span className={className}>
+      {prefix}{formatValue()}{suffix}
+    </span>
+  );
+};
+
 export default function PumpfunDashboard() {
   const [selectedScenario, setSelectedScenario] = useState<'bearish' | 'bullish' | 'neutral'>('neutral');
   const [trumpImpactData, setTrumpImpactData] = useState<any>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Fetch Pump.fun revenue data from DefiLlama
   const { data: pumpfunData, isLoading: loadingPumpfun } = useQuery({
@@ -243,122 +295,335 @@ export default function PumpfunDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white p-8">
+      {/* Background effects */}
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20 pointer-events-none" />
+      
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between mb-6">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center justify-between mb-6"
+        >
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-pulse">
               Pump.fun TGE Analysis Dashboard
             </h1>
-            <p className="text-gray-400 mt-2">
-              Analyzing $PUMP token launch scenarios and potential market impact
-            </p>
+            <div className="flex items-center gap-4 mt-3">
+              <p className="text-gray-400">
+                Analyzing $PUMP token launch scenarios and potential market impact
+              </p>
+              <div className="pump-live-indicator">
+                <span className="pump-live-dot"></span>
+                <span className="text-xs text-green-400">Live</span>
+              </div>
+            </div>
           </div>
-          <Badge variant="outline" className="text-lg px-4 py-2 border-purple-500 text-purple-400">
-            TGE: July 12, 2025
-          </Badge>
-        </div>
+          <div className="flex flex-col items-end gap-2">
+            <Badge variant="outline" className="text-lg px-4 py-2 border-purple-500 text-purple-400 pump-shimmer">
+              TGE: July 12, 2025
+            </Badge>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => window.location.reload()}
+              className="text-xs text-gray-400 hover:text-white"
+            >
+              <RefreshCw className={`h-3 w-3 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh Data
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Executive Summary */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-8"
+        >
+          <Card className="pump-glassmorphism border-purple-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 animate-pulse" />
+            <CardHeader className="relative">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Target className="h-5 w-5 text-purple-400" />
+                Executive Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-gray-300">Market Cap: $4B FDV vs $715.36M Revenue (5.6x)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
+                  <span className="text-gray-300">Competition: Lost 70% market share to Bonk.fun</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                  <span className="text-gray-300">Risk: High-FDV launch in volatile market</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm text-gray-400">Total Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-green-400">
-                {formatCurrency(pumpfunMetrics.totalRevenue)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Since launch</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="pump-glassmorphism pump-metric-card border-green-500/20 hover:border-green-500/40 cursor-help">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
+                        <DollarSign className="h-4 w-4" />
+                        Total Revenue
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold text-green-400">
+                        <AnimatedValue value={pumpfunMetrics.totalRevenue} format="currency" />
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <TrendUp className="h-3 w-3 text-green-400" />
+                        <p className="text-xs text-gray-500">Since launch</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Total fees generated from token launches</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </motion.div>
 
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm text-gray-400">TGE Valuation</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-blue-400">
-                {formatCurrency(pumpfunMetrics.tgeValuation)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Fully diluted</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="pump-glassmorphism pump-metric-card border-blue-500/20 hover:border-blue-500/40 cursor-help">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4" />
+                        TGE Valuation
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold text-blue-400">
+                        <AnimatedValue value={pumpfunMetrics.tgeValuation} format="currency" />
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Zap className="h-3 w-3 text-blue-400" />
+                        <p className="text-xs text-gray-500">Fully diluted</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Initial fully diluted valuation at token launch</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </motion.div>
 
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm text-gray-400">Expected Raise</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-purple-400">
-                {formatCurrency(pumpfunMetrics.expectedRaise)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Public sale target</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="pump-glassmorphism pump-metric-card border-purple-500/20 hover:border-purple-500/40 cursor-help">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Expected Raise
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold text-purple-400">
+                        <AnimatedValue value={pumpfunMetrics.expectedRaise} format="currency" />
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Activity className="h-3 w-3 text-purple-400" />
+                        <p className="text-xs text-gray-500">Public sale target</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Target amount to raise from public token sale</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </motion.div>
 
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm text-gray-400">Revenue Multiple</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-yellow-400">
-                {(pumpfunMetrics.tgeValuation / pumpfunMetrics.totalRevenue).toFixed(1)}x
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Valuation/Revenue</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="pump-glassmorphism pump-metric-card border-yellow-500/20 hover:border-yellow-500/40 cursor-help">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
+                        <PieChart className="h-4 w-4" />
+                        Revenue Multiple
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-3xl font-bold text-yellow-400">
+                        <AnimatedValue 
+                          value={pumpfunMetrics.tgeValuation / pumpfunMetrics.totalRevenue} 
+                          suffix="x"
+                          format="number"
+                        />
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Info className="h-3 w-3 text-yellow-400" />
+                        <p className="text-xs text-gray-500">Valuation/Revenue</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Price-to-revenue ratio compared to crypto standards</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </motion.div>
         </div>
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="trump-impact" className="space-y-6">
-          <TabsList className="bg-gray-800/50 border border-gray-700">
-            <TabsTrigger value="trump-impact">$TRUMP Impact Analysis</TabsTrigger>
-            <TabsTrigger value="drawdown-scenarios">Drawdown Scenarios</TabsTrigger>
-            <TabsTrigger value="pump-metrics">Pump.fun Metrics</TabsTrigger>
-            <TabsTrigger value="competition">Bonk.fun Competition</TabsTrigger>
-            <TabsTrigger value="predictions">Predictions</TabsTrigger>
-            <TabsTrigger value="valuation-debate">Valuation Analysis</TabsTrigger>
-          </TabsList>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <TabsList className="pump-glassmorphism border-gray-700/50 p-1 flex flex-wrap gap-1">
+              <TabsTrigger 
+                value="trump-impact" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                $TRUMP Impact Analysis
+              </TabsTrigger>
+              <TabsTrigger 
+                value="drawdown-scenarios"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                Drawdown Scenarios
+              </TabsTrigger>
+              <TabsTrigger 
+                value="pump-metrics"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                Pump.fun Metrics
+              </TabsTrigger>
+              <TabsTrigger 
+                value="competition"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                Bonk.fun Competition
+              </TabsTrigger>
+              <TabsTrigger 
+                value="predictions"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                Predictions
+              </TabsTrigger>
+              <TabsTrigger 
+                value="valuation-debate"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
+              >
+                Valuation Analysis
+              </TabsTrigger>
+            </TabsList>
+          </motion.div>
 
           {/* $TRUMP Impact Analysis */}
           <TabsContent value="trump-impact" className="space-y-6">
-            <Card className="bg-gray-800/30 border-gray-700">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-red-500" />
-                  The $TRUMP Liquidity Blackhole Event
-                </CardTitle>
-                <CardDescription>
-                  Analysis of the January 17, 2025 market impact
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Liquidity Drained</p>
-                    <p className="text-2xl font-bold text-red-400">
-                      {formatCurrency(trumpImpact.totalLiquidityDrained)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">In 48 hours</p>
-                  </div>
-                  <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
-                    <p className="text-sm text-gray-400 mb-1">ETH Drawdown</p>
-                    <p className="text-2xl font-bold text-orange-400">
-                      -{trumpImpact.ethDrawdown}%
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">$3,494 → $3,130</p>
-                  </div>
-                  <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Memecoin Collapse</p>
-                    <p className="text-2xl font-bold text-yellow-400">
-                      -{trumpImpact.memecoinsDrawdown}%
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">Average decline</p>
-                  </div>
-                </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="pump-glassmorphism border-gray-700/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-red-500 animate-pulse" />
+                      The $TRUMP Liquidity Blackhole Event
+                    </CardTitle>
+                    <CardDescription>
+                      Analysis of the January 17, 2025 market impact
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="bg-gradient-to-br from-red-900/20 to-red-800/10 rounded-lg p-4 border border-red-800/50 pump-card-glow"
+                      >
+                        <p className="text-sm text-gray-400 mb-2">Liquidity Drained</p>
+                        <p className="text-3xl font-bold text-red-400">
+                          <AnimatedValue value={trumpImpact.totalLiquidityDrained} format="currency" />
+                        </p>
+                        <div className="flex items-center gap-1 mt-2">
+                          <Clock className="h-3 w-3 text-red-300" />
+                          <p className="text-xs text-gray-500">In 48 hours</p>
+                        </div>
+                      </motion.div>
+                      
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 rounded-lg p-4 border border-orange-800/50 pump-card-glow"
+                      >
+                        <p className="text-sm text-gray-400 mb-2">ETH Drawdown</p>
+                        <p className="text-3xl font-bold text-orange-400">
+                          -<AnimatedValue value={trumpImpact.ethDrawdown} format="percent" />
+                        </p>
+                        <div className="flex items-center gap-1 mt-2">
+                          <TrendingDown className="h-3 w-3 text-orange-300" />
+                          <p className="text-xs text-gray-500">$3,494 → $3,130</p>
+                        </div>
+                      </motion.div>
+                      
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="bg-gradient-to-br from-yellow-900/20 to-yellow-800/10 rounded-lg p-4 border border-yellow-800/50 pump-card-glow"
+                      >
+                        <p className="text-sm text-gray-400 mb-2">Memecoin Collapse</p>
+                        <p className="text-3xl font-bold text-yellow-400">
+                          -<AnimatedValue value={trumpImpact.memecoinsDrawdown} format="percent" />
+                        </p>
+                        <div className="flex items-center gap-1 mt-2">
+                          <AlertTriangle className="h-3 w-3 text-yellow-300" />
+                          <p className="text-xs text-gray-500">Average decline</p>
+                        </div>
+                      </motion.div>
+                    </div>
 
-                {/* Impact Timeline */}
+                    {/* Impact Timeline */}
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
                   <div className="space-y-3">
@@ -391,8 +656,10 @@ export default function PumpfunDashboard() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </AnimatePresence>
           </TabsContent>
 
           {/* Drawdown Scenarios */}
