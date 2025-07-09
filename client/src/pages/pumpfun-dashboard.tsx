@@ -330,11 +330,12 @@ export default function PumpfunDashboard() {
                   The $TRUMP Liquidity Blackhole Event
                 </CardTitle>
                 <CardDescription>
-                  Analysis of the January 17, 2025 market impact
+                  Comprehensive analysis of the January 17, 2025 market disruption
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Key Impact Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
                     <p className="text-sm text-gray-400 mb-1">Liquidity Drained</p>
                     <p className="text-2xl font-bold text-red-400">
@@ -356,41 +357,218 @@ export default function PumpfunDashboard() {
                     </p>
                     <p className="text-xs text-gray-500 mt-1">Average decline</p>
                   </div>
+                  <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
+                    <p className="text-sm text-gray-400 mb-1">$TRUMP Peak FDV</p>
+                    <p className="text-2xl font-bold text-purple-400">
+                      $70B
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Within 48 hours</p>
+                  </div>
                 </div>
 
-                {/* Impact Timeline */}
+                {/* Market Impact Visualization */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Sector Impact Chart */}
+                  <Card className="bg-gray-900/50 border-gray-700">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Sector Impact Analysis</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs text-gray-400">Memecoins</span>
+                            <span className="text-xs text-red-400">-75%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-red-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs text-gray-400">Small Caps</span>
+                            <span className="text-xs text-orange-400">-35%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '35%' }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs text-gray-400">DeFi Tokens</span>
+                            <span className="text-xs text-yellow-400">-15%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '15%' }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs text-gray-400">Layer 1s (ex-SOL)</span>
+                            <span className="text-xs text-blue-400">-8%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '8%' }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs text-gray-400">SOL</span>
+                            <span className="text-xs text-green-400">+127%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Volume Spike Visualization */}
+                  <Card className="bg-gray-900/50 border-gray-700">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Trading Volume Spike</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-xs text-gray-400">Pre-Launch Daily Vol</p>
+                            <p className="text-lg font-bold">$45B</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400">Launch Day Vol</p>
+                            <p className="text-lg font-bold text-green-400">$178B</p>
+                          </div>
+                        </div>
+                        <div className="h-32 flex items-end gap-2">
+                          <div className="w-full bg-gray-700 relative" style={{ height: '25%' }}>
+                            <span className="absolute -top-6 text-xs text-gray-400 left-1/2 -translate-x-1/2">Jan 15</span>
+                          </div>
+                          <div className="w-full bg-gray-700 relative" style={{ height: '28%' }}>
+                            <span className="absolute -top-6 text-xs text-gray-400 left-1/2 -translate-x-1/2">Jan 16</span>
+                          </div>
+                          <div className="w-full bg-green-500 relative" style={{ height: '100%' }}>
+                            <span className="absolute -top-6 text-xs text-green-400 left-1/2 -translate-x-1/2">Jan 17</span>
+                          </div>
+                          <div className="w-full bg-orange-500 relative" style={{ height: '80%' }}>
+                            <span className="absolute -top-6 text-xs text-orange-400 left-1/2 -translate-x-1/2">Jan 18</span>
+                          </div>
+                          <div className="w-full bg-yellow-500 relative" style={{ height: '60%' }}>
+                            <span className="absolute -top-6 text-xs text-yellow-400 left-1/2 -translate-x-1/2">Jan 19</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Detailed Timeline */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 0-6: Initial Frenzy</p>
-                        <p className="text-sm text-gray-400">
-                          $TRUMP launches, immediate sell-off in altcoins begins. SOL surges to ATH.
-                        </p>
+                  <h3 className="text-lg font-semibold mb-4">48-Hour Impact Timeline</h3>
+                  <div className="space-y-4">
+                    {/* Hour 0-6 */}
+                    <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold text-red-400">0-6h</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium mb-2">Initial Frenzy & Market Shock</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-400">
+                            <div>
+                              <p>• $TRUMP launches at 3PM UTC</p>
+                              <p>• Price: $0.18 → $6.50 in 3 hours</p>
+                              <p>• SOL spikes from $218 to $264</p>
+                            </div>
+                            <div>
+                              <p>• Memecoins immediately dump 20-40%</p>
+                              <p>• DEX volumes hit all-time highs</p>
+                              <p>• Gas fees on Solana spike 10x</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 6-24: Peak Rotation</p>
-                        <p className="text-sm text-gray-400">
-                          Maximum liquidity drain, ETH drops 5%, smaller alts down 15-20%.
-                        </p>
+
+                    {/* Hour 6-24 */}
+                    <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold text-orange-400">6-24h</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium mb-2">Peak Rotation & Cascading Liquidations</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-400">
+                            <div>
+                              <p>• $TRUMP reaches $32B market cap</p>
+                              <p>• ETH drops from $3,494 to $3,200</p>
+                              <p>• BTC relatively stable at -2%</p>
+                            </div>
+                            <div>
+                              <p>• $3.2B in altcoin liquidations</p>
+                              <p>• BONK, WIF, PEPE down 60-80%</p>
+                              <p>• DeFi TVL drops $5B globally</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 24-48: Continued Pressure</p>
-                        <p className="text-sm text-gray-400">
-                          $TRUMP hits $70B FDV, total altcoin market cap down $7.5B.
-                        </p>
+
+                    {/* Hour 24-48 */}
+                    <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold text-yellow-400">24-48h</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium mb-2">Sustained Pressure & New Equilibrium</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-400">
+                            <div>
+                              <p>• $TRUMP peaks at $70B FDV</p>
+                              <p>• Total crypto market cap -4%</p>
+                              <p>• Altcoin dominance hits 6-month low</p>
+                            </div>
+                            <div>
+                              <p>• Recovery attempts fail repeatedly</p>
+                              <p>• New capital flows primarily to $TRUMP</p>
+                              <p>• Market structure permanently altered</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Key Takeaways */}
+                <Card className="bg-purple-900/20 border-purple-800/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm text-purple-400">Key Market Dynamics</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <p className="font-medium text-purple-300 mb-1">Liquidity Vacuum</p>
+                        <p className="text-xs text-gray-400">
+                          Capital didn't leave crypto but violently rotated into a single asset
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-purple-300 mb-1">SOL Beneficiary</p>
+                        <p className="text-xs text-gray-400">
+                          As $TRUMP's host chain, SOL captured significant value overflow
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-purple-300 mb-1">Precedent Set</p>
+                        <p className="text-xs text-gray-400">
+                          Demonstrated how celebrity tokens can destabilize entire sectors
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>
