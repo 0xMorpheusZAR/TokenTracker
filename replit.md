@@ -150,7 +150,6 @@ Changelog:
 - July 7, 2025: Enhanced revenue dashboard with TVL data integration from DefiLlama protocols API, optimized view switching performance with useMemo, and improved loading states
 - July 7, 2025: Created comprehensive dashboard documentation (README-dashboard.md) for GitHub repository including detailed feature descriptions, architecture overview, setup instructions, API documentation, development guidelines, and future roadmap
 - July 9, 2025: Built comprehensive Pump.fun Dashboard analyzing TGE scenarios, $TRUMP liquidity blackhole impact (Jan 17, 2025), and Bonk.fun competition - includes altcoin drawdown simulations, market share analysis, valuation debates (Bull/Bear cases), and community sentiment tracking
-- July 9, 2025: Added Monte Carlo Simulations for $PUMP token with 10,000 simulations across 3 scenarios (Bearish 35%, Base 45%, Bullish 20%), statistical price distribution analysis, comprehensive risk metrics (VaR, Expected Shortfall, Sharpe/Sortino ratios), and investment recommendations showing 65% probability of loss
 ```
 
 ## User Preferences
