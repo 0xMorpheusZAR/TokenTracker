@@ -842,7 +842,7 @@ export default function PumpfunDashboard() {
                   <div className="space-y-3">
                     <div className="p-3 bg-gray-800/50 rounded-lg">
                       <p className="text-sm font-medium mb-1">Revenue Foundation</p>
-                      <p className="text-xs text-gray-400">$700M+ total revenue generated</p>
+                      <p className="text-xs text-gray-400">$715.36M total revenue generated</p>
                       <p className="text-xs text-gray-400">Peak daily: $14M (Jan 2025)</p>
                     </div>
                     
