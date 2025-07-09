@@ -495,7 +495,6 @@ export default function PumpfunDashboard() {
 
                 {/* Top 100 Altcoins List */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Top 100 Altcoins Drawdown Scenarios</h3>
                   <ScrollArea className="h-[600px]">
                     <div className="space-y-2">
                       {top100Drawdowns.map((token, index) => (
