@@ -294,116 +294,151 @@ export default function PumpfunDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white p-8">
-      {/* Background effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-pink-900/20 pointer-events-none" />
+    <div className="pump-dashboard min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-white">
+      {/* Subtle background gradient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/5 via-transparent to-blue-900/5 pointer-events-none" />
       
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center justify-between mb-6"
-        >
-          <div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-pulse">
-              Pump.fun TGE Analysis Dashboard
-            </h1>
-            <div className="flex items-center gap-4 mt-3">
-              <p className="text-gray-400">
-                Analyzing $PUMP token launch scenarios and potential market impact
-              </p>
-              <div className="pump-live-indicator">
-                <span className="pump-live-dot"></span>
-                <span className="text-xs text-green-400">Live</span>
+      {/* Main Container with better padding */}
+      <div className="relative px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section with improved spacing */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-10"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+              <div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-100 mb-3">
+                  Pump.fun TGE Analysis
+                </h1>
+                <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
+                  Comprehensive analysis of $PUMP token launch scenarios, market impact projections, 
+                  and competitive landscape assessment
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="pump-live-indicator">
+                    <span className="pump-live-dot"></span>
+                    <span className="text-sm font-medium text-green-400">Live Data</span>
+                  </div>
+                  <Badge variant="outline" className="text-base px-4 py-2 border-purple-500/50 text-purple-300 bg-purple-500/10">
+                    TGE: July 12, 2025
+                  </Badge>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsRefreshing(true);
+                    window.location.reload();
+                  }}
+                  className="text-sm text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <Badge variant="outline" className="text-lg px-4 py-2 border-purple-500 text-purple-400 pump-shimmer">
-              TGE: July 12, 2025
-            </Badge>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => window.location.reload()}
-              className="text-xs text-gray-400 hover:text-white"
-            >
-              <RefreshCw className={`h-3 w-3 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh Data
-            </Button>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Executive Summary */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-8"
-        >
-          <Card className="pump-glassmorphism border-purple-500/20 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 animate-pulse" />
-            <CardHeader className="relative">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Target className="h-5 w-5 text-purple-400" />
-                Executive Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-gray-300">Market Cap: $4B FDV vs $715.36M Revenue (5.6x)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-                  <span className="text-gray-300">Competition: Lost 70% market share to Bonk.fun</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                  <span className="text-gray-300">Risk: High-FDV launch in volatile market</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Executive Summary */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-12"
           >
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Card className="pump-glassmorphism pump-metric-card border-green-500/20 hover:border-green-500/40 cursor-help">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        Total Revenue
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold text-green-400">
-                        <AnimatedValue value={pumpfunMetrics.totalRevenue} format="currency" />
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <TrendUp className="h-3 w-3 text-green-400" />
-                        <p className="text-xs text-gray-500">Since launch</p>
+            <Card className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border-gray-700/50 shadow-xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3 text-xl font-semibold text-gray-100">
+                  <Target className="h-5 w-5 text-purple-400" />
+                  Executive Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <p className="text-base leading-7 text-gray-200">
+                    With Pump.fun's 30-day revenue reaching{' '}
+                    <span className="font-semibold text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
+                      $827.46M
+                    </span>{' '}
+                    (foundation revenue:{' '}
+                    <span className="font-semibold text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
+                      $715.36M
+                    </span>
+                    ), the anticipated $PUMP TGE presents a critical market liquidity test.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-green-400 rounded-full" />
+                        <span className="text-sm font-medium text-gray-300">Market Valuation</span>
                       </div>
-                    </CardContent>
-                  </Card>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Total fees generated from token launches</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                      <p className="text-gray-100 font-medium">$4B FDV vs $715.36M Revenue</p>
+                      <p className="text-sm text-gray-400 mt-1">5.6x revenue multiple</p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                        <span className="text-sm font-medium text-gray-300">Competition Risk</span>
+                      </div>
+                      <p className="text-gray-100 font-medium">Lost 70% market share</p>
+                      <p className="text-sm text-gray-400 mt-1">to Bonk.fun platform</p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-red-400 rounded-full" />
+                        <span className="text-sm font-medium text-gray-300">Launch Risk</span>
+                      </div>
+                      <p className="text-gray-100 font-medium">High-FDV launch</p>
+                      <p className="text-sm text-gray-400 mt-1">in volatile market conditions</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
+
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm border-gray-700/50 hover:border-green-500/30 transition-all cursor-help shadow-lg">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          Total Revenue
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-2xl lg:text-3xl font-bold text-gray-100 mb-2">
+                          <AnimatedValue value={pumpfunMetrics.totalRevenue} format="currency" />
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <TrendUp className="h-3 w-3 text-green-400" />
+                          <p className="text-xs text-gray-400">Since launch</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Total fees generated from token launches</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -624,38 +659,38 @@ export default function PumpfunDashboard() {
                     </div>
 
                     {/* Impact Timeline */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 0-6: Initial Frenzy</p>
-                        <p className="text-sm text-gray-400">
-                          $TRUMP launches, immediate sell-off in altcoins begins. SOL surges to ATH.
-                        </p>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">Impact Timeline</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-4">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
+                          <div className="flex-1">
+                            <p className="font-medium">Hour 0-6: Initial Frenzy</p>
+                            <p className="text-sm text-gray-400">
+                              $TRUMP launches, immediate sell-off in altcoins begins. SOL surges to ATH.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4">
+                          <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
+                          <div className="flex-1">
+                            <p className="font-medium">Hour 6-24: Peak Rotation</p>
+                            <p className="text-sm text-gray-400">
+                              Maximum liquidity drain, ETH drops 5%, smaller alts down 15-20%.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
+                          <div className="flex-1">
+                            <p className="font-medium">Hour 24-48: Continued Pressure</p>
+                            <p className="text-sm text-gray-400">
+                              $TRUMP hits $70B FDV, total altcoin market cap down $7.5B.
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-orange-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 6-24: Peak Rotation</p>
-                        <p className="text-sm text-gray-400">
-                          Maximum liquidity drain, ETH drops 5%, smaller alts down 15-20%.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
-                      <div className="flex-1">
-                        <p className="font-medium">Hour 24-48: Continued Pressure</p>
-                        <p className="text-sm text-gray-400">
-                          $TRUMP hits $70B FDV, total altcoin market cap down $7.5B.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                   </CardContent>
                 </Card>
               </motion.div>
