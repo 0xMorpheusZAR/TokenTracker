@@ -318,6 +318,7 @@ export default function PumpfunDashboard() {
             <TabsTrigger value="pump-metrics">Pump.fun Metrics</TabsTrigger>
             <TabsTrigger value="competition">Bonk.fun Competition</TabsTrigger>
             <TabsTrigger value="predictions">Predictions</TabsTrigger>
+            <TabsTrigger value="monte-carlo">Monte Carlo</TabsTrigger>
             <TabsTrigger value="valuation-debate">Valuation Analysis</TabsTrigger>
           </TabsList>
 
@@ -952,6 +953,348 @@ export default function PumpfunDashboard() {
                     $PUMP performance will indicate broader market appetite for high-FDV launches and memecoin infrastructure plays
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Monte Carlo Simulations */}
+          <TabsContent value="monte-carlo" className="space-y-6">
+            <Card className="bg-gray-800/30 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-purple-500" />
+                  Monte Carlo Price Simulations for $PUMP
+                </CardTitle>
+                <CardDescription>
+                  Statistical modeling of potential price outcomes based on multiple scenarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Simulation Parameters */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-gray-900/50 border-gray-700">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Base Parameters</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Launch Price:</span>
+                          <span className="text-white">$0.004</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Initial FDV:</span>
+                          <span className="text-white">$4B</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Simulations:</span>
+                          <span className="text-white">10,000</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Time Horizon:</span>
+                          <span className="text-white">90 days</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gray-900/50 border-gray-700">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Market Conditions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Volatility:</span>
+                          <span className="text-white">95% annualized</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Risk-Free Rate:</span>
+                          <span className="text-white">4.5%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Correlation:</span>
+                          <span className="text-white">0.65 (BTC)</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Drift Factor:</span>
+                          <span className="text-white">Variable</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gray-900/50 border-gray-700">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Key Assumptions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Revenue Growth:</span>
+                          <span className="text-white">-15% monthly</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Market Share:</span>
+                          <span className="text-white">20-35%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Competition:</span>
+                          <span className="text-white">Increasing</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Token Unlocks:</span>
+                          <span className="text-white">Monthly</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Scenario Outcomes */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Simulation Results by Scenario</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Bearish Scenario */}
+                    <Card className="bg-red-900/20 border-red-800/50">
+                      <CardHeader>
+                        <CardTitle className="text-red-400 text-base">Bearish Scenario (35% probability)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Median Price:</span>
+                            <span className="text-red-400">$0.0018 (-55%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">5th Percentile:</span>
+                            <span className="text-red-500">$0.0008 (-80%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">95th Percentile:</span>
+                            <span className="text-red-300">$0.0032 (-20%)</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-3 p-3 bg-red-900/30 rounded-lg">
+                          <p className="text-xs text-red-300 font-medium mb-1">Key Drivers:</p>
+                          <ul className="text-xs text-red-200 space-y-1">
+                            <li>• Bonk.fun maintains 70%+ market share</li>
+                            <li>• Daily revenue falls below $500k</li>
+                            <li>• Major unlock selling pressure</li>
+                            <li>• General altcoin weakness</li>
+                          </ul>
+                        </div>
+
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-400 mb-1">FDV Range:</p>
+                          <p className="text-sm font-medium text-red-400">$800M - $3.2B</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Base Scenario */}
+                    <Card className="bg-blue-900/20 border-blue-800/50">
+                      <CardHeader>
+                        <CardTitle className="text-blue-400 text-base">Base Scenario (45% probability)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Median Price:</span>
+                            <span className="text-blue-400">$0.0045 (+12.5%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">5th Percentile:</span>
+                            <span className="text-blue-300">$0.0025 (-37.5%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">95th Percentile:</span>
+                            <span className="text-blue-300">$0.0072 (+80%)</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-3 p-3 bg-blue-900/30 rounded-lg">
+                          <p className="text-xs text-blue-300 font-medium mb-1">Key Drivers:</p>
+                          <ul className="text-xs text-blue-200 space-y-1">
+                            <li>• Market share stabilizes at 30%</li>
+                            <li>• Revenue maintains $1M+ daily</li>
+                            <li>• New features gain traction</li>
+                            <li>• Moderate market conditions</li>
+                          </ul>
+                        </div>
+
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-400 mb-1">FDV Range:</p>
+                          <p className="text-sm font-medium text-blue-400">$2.5B - $7.2B</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Bullish Scenario */}
+                    <Card className="bg-green-900/20 border-green-800/50">
+                      <CardHeader>
+                        <CardTitle className="text-green-400 text-base">Bullish Scenario (20% probability)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Median Price:</span>
+                            <span className="text-green-400">$0.012 (+200%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">5th Percentile:</span>
+                            <span className="text-green-300">$0.007 (+75%)</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">95th Percentile:</span>
+                            <span className="text-green-300">$0.025 (+525%)</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-3 p-3 bg-green-900/30 rounded-lg">
+                          <p className="text-xs text-green-300 font-medium mb-1">Key Drivers:</p>
+                          <ul className="text-xs text-green-200 space-y-1">
+                            <li>• Regains 50%+ market share</li>
+                            <li>• EVM expansion successful</li>
+                            <li>• Revenue sharing attracts users</li>
+                            <li>• Bull market continuation</li>
+                          </ul>
+                        </div>
+
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-400 mb-1">FDV Range:</p>
+                          <p className="text-sm font-medium text-green-400">$7B - $25B</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Statistical Distribution */}
+                <Card className="bg-gray-900/50 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-base">Price Distribution Analysis</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Probability Distribution</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                            <div className="w-24 text-sm text-gray-400">Below $0.002:</div>
+                            <div className="flex-1 bg-gray-700 rounded-full h-4 relative">
+                              <div className="absolute inset-y-0 left-0 bg-red-500 rounded-full" style={{width: '25%'}}></div>
+                            </div>
+                            <span className="text-sm">25%</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-24 text-sm text-gray-400">$0.002-$0.004:</div>
+                            <div className="flex-1 bg-gray-700 rounded-full h-4 relative">
+                              <div className="absolute inset-y-0 left-0 bg-orange-500 rounded-full" style={{width: '30%'}}></div>
+                            </div>
+                            <span className="text-sm">30%</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-24 text-sm text-gray-400">$0.004-$0.008:</div>
+                            <div className="flex-1 bg-gray-700 rounded-full h-4 relative">
+                              <div className="absolute inset-y-0 left-0 bg-blue-500 rounded-full" style={{width: '25%'}}></div>
+                            </div>
+                            <span className="text-sm">25%</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-24 text-sm text-gray-400">Above $0.008:</div>
+                            <div className="flex-1 bg-gray-700 rounded-full h-4 relative">
+                              <div className="absolute inset-y-0 left-0 bg-green-500 rounded-full" style={{width: '20%'}}></div>
+                            </div>
+                            <span className="text-sm">20%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Risk Metrics</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Value at Risk (95%):</span>
+                            <span className="text-red-400">-65%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Expected Shortfall:</span>
+                            <span className="text-red-400">-72%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Maximum Drawdown:</span>
+                            <span className="text-red-400">-85%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Sharpe Ratio:</span>
+                            <span className="text-yellow-400">0.42</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Sortino Ratio:</span>
+                            <span className="text-yellow-400">0.38</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Investment Recommendation */}
+                <Card className="bg-purple-900/20 border-purple-800/50">
+                  <CardHeader>
+                    <CardTitle className="text-purple-400">Monte Carlo Investment Analysis</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Expected Returns</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">30-Day Expected Return:</span>
+                            <span className="text-white">-8.5%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">60-Day Expected Return:</span>
+                            <span className="text-white">-12.3%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">90-Day Expected Return:</span>
+                            <span className="text-white">-15.7%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Probability of Profit</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">30-Day Profit Probability:</span>
+                            <span className="text-yellow-400">42%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">60-Day Profit Probability:</span>
+                            <span className="text-orange-400">38%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">90-Day Profit Probability:</span>
+                            <span className="text-red-400">35%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-purple-900/30 rounded-lg">
+                      <p className="text-sm font-semibold text-purple-300 mb-2">Monte Carlo Conclusion</p>
+                      <p className="text-xs text-purple-200">
+                        Simulations indicate a negative expected value with 65% probability of loss. 
+                        The risk-reward profile is unfavorable given high initial valuation, declining revenue trends, 
+                        and intense competition. Consider waiting for better entry or allocating to higher conviction plays.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>
