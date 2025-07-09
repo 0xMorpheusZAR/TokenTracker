@@ -176,7 +176,7 @@ export default function PumpfunDashboard() {
     }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
   };
 
-  // Calculate sectoral drawdowns
+  // Calculate sectoral drawdowns based on top 10 tokens
   const calculateSectoralDrawdowns = () => {
     const drawdowns = calculateTop100Drawdowns();
     if (!drawdowns.length) return [];
@@ -196,18 +196,22 @@ export default function PumpfunDashboard() {
       const sectorTokens = drawdowns.filter(t => t.category === sector);
       if (!sectorTokens.length) return null;
 
-      const totalMarketCap = sectorTokens.reduce((sum, t) => sum + t.marketCap, 0);
-      const avgDrawdown = sectorTokens.reduce((sum, t) => sum + t.drawdownPercent, 0) / sectorTokens.length;
-      const totalImpact = sectorTokens.reduce((sum, t) => sum + t.impactValue, 0);
+      // Sort by market cap and take top 10
+      const top10Tokens = sectorTokens
+        .sort((a, b) => b.marketCap - a.marketCap)
+        .slice(0, 10);
+
+      const totalMarketCap = top10Tokens.reduce((sum, t) => sum + t.marketCap, 0);
+      const avgDrawdown = top10Tokens.reduce((sum, t) => sum + t.drawdownPercent, 0) / top10Tokens.length;
+      const totalImpact = top10Tokens.reduce((sum, t) => sum + t.impactValue, 0);
 
       return {
         sector,
         name: sectorMap[sector],
-        tokenCount: sectorTokens.length,
+        tokenCount: top10Tokens.length,
         totalMarketCap,
         avgDrawdown,
-        totalImpact,
-        topTokens: sectorTokens.slice(0, 5)
+        totalImpact
       };
     }).filter(s => s !== null);
   };
@@ -457,7 +461,7 @@ export default function PumpfunDashboard() {
                     {/* Sectoral Breakdown */}
                     <div className="mb-6">
                       <h3 className="text-lg font-semibold mb-4">Sectoral Drawdown Analysis</h3>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {sectoralDrawdowns.map((sector: any) => (
                           <Card key={sector.sector} className="bg-gray-900/50 border-gray-700">
                             <CardHeader className="pb-3">
@@ -466,46 +470,22 @@ export default function PumpfunDashboard() {
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <p className="text-xs text-gray-400">Avg Drawdown</p>
-                                    <p className={`text-lg font-bold ${
-                                      selectedScenario === 'bearish' ? 'text-red-400' :
-                                      selectedScenario === 'neutral' ? 'text-yellow-400' :
-                                      'text-green-400'
-                                    }`}>
-                                      -{sector.avgDrawdown.toFixed(1)}%
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <p className="text-xs text-gray-400">Total Impact</p>
-                                    <p className="text-sm font-medium">
-                                      ${formatNumber(sector.totalImpact)}
-                                    </p>
-                                  </div>
-                                </div>
-                                
-                                {/* Top 10 Tokens */}
+                              <div className="space-y-3">
                                 <div>
-                                  <p className="text-xs text-gray-400 mb-2">Top 10 Tokens</p>
-                                  <div className="space-y-1">
-                                    {sector.topTokens.slice(0, 10).map((token: any, idx: number) => (
-                                      <div key={idx} className="flex items-center justify-between text-xs">
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-gray-500">{idx + 1}.</span>
-                                          <span className="font-medium">{token.symbol}</span>
-                                        </div>
-                                        <span className={`font-medium ${
-                                          selectedScenario === 'bearish' ? 'text-red-400' :
-                                          selectedScenario === 'neutral' ? 'text-yellow-400' :
-                                          'text-green-400'
-                                        }`}>
-                                          -{token.drawdownPercent.toFixed(1)}%
-                                        </span>
-                                      </div>
-                                    ))}
-                                  </div>
+                                  <p className="text-xs text-gray-400">Avg Drawdown (Top 10)</p>
+                                  <p className={`text-xl font-bold ${
+                                    selectedScenario === 'bearish' ? 'text-red-400' :
+                                    selectedScenario === 'neutral' ? 'text-yellow-400' :
+                                    'text-green-400'
+                                  }`}>
+                                    -{sector.avgDrawdown.toFixed(1)}%
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Total Impact</p>
+                                  <p className="text-sm font-medium">
+                                    ${formatNumber(sector.totalImpact)}
+                                  </p>
                                 </div>
                               </div>
                             </CardContent>
