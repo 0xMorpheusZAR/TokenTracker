@@ -372,7 +372,7 @@ export default function PumpfunDashboard() {
 
 
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -389,7 +389,7 @@ export default function PumpfunDashboard() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-2xl lg:text-3xl font-bold text-gray-100 mb-2">
+                        <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-100 mb-2">
                           <AnimatedValue value={pumpfunMetrics.totalRevenue} format="currency" />
                         </p>
                         <div className="flex items-center gap-2">
@@ -422,7 +422,7 @@ export default function PumpfunDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold text-blue-400">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-400">
                         <AnimatedValue value={pumpfunMetrics.tgeValuation} format="currency" />
                       </p>
                       <div className="flex items-center gap-2 mt-2">
@@ -455,7 +455,7 @@ export default function PumpfunDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold text-purple-400">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-400">
                         <AnimatedValue value={pumpfunMetrics.expectedRaise} format="currency" />
                       </p>
                       <div className="flex items-center gap-2 mt-2">
@@ -488,7 +488,7 @@ export default function PumpfunDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold text-yellow-400">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-400">
                         <AnimatedValue 
                           value={5.59} 
                           suffix="x"
@@ -517,44 +517,46 @@ export default function PumpfunDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
           >
-            <TabsList className="pump-glassmorphism border-gray-700/50 p-1 flex flex-wrap gap-1">
-              <TabsTrigger 
-                value="trump-impact" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                $TRUMP Impact Analysis
-              </TabsTrigger>
-              <TabsTrigger 
-                value="drawdown-scenarios"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                Drawdown Scenarios
-              </TabsTrigger>
-              <TabsTrigger 
-                value="pump-metrics"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                Pump.fun Metrics
-              </TabsTrigger>
-              <TabsTrigger 
-                value="competition"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                Bonk.fun Competition
-              </TabsTrigger>
-              <TabsTrigger 
-                value="predictions"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                Predictions
-              </TabsTrigger>
-              <TabsTrigger 
-                value="valuation-debate"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50"
-              >
-                Valuation Analysis
-              </TabsTrigger>
-            </TabsList>
+            <div className="w-full overflow-x-auto">
+              <TabsList className="pump-glassmorphism border-gray-700/50 p-1 flex flex-nowrap gap-1 w-max sm:w-full min-w-full sm:flex-wrap">
+                <TabsTrigger 
+                  value="trump-impact" 
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  $TRUMP Impact
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="drawdown-scenarios"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Drawdowns
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="pump-metrics"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Metrics
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="competition"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Competition
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="predictions"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Predictions
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="valuation-debate"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Valuation
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </motion.div>
 
           {/* $TRUMP Impact Analysis */}
@@ -577,14 +579,14 @@ export default function PumpfunDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                       <motion.div
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 300 }}
                         className="bg-gradient-to-br from-red-900/20 to-red-800/10 rounded-lg p-4 border border-red-800/50 pump-card-glow"
                       >
-                        <p className="text-sm text-gray-400 mb-2">Liquidity Drained</p>
-                        <p className="text-3xl font-bold text-red-400">
+                        <p className="text-xs sm:text-sm text-gray-400 mb-2">Liquidity Drained</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-red-400">
                           <AnimatedValue value={trumpImpact.totalLiquidityDrained} format="currency" />
                         </p>
                         <div className="flex items-center gap-1 mt-2">
@@ -598,8 +600,8 @@ export default function PumpfunDashboard() {
                         transition={{ type: "spring", stiffness: 300 }}
                         className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 rounded-lg p-4 border border-orange-800/50 pump-card-glow"
                       >
-                        <p className="text-sm text-gray-400 mb-2">ETH Drawdown</p>
-                        <p className="text-3xl font-bold text-orange-400">
+                        <p className="text-xs sm:text-sm text-gray-400 mb-2">ETH Drawdown</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-400">
                           -<AnimatedValue value={trumpImpact.ethDrawdown} format="percent" />
                         </p>
                         <div className="flex items-center gap-1 mt-2">
@@ -613,8 +615,8 @@ export default function PumpfunDashboard() {
                         transition={{ type: "spring", stiffness: 300 }}
                         className="bg-gradient-to-br from-yellow-900/20 to-yellow-800/10 rounded-lg p-4 border border-yellow-800/50 pump-card-glow"
                       >
-                        <p className="text-sm text-gray-400 mb-2">Memecoin Collapse</p>
-                        <p className="text-3xl font-bold text-yellow-400">
+                        <p className="text-xs sm:text-sm text-gray-400 mb-2">Memecoin Collapse</p>
+                        <p className="text-xl sm:text-2xl md:text-3xl font-bold text-yellow-400">
                           -<AnimatedValue value={trumpImpact.memecoinsDrawdown} format="percent" />
                         </p>
                         <div className="flex items-center gap-1 mt-2">
@@ -673,30 +675,36 @@ export default function PumpfunDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-4 mb-6">
+                <div className="flex flex-wrap gap-2 sm:gap-4 mb-6">
                   <Button
                     variant={selectedScenario === 'bearish' ? 'destructive' : 'outline'}
                     onClick={() => setSelectedScenario('bearish')}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                    size="sm"
                   >
-                    <TrendingDown className="h-4 w-4" />
-                    Bearish Scenario
+                    <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Bearish Scenario</span>
+                    <span className="sm:hidden">Bearish</span>
                   </Button>
                   <Button
                     variant={selectedScenario === 'neutral' ? 'secondary' : 'outline'}
                     onClick={() => setSelectedScenario('neutral')}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                    size="sm"
                   >
-                    <Activity className="h-4 w-4" />
-                    Neutral Scenario
+                    <Activity className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Neutral Scenario</span>
+                    <span className="sm:hidden">Neutral</span>
                   </Button>
                   <Button
                     variant={selectedScenario === 'bullish' ? 'default' : 'outline'}
                     onClick={() => setSelectedScenario('bullish')}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                    size="sm"
                   >
-                    <TrendingUp className="h-4 w-4" />
-                    Bullish Scenario
+                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Bullish Scenario</span>
+                    <span className="sm:hidden">Bullish</span>
                   </Button>
                 </div>
 
@@ -780,7 +788,7 @@ export default function PumpfunDashboard() {
 
           {/* Pump.fun Metrics */}
           <TabsContent value="pump-metrics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <Card className="bg-gray-800/30 border-gray-700">
                 <CardHeader>
                   <CardTitle>Revenue Growth</CardTitle>
@@ -789,7 +797,7 @@ export default function PumpfunDashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[300px]">
+                  <div className="h-[200px] sm:h-[250px] md:h-[300px]">
                     <Line
                       data={{
                         labels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
@@ -815,7 +823,7 @@ export default function PumpfunDashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[300px]">
+                  <div className="h-[200px] sm:h-[250px] md:h-[300px]">
                     <Doughnut
                       data={{
                         labels: [
@@ -884,7 +892,7 @@ export default function PumpfunDashboard() {
 
           {/* Predictions */}
           <TabsContent value="predictions" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Bearish Case */}
               <Card className="bg-red-900/20 border-red-800/50">
                 <CardHeader>
@@ -1147,7 +1155,7 @@ export default function PumpfunDashboard() {
 
           {/* Valuation Debate */}
           <TabsContent value="valuation-debate" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Bull Case */}
               <Card className="bg-green-900/20 border-green-800/50">
                 <CardHeader>
