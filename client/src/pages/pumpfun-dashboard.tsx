@@ -762,12 +762,12 @@ export default function PumpfunDashboard() {
                   <>
                     {/* Sectoral Breakdown */}
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-4">Sectoral Drawdown Analysis</h3>
+                      <h3 className="text-lg font-semibold mb-4 text-gray-100">Sectoral Drawdown Analysis</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {sectoralDrawdowns.map((sector: any) => (
                           <Card key={sector.sector} className="bg-gray-900/50 border-gray-700">
                             <CardHeader className="pb-3">
-                              <CardTitle className="text-sm">
+                              <CardTitle className="text-sm text-gray-100">
                                 {sector.name}
                               </CardTitle>
                             </CardHeader>
@@ -785,7 +785,7 @@ export default function PumpfunDashboard() {
                                 </div>
                                 <div>
                                   <p className="text-xs text-gray-400">Total Impact</p>
-                                  <p className="text-sm font-medium">
+                                  <p className="text-sm font-medium text-gray-200">
                                     ${formatNumber(sector.totalImpact)}
                                   </p>
                                 </div>
@@ -800,7 +800,7 @@ export default function PumpfunDashboard() {
 
                     <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
                       <p className="text-sm text-gray-400 mb-2">Total Market Impact (Top 100)</p>
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-bold text-gray-100">
                         ${formatNumber(
                           top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
                         )}
@@ -925,19 +925,19 @@ export default function PumpfunDashboard() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span>$600M+ rotated from existing altcoins</span>
+                      <span className="text-gray-200">$600M+ rotated from existing altcoins</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span>5-15% average altcoin drawdown</span>
+                      <span className="text-gray-200">5-15% average altcoin drawdown</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span>Memecoin sector drops 20-30%</span>
+                      <span className="text-gray-200">Memecoin sector drops 20-30%</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span>$PUMP dumps 50%+ post-launch</span>
+                      <span className="text-gray-200">$PUMP dumps 50%+ post-launch</span>
                     </li>
                   </ul>
 
@@ -967,19 +967,19 @@ export default function PumpfunDashboard() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span>Fresh capital enters from sidelines</span>
+                      <span className="text-gray-200">Fresh capital enters from sidelines</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span>0-3% minimal altcoin impact</span>
+                      <span className="text-gray-200">0-3% minimal altcoin impact</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span>Revenue sharing attracts investors</span>
+                      <span className="text-gray-200">Revenue sharing attracts investors</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5" />
-                      <span>$PUMP appreciates 2-3x on fundamentals</span>
+                      <span className="text-gray-200">$PUMP appreciates 2-3x on fundamentals</span>
                     </li>
                   </ul>
 
@@ -1001,21 +1001,21 @@ export default function PumpfunDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-4 bg-gray-900/50 rounded-lg">
                     <DollarSign className="h-8 w-8 text-purple-400 mb-2" />
-                    <h4 className="font-semibold mb-1">Market Liquidity</h4>
+                    <h4 className="font-semibold mb-1 text-gray-100">Market Liquidity</h4>
                     <p className="text-sm text-gray-400">
                       Current sidelined capital vs. rotation from existing positions
                     </p>
                   </div>
                   <div className="p-4 bg-gray-900/50 rounded-lg">
                     <Activity className="h-8 w-8 text-blue-400 mb-2" />
-                    <h4 className="font-semibold mb-1">Revenue Sustainability</h4>
+                    <h4 className="font-semibold mb-1 text-gray-100">Revenue Sustainability</h4>
                     <p className="text-sm text-gray-400">
                       Pump.fun's ability to maintain or grow $1M+ daily revenue
                     </p>
                   </div>
                   <div className="p-4 bg-gray-900/50 rounded-lg">
                     <AlertTriangle className="h-8 w-8 text-yellow-400 mb-2" />
-                    <h4 className="font-semibold mb-1">Market Sentiment</h4>
+                    <h4 className="font-semibold mb-1 text-gray-100">Market Sentiment</h4>
                     <p className="text-sm text-gray-400">
                       Overall crypto market conditions and risk appetite
                     </p>
@@ -1059,10 +1059,10 @@ export default function PumpfunDashboard() {
 
                 {/* Competition Metrics */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Competition Metrics</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Competition Metrics</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm">Daily Token Launches</span>
+                      <span className="text-sm text-gray-300">Daily Token Launches</span>
                       <div className="text-right">
                         <p className="text-sm">
                           <span className="text-orange-400">Bonk.fun: 21,000</span> vs 
@@ -1071,13 +1071,13 @@ export default function PumpfunDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm">Graduated Tokens Ratio</span>
+                      <span className="text-sm text-gray-300">Graduated Tokens Ratio</span>
                       <div className="text-right">
                         <p className="text-sm text-orange-400">Bonk.fun leads 3:1</p>
                       </div>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm">Fee Model</span>
+                      <span className="text-sm text-gray-300">Fee Model</span>
                       <div className="text-right">
                         <p className="text-sm text-green-400">58% revenue sharing</p>
                         <p className="text-xs text-gray-500">vs Pump.fun's extractive model</p>
