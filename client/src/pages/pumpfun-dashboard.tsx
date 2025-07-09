@@ -496,59 +496,13 @@ export default function PumpfunDashboard() {
 
 
 
-                    {/* Total Market Impact - Enhanced Visual Display */}
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold mb-4">Total Market Impact Summary</h3>
-                      <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="p-3 bg-red-500/20 rounded-lg">
-                            <TrendingDown className="h-8 w-8 text-red-400" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-400">Estimated Liquidity Drain</p>
-                            <p className="text-3xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
-                              ${(() => {
-                                const impact = top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0);
-                                if (impact >= 1e12) return (impact / 1e12).toFixed(1) + 'T';
-                                if (impact >= 1e9) return (impact / 1e9).toFixed(1) + 'B';
-                                if (impact >= 1e6) return (impact / 1e6).toFixed(1) + 'M';
-                                return formatNumber(impact);
-                              })()}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-700">
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-yellow-400">
-                              {selectedScenario === 'bearish' ? '15-25%' : 
-                               selectedScenario === 'neutral' ? '5-10%' : 
-                               '0-5%'}
-                            </p>
-                            <p className="text-xs text-gray-500">Avg Drawdown</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-purple-400">
-                              {top100Drawdowns.length}
-                            </p>
-                            <p className="text-xs text-gray-500">Tokens Analyzed</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-blue-400">
-                              {selectedScenario === 'bearish' ? '48h' : 
-                               selectedScenario === 'neutral' ? '72h' : 
-                               '1 week'}
-                            </p>
-                            <p className="text-xs text-gray-500">Recovery Time</p>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-4 p-3 bg-gray-900/50 rounded-lg">
-                          <p className="text-xs text-gray-400">
-                            <span className="text-yellow-300">⚠️ Note:</span> This represents the total value that could rotate from altcoins to $PUMP during the TGE event based on {selectedScenario} market conditions.
-                          </p>
-                        </div>
-                      </div>
+                    <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
+                      <p className="text-sm text-gray-400 mb-2">Total Market Impact (Top 100)</p>
+                      <p className="text-2xl font-bold">
+                        ${formatNumber(
+                          top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
+                        )}
+                      </p>
                     </div>
                   </>
                 )}
