@@ -818,15 +818,27 @@ export default function PumpfunDashboard() {
                   <div className="h-[300px]">
                     <Doughnut
                       data={{
-                        labels: ['Public Sale', 'Team', 'Treasury', 'Ecosystem', 'Advisors'],
+                        labels: [
+                          'Initial Coin Offering', 
+                          'Community & Ecosystem Initiatives', 
+                          'Team', 
+                          'Existing Investors', 
+                          'Livestreaming', 
+                          'Liquidity & Exchanges', 
+                          'Ecosystem Fund', 
+                          'Foundation'
+                        ],
                         datasets: [{
-                          data: [15, 20, 30, 30, 5],
+                          data: [33, 24, 20, 13, 3, 2.6, 2.4, 2],
                           backgroundColor: [
-                            'rgba(168, 85, 247, 0.8)',
-                            'rgba(236, 72, 153, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(34, 197, 94, 0.8)',
-                            'rgba(251, 146, 60, 0.8)'
+                            'rgba(168, 85, 247, 0.8)',  // Purple for ICO
+                            'rgba(52, 211, 153, 0.8)',  // Green for Community
+                            'rgba(96, 165, 250, 0.8)',  // Blue for Team
+                            'rgba(45, 55, 72, 0.8)',    // Dark gray for Existing Investors
+                            'rgba(129, 140, 248, 0.8)', // Light blue for Livestreaming
+                            'rgba(251, 191, 36, 0.8)',  // Yellow for Liquidity
+                            'rgba(34, 197, 94, 0.8)',   // Green for Ecosystem Fund
+                            'rgba(251, 146, 60, 0.8)'   // Orange for Foundation
                           ],
                           borderWidth: 0
                         }]
