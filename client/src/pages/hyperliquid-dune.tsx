@@ -107,6 +107,11 @@ export default function HyperliquidDunePage() {
     queryKey: ['/api/dune/hyperliquid/all'],
   });
 
+  // Fetch DefiLlama revenue data
+  const { data: revenueData } = useQuery<any[]>({
+    queryKey: ['/api/defillama/protocol-revenues'],
+  });
+
   const isLoading = defiLlamaLoading || coinGeckoLoading;
 
   const chartOptions: ChartOptions<any> = {
@@ -150,7 +155,8 @@ export default function HyperliquidDunePage() {
     }
   };
 
-  const formatNumber = (num: number): string => {
+  const formatNumber = (num: number | undefined | null): string => {
+    if (!num || typeof num !== 'number') return 'N/A';
     if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
     if (num >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
     if (num >= 1e3) return `$${(num / 1e3).toFixed(2)}K`;
@@ -539,6 +545,104 @@ export default function HyperliquidDunePage() {
                     </CardContent>
                   </Card>
                 </div>
+                
+                {/* DefiLlama Protocol Data */}
+                <Card className="bg-gray-800/30 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-white">DefiLlama Protocol Data</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Comprehensive protocol metrics from DefiLlama
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Chain TVL Breakdown */}
+                      {defiLlamaData?.currentChainTvls && Object.keys(defiLlamaData.currentChainTvls).length > 0 && (
+                        <div className="p-4 bg-gray-900/50 rounded-lg">
+                          <h4 className="text-md font-semibold text-white mb-3">TVL by Chain</h4>
+                          <div className="space-y-3">
+                            {Object.entries(defiLlamaData.currentChainTvls).map(([chain, tvl]) => (
+                              <div key={chain} className="flex justify-between items-center py-2 border-b border-gray-700 last:border-0">
+                                <span className="text-gray-400">{chain}</span>
+                                <span className="text-white font-medium">{formatNumber(tvl as number)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Revenue Summary */}
+                      {(() => {
+                        const hyperliquidRevenue = revenueData?.find(p => 
+                          p.name?.includes('Hyperliquid') || p.id?.includes('hyperliquid')
+                        );
+                        
+                        if (hyperliquidRevenue) {
+                          return (
+                            <div className="p-4 bg-purple-900/20 rounded-lg">
+                              <h4 className="text-md font-semibold text-purple-300 mb-3">Revenue Summary</h4>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-gray-900/50 rounded p-3">
+                                  <p className="text-xs text-gray-400 mb-1">24h Fees</p>
+                                  <p className="text-lg font-bold text-green-400">{formatNumber(hyperliquidRevenue.fees24h)}</p>
+                                </div>
+                                <div className="bg-gray-900/50 rounded p-3">
+                                  <p className="text-xs text-gray-400 mb-1">7d Fees</p>
+                                  <p className="text-lg font-bold text-green-400">{formatNumber(hyperliquidRevenue.fees7d)}</p>
+                                </div>
+                                <div className="bg-gray-900/50 rounded p-3">
+                                  <p className="text-xs text-gray-400 mb-1">24h Revenue</p>
+                                  <p className="text-lg font-bold text-purple-400">{formatNumber(hyperliquidRevenue.revenue24h)}</p>
+                                </div>
+                                <div className="bg-gray-900/50 rounded p-3">
+                                  <p className="text-xs text-gray-400 mb-1">Protocol</p>
+                                  <p className="text-sm font-medium text-white truncate">{hyperliquidRevenue.name}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
+                    
+                    {/* Additional Protocol Info */}
+                    <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      {defiLlamaData?.mcap && (
+                        <div className="bg-blue-900/20 rounded-lg p-3">
+                          <p className="text-xs text-blue-300 mb-1">Market Cap (DefiLlama)</p>
+                          <p className="text-lg font-bold text-white">{formatNumber(defiLlamaData.mcap)}</p>
+                        </div>
+                      )}
+                      {defiLlamaData?.tokens && defiLlamaData.tokens.length > 0 && (
+                        <div className="bg-green-900/20 rounded-lg p-3">
+                          <p className="text-xs text-green-300 mb-1">Token Count</p>
+                          <p className="text-lg font-bold text-white">{defiLlamaData.tokens.length}</p>
+                        </div>
+                      )}
+                      {defiLlamaData?.cmcId && (
+                        <div className="bg-orange-900/20 rounded-lg p-3">
+                          <p className="text-xs text-orange-300 mb-1">CMC ID</p>
+                          <p className="text-lg font-bold text-white">{defiLlamaData.cmcId}</p>
+                        </div>
+                      )}
+                      {defiLlamaData?.gecko_id && (
+                        <div className="bg-pink-900/20 rounded-lg p-3">
+                          <p className="text-xs text-pink-300 mb-1">CoinGecko ID</p>
+                          <p className="text-lg font-bold text-white">{defiLlamaData.gecko_id}</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Treasury if available */}
+                    {defiLlamaData?.treasury && (
+                      <div className="mt-6 p-4 bg-blue-900/20 rounded-lg">
+                        <h4 className="text-md font-semibold text-blue-300 mb-2">Protocol Treasury</h4>
+                        <p className="text-2xl font-bold text-white">{formatNumber(defiLlamaData.treasury)}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               {/* Tokenomics Tab */}
@@ -632,70 +736,80 @@ export default function HyperliquidDunePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-gray-900/50 rounded-lg p-4">
-                        <p className="text-sm text-gray-400 mb-2">24h Fees</p>
-                        <p className="text-xl font-bold text-green-400">
-                          {defiLlamaData?.fees?.total24h 
-                            ? formatNumber(defiLlamaData.fees.total24h)
-                            : 'N/A'}
-                        </p>
-                      </div>
-                      <div className="bg-gray-900/50 rounded-lg p-4">
-                        <p className="text-sm text-gray-400 mb-2">7d Fees</p>
-                        <p className="text-xl font-bold text-green-400">
-                          {defiLlamaData?.fees?.total7d 
-                            ? formatNumber(defiLlamaData.fees.total7d)
-                            : 'N/A'}
-                        </p>
-                      </div>
-                      <div className="bg-gray-900/50 rounded-lg p-4">
-                        <p className="text-sm text-gray-400 mb-2">30d Fees</p>
-                        <p className="text-xl font-bold text-green-400">
-                          {defiLlamaData?.fees?.total30d 
-                            ? formatNumber(defiLlamaData.fees.total30d)
-                            : 'N/A'}
-                        </p>
-                      </div>
-                      <div className="bg-gray-900/50 rounded-lg p-4">
-                        <p className="text-sm text-gray-400 mb-2">Annual Fees</p>
-                        <p className="text-xl font-bold text-green-400">
-                          {defiLlamaData?.fees?.total365d 
-                            ? formatNumber(defiLlamaData.fees.total365d)
-                            : 'N/A'}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {/* Revenue metrics if available */}
-                    {defiLlamaData?.revenue && (
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-purple-900/20 rounded-lg p-4">
-                          <p className="text-sm text-purple-300 mb-2">24h Revenue</p>
-                          <p className="text-xl font-bold text-purple-400">
-                            {formatNumber(defiLlamaData.revenue.total24h || 0)}
-                          </p>
-                        </div>
-                        <div className="bg-purple-900/20 rounded-lg p-4">
-                          <p className="text-sm text-purple-300 mb-2">7d Revenue</p>
-                          <p className="text-xl font-bold text-purple-400">
-                            {formatNumber(defiLlamaData.revenue.total7d || 0)}
-                          </p>
-                        </div>
-                        <div className="bg-purple-900/20 rounded-lg p-4">
-                          <p className="text-sm text-purple-300 mb-2">30d Revenue</p>
-                          <p className="text-xl font-bold text-purple-400">
-                            {formatNumber(defiLlamaData.revenue.total30d || 0)}
-                          </p>
-                        </div>
-                        <div className="bg-purple-900/20 rounded-lg p-4">
-                          <p className="text-sm text-purple-300 mb-2">Annual Revenue</p>
-                          <p className="text-xl font-bold text-purple-400">
-                            {formatNumber(defiLlamaData.revenue.total365d || 0)}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                    {(() => {
+                      const hyperliquidRevenue = revenueData?.find(p => 
+                        p.name?.includes('Hyperliquid') || p.id?.includes('hyperliquid')
+                      );
+                      
+                      return (
+                        <>
+                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                              <p className="text-sm text-gray-400 mb-2">24h Fees</p>
+                              <p className="text-xl font-bold text-green-400">
+                                {hyperliquidRevenue?.fees24h 
+                                  ? formatNumber(hyperliquidRevenue.fees24h)
+                                  : 'N/A'}
+                              </p>
+                            </div>
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                              <p className="text-sm text-gray-400 mb-2">7d Fees</p>
+                              <p className="text-xl font-bold text-green-400">
+                                {hyperliquidRevenue?.fees7d 
+                                  ? formatNumber(hyperliquidRevenue.fees7d)
+                                  : 'N/A'}
+                              </p>
+                            </div>
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                              <p className="text-sm text-gray-400 mb-2">30d Fees</p>
+                              <p className="text-xl font-bold text-green-400">
+                                {hyperliquidRevenue?.fees30d 
+                                  ? formatNumber(hyperliquidRevenue.fees30d)
+                                  : 'N/A'}
+                              </p>
+                            </div>
+                            <div className="bg-gray-900/50 rounded-lg p-4">
+                              <p className="text-sm text-gray-400 mb-2">Current TVL</p>
+                              <p className="text-xl font-bold text-blue-400">
+                                {hyperliquidRevenue?.tvl 
+                                  ? formatNumber(hyperliquidRevenue.tvl)
+                                  : defiLlamaData?.tvl ? formatNumber(defiLlamaData.tvl) : 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Revenue metrics if available */}
+                          {hyperliquidRevenue?.revenue24h && (
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                              <div className="bg-purple-900/20 rounded-lg p-4">
+                                <p className="text-sm text-purple-300 mb-2">24h Revenue</p>
+                                <p className="text-xl font-bold text-purple-400">
+                                  {formatNumber(hyperliquidRevenue.revenue24h)}
+                                </p>
+                              </div>
+                              <div className="bg-purple-900/20 rounded-lg p-4">
+                                <p className="text-sm text-purple-300 mb-2">7d Revenue</p>
+                                <p className="text-xl font-bold text-purple-400">
+                                  {formatNumber(hyperliquidRevenue.revenue7d || 0)}
+                                </p>
+                              </div>
+                              <div className="bg-purple-900/20 rounded-lg p-4">
+                                <p className="text-sm text-purple-300 mb-2">30d Revenue</p>
+                                <p className="text-xl font-bold text-purple-400">
+                                  {formatNumber(hyperliquidRevenue.revenue30d || 0)}
+                                </p>
+                              </div>
+                              <div className="bg-purple-900/20 rounded-lg p-4">
+                                <p className="text-sm text-purple-300 mb-2">Protocol Name</p>
+                                <p className="text-sm font-bold text-purple-400">
+                                  {hyperliquidRevenue.name}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                     
                     {/* Fees Chart */}
                     {defiLlamaData?.fees?.totalDataChart && defiLlamaData.fees.totalDataChart.length > 0 && (
