@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { TrendingUp, ArrowLeft, DollarSign, Users, Rocket, Shield, Zap, Target } from "lucide-react";
+import { TrendingUp, ArrowLeft, DollarSign, Users, Rocket, Shield, Zap, Target, BarChart3 } from "lucide-react";
+import { Link } from "wouter";
 
 export default function HyperliquidAnalysis() {
   const { data: hyperliquidData } = useQuery({
@@ -81,6 +82,17 @@ export default function HyperliquidAnalysis() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* On-Chain Analytics Button */}
+        <div className="mb-8 text-center">
+          <Link href="/hyperliquid-dune">
+            <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+              <BarChart3 className="w-5 h-5" />
+              <span>View On-Chain Analytics</span>
+              <span className="text-xs opacity-80 ml-2">Powered by Dune</span>
+            </button>
+          </Link>
         </div>
 
         {/* Key Achievement Banner - Updated June 27, 2025 */}
