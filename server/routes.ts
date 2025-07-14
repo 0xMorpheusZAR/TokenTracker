@@ -742,6 +742,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dune Analytics endpoints
+  app.get("/api/dune/status", async (req, res) => {
+    try {
+      const status = duneService.getConnectionStatus();
+      res.json(status);
+    } catch (error) {
+      console.error("Failed to check Dune status:", error);
+      res.status(500).json({ error: "Failed to check Dune status" });
+    }
+  });
+
+  app.get("/api/dune/hyperliquid/all", async (req, res) => {
+    try {
+      const data = await duneService.getAllHyperliquidData();
+      if (!data) {
+        return res.status(500).json({ error: "Failed to fetch Hyperliquid data" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.error("Failed to fetch all Hyperliquid data:", error);
+      res.status(500).json({ error: "Failed to fetch Hyperliquid data" });
+    }
+  });
+
+  app.get("/api/dune/hyperliquid/:metric", async (req, res) => {
+    try {
+      const { metric } = req.params;
+      const data = await duneService.getHyperliquidMetric(metric.toUpperCase() as any);
+      if (!data) {
+        return res.status(404).json({ error: "Metric not found" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.error(`Failed to fetch Hyperliquid metric ${req.params.metric}:`, error);
+      res.status(500).json({ error: "Failed to fetch metric data" });
+    }
+  });
+
+  app.get("/api/dune/query/:queryId/latest", async (req, res) => {
+    try {
+      const { queryId } = req.params;
+      const data = await duneService.getLatestResults(parseInt(queryId));
+      if (!data) {
+        return res.status(404).json({ error: "Query not found or no data available" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.error(`Failed to fetch query ${req.params.queryId} results:`, error);
+      res.status(500).json({ error: "Failed to fetch query results" });
+    }
+  });
+
+  app.post("/api/dune/query/:queryId/execute", async (req, res) => {
+    try {
+      const { queryId } = req.params;
+      const { waitForResults } = req.body;
+      
+      if (waitForResults) {
+        const data = await duneService.executeAndWaitForResults(parseInt(queryId));
+        if (!data) {
+          return res.status(500).json({ error: "Query execution failed" });
+        }
+        res.json(data);
+      } else {
+        const executionId = await duneService.executeQuery(parseInt(queryId));
+        if (!executionId) {
+          return res.status(500).json({ error: "Failed to execute query" });
+        }
+        res.json({ executionId });
+      }
+    } catch (error) {
+      console.error(`Failed to execute query ${req.params.queryId}:`, error);
+      res.status(500).json({ error: "Failed to execute query" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

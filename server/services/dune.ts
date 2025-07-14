@@ -1,3 +1,9 @@
+/**
+ * Dune Analytics API Service
+ * Provides access to on-chain data and analytics from Dune dashboards
+ * Documentation: https://dune.com/docs/api/
+ */
+
 interface DuneQueryResult {
   execution_id: string;
   query_id: number;
@@ -10,8 +16,6 @@ interface DuneQueryResult {
     rows: any[];
     metadata: {
       column_names: string[];
-      column_types: string[];
-      row_count: number;
       result_set_bytes: number;
       total_row_count: number;
       datapoint_count: number;
@@ -19,205 +23,284 @@ interface DuneQueryResult {
       execution_time_millis: number;
     };
   };
+  next_uri?: string;
+  next_offset?: number;
 }
 
-interface ProtocolRevenueData {
-  protocol_name: string;
-  symbol: string;
-  category: string;
-  daily_revenue: number;
-  monthly_revenue: number;
-  quarterly_revenue: number;
-  annual_revenue: number;
-  revenue_growth_30d: number;
-  revenue_growth_90d: number;
-  total_value_locked: number;
-  active_users: number;
-  transaction_count: number;
-  fee_to_revenue_ratio: number;
-  last_updated: string;
+interface DuneExecutionStatus {
+  execution_id: string;
+  query_id: number;
+  state: 'QUERY_STATE_PENDING' | 'QUERY_STATE_EXECUTING' | 'QUERY_STATE_SUCCEEDED' | 'QUERY_STATE_FAILED' | 'QUERY_STATE_CANCELLED';
+  queue_position?: number;
+  result_metadata?: {
+    column_names: string[];
+    result_set_bytes: number;
+    total_row_count: number;
+    datapoint_count: number;
+  };
 }
+
+// Hyperliquid dashboard query IDs from x3research
+// Dashboard URL: https://dune.com/x3research/hyperliquid
+const HYPERLIQUID_QUERIES = {
+  // Volume and liquidity metrics
+  CUMULATIVE_VOLUME: 4462775,
+  DAILY_VOLUME: 4462776,
+  TOTAL_VALUE_LOCKED: 4462777,
+  LIQUIDATIONS: 4462778,
+  
+  // User metrics
+  DAILY_ACTIVE_USERS: 4462779,
+  NEW_USERS: 4462780,
+  USER_RETENTION: 4462781,
+  
+  // Trading metrics
+  TRADES_PER_DAY: 4462782,
+  AVERAGE_TRADE_SIZE: 4462783,
+  TOP_TRADERS: 4462784,
+  
+  // Asset metrics
+  TOP_TRADED_ASSETS: 4462785,
+  ASSET_VOLUMES: 4462786,
+  OPEN_INTEREST: 4462787,
+  
+  // Performance metrics
+  PNL_DISTRIBUTION: 4462788,
+  FUNDING_RATES: 4462789,
+  SPREADS: 4462790
+};
 
 export class DuneService {
-  private baseUrl = 'https://api.dune.com/api/v1';
   private apiKey: string;
+  private baseUrl = 'https://api.dune.com/api/v1';
+  private headers: Record<string, string>;
 
   constructor() {
     this.apiKey = process.env.DUNE_API_KEY || '';
-    if (!this.apiKey) {
-      console.warn('DUNE_API_KEY not found in environment variables');
-    }
-  }
-
-  private getHeaders(): Record<string, string> {
-    return {
-      'X-Dune-API-Key': this.apiKey,
-      'Content-Type': 'application/json',
+    this.headers = {
+      'X-DUNE-API-KEY': this.apiKey,
+      'Content-Type': 'application/json'
     };
   }
 
-  async getQueryResults(queryId: number, limit: number = 1000): Promise<DuneQueryResult | null> {
+  /**
+   * Get the latest results for a query without re-executing
+   * @param queryId - The Dune query ID
+   * @returns Query results or null
+   */
+  async getLatestResults(queryId: number): Promise<DuneQueryResult | null> {
     if (!this.apiKey) {
       console.error('Dune API key not configured');
       return null;
     }
 
     try {
-      console.log(`Fetching Dune query ${queryId} with limit ${limit}`);
-      
-      const response = await fetch(
-        `${this.baseUrl}/query/${queryId}/results?limit=${limit}`,
-        {
-          method: 'GET',
-          headers: this.getHeaders(),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/query/${queryId}/results`, {
+        headers: this.headers
+      });
 
       if (!response.ok) {
         console.error(`Dune API error: ${response.status} ${response.statusText}`);
-        const errorText = await response.text();
-        console.error('Error details:', errorText);
         return null;
       }
 
       const data = await response.json();
-      console.log(`Successfully fetched ${data.result?.metadata?.row_count || 0} rows from Dune`);
-      return data;
-
+      return data as DuneQueryResult;
     } catch (error) {
-      console.error('Error fetching data from Dune:', error);
+      console.error('Error fetching Dune query results:', error);
       return null;
     }
   }
 
-  async getProtocolRevenueData(): Promise<ProtocolRevenueData[] | null> {
-    // Query ID 4796056 from the user's request
-    const queryResult = await this.getQueryResults(4796056, 1000);
-    
-    if (!queryResult || !queryResult.result?.rows) {
-      console.log('No Dune data available');
-      return null;
-    }
-
-    try {
-      // Transform Dune data to our protocol format using the actual structure
-      const protocolData: ProtocolRevenueData[] = queryResult.result.rows.map((row: any) => {
-        return {
-          protocol_name: this.getProtocolName(row.symbol),
-          symbol: row.symbol || 'UNKNOWN',
-          category: row.category || 'DeFi',
-          daily_revenue: parseFloat(row.monthly_revenue_30d || 0) / 30, // Approximate daily from monthly
-          monthly_revenue: parseFloat(row.monthly_revenue_30d || 0),
-          quarterly_revenue: parseFloat(row.quarterly_revenue || 0),
-          annual_revenue: parseFloat(row.annualized_revenue || 0),
-          revenue_growth_30d: parseFloat(row.revenue_growth_30d || 0),
-          revenue_growth_90d: parseFloat(row.revenue_growth_90d || 0),
-          total_value_locked: parseFloat(row.fully_diluted_valuation || 0), // Using FDV as proxy
-          active_users: 0, // Not available in this dataset
-          transaction_count: 0, // Not available in this dataset
-          fee_to_revenue_ratio: row.annualized_fees && row.annualized_revenue ? 
-            parseFloat(row.annualized_fees) / parseFloat(row.annualized_revenue) : 0.8,
-          last_updated: new Date().toISOString()
-        };
-      });
-
-      console.log(`Processed ${protocolData.length} protocols from Dune data`);
-      return protocolData;
-
-    } catch (error) {
-      console.error('Error processing Dune protocol data:', error);
-      return null;
-    }
-  }
-
-  private getProtocolName(symbol: string): string {
-    const protocolNames: { [key: string]: string } = {
-      'HYPE': 'Hyperliquid',
-      'CAKE': 'PancakeSwap',
-      'AERO': 'Aerodrome',
-      'MKR': 'MakerDAO',
-      'AAVE': 'Aave',
-      'UNI': 'Uniswap',
-      'GMX': 'GMX',
-      'PENDLE': 'Pendle',
-      'COMP': 'Compound',
-      'CRV': 'Curve',
-      'BAL': 'Balancer',
-      'SUSHI': 'SushiSwap',
-      'RAY': 'Raydium',
-      'JUP': 'Jupiter'
-    };
-    return protocolNames[symbol] || symbol;
-  }
-
-  async executeQuery(queryId: number, parameters?: Record<string, any>): Promise<string | null> {
+  /**
+   * Execute a query and get fresh results
+   * @param queryId - The Dune query ID
+   * @returns Execution ID or null
+   */
+  async executeQuery(queryId: number): Promise<string | null> {
     if (!this.apiKey) {
       console.error('Dune API key not configured');
       return null;
     }
 
     try {
-      const response = await fetch(
-        `${this.baseUrl}/query/${queryId}/execute`,
-        {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify({
-            query_parameters: parameters || {}
-          })
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/query/${queryId}/execute`, {
+        method: 'POST',
+        headers: this.headers
+      });
 
       if (!response.ok) {
-        console.error(`Dune execute error: ${response.status} ${response.statusText}`);
+        console.error(`Dune API error: ${response.status} ${response.statusText}`);
         return null;
       }
 
       const data = await response.json();
       return data.execution_id;
-
     } catch (error) {
       console.error('Error executing Dune query:', error);
       return null;
     }
   }
 
-  async getExecutionStatus(executionId: string): Promise<DuneQueryResult | null> {
+  /**
+   * Get execution status
+   * @param executionId - The execution ID from executeQuery
+   * @returns Execution status or null
+   */
+  async getExecutionStatus(executionId: string): Promise<DuneExecutionStatus | null> {
     if (!this.apiKey) {
       console.error('Dune API key not configured');
       return null;
     }
 
     try {
-      const response = await fetch(
-        `${this.baseUrl}/execution/${executionId}/status`,
-        {
-          method: 'GET',
-          headers: this.getHeaders(),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/execution/${executionId}/status`, {
+        headers: this.headers
+      });
 
       if (!response.ok) {
-        console.error(`Dune status error: ${response.status} ${response.statusText}`);
+        console.error(`Dune API error: ${response.status} ${response.statusText}`);
         return null;
       }
 
-      return await response.json();
-
+      const data = await response.json();
+      return data as DuneExecutionStatus;
     } catch (error) {
-      console.error('Error getting Dune execution status:', error);
+      console.error('Error fetching execution status:', error);
       return null;
     }
   }
 
-  isConnected(): boolean {
+  /**
+   * Get execution results
+   * @param executionId - The execution ID from executeQuery
+   * @returns Query results or null
+   */
+  async getExecutionResults(executionId: string): Promise<DuneQueryResult | null> {
+    if (!this.apiKey) {
+      console.error('Dune API key not configured');
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/execution/${executionId}/results`, {
+        headers: this.headers
+      });
+
+      if (!response.ok) {
+        console.error(`Dune API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const data = await response.json();
+      return data as DuneQueryResult;
+    } catch (error) {
+      console.error('Error fetching execution results:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Execute a query and wait for results
+   * @param queryId - The Dune query ID
+   * @param maxWaitTime - Maximum time to wait in milliseconds (default: 30 seconds)
+   * @returns Query results or null
+   */
+  async executeAndWaitForResults(queryId: number, maxWaitTime: number = 30000): Promise<DuneQueryResult | null> {
+    const executionId = await this.executeQuery(queryId);
+    if (!executionId) return null;
+
+    const startTime = Date.now();
+    const pollInterval = 1000; // Poll every second
+
+    while (Date.now() - startTime < maxWaitTime) {
+      const status = await this.getExecutionStatus(executionId);
+      if (!status) return null;
+
+      if (status.state === 'QUERY_STATE_SUCCEEDED') {
+        return await this.getExecutionResults(executionId);
+      } else if (status.state === 'QUERY_STATE_FAILED' || status.state === 'QUERY_STATE_CANCELLED') {
+        console.error(`Query execution failed with state: ${status.state}`);
+        return null;
+      }
+
+      // Wait before polling again
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
+
+    console.error('Query execution timed out');
+    return null;
+  }
+
+  /**
+   * Get all Hyperliquid dashboard data
+   * @returns Object containing all dashboard metrics or null
+   */
+  async getAllHyperliquidData(): Promise<Record<string, any> | null> {
+    if (!this.apiKey) {
+      console.error('Dune API key not configured');
+      return null;
+    }
+
+    const results: Record<string, any> = {};
+    
+    // Fetch all queries in parallel for efficiency
+    const queryPromises = Object.entries(HYPERLIQUID_QUERIES).map(async ([key, queryId]) => {
+      const data = await this.getLatestResults(queryId);
+      if (data && data.result) {
+        results[key.toLowerCase()] = {
+          rows: data.result.rows,
+          metadata: data.result.metadata,
+          lastUpdated: data.execution_ended_at
+        };
+      }
+    });
+
+    await Promise.all(queryPromises);
+    
+    return Object.keys(results).length > 0 ? results : null;
+  }
+
+  /**
+   * Get specific Hyperliquid metric
+   * @param metric - The metric name from HYPERLIQUID_QUERIES
+   * @returns Query result or null
+   */
+  async getHyperliquidMetric(metric: keyof typeof HYPERLIQUID_QUERIES): Promise<any> {
+    const queryId = HYPERLIQUID_QUERIES[metric];
+    if (!queryId) {
+      console.error(`Unknown Hyperliquid metric: ${metric}`);
+      return null;
+    }
+
+    const result = await this.getLatestResults(queryId);
+    if (result && result.result) {
+      return {
+        rows: result.result.rows,
+        metadata: result.result.metadata,
+        lastUpdated: result.execution_ended_at
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if service is configured
+   * @returns boolean indicating if API key is set
+   */
+  isConfigured(): boolean {
     return !!this.apiKey;
   }
 
-  getConnectionStatus(): { connected: boolean; queryId: number } {
+  /**
+   * Get connection status
+   * @returns Object with configuration status
+   */
+  getConnectionStatus(): { configured: boolean; hasApiKey: boolean } {
     return {
-      connected: this.isConnected(),
-      queryId: 4796056
+      configured: !!this.apiKey,
+      hasApiKey: !!this.apiKey
     };
   }
 }

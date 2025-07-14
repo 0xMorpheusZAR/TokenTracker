@@ -68,7 +68,8 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 ### External APIs
 - **CoinGecko Pro API** for real-time pricing data
 - **CryptoRank API** for unlock schedule data
-- **Dune Analytics** for on-chain metrics
+- **Dune Analytics API** for on-chain blockchain metrics and custom queries
+- **DefiLlama API** for DeFi protocol TVL and revenue data
 - **Discord OAuth2** for authentication
 - **Whop API** for membership verification
 
@@ -168,6 +169,56 @@ The application will be available at `http://localhost:5000`
 - Comparative analysis tools
 - Export capabilities for reports
 - Multi-timeframe analysis
+
+## 🔗 Dune Analytics Integration
+
+The dashboard integrates with Dune Analytics to provide comprehensive on-chain data for Hyperliquid and other protocols.
+
+### Hyperliquid Dashboard Data
+We pull data from the [x3research Hyperliquid Dashboard](https://dune.com/x3research/hyperliquid) which includes:
+
+#### Volume & Liquidity Metrics
+- **Cumulative Volume**: Total trading volume over time
+- **Daily Volume**: 24-hour trading volume breakdown
+- **Total Value Locked (TVL)**: Liquidity in the protocol
+- **Liquidations**: Tracking liquidation events and volumes
+
+#### User Analytics
+- **Daily Active Users**: Unique users interacting with the protocol
+- **New Users**: Daily new user acquisition
+- **User Retention**: Cohort retention analysis
+
+#### Trading Metrics
+- **Trades Per Day**: Transaction count and trends
+- **Average Trade Size**: Mean transaction values
+- **Top Traders**: Leaderboard of highest volume traders
+
+#### Asset Performance
+- **Top Traded Assets**: Most popular trading pairs
+- **Asset Volumes**: Volume breakdown by asset
+- **Open Interest**: Outstanding derivative positions
+- **PnL Distribution**: Profit/loss analysis across users
+- **Funding Rates**: Perpetual funding rate history
+- **Spreads**: Bid-ask spread analysis
+
+### API Endpoints
+
+```javascript
+// Get all Hyperliquid metrics
+GET /api/dune/hyperliquid/all
+
+// Get specific metric
+GET /api/dune/hyperliquid/:metric
+
+// Execute custom query
+POST /api/dune/query/:queryId/execute
+```
+
+### Setup Requirements
+To use Dune Analytics features, add your API key to the environment:
+```bash
+DUNE_API_KEY=pZBvRD0acWVAtWRwnTtOuZgUvuETutIt
+```
 
 ## 🤝 Contributing
 

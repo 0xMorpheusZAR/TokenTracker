@@ -48,6 +48,8 @@ The application uses a normalized schema with three core entities:
 ### External Integrations
 - **CryptoRank API**: Service for fetching real-time token unlock data and vesting schedules
 - **CoinGecko API**: Primary data source for accurate real-time and historical price data
+- **DefiLlama API**: Protocol TVL and revenue data for 1,100+ DeFi protocols
+- **Dune Analytics API**: On-chain data and custom queries for Hyperliquid metrics
 - **API Key Management**: Environment-based configuration for external services
 
 ### UI Components
@@ -151,6 +153,8 @@ Changelog:
 - July 7, 2025: Created comprehensive dashboard documentation (README-dashboard.md) for GitHub repository including detailed feature descriptions, architecture overview, setup instructions, API documentation, development guidelines, and future roadmap
 - July 9, 2025: Built comprehensive Pump.fun Dashboard analyzing TGE scenarios, $TRUMP liquidity blackhole impact (Jan 17, 2025), and Bonk.fun competition - includes altcoin drawdown simulations, market share analysis, valuation debates (Bull/Bear cases), and community sentiment tracking
 - July 9, 2025: Updated Pump.fun Dashboard with latest market analysis - Revenue down 86% from February highs, valuation multiple reduced to 5.59x, ICO raise reduced from $1B to $600M (15% of supply), updated tokenomics (33% ICO, 24% community), institutional skepticism from Dragonfly Capital, mixed community sentiment ("everyone complained but still aped in")
+- July 14, 2025: Integrated Dune Analytics API for on-chain blockchain data querying - Added comprehensive service for Hyperliquid dashboard metrics from x3research, includes volume/liquidity metrics, user analytics, trading metrics, asset performance data, and custom query execution capabilities
+- July 14, 2025: Enhanced README.md with comprehensive documentation including Dune Analytics integration guide, API endpoints documentation, and setup instructions for GitHub deployment
 ```
 
 ## User Preferences
