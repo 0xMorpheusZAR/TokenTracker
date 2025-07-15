@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   AlertTriangle, TrendingDown, TrendingUp, DollarSign, Activity, 
-  ChevronRight, RefreshCw, Info, Clock, Zap, Target,
+  ChevronRight, RefreshCw, Info, Clock, Zap, Target, AlertCircle,
   BarChart3, PieChart, TrendingUp as TrendUp, Users, ArrowLeft
 } from "lucide-react";
 import { Line, Bar, Doughnut, Radar } from "react-chartjs-2";
@@ -349,16 +349,32 @@ export default function PumpfunDashboard() {
     peakMarketCap: 70000000000 // $70B
   };
 
-  // Pump.fun metrics
+  // Pump.fun metrics - Updated with latest PDF data
   const pumpfunMetrics = {
-    totalRevenue: 715360000, // $715.36M total
+    totalRevenue: 800000000, // $800M+ total since launch
     peakDailyRevenue: 14000000, // $14M peak
-    currentDailyRevenue: 1000000, // $1M current
-
+    currentDailyRevenue: 1000000, // $1M current (down from peak)
     tokenSupply: 1000000000000, // 1T total
-    publicSalePercent: 15, // 15%
+    publicSalePercent: 12.5, // 12.5% (125B tokens out of 1T)
     salePrice: 0.004, // $0.004 per token
-    expectedRaise: 600000000 // $600M expected
+    actualRaise: 500000000, // $500M actual (sold out in 12 minutes)
+    icoSoldOutTime: '12 minutes', // Historic ICO speed
+    circulatingSupply: 350000000000, // 350B circulating
+    tokenAllocation: {
+      tokenSale: 33, // 33% (18% private, 15% public planned)
+      ecosystem: 24, // 24% for community/ecosystem
+      team: 20, // 20% for core team
+      investors: 13, // 13% for investors/advisors
+      liquidity: 5 // ~5% for liquidity/reserves
+    },
+    competitorMetrics: {
+      bonkfunMarketShare: 55, // 55% market share
+      pumpfunMarketShare: 45, // 45% market share (down from ~100%)
+      bonkfunDailyLaunches: 21000, // 21k tokens/day
+      pumpfunDailyLaunches: 10000, // ~10k tokens/day
+      bonkfunRevenueShare: 58, // 58% of fees to BONK holders
+      pumpfunPlannedShare: 25 // Allegedly planning 25% revenue share
+    }
   };
 
   return (
@@ -398,7 +414,7 @@ export default function PumpfunDashboard() {
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               <div>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-100 mb-3">
-                  Pump.fun TGE Analysis
+                  Pump.fun $PUMP Token Analysis
                 </h1>
                 <p className="text-lg text-gray-300 max-w-2xl leading-relaxed">
                   Comprehensive analysis of $PUMP token launch scenarios, market impact projections, 
@@ -423,7 +439,7 @@ export default function PumpfunDashboard() {
                     <span className="text-sm font-medium text-green-400">Live Data</span>
                   </div>
                   <Badge variant="outline" className="text-base px-4 py-2 border-purple-500/50 text-purple-300 bg-purple-500/10">
-                    TGE: July 12, 2025
+                    Launched: July 12, 2025
                   </Badge>
                 </div>
                 <Button
@@ -617,11 +633,11 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-400">
-                        <AnimatedValue value={pumpfunMetrics.expectedRaise} format="currency" />
+                        <AnimatedValue value={pumpfunMetrics.actualRaise} format="currency" />
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <TrendingDown className="h-3 w-3 text-orange-400" />
-                        <p className="text-xs text-gray-500">Reduced from $1B</p>
+                        <TrendingUp className="h-3 w-3 text-green-400" />
+                        <p className="text-xs text-gray-500">Sold out in {pumpfunMetrics.icoSoldOutTime}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1202,12 +1218,12 @@ export default function PumpfunDashboard() {
                   </div>
                   <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
                     <p className="text-sm text-gray-400 mb-1">Current Market Share</p>
-                    <p className="text-2xl font-bold text-orange-400">20-35%</p>
-                    <p className="text-xs text-gray-500 mt-1">Lost in 8 days</p>
+                    <p className="text-2xl font-bold text-orange-400">{pumpfunMetrics.competitorMetrics.pumpfunMarketShare}%</p>
+                    <p className="text-xs text-gray-500 mt-1">By volume</p>
                   </div>
                   <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
                     <p className="text-sm text-gray-400 mb-1">Bonk.fun Market Share</p>
-                    <p className="text-2xl font-bold text-yellow-400">55%+</p>
+                    <p className="text-2xl font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunMarketShare}%</p>
                     <p className="text-xs text-gray-500 mt-1">By volume</p>
                   </div>
                 </div>
@@ -1220,8 +1236,8 @@ export default function PumpfunDashboard() {
                       <span className="text-sm text-gray-300">Daily Token Launches</span>
                       <div className="text-right">
                         <p className="text-sm">
-                          <span className="text-orange-400">Bonk.fun: 21,000</span> vs 
-                          <span className="text-gray-400 ml-2">Pump.fun: 9,000</span>
+                          <span className="text-orange-400">Bonk.fun: {pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches.toLocaleString()}</span> vs 
+                          <span className="text-gray-400 ml-2">Pump.fun: {pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches.toLocaleString()}</span>
                         </p>
                       </div>
                     </div>
@@ -1234,8 +1250,8 @@ export default function PumpfunDashboard() {
                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
                       <span className="text-sm text-gray-300">Fee Model</span>
                       <div className="text-right">
-                        <p className="text-sm text-green-400">58% revenue sharing</p>
-                        <p className="text-xs text-gray-500">vs Pump.fun's extractive model</p>
+                        <p className="text-sm text-green-400">Bonk.fun: {pumpfunMetrics.competitorMetrics.bonkfunRevenueShare}% to holders</p>
+                        <p className="text-xs text-gray-500">Pump.fun: {pumpfunMetrics.competitorMetrics.pumpfunPlannedShare}% planned</p>
                       </div>
                     </div>
                   </div>
@@ -1297,6 +1313,55 @@ export default function PumpfunDashboard() {
                         Failed to load BONK data
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+
+                {/* Strategic Analysis from PDF */}
+                <Card className="bg-purple-900/20 border-purple-800/50">
+                  <CardHeader>
+                    <CardTitle className="text-base text-purple-400">Strategic Market Analysis</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-200 mb-2">Key Challenges</h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
+                          <span className="text-gray-300">86% revenue decline from February peak ($14M to ~$1M daily)</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
+                          <span className="text-gray-300">Market share loss from ~100% to 45% in under 10 days</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
+                          <span className="text-gray-300">Community criticism: "extractive model" vs competitors' revenue sharing</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-200 mb-2">Paradoxical Opportunity</h4>
+                      <div className="p-3 bg-purple-900/30 rounded-lg">
+                        <p className="text-sm text-purple-300 italic">
+                          "Everyone complained but still aped in" - Despite criticism, ICO sold out in 12 minutes
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-200 mb-2">Valuation Perspective</h4>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <Info className="h-4 w-4 text-blue-400 mt-0.5" />
+                          <span className="text-gray-300">Current: 5.59x revenue multiple (down from 22x peak)</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Info className="h-4 w-4 text-blue-400 mt-0.5" />
+                          <span className="text-gray-300">For context: Many crypto projects trade at 50-100x revenue</span>
+                        </li>
+                      </ul>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -1535,22 +1600,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-red-400">$0.0012</p>
-                        <p className="text-sm text-gray-400">-70% from launch</p>
+                        <p className="text-2xl font-bold text-red-400">$0.0033</p>
+                        <p className="text-sm text-gray-400">-43% from current</p>
                       </div>
                       <Progress value={30} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• Revenue decline continues (-86%)</li>
-                          <li>• Bonk.fun captures market share</li>
-                          <li>• High FDV rejection by market</li>
-                          <li>• Liquidity rotation to competitors</li>
+                          <li>• Bonk.fun maintains 55%+ dominance</li>
+                          <li>• No revenue sharing implemented</li>
+                          <li>• Revenue stays at $1M daily or lower</li>
+                          <li>• Break below $0.0055 support level</li>
+                          <li>• Regulatory concerns impact launch</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
-                        <p className="text-xs text-gray-500">Probability: 45%</p>
-                        <p className="text-xs text-gray-500">Target Date: 30 days from launch</p>
+                        <p className="text-xs text-gray-500">Probability: 35%</p>
+                        <p className="text-xs text-gray-500">Target: 30-60 days</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1565,22 +1631,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-yellow-400">$0.0035</p>
-                        <p className="text-sm text-gray-400">-12.5% from launch</p>
+                        <p className="text-2xl font-bold text-yellow-400">$0.0070</p>
+                        <p className="text-sm text-gray-400">+21% from current</p>
                       </div>
                       <Progress value={60} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• Revenue stabilizes at $1M/day</li>
-                          <li>• 5.59x multiple holds steady</li>
-                          <li>• Mixed market reception</li>
-                          <li>• Gradual unlock pressure</li>
+                          <li>• Market share stabilizes at 45%</li>
+                          <li>• 25% revenue share partially implemented</li>
+                          <li>• Revenue maintains $1M+ daily</li>
+                          <li>• Price consolidates in $0.0065-0.0075 range</li>
+                          <li>• "Everyone complained but still aped in"</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
-                        <p className="text-xs text-gray-500">Probability: 35%</p>
-                        <p className="text-xs text-gray-500">Target Date: 60 days from launch</p>
+                        <p className="text-xs text-gray-500">Probability: 40%</p>
+                        <p className="text-xs text-gray-500">Target: 60-90 days</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1595,22 +1662,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-green-400">$0.0080</p>
-                        <p className="text-sm text-gray-400">+100% from launch</p>
+                        <p className="text-2xl font-bold text-green-400">$0.0095</p>
+                        <p className="text-sm text-gray-400">+64% from current</p>
                       </div>
                       <Progress value={85} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• FOMO drives instant sellout</li>
-                          <li>• EVM expansion successful</li>
-                          <li>• Revenue growth returns</li>
-                          <li>• Fresh capital enters market</li>
+                          <li>• 25% revenue sharing fully implemented</li>
+                          <li>• Returns to previous ATH of $0.0095</li>
+                          <li>• Daily revenue recovers to $2M+</li>
+                          <li>• FOMO drives "still aped in" mentality</li>
+                          <li>• 5.59x multiple seen as "cheap for crypto"</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
-                        <p className="text-xs text-gray-500">Probability: 20%</p>
-                        <p className="text-xs text-gray-500">Target Date: 90 days from launch</p>
+                        <p className="text-xs text-gray-500">Probability: 25%</p>
+                        <p className="text-xs text-gray-500">Target: 90-120 days</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1628,8 +1696,8 @@ export default function PumpfunDashboard() {
                           labels: ['Launch', '7d', '14d', '30d', '60d', '90d'],
                           datasets: [
                             {
-                              label: 'P90 (Bullish)',
-                              data: [0.004, 0.0052, 0.0064, 0.0072, 0.0076, 0.0080],
+                              label: 'P85 (Bullish)',
+                              data: [0.004, 0.0058, 0.0065, 0.0072, 0.0080, 0.0095],
                               borderColor: 'rgb(34, 197, 94)',
                               backgroundColor: 'rgba(34, 197, 94, 0.1)',
                               tension: 0.4,
@@ -1638,7 +1706,7 @@ export default function PumpfunDashboard() {
                             },
                             {
                               label: 'P50 (Median)',
-                              data: [0.004, 0.0038, 0.0036, 0.0035, 0.0035, 0.0035],
+                              data: [0.004, 0.0058, 0.0062, 0.0065, 0.0068, 0.0070],
                               borderColor: 'rgb(250, 204, 21)',
                               backgroundColor: 'rgba(250, 204, 21, 0.1)',
                               tension: 0.4,
@@ -1646,8 +1714,8 @@ export default function PumpfunDashboard() {
                               borderDash: [5, 5]
                             },
                             {
-                              label: 'P10 (Bearish)',
-                              data: [0.004, 0.0028, 0.0020, 0.0015, 0.0013, 0.0012],
+                              label: 'P15 (Bearish)',
+                              data: [0.004, 0.0045, 0.0040, 0.0035, 0.0034, 0.0033],
                               borderColor: 'rgb(239, 68, 68)',
                               backgroundColor: 'rgba(239, 68, 68, 0.1)',
                               tension: 0.4,
