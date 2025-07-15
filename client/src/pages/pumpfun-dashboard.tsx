@@ -1876,7 +1876,7 @@ export default function PumpfunDashboard() {
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-start gap-2">
                           <Info className="h-4 w-4 text-blue-400 mt-0.5" />
-                          <span className="text-gray-300">Current: 5.59x revenue multiple (down from 22x peak)</span>
+                          <span className="text-gray-300">Current: {pumpTokenData?.market_cap ? (pumpTokenData.market_cap / (619000 * 365)).toFixed(1) : '34.5'}x revenue multiple</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Info className="h-4 w-4 text-blue-400 mt-0.5" />
@@ -1923,7 +1923,7 @@ export default function PumpfunDashboard() {
                       <p className="text-sm font-medium mb-1">Revenue Foundation</p>
                       <p className="text-xs text-gray-400">$719.84M total revenue generated</p>
                       <p className="text-xs text-gray-400">$835.16M total fees collected</p>
-                      <p className="text-xs text-gray-400">Current: 5.6x revenue multiple</p>
+                      <p className="text-xs text-gray-400">Current: {pumpTokenData?.market_cap ? (pumpTokenData.market_cap / (619000 * 365)).toFixed(1) : '34.5'}x revenue multiple</p>
                       <p className="text-xs text-gray-400">"Cheap for crypto standards (50-100x typical)"</p>
                     </div>
                     
