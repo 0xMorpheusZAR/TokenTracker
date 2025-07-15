@@ -349,11 +349,14 @@ export default function PumpfunDashboard() {
     peakMarketCap: 70000000000 // $70B
   };
 
-  // Pump.fun metrics - Updated with latest PDF data
+  // Pump.fun metrics - Updated with latest CSV data (July 15, 2025)
   const pumpfunMetrics = {
-    totalRevenue: 800000000, // $800M+ total since launch
-    peakDailyRevenue: 14000000, // $14M peak
-    currentDailyRevenue: 1000000, // $1M current (down from peak)
+    totalRevenue: 719837848, // $719.84M cumulative revenue (July 14, 2025)
+    totalFees: 835164745, // $835.16M cumulative fees (July 14, 2025)
+    peakDailyRevenue: 14000000, // $14M peak (February 2025)
+    currentDailyRevenue: 533000, // $533k current (July 7, 2025)
+    dailyRevenueJuly14: 757020, // $757k on July 14, 2025
+    allTimeHighLaunches: 71735, // ATH tokens in single day (Jan 23, 2025)
     tokenSupply: 1000000000000, // 1T total
     publicSalePercent: 12.5, // 12.5% (125B tokens out of 1T)
     salePrice: 0.004, // $0.004 per token
@@ -368,12 +371,19 @@ export default function PumpfunDashboard() {
       liquidity: 5 // ~5% for liquidity/reserves
     },
     competitorMetrics: {
-      bonkfunMarketShare: 55, // 55% market share
-      pumpfunMarketShare: 45, // 45% market share (down from ~100%)
-      bonkfunDailyLaunches: 21000, // 21k tokens/day
-      pumpfunDailyLaunches: 10000, // ~10k tokens/day
-      bonkfunRevenueShare: 58, // 58% of fees to BONK holders
-      pumpfunPlannedShare: 25 // Allegedly planning 25% revenue share
+      bonkfunMarketShare: 59, // 59% market share by volume (July 2025)
+      pumpfunMarketShare: 35, // 35% market share (down from 95-100%)
+      bonkfunDailyLaunches: 19600, // 19.6k tokens/day (July 2025)
+      pumpfunDailyLaunches: 9200, // 9.2k tokens/day (July 2025)
+      bonkfunDailyRevenue: 1040000, // $1.04M daily revenue
+      pumpfunDailyRevenue: 533000, // $533k daily revenue
+      bonkfunRevenueShare: 58, // 58% of fees burned for BONK
+      pumpfunPlannedShare: 25, // Allegedly planning 25% revenue share
+      bonkfunBurnAmount: 500000, // ~$500k BONK burned daily
+      marketShareCollapseTime: 8, // Days to lose dominance
+      previousMarketShare: 95, // Previous near-monopoly %
+      graduationRateBonk: 0.88, // ~0.88% graduation rate
+      graduationRatePump: 0.65 // ~0.65% graduation rate
     }
   };
 
@@ -1046,23 +1056,23 @@ export default function PumpfunDashboard() {
             <Card className="bg-gray-800/30 border-gray-700">
               <CardHeader>
                 <CardTitle>Platform Statistics</CardTitle>
-                <CardDescription>Cumulative performance as of July 7, 2025</CardDescription>
+                <CardDescription>Cumulative performance as of July 14, 2025</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
                     <p className="text-sm text-gray-400">Total Fees Generated</p>
-                    <p className="text-2xl font-bold text-purple-400">$827.46M</p>
+                    <p className="text-2xl font-bold text-purple-400">${(pumpfunMetrics.totalFees / 1e6).toFixed(2)}M</p>
                     <p className="text-xs text-gray-500 mt-1">All-time cumulative</p>
                   </div>
                   <div className="bg-blue-900/20 rounded-lg p-4 border border-blue-800/50">
                     <p className="text-sm text-gray-400">Total Revenue</p>
-                    <p className="text-2xl font-bold text-blue-400">$715.36M</p>
+                    <p className="text-2xl font-bold text-blue-400">${(pumpfunMetrics.totalRevenue / 1e6).toFixed(2)}M</p>
                     <p className="text-xs text-gray-500 mt-1">Platform earnings</p>
                   </div>
                   <div className="bg-green-900/20 rounded-lg p-4 border border-green-800/50">
                     <p className="text-sm text-gray-400">Revenue Ratio</p>
-                    <p className="text-2xl font-bold text-green-400">86.5%</p>
+                    <p className="text-2xl font-bold text-green-400">{((pumpfunMetrics.totalRevenue / pumpfunMetrics.totalFees) * 100).toFixed(1)}%</p>
                     <p className="text-xs text-gray-500 mt-1">Revenue/Fees</p>
                   </div>
                   <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
@@ -1104,7 +1114,7 @@ export default function PumpfunDashboard() {
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
-                      <span className="text-gray-200">$600M sale despite earning $700M+ in fees</span>
+                      <span className="text-gray-200">$500M sale despite earning $835M+ in fees</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-red-400 mt-0.5" />
@@ -1209,49 +1219,150 @@ export default function PumpfunDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Market Share Collapse */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Previous Market Share</p>
-                    <p className="text-2xl font-bold text-red-400">90-100%</p>
-                    <p className="text-xs text-gray-500 mt-1">Near monopoly</p>
+                {/* Market Share Collapse Timeline */}
+                <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                  <h3 className="text-base font-semibold text-gray-100 mb-4">Market Dominance Collapse: The 8-Day Implosion</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
+                      <p className="text-sm text-gray-400 mb-1">Previous Dominance</p>
+                      <p className="text-2xl font-bold text-red-400">{pumpfunMetrics.competitorMetrics.previousMarketShare}-100%</p>
+                      <p className="text-xs text-gray-500 mt-1">Near-monopoly position</p>
+                    </div>
+                    <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
+                      <p className="text-sm text-gray-400 mb-1">Current Market Share</p>
+                      <p className="text-2xl font-bold text-orange-400">{pumpfunMetrics.competitorMetrics.pumpfunMarketShare}%</p>
+                      <p className="text-xs text-gray-500 mt-1">Lost in {pumpfunMetrics.competitorMetrics.marketShareCollapseTime} days</p>
+                    </div>
+                    <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
+                      <p className="text-sm text-gray-400 mb-1">Bonk.fun Market Share</p>
+                      <p className="text-2xl font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunMarketShare}%</p>
+                      <p className="text-xs text-gray-500 mt-1">By volume (July 2025)</p>
+                    </div>
                   </div>
-                  <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Current Market Share</p>
-                    <p className="text-2xl font-bold text-orange-400">{pumpfunMetrics.competitorMetrics.pumpfunMarketShare}%</p>
-                    <p className="text-xs text-gray-500 mt-1">By volume</p>
-                  </div>
-                  <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
-                    <p className="text-sm text-gray-400 mb-1">Bonk.fun Market Share</p>
-                    <p className="text-2xl font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunMarketShare}%</p>
-                    <p className="text-xs text-gray-500 mt-1">By volume</p>
+                  
+                  {/* Timeline visualization */}
+                  <div className="relative bg-gray-800/30 rounded-lg p-3">
+                    <div className="absolute top-6 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 opacity-30" />
+                    <div className="flex justify-between relative">
+                      <div className="text-center">
+                        <div className="w-3 h-3 bg-red-500 rounded-full mb-2" />
+                        <p className="text-xs text-gray-400">June 2025</p>
+                        <p className="text-xs font-semibold text-red-400">95-100%</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="w-3 h-3 bg-orange-500 rounded-full mb-2" />
+                        <p className="text-xs text-gray-400">Early July</p>
+                        <p className="text-xs font-semibold text-orange-400">~60%</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full mb-2" />
+                        <p className="text-xs text-gray-400">July 8</p>
+                        <p className="text-xs font-semibold text-yellow-400">35%</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Competition Metrics */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Competition Metrics</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Head-to-Head Metrics (July 2025)</h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm text-gray-300">Daily Token Launches</span>
-                      <div className="text-right">
-                        <p className="text-sm">
-                          <span className="text-orange-400">Bonk.fun: {pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches.toLocaleString()}</span> vs 
-                          <span className="text-gray-400 ml-2">Pump.fun: {pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches.toLocaleString()}</span>
-                        </p>
+                    {/* Daily Revenue Comparison */}
+                    <div className="bg-gray-800/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-300">Daily Protocol Revenue</span>
+                        <span className="text-xs text-gray-500">July 7, 2025</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-green-400">Bonk.fun</span>
+                          <span className="text-sm font-bold text-green-400">${pumpfunMetrics.competitorMetrics.bonkfunDailyRevenue.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Pump.fun</span>
+                          <span className="text-sm font-bold text-gray-400">${pumpfunMetrics.competitorMetrics.pumpfunDailyRevenue.toLocaleString()}</span>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-gray-700">
+                          <p className="text-xs text-orange-400">Bonk.fun generates ~2x daily revenue</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm text-gray-300">Graduated Tokens Ratio</span>
-                      <div className="text-right">
-                        <p className="text-sm text-orange-400">Bonk.fun leads 3:1</p>
+
+                    {/* Token Launch Activity */}
+                    <div className="bg-gray-800/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-300">Daily Token Launches</span>
+                        <Badge variant="outline" className="text-xs border-red-500/50 text-red-400">
+                          Peak: 71,735 (Jan 23)
+                        </Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-yellow-400">Bonk.fun</span>
+                          <span className="text-sm font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches.toLocaleString()} tokens</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Pump.fun</span>
+                          <span className="text-sm font-bold text-gray-400">{pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches.toLocaleString()} tokens</span>
+                        </div>
+                        <Progress value={(pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches / pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches) * 100} className="h-2 mt-2" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                      <span className="text-sm text-gray-300">Fee Model</span>
-                      <div className="text-right">
-                        <p className="text-sm text-green-400">Bonk.fun: {pumpfunMetrics.competitorMetrics.bonkfunRevenueShare}% to holders</p>
-                        <p className="text-xs text-gray-500">Pump.fun: {pumpfunMetrics.competitorMetrics.pumpfunPlannedShare}% planned</p>
+
+                    {/* Graduation Rates */}
+                    <div className="bg-gray-800/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-300">Token Graduation Rate</span>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-3 w-3 text-gray-500" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-xs">% of tokens reaching $69k market cap</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-green-400">Bonk.fun</span>
+                          <span className="text-sm font-bold text-green-400">{pumpfunMetrics.competitorMetrics.graduationRateBonk}%</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Pump.fun</span>
+                          <span className="text-sm font-bold text-gray-400">{pumpfunMetrics.competitorMetrics.graduationRatePump}%</span>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-gray-700">
+                          <p className="text-xs text-blue-400">Higher quality ratio on Bonk.fun</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fee Model Innovation */}
+                    <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-purple-300">Revolutionary Fee Model</span>
+                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/50">
+                          Game Changer
+                        </Badge>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-sm font-medium text-yellow-400 mb-1">Bonk.fun Innovation</p>
+                          <ul className="space-y-1 text-xs text-gray-300">
+                            <li>• {pumpfunMetrics.competitorMetrics.bonkfunRevenueShare}% of fees buy BONK token</li>
+                            <li>• 50% of purchased BONK burned forever</li>
+                            <li>• ~${pumpfunMetrics.competitorMetrics.bonkfunBurnAmount.toLocaleString()} burned daily</li>
+                            <li>• Creates constant deflationary pressure</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-400 mb-1">Pump.fun Response</p>
+                          <ul className="space-y-1 text-xs text-gray-400">
+                            <li>• {pumpfunMetrics.competitorMetrics.pumpfunPlannedShare}% revenue share planned</li>
+                            <li>• "Extractive model" criticism persists</li>
+                            <li>• No burn mechanism announced</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1399,9 +1510,10 @@ export default function PumpfunDashboard() {
                   <div className="space-y-3">
                     <div className="p-3 bg-gray-800/50 rounded-lg">
                       <p className="text-sm font-medium mb-1">Revenue Foundation</p>
-                      <p className="text-xs text-gray-400">$715.36M total revenue generated</p>
-                      <p className="text-xs text-gray-400">5.59x valuation-to-revenue multiple</p>
-                      <p className="text-xs text-gray-400">"Undervalued in traditional markets"</p>
+                      <p className="text-xs text-gray-400">$719.84M total revenue generated</p>
+                      <p className="text-xs text-gray-400">$835.16M total fees collected</p>
+                      <p className="text-xs text-gray-400">Current: 5.6x revenue multiple</p>
+                      <p className="text-xs text-gray-400">"Cheap for crypto standards (50-100x typical)"</p>
                     </div>
                     
                     <div className="p-3 bg-gray-800/50 rounded-lg">
@@ -1600,23 +1712,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-red-400">$0.0033</p>
-                        <p className="text-sm text-gray-400">-43% from current</p>
+                        <p className="text-2xl font-bold text-red-400">$0.0025</p>
+                        <p className="text-sm text-gray-400">-57% from current</p>
                       </div>
-                      <Progress value={30} className="h-2 bg-gray-700" />
+                      <Progress value={35} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• Bonk.fun maintains 55%+ dominance</li>
+                          <li>• Bonk.fun extends to 70%+ market share</li>
+                          <li>• Daily revenue drops to $300-400k</li>
                           <li>• No revenue sharing implemented</li>
-                          <li>• Revenue stays at $1M daily or lower</li>
-                          <li>• Break below $0.0055 support level</li>
-                          <li>• Regulatory concerns impact launch</li>
+                          <li>• Break below $0.004 ICO price</li>
+                          <li>• "Exit liquidity" narrative dominates</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 35%</p>
-                        <p className="text-xs text-gray-500">Target: 30-60 days</p>
+                        <p className="text-xs text-gray-500">Extreme competition scenario</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1631,23 +1743,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-yellow-400">$0.0070</p>
-                        <p className="text-sm text-gray-400">+21% from current</p>
+                        <p className="text-2xl font-bold text-yellow-400">$0.0058</p>
+                        <p className="text-sm text-gray-400">+0% (sideways)</p>
                       </div>
-                      <Progress value={60} className="h-2 bg-gray-700" />
+                      <Progress value={50} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• Market share stabilizes at 45%</li>
-                          <li>• 25% revenue share partially implemented</li>
-                          <li>• Revenue maintains $1M+ daily</li>
-                          <li>• Price consolidates in $0.0065-0.0075 range</li>
-                          <li>• "Everyone complained but still aped in"</li>
+                          <li>• Market share stabilizes at 35-40%</li>
+                          <li>• Revenue holds at $500-600k daily</li>
+                          <li>• 25% revenue share delayed/partial</li>
+                          <li>• Price range: $0.0055-0.0065</li>
+                          <li>• FOMO balanced by competition fears</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 40%</p>
-                        <p className="text-xs text-gray-500">Target: 60-90 days</p>
+                        <p className="text-xs text-gray-500">Base case scenario</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1662,23 +1774,23 @@ export default function PumpfunDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <p className="text-2xl font-bold text-green-400">$0.0095</p>
-                        <p className="text-sm text-gray-400">+64% from current</p>
+                        <p className="text-2xl font-bold text-green-400">$0.0085</p>
+                        <p className="text-sm text-gray-400">+47% from current</p>
                       </div>
-                      <Progress value={85} className="h-2 bg-gray-700" />
+                      <Progress value={75} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Key Factors:</p>
                         <ul className="space-y-1 text-xs text-gray-400">
-                          <li>• 25% revenue sharing fully implemented</li>
-                          <li>• Returns to previous ATH of $0.0095</li>
-                          <li>• Daily revenue recovers to $2M+</li>
-                          <li>• FOMO drives "still aped in" mentality</li>
-                          <li>• 5.59x multiple seen as "cheap for crypto"</li>
+                          <li>• 25% revenue sharing launches strong</li>
+                          <li>• EVM expansion successful</li>
+                          <li>• Revenue recovers to $1M+ daily</li>
+                          <li>• Recaptures 40-45% market share</li>
+                          <li>• "Still aped in" proves true</li>
                         </ul>
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 25%</p>
-                        <p className="text-xs text-gray-500">Target: 90-120 days</p>
+                        <p className="text-xs text-gray-500">Recovery scenario</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1696,8 +1808,8 @@ export default function PumpfunDashboard() {
                           labels: ['Launch', '7d', '14d', '30d', '60d', '90d'],
                           datasets: [
                             {
-                              label: 'P85 (Bullish)',
-                              data: [0.004, 0.0058, 0.0065, 0.0072, 0.0080, 0.0095],
+                              label: 'P75 (Bullish)',
+                              data: [0.004, 0.0058, 0.0065, 0.0070, 0.0075, 0.0085],
                               borderColor: 'rgb(34, 197, 94)',
                               backgroundColor: 'rgba(34, 197, 94, 0.1)',
                               tension: 0.4,
@@ -1705,8 +1817,8 @@ export default function PumpfunDashboard() {
                               fill: '+1'
                             },
                             {
-                              label: 'P50 (Median)',
-                              data: [0.004, 0.0058, 0.0062, 0.0065, 0.0068, 0.0070],
+                              label: 'P50 (Base)',
+                              data: [0.004, 0.0058, 0.0058, 0.0058, 0.0058, 0.0058],
                               borderColor: 'rgb(250, 204, 21)',
                               backgroundColor: 'rgba(250, 204, 21, 0.1)',
                               tension: 0.4,
@@ -1714,8 +1826,8 @@ export default function PumpfunDashboard() {
                               borderDash: [5, 5]
                             },
                             {
-                              label: 'P15 (Bearish)',
-                              data: [0.004, 0.0045, 0.0040, 0.0035, 0.0034, 0.0033],
+                              label: 'P35 (Bearish)',
+                              data: [0.004, 0.0045, 0.0038, 0.0032, 0.0028, 0.0025],
                               borderColor: 'rgb(239, 68, 68)',
                               backgroundColor: 'rgba(239, 68, 68, 0.1)',
                               tension: 0.4,

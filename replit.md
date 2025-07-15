@@ -158,6 +158,7 @@ Changelog:
 - July 16, 2025: Removed /hyperliquid-dune dashboard page per user request, maintaining Dune Analytics API integration for other dashboard features
 - July 16, 2025: Enhanced interactive dashboard to display live CoinGecko pricing data with 24h price changes for all tokens in both grid and table views
 - July 16, 2025: Integrated live Pump.fun ($PUMP) token data from CoinGecko Pro API into /pumpfun dashboard - displays real-time pricing, market cap, volume, ATH/ATL, supply metrics, and price changes
+- July 16, 2025: Updated Pump.fun metrics with latest CSV data (July 14, 2025) - Total fees: $835.16M, Total revenue: $719.84M, revenue ratio 86.2%, enhanced competition analysis with detailed head-to-head metrics, market share collapse timeline visualization, and updated Monte Carlo price targets based on competitive dynamics
 ```
 
 ## User Preferences
