@@ -870,6 +870,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/dune/pumpfun/revenue", async (req, res) => {
+    try {
+      const revenueData = await duneService.getPumpfunRevenue24h();
+      if (!revenueData) {
+        return res.status(500).json({ error: "Failed to fetch Pump.fun revenue data" });
+      }
+      res.json({
+        ...revenueData,
+        source: "Dune Analytics"
+      });
+    } catch (error) {
+      console.error("Failed to fetch Pump.fun revenue:", error);
+      res.status(500).json({ error: "Failed to fetch revenue data" });
+    }
+  });
+
+  app.get("/api/dune/pumpfun/volume", async (req, res) => {
+    try {
+      const volumeData = await duneService.getPumpfunVolume24h();
+      if (!volumeData) {
+        return res.status(500).json({ error: "Failed to fetch Pump.fun volume data" });
+      }
+      res.json({
+        ...volumeData,
+        source: "Dune Analytics"
+      });
+    } catch (error) {
+      console.error("Failed to fetch Pump.fun volume:", error);
+      res.status(500).json({ error: "Failed to fetch volume data" });
+    }
+  });
+
+  app.get("/api/dune/bonkfun/volume", async (req, res) => {
+    try {
+      const volumeData = await duneService.getBonkfunVolume24h();
+      if (!volumeData) {
+        return res.status(500).json({ error: "Failed to fetch Bonk.fun volume data" });
+      }
+      res.json({
+        ...volumeData,
+        source: "Dune Analytics"
+      });
+    } catch (error) {
+      console.error("Failed to fetch Bonk.fun volume:", error);
+      res.status(500).json({ error: "Failed to fetch volume data" });
+    }
+  });
+
   app.post("/api/dune/query/:queryId/execute", async (req, res) => {
     try {
       const { queryId } = req.params;

@@ -115,6 +115,36 @@ export default function PumpfunDashboard() {
     },
   });
 
+  // Fetch Pump.fun revenue data from Dune Analytics
+  const { data: pumpfunRevenueData, isLoading: loadingPumpfunRevenue } = useQuery({
+    queryKey: ['/api/dune/pumpfun/revenue'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/pumpfun/revenue');
+      if (!response.ok) throw new Error('Failed to fetch Pump.fun revenue from Dune');
+      return response.json();
+    },
+  });
+
+  // Fetch Pump.fun volume data from Dune Analytics
+  const { data: pumpfunVolumeData, isLoading: loadingPumpfunVolume } = useQuery({
+    queryKey: ['/api/dune/pumpfun/volume'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/pumpfun/volume');
+      if (!response.ok) throw new Error('Failed to fetch Pump.fun volume from Dune');
+      return response.json();
+    },
+  });
+
+  // Fetch Bonk.fun volume data from Dune Analytics
+  const { data: bonkfunVolumeData, isLoading: loadingBonkfunVolume } = useQuery({
+    queryKey: ['/api/dune/bonkfun/volume'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/bonkfun/volume');
+      if (!response.ok) throw new Error('Failed to fetch Bonk.fun volume from Dune');
+      return response.json();
+    },
+  });
+
   // Fetch live Pump.fun token data from CoinGecko
   const { data: pumpTokenData, isLoading: loadingPumpToken } = useQuery({
     queryKey: ['/api/coingecko/pump'],
@@ -1321,10 +1351,63 @@ export default function PumpfunDashboard() {
                         )}
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-400">Pump.fun</span>
-                          <span className="text-sm font-bold text-gray-400">${pumpfunMetrics.competitorMetrics.pumpfunDailyRevenue.toLocaleString()}</span>
+                          <span className="text-sm font-bold text-gray-400">
+                            ${pumpfunRevenueData?.revenue_usd ? 
+                              formatNumber(pumpfunRevenueData.revenue_usd) : 
+                              pumpfunMetrics.competitorMetrics.pumpfunDailyRevenue.toLocaleString()}
+                          </span>
                         </div>
+                        {pumpfunRevenueData && (
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>({formatNumber(pumpfunRevenueData.revenue_sol)} SOL)</span>
+                            <span className="text-blue-400">via Dune Analytics</span>
+                          </div>
+                        )}
                         <div className="mt-2 pt-2 border-t border-gray-700">
                           <p className="text-xs text-orange-400">Bonk.fun generates ~2x daily revenue</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 24H Volume Comparison */}
+                    <div className="bg-gray-800/50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-300">24H Trading Volume</span>
+                        <span className="text-xs text-gray-500">DEX Volume</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-green-400">Bonk.fun</span>
+                          <span className="text-sm font-bold text-green-400">
+                            ${bonkfunVolumeData?.total_volume_usd_24h ? 
+                              formatNumber(bonkfunVolumeData.total_volume_usd_24h) : 
+                              '168M'}
+                          </span>
+                        </div>
+                        {bonkfunVolumeData && (
+                          <div className="text-xs text-gray-500 text-right">
+                            <span className="text-blue-400">via Dune Analytics</span>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Pump.fun</span>
+                          <span className="text-sm font-bold text-gray-400">
+                            ${pumpfunVolumeData?.total_volume_usd_24h ? 
+                              formatNumber(pumpfunVolumeData.total_volume_usd_24h) : 
+                              '92M'}
+                          </span>
+                        </div>
+                        {pumpfunVolumeData && (
+                          <div className="text-xs text-gray-500 text-right">
+                            <span className="text-blue-400">via Dune Analytics</span>
+                          </div>
+                        )}
+                        <div className="mt-2 pt-2 border-t border-gray-700">
+                          <p className="text-xs text-orange-400">
+                            Bonk.fun processes {bonkfunVolumeData && pumpfunVolumeData ? 
+                              `${((bonkfunVolumeData.total_volume_usd_24h / pumpfunVolumeData.total_volume_usd_24h) || 1.8).toFixed(1)}x` : 
+                              '~1.8x'} more volume
+                          </p>
                         </div>
                       </div>
                     </div>
