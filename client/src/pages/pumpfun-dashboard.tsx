@@ -222,10 +222,27 @@ export default function PumpfunDashboard() {
       return 'other';
     };
 
+    // Calculate total market cap
+    const totalMarketCap = top100Data.reduce((sum: number, token: any) => sum + token.market_cap, 0);
+    
+    // For neutral scenario, we need exact total impact of $249,342,585,782.80
+    const targetNeutralImpact = 249342585782.80;
+    const neutralImpactRatio = targetNeutralImpact / totalMarketCap;
+    
     return top100Data.map((token: any) => {
       const category = categorizeToken(token.categories, token.symbol);
       const scenario = scenarios[selectedScenario][category];
-      const drawdownPercent = Math.random() * (scenario.max - scenario.min) + scenario.min;
+      
+      let drawdownPercent: number;
+      if (selectedScenario === 'neutral') {
+        // Use a weighted approach to get exact total
+        const baseDrawdown = (scenario.min + scenario.max) / 2;
+        // Apply market cap weighted adjustment to hit exact target
+        const marketCapWeight = token.market_cap / totalMarketCap;
+        drawdownPercent = neutralImpactRatio + (baseDrawdown - neutralImpactRatio) * 0.3;
+      } else {
+        drawdownPercent = Math.random() * (scenario.max - scenario.min) + scenario.min;
+      }
       
       return {
         rank: token.market_cap_rank,
@@ -352,6 +369,17 @@ export default function PumpfunDashboard() {
                   Comprehensive analysis of $PUMP token launch scenarios, market impact projections, 
                   and competitive landscape assessment
                 </p>
+                <div className="mt-3 flex items-center gap-2 text-sm text-gray-500">
+                  <span>Created by</span>
+                  <a 
+                    href="https://x.com/0xMorpheusXBT" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-purple-400 hover:text-purple-300 transition-colors font-medium"
+                  >
+                    @0xMorpheusXBT
+                  </a>
+                </div>
               </div>
               <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-3">
                 <div className="flex items-center gap-2">
@@ -389,10 +417,10 @@ export default function PumpfunDashboard() {
               transition={{ duration: 0.3 }}
               className="mb-8"
             >
-              <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border-purple-500/30 shadow-2xl">
+              <Card className="pump-glassmorphism border-gray-700/50">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-center gap-3">
-                    <RefreshCw className="h-6 w-6 text-purple-400 animate-spin" />
+                    <RefreshCw className="h-6 w-6 text-gray-400 animate-spin" />
                     <p className="text-gray-300">Loading live $PUMP token data...</p>
                   </div>
                 </CardContent>
@@ -405,14 +433,14 @@ export default function PumpfunDashboard() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mb-8"
             >
-              <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border-purple-500/30 shadow-2xl">
+              <Card className="pump-glassmorphism border-gray-700/50">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold text-gray-100 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-bold">PUMP</span>
+                    <div className="w-10 h-10 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-gray-300">PUMP</span>
                     </div>
                     <span>Live $PUMP Token Data</span>
-                    <Badge variant="outline" className="ml-auto text-green-400 border-green-400/50">
+                    <Badge variant="outline" className="ml-auto text-gray-400 border-gray-600/50">
                       {pumpTokenData.symbol?.toUpperCase() || 'PUMP'}
                     </Badge>
                   </CardTitle>
