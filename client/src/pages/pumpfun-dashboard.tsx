@@ -1150,39 +1150,6 @@ export default function PumpfunDashboard() {
 
           {/* Predictions */}
           <TabsContent value="predictions" className="space-y-6">
-            {/* Updated Competitive Landscape Notice */}
-            <Card className="bg-orange-900/20 border-orange-800/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-orange-400" />
-                  Updated Market Analysis - Post Bonk.fun Disruption
-                </CardTitle>
-                <CardDescription>
-                  Price targets revised based on competitive dynamics and current market share
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400">Current Price</p>
-                    <p className="text-lg font-bold text-gray-200">${pumpTokenData?.current_price ? pumpTokenData.current_price.toFixed(4) : '0.0078'}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400">Market Cap</p>
-                    <p className="text-lg font-bold text-gray-200">${pumpTokenData?.market_cap ? formatNumber(pumpTokenData.market_cap) : '7.8B'}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400">Market Share</p>
-                    <p className="text-lg font-bold text-orange-400">33%</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400">Daily Revenue</p>
-                    <p className="text-lg font-bold text-gray-200">$619k</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Bearish Case */}
               <Card className="bg-red-900/20 border-red-800/50">
