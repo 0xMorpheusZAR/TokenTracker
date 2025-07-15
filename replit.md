@@ -163,6 +163,8 @@ Changelog:
 - July 16, 2025: Added Bonk.fun 24h revenue data from Dune Analytics (Query #5431407 by adam_tehc) - shows revenue in both SOL and USD with proper attribution to dashboard creator
 - July 16, 2025: Integrated comprehensive Dune Analytics queries for Pump.fun and Bonk.fun metrics - Added Pump.fun 24h revenue (Query #5436123), Pump.fun 24h volume (Query #5436124), and Bonk.fun 24h volume (Query #5436125) with real-time data display in competition tab showing revenue in SOL/USD and trading volumes with comparative analysis
 - July 16, 2025: Removed DefiLlama integration from competition section per user request - Competition tab now focuses on Dune Analytics data for revenue and volume metrics while maintaining all other functionality
+- July 16, 2025: Added CSV data fetching capability from Dune Analytics API - Integrated Query #5446111 for additional Pump.fun metrics with CSV parsing functionality
+- July 16, 2025: Updated volume comparison queries - Bonk.fun volume now uses Query #5440994 and Pump.fun volume uses Query #5440990, both with 10-minute auto-refresh
 ```
 
 ## User Preferences

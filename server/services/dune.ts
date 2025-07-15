@@ -80,7 +80,8 @@ const BONKFUN_QUERIES = {
 // Pump.fun queries
 const PUMPFUN_QUERIES = {
   REVENUE_24H: 5436123, // Query for Pump.fun 24h revenue in SOL and USD
-  VOLUME_24H: 5440990 // Query for Pump.fun 24h volume in USD (updated)
+  VOLUME_24H: 5440990, // Query for Pump.fun 24h volume in USD (updated)
+  ADDITIONAL_METRICS: 5446111 // Additional metrics query
 };
 
 export class DuneService {
@@ -564,6 +565,70 @@ export class DuneService {
       configured: !!this.apiKey,
       hasApiKey: !!this.apiKey
     };
+  }
+
+  /**
+   * Get CSV results for a query
+   * @param queryId - The Dune query ID
+   * @param limit - Maximum number of rows to return (default 1000)
+   * @returns CSV data as string or null
+   */
+  async getCSVResults(queryId: number, limit: number = 1000): Promise<string | null> {
+    if (!this.apiKey) {
+      console.error('Dune API key not configured');
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/query/${queryId}/results/csv?limit=${limit}`, {
+        headers: this.headers
+      });
+
+      if (!response.ok) {
+        console.error(`Dune API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        return null;
+      }
+
+      const csvData = await response.text();
+      return csvData;
+    } catch (error) {
+      console.error('Error fetching CSV results:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get additional metrics data
+   * @returns Parsed metrics data or null
+   */
+  async getAdditionalMetrics(): Promise<any | null> {
+    const queryId = PUMPFUN_QUERIES.ADDITIONAL_METRICS;
+    
+    try {
+      const csvData = await this.getCSVResults(queryId);
+      if (!csvData) return null;
+      
+      // Parse CSV data
+      const lines = csvData.split('\n').filter(line => line.trim());
+      if (lines.length < 2) return null;
+      
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        return row;
+      });
+      
+      return rows;
+    } catch (error) {
+      console.error('Error fetching additional metrics:', error);
+      return null;
+    }
   }
 }
 

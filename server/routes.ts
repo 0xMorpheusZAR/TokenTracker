@@ -918,6 +918,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/dune/pumpfun/additional-metrics", async (req, res) => {
+    try {
+      const metricsData = await duneService.getAdditionalMetrics();
+      if (!metricsData) {
+        return res.status(500).json({ error: "Failed to fetch additional metrics data" });
+      }
+      res.json({
+        data: metricsData,
+        source: "Dune Analytics",
+        queryId: 5446111
+      });
+    } catch (error) {
+      console.error("Failed to fetch additional metrics:", error);
+      res.status(500).json({ error: "Failed to fetch metrics data" });
+    }
+  });
+
   app.post("/api/dune/query/:queryId/execute", async (req, res) => {
     try {
       const { queryId } = req.params;
