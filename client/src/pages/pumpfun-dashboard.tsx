@@ -1115,6 +1115,213 @@ export default function PumpfunDashboard() {
               </Card>
             </div>
 
+            {/* Daily Selling Pressure Analysis */}
+            <Card className="bg-gray-800/30 border-gray-700 mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-500" />
+                  Daily Selling Pressure Analysis
+                </CardTitle>
+                <CardDescription>
+                  Estimated potential selling pressure based on token distribution and current metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingPumpToken ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="w-12 h-12 border-4 border-gray-700 border-t-purple-500 rounded-full animate-spin"></div>
+                  </div>
+                ) : pumpTokenData ? (
+                  <div className="space-y-6">
+                    {/* Calculate selling pressure metrics */}
+                    {(() => {
+                      const circulatingSupply = pumpTokenData.circulatingSupply || 0;
+                      const maxSupply = pumpTokenData.maxSupply || 1000000000; // 1B tokens
+                      const currentPrice = pumpTokenData.currentPrice || 0;
+                      const dailyVolume = pumpTokenData.totalVolume || 0;
+                      
+                      // Token distribution percentages
+                      const distribution = {
+                        ico: 0.33,
+                        community: 0.24,
+                        team: 0.20,
+                        investors: 0.13,
+                        others: 0.10
+                      };
+                      
+                      // Estimated daily selling pressure by category
+                      const sellingPressure = {
+                        ico: dailyVolume * 0.30, // ICO participants may sell 30% of daily volume
+                        team: dailyVolume * 0.05, // Team vesting with 5% pressure
+                        investors: dailyVolume * 0.15, // Early investors taking profits
+                        community: dailyVolume * 0.25, // Community trading activity
+                        marketMakers: dailyVolume * 0.25 // Market makers & arbitrage
+                      };
+                      
+                      const totalSellingPressure = Object.values(sellingPressure).reduce((a, b) => a + b, 0);
+                      const sellingPressureRatio = (totalSellingPressure / (circulatingSupply * currentPrice)) * 100;
+                      
+                      return (
+                        <>
+                          {/* Key Metrics Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                              <p className="text-sm text-gray-400 mb-1">Circulating Supply</p>
+                              <p className="text-xl font-bold text-gray-100">
+                                {formatNumber(circulatingSupply)}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {((circulatingSupply / maxSupply) * 100).toFixed(1)}% of max supply
+                              </p>
+                            </div>
+                            
+                            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                              <p className="text-sm text-gray-400 mb-1">24h Volume/Market Cap</p>
+                              <p className="text-xl font-bold text-purple-400">
+                                {((dailyVolume / (circulatingSupply * currentPrice)) * 100).toFixed(2)}%
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Liquidity ratio
+                              </p>
+                            </div>
+                            
+                            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                              <p className="text-sm text-gray-400 mb-1">Est. Daily Selling Pressure</p>
+                              <p className="text-xl font-bold text-red-400">
+                                ${formatNumber(totalSellingPressure)}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {sellingPressureRatio.toFixed(2)}% of market cap
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Selling Pressure Breakdown */}
+                          <div className="mb-6">
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Selling Pressure Sources</h4>
+                            <div className="space-y-2">
+                              {Object.entries(sellingPressure).map(([source, amount]) => {
+                                const percentage = (amount / totalSellingPressure) * 100;
+                                const displayName = source === 'ico' ? 'ICO Participants' :
+                                                   source === 'team' ? 'Team Vesting' :
+                                                   source === 'investors' ? 'Early Investors' :
+                                                   source === 'community' ? 'Community Trading' :
+                                                   'Market Makers';
+                                
+                                return (
+                                  <div key={source} className="relative">
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="text-xs text-gray-400">{displayName}</span>
+                                      <span className="text-xs font-medium text-gray-300">
+                                        ${formatNumber(amount)} ({percentage.toFixed(0)}%)
+                                      </span>
+                                    </div>
+                                    <div className="w-full bg-gray-700/30 rounded-full h-2">
+                                      <div 
+                                        className={`h-full rounded-full transition-all duration-500 ${
+                                          source === 'ico' ? 'bg-purple-500' :
+                                          source === 'team' ? 'bg-blue-500' :
+                                          source === 'investors' ? 'bg-yellow-500' :
+                                          source === 'community' ? 'bg-green-500' :
+                                          'bg-gray-500'
+                                        }`}
+                                        style={{ width: `${percentage}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          
+                          {/* Visual Pressure Gauge */}
+                          <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Selling Pressure Intensity</h4>
+                            <div className="relative h-32">
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                  <p className={`text-3xl font-bold ${
+                                    sellingPressureRatio > 10 ? 'text-red-400' :
+                                    sellingPressureRatio > 5 ? 'text-yellow-400' :
+                                    'text-green-400'
+                                  }`}>
+                                    {sellingPressureRatio.toFixed(1)}%
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">of Market Cap</p>
+                                </div>
+                              </div>
+                              <Radar
+                                data={{
+                                  labels: ['Liquidity', 'Volume', 'Volatility', 'Distribution', 'Sentiment'],
+                                  datasets: [{
+                                    label: 'Risk Factors',
+                                    data: [
+                                      Math.min((dailyVolume / (circulatingSupply * currentPrice)) * 10, 10),
+                                      Math.min(sellingPressureRatio, 10),
+                                      7.5, // High volatility for meme token
+                                      8.0, // Concentrated distribution risk
+                                      6.0  // Mixed sentiment
+                                    ],
+                                    backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                                    borderColor: 'rgb(168, 85, 247)',
+                                    pointBackgroundColor: 'rgb(168, 85, 247)',
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: 'rgb(168, 85, 247)'
+                                  }]
+                                }}
+                                options={{
+                                  ...chartOptions,
+                                  scales: {
+                                    r: {
+                                      angleLines: {
+                                        color: 'rgba(148, 163, 184, 0.1)'
+                                      },
+                                      grid: {
+                                        color: 'rgba(148, 163, 184, 0.1)'
+                                      },
+                                      pointLabels: {
+                                        color: '#94a3b8',
+                                        font: { size: 10 }
+                                      },
+                                      suggestedMin: 0,
+                                      suggestedMax: 10,
+                                      ticks: {
+                                        stepSize: 2,
+                                        color: '#64748b',
+                                        font: { size: 8 }
+                                      }
+                                    }
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Risk Warning */}
+                          <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
+                            <div className="flex items-start gap-2">
+                              <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                              <div className="text-xs text-gray-300">
+                                <strong>Risk Notice:</strong> The estimated {sellingPressureRatio.toFixed(1)}% daily selling pressure 
+                                relative to market cap indicates {sellingPressureRatio > 10 ? 'extreme' : sellingPressureRatio > 5 ? 'high' : 'moderate'} volatility risk. 
+                                ICO participants (33% allocation) and early investors (13% allocation) represent significant potential selling pressure.
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <AlertCircle className="h-12 w-12 mx-auto mb-3 text-gray-600" />
+                    <p>Unable to load PUMP token data</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <Card className="bg-gray-800/30 border-gray-700">
               <CardHeader>
                 <CardTitle>Platform Statistics</CardTitle>
@@ -1283,7 +1490,7 @@ export default function PumpfunDashboard() {
               <CardContent className="space-y-6">
                 {/* Market Share Collapse Timeline */}
                 <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                  <h3 className="text-base font-semibold text-gray-100 mb-4">Market Dominance Collapse: The 8-Day Implosion</h3>
+                  <h3 className="text-base font-semibold text-gray-100 mb-4">Market Dominance Collapse</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="bg-red-900/20 rounded-lg p-4 border border-red-800/50">
                       <p className="text-sm text-gray-400 mb-1">Previous Dominance</p>
@@ -1356,139 +1563,129 @@ export default function PumpfunDashboard() {
                         <p className="text-xs text-gray-400">July 8</p>
                         <p className="text-xs font-semibold text-yellow-400">35%</p>
                       </div>
+                      <div className="text-center">
+                        <div className="w-3 h-3 bg-green-500 rounded-full mb-2" />
+                        <p className="text-xs text-gray-400">July 15</p>
+                        <p className="text-xs font-semibold text-green-400">33%</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Competition Metrics */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Head-to-Head Metrics (July 2025)</h3>
-                  <div className="space-y-3">
-                    {/* Daily Revenue Comparison */}
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-gray-300">Daily Protocol Revenue</span>
-                        <span className="text-xs text-gray-500">24h Revenue</span>
+                {/* Head-to-Head Metrics - Sleek Visual Design */}
+                <div className="bg-gradient-to-br from-gray-900/80 via-gray-900/90 to-black/80 rounded-xl p-6 border border-gray-700/50">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold text-gray-100">Head-to-Head Metrics (July 2025)</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Daily Protocol Revenue - Enhanced Design */}
+                    <div className="bg-gray-800/60 rounded-lg p-5 border border-gray-700/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-gray-200">Daily Protocol Revenue</span>
+                        <span className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">24h Revenue</span>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-400">Bonk.fun</span>
-                          <span className="text-sm font-bold text-green-400">
-                            ${bonkfunRevenueData?.revenue_usd ? 
-                              formatNumber(bonkfunRevenueData.revenue_usd) : 
-                              pumpfunMetrics.competitorMetrics.bonkfunDailyRevenue.toLocaleString()}
-                          </span>
-                        </div>
-                        {bonkfunRevenueData && (
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>({formatNumber(bonkfunRevenueData.revenue_sol)} SOL)</span>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <span className="text-blue-400 hover:text-blue-300 cursor-pointer">
-                                  via Dune Analytics
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">
-                                  Data by <a href="https://dune.com/adam_tehc" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">adam_tehc</a>
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
+                      <div className="space-y-3">
+                        {/* Bonk.fun Revenue - Winner */}
+                        <div className="flex items-center justify-between p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+                          <div>
+                            <p className="text-sm font-medium text-green-400">Bonk.fun</p>
+                            {bonkfunRevenueData && (
+                              <p className="text-xs text-gray-400">({formatNumber(bonkfunRevenueData.revenue_sol)} SOL)</p>
+                            )}
                           </div>
-                        )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-400">Pump.fun</span>
-                          <span className="text-sm font-bold text-gray-400">
-                            ${pumpfunRevenueData?.revenue_usd ? 
-                              formatNumber(pumpfunRevenueData.revenue_usd) : 
-                              pumpfunMetrics.competitorMetrics.pumpfunDailyRevenue.toLocaleString()}
-                          </span>
-                        </div>
-                        {pumpfunRevenueData && (
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <span>({formatNumber(pumpfunRevenueData.revenue_sol)} SOL)</span>
-                            <span className="text-blue-400">via Dune Analytics</span>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-green-400">
+                              ${bonkfunRevenueData?.revenue_usd ? 
+                                formatNumber(bonkfunRevenueData.revenue_usd) : 
+                                '1,040,000'}
+                            </p>
+                            {bonkfunRevenueData && (
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <span className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">
+                                    via Dune Analytics
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-xs">
+                                    Data by <a href="https://dune.com/adam_tehc" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">adam_tehc</a>
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
                           </div>
-                        )}
-                        <div className="mt-2 pt-2 border-t border-gray-700">
-                          <p className="text-xs text-orange-400">Bonk.fun generates ~2x daily revenue</p>
+                        </div>
+                        
+                        {/* Pump.fun Revenue */}
+                        <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                          <div>
+                            <p className="text-sm font-medium text-gray-300">Pump.fun</p>
+                            {pumpfunRevenueData && (
+                              <p className="text-xs text-gray-500">({formatNumber(pumpfunRevenueData.revenue_sol)} SOL)</p>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-gray-400">
+                              ${pumpfunRevenueData?.revenue_usd ? 
+                                formatNumber(pumpfunRevenueData.revenue_usd) : 
+                                '619,034'}
+                            </p>
+                            {pumpfunRevenueData && (
+                              <span className="text-xs text-blue-400">via Dune Analytics</span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="text-center pt-2">
+                          <p className="text-sm text-orange-400 font-medium">Bonk.fun generates ~2x daily revenue</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* 24H Volume Comparison */}
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-gray-300">24H Trading Volume</span>
-                        <span className="text-xs text-gray-500">DEX Volume</span>
+                    {/* 24H Trading Volume - Enhanced Design */}
+                    <div className="bg-gray-800/60 rounded-lg p-5 border border-gray-700/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-gray-200">24H Trading Volume</span>
+                        <span className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">DEX Volume</span>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {(() => {
-                          const bonkVolume = bonkfunVolumeData?.total_volume_usd_24h || 168000000;
-                          const pumpVolume = pumpfunVolumeData?.total_volume_usd_24h || 92000000;
+                          const bonkVolume = bonkfunVolumeData?.total_volume_usd_24h || 62945301;
+                          const pumpVolume = pumpfunVolumeData?.total_volume_usd_24h || 107371930;
                           const pumpHasHigherVolume = pumpVolume > bonkVolume;
                           
                           return (
                             <>
-                              {/* Show platform with higher volume first */}
-                              {pumpHasHigherVolume ? (
-                                <>
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-green-400">Pump.fun</span>
-                                    <span className="text-sm font-bold text-green-400">
-                                      ${formatNumber(pumpVolume)}
-                                    </span>
-                                  </div>
+                              {/* Pump.fun Volume - Winner */}
+                              <div className="flex items-center justify-between p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+                                <p className="text-sm font-medium text-green-400">Pump.fun</p>
+                                <div className="text-right">
+                                  <p className="text-xl font-bold text-green-400">
+                                    ${formatNumber(pumpVolume)}
+                                  </p>
                                   {pumpfunVolumeData && (
-                                    <div className="text-xs text-gray-500 text-right">
-                                      <span className="text-blue-400">via Dune Analytics</span>
-                                    </div>
+                                    <span className="text-xs text-blue-400">via Dune Analytics</span>
                                   )}
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-400">Bonk.fun</span>
-                                    <span className="text-sm font-bold text-gray-400">
-                                      ${formatNumber(bonkVolume)}
-                                    </span>
-                                  </div>
-                                  {bonkfunVolumeData && (
-                                    <div className="text-xs text-gray-500 text-right">
-                                      <span className="text-blue-400">via Dune Analytics</span>
-                                    </div>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-green-400">Bonk.fun</span>
-                                    <span className="text-sm font-bold text-green-400">
-                                      ${formatNumber(bonkVolume)}
-                                    </span>
-                                  </div>
-                                  {bonkfunVolumeData && (
-                                    <div className="text-xs text-gray-500 text-right">
-                                      <span className="text-blue-400">via Dune Analytics</span>
-                                    </div>
-                                  )}
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-400">Pump.fun</span>
-                                    <span className="text-sm font-bold text-gray-400">
-                                      ${formatNumber(pumpVolume)}
-                                    </span>
-                                  </div>
-                                  {pumpfunVolumeData && (
-                                    <div className="text-xs text-gray-500 text-right">
-                                      <span className="text-blue-400">via Dune Analytics</span>
-                                    </div>
-                                  )}
-                                </>
-                              )}
+                                </div>
+                              </div>
                               
-                              <div className="mt-2 pt-2 border-t border-gray-700">
-                                <p className="text-xs text-orange-400">
-                                  {pumpHasHigherVolume ? 
-                                    `Pump.fun processes ${(pumpVolume / bonkVolume).toFixed(1)}x more volume` :
-                                    `Bonk.fun processes ${(bonkVolume / pumpVolume).toFixed(1)}x more volume`
-                                  }
+                              {/* Bonk.fun Volume */}
+                              <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                                <p className="text-sm font-medium text-gray-300">Bonk.fun</p>
+                                <div className="text-right">
+                                  <p className="text-xl font-bold text-gray-400">
+                                    ${formatNumber(bonkVolume)}
+                                  </p>
+                                  {bonkfunVolumeData && (
+                                    <span className="text-xs text-blue-400">via Dune Analytics</span>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <div className="text-center pt-2">
+                                <p className="text-sm text-blue-400 font-medium">
+                                  Pump.fun processes {(pumpVolume / bonkVolume).toFixed(1)}x more volume
                                 </p>
                               </div>
                             </>
@@ -1497,14 +1694,13 @@ export default function PumpfunDashboard() {
                       </div>
                     </div>
 
-                    {/* Token Launch Activity */}
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-gray-300">Daily Token Launches</span>
+                    {/* Daily Token Launches - Enhanced Design */}
+                    <div className="bg-gray-800/60 rounded-lg p-5 border border-gray-700/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-gray-200">Daily Token Launches</span>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {(() => {
-                          // Get latest launch data from Dune data
                           const latestBonkfun = graduationRatesData?.data?.find((d: any) => 
                             d.platform === 'LetsBonk' && d.block_date === graduationRatesData.data[0].block_date
                           );
@@ -1513,26 +1709,47 @@ export default function PumpfunDashboard() {
                           );
                           
                           const bonkfunLaunches = latestBonkfun ? 
-                            parseInt(latestBonkfun.daily_token_launches) : 
-                            pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches;
+                            parseInt(latestBonkfun.daily_token_launches) : 18571;
                           const pumpfunLaunches = latestPumpfun ? 
-                            parseInt(latestPumpfun.daily_token_launches) : 
-                            pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches;
+                            parseInt(latestPumpfun.daily_token_launches) : 12572;
+                          
+                          const totalLaunches = bonkfunLaunches + pumpfunLaunches;
+                          const bonkPercentage = (bonkfunLaunches / totalLaunches) * 100;
+                          const pumpPercentage = (pumpfunLaunches / totalLaunches) * 100;
                           
                           return (
                             <>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-yellow-400">Bonk.fun</span>
-                                <span className="text-sm font-bold text-yellow-400">{bonkfunLaunches.toLocaleString()} tokens</span>
+                              {/* Bonk.fun Launches - Winner */}
+                              <div className="flex items-center justify-between p-3 bg-yellow-900/20 rounded-lg border border-yellow-800/30">
+                                <p className="text-sm font-medium text-yellow-400">Bonk.fun</p>
+                                <p className="text-xl font-bold text-yellow-400">
+                                  {bonkfunLaunches.toLocaleString()} <span className="text-sm text-gray-400">tokens</span>
+                                </p>
                               </div>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-400">Pump.fun</span>
-                                <span className="text-sm font-bold text-gray-400">{pumpfunLaunches.toLocaleString()} tokens</span>
+                              
+                              {/* Pump.fun Launches */}
+                              <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                                <p className="text-sm font-medium text-gray-300">Pump.fun</p>
+                                <p className="text-xl font-bold text-gray-400">
+                                  {pumpfunLaunches.toLocaleString()} <span className="text-sm text-gray-400">tokens</span>
+                                </p>
                               </div>
-                              <Progress value={(pumpfunLaunches / bonkfunLaunches) * 100} className="h-2 mt-2" />
+                              
+                              {/* Visual Progress Bar */}
+                              <div className="mt-3">
+                                <div className="w-full bg-gray-700/30 rounded-full h-2 overflow-hidden">
+                                  <div className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all duration-500" 
+                                       style={{ width: `${bonkPercentage}%` }} />
+                                </div>
+                                <div className="flex justify-between mt-1">
+                                  <span className="text-xs text-gray-500">Pump.fun: {pumpPercentage.toFixed(0)}%</span>
+                                  <span className="text-xs text-gray-500">Bonk.fun: {bonkPercentage.toFixed(0)}%</span>
+                                </div>
+                              </div>
+                              
                               {graduationRatesData && (
-                                <div className="text-xs text-gray-500 text-right mt-1">
-                                  <span className="text-blue-400">via Dune Analytics</span>
+                                <div className="text-center pt-2">
+                                  <span className="text-xs text-blue-400">via Dune Analytics</span>
                                 </div>
                               )}
                             </>
@@ -1541,22 +1758,21 @@ export default function PumpfunDashboard() {
                       </div>
                     </div>
 
-                    {/* Graduation Rates */}
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-gray-300">Token Graduation Rate</span>
+                    {/* Token Graduation Rate - Enhanced Design */}
+                    <div className="bg-gray-800/60 rounded-lg p-5 border border-gray-700/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-gray-200">Token Graduation Rate</span>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Info className="h-3 w-3 text-gray-500" />
+                            <Info className="h-3 w-3 text-gray-400 hover:text-gray-300" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p className="text-xs">% of tokens reaching $69k market cap</p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {(() => {
-                          // Get latest graduation rates from Dune data
                           const latestBonkfun = graduationRatesData?.data?.find((d: any) => 
                             d.platform === 'LetsBonk' && d.block_date === graduationRatesData.data[0].block_date
                           );
@@ -1565,40 +1781,45 @@ export default function PumpfunDashboard() {
                           );
                           
                           const bonkfunRate = latestBonkfun ? 
-                            (parseFloat(latestBonkfun.graduation_rate) * 100).toFixed(2) : 
-                            pumpfunMetrics.competitorMetrics.graduationRateBonk;
+                            (parseFloat(latestBonkfun.graduation_rate) * 100).toFixed(2) : '1.04';
                           const pumpfunRate = latestPumpfun ? 
-                            (parseFloat(latestPumpfun.graduation_rate) * 100).toFixed(2) : 
-                            pumpfunMetrics.competitorMetrics.graduationRatePump;
+                            (parseFloat(latestPumpfun.graduation_rate) * 100).toFixed(2) : '0.84';
                           
                           return (
                             <>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-green-400">Bonk.fun</span>
-                                <span className="text-sm font-bold text-green-400">{bonkfunRate}%</span>
-                              </div>
-                              {latestBonkfun && (
-                                <div className="flex items-center justify-between text-xs text-gray-500">
-                                  <span>{formatNumber(latestBonkfun.daily_graduations)} graduations</span>
-                                  <span className="text-blue-400">via Dune Analytics</span>
+                              {/* Bonk.fun Graduation Rate - Winner */}
+                              <div className="p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm font-medium text-green-400">Bonk.fun</p>
+                                  <p className="text-xl font-bold text-green-400">{bonkfunRate}%</p>
                                 </div>
-                              )}
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-400">Pump.fun</span>
-                                <span className="text-sm font-bold text-gray-400">{pumpfunRate}%</span>
+                                {latestBonkfun && (
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {formatNumber(latestBonkfun.daily_graduations)} graduations
+                                  </p>
+                                )}
                               </div>
-                              {latestPumpfun && (
-                                <div className="flex items-center justify-between text-xs text-gray-500">
-                                  <span>{formatNumber(latestPumpfun.daily_graduations)} graduations</span>
-                                  <span className="text-blue-400">via Dune Analytics</span>
+                              
+                              {/* Pump.fun Graduation Rate */}
+                              <div className="p-3 bg-gray-800/50 rounded-lg">
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm font-medium text-gray-300">Pump.fun</p>
+                                  <p className="text-xl font-bold text-gray-400">{pumpfunRate}%</p>
                                 </div>
-                              )}
-                              <div className="mt-2 pt-2 border-t border-gray-700">
-                                <p className="text-xs text-blue-400">
-                                  {parseFloat(bonkfunRate) > parseFloat(pumpfunRate) ? 
-                                    'Higher quality ratio on Bonk.fun' : 
-                                    'Similar graduation rates across platforms'}
+                                {latestPumpfun && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {formatNumber(latestPumpfun.daily_graduations)} graduations
+                                  </p>
+                                )}
+                              </div>
+                              
+                              <div className="text-center pt-2">
+                                <p className="text-sm text-purple-400 font-medium">
+                                  Higher quality ratio on Bonk.fun
                                 </p>
+                                {graduationRatesData && (
+                                  <span className="text-xs text-blue-400">via Dune Analytics</span>
+                                )}
                               </div>
                             </>
                           );
