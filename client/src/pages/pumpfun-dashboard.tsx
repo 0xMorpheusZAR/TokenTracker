@@ -1133,38 +1133,62 @@ export default function PumpfunDashboard() {
                   </div>
                 ) : pumpTokenData ? (
                   <div className="space-y-6">
-                    {/* Calculate selling pressure metrics */}
+                    {/* Calculate selling pressure metrics based on actual vesting schedule */}
                     {(() => {
                       const circulatingSupply = pumpTokenData.circulatingSupply || 0;
                       const maxSupply = pumpTokenData.maxSupply || 1000000000; // 1B tokens
                       const currentPrice = pumpTokenData.currentPrice || 0;
                       const dailyVolume = pumpTokenData.totalVolume || 0;
+                      const marketCap = circulatingSupply * currentPrice;
                       
-                      // Token distribution percentages
-                      const distribution = {
-                        ico: 0.33,
-                        community: 0.24,
-                        team: 0.20,
-                        investors: 0.13,
-                        others: 0.10
+                      // Current date for vesting analysis
+                      const currentDate = new Date();
+                      const launchDate = new Date('2025-01-09'); // Approximate launch date
+                      const daysSinceLaunch = Math.floor((currentDate.getTime() - launchDate.getTime()) / (1000 * 60 * 60 * 24));
+                      
+                      // Token allocations based on the vesting chart
+                      const allocations = {
+                        marketSupply: 0.33, // 33% - Immediate circulation (ICO)
+                        team: 0.20, // 20% - Vesting over 24 months with 6-month cliff
+                        existingInvestors: 0.13, // 13% - Strategic investors with gradual unlock
+                        community: 0.24, // 24% - Community & ecosystem (partial immediate, partial vesting)
+                        foundation: 0.02, // 2% - Foundation reserve
+                        treasury: 0.024, // 2.4% - Treasury
+                        ecosystem: 0.026, // 2.6% - Ecosystem fund
+                        livestreaming: 0.03 // 3% - Livestreaming rewards
                       };
                       
-                      // Estimated daily selling pressure by category
+                      // Daily unlock rates based on vesting schedules
+                      const dailyUnlockRates = {
+                        team: daysSinceLaunch > 180 ? (allocations.team * maxSupply) / 540 : 0, // 6-month cliff, then linear over 18 months
+                        existingInvestors: (allocations.existingInvestors * maxSupply) / 365, // Linear unlock over 1 year
+                        community: (allocations.community * maxSupply * 0.5) / 730, // 50% vests over 2 years
+                        ecosystem: (allocations.ecosystem * maxSupply) / 365, // Linear over 1 year
+                        livestreaming: (allocations.livestreaming * maxSupply) / 90 // Distributed over 3 months
+                      };
+                      
+                      // Calculate daily new supply entering market
+                      const dailyNewSupply = Object.values(dailyUnlockRates).reduce((a, b) => a + b, 0);
+                      const dailyNewSupplyValue = dailyNewSupply * currentPrice;
+                      
+                      // Estimated selling pressure by holder type
                       const sellingPressure = {
-                        ico: dailyVolume * 0.30, // ICO participants may sell 30% of daily volume
-                        team: dailyVolume * 0.05, // Team vesting with 5% pressure
-                        investors: dailyVolume * 0.15, // Early investors taking profits
-                        community: dailyVolume * 0.25, // Community trading activity
-                        marketMakers: dailyVolume * 0.25 // Market makers & arbitrage
+                        marketSupply: dailyVolume * 0.25, // ICO participants and early traders
+                        teamUnlocks: dailyUnlockRates.team * currentPrice * 0.20, // 20% of team unlocks sold
+                        investorUnlocks: dailyUnlockRates.existingInvestors * currentPrice * 0.40, // 40% of investor unlocks sold
+                        communityActivity: dailyVolume * 0.20, // General community trading
+                        ecosystemGrants: dailyUnlockRates.ecosystem * currentPrice * 0.30, // 30% of ecosystem unlocks
+                        marketMakers: dailyVolume * 0.15 // Market makers & arbitrage
                       };
                       
                       const totalSellingPressure = Object.values(sellingPressure).reduce((a, b) => a + b, 0);
-                      const sellingPressureRatio = (totalSellingPressure / (circulatingSupply * currentPrice)) * 100;
+                      const sellingPressureRatio = (totalSellingPressure / marketCap) * 100;
+                      const newSupplyPressureRatio = (dailyNewSupplyValue / marketCap) * 100;
                       
                       return (
                         <>
                           {/* Key Metrics Grid */}
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                             <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
                               <p className="text-sm text-gray-400 mb-1">Circulating Supply</p>
                               <p className="text-xl font-bold text-gray-100">
@@ -1176,9 +1200,19 @@ export default function PumpfunDashboard() {
                             </div>
                             
                             <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                              <p className="text-sm text-gray-400 mb-1">Daily New Supply</p>
+                              <p className="text-xl font-bold text-yellow-400">
+                                {formatNumber(dailyNewSupply)}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {newSupplyPressureRatio.toFixed(3)}% of market cap
+                              </p>
+                            </div>
+                            
+                            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
                               <p className="text-sm text-gray-400 mb-1">24h Volume/Market Cap</p>
                               <p className="text-xl font-bold text-purple-400">
-                                {((dailyVolume / (circulatingSupply * currentPrice)) * 100).toFixed(2)}%
+                                {((dailyVolume / marketCap) * 100).toFixed(2)}%
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
                                 Liquidity ratio
@@ -1196,22 +1230,49 @@ export default function PumpfunDashboard() {
                             </div>
                           </div>
                           
+                          {/* Vesting Schedule Status */}
+                          <div className="mb-6">
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Vesting Schedule Status</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                              <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                                <p className="text-xs text-gray-400 mb-1">Days Since Launch</p>
+                                <p className="text-lg font-bold text-gray-100">{daysSinceLaunch} days</p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Team cliff: {daysSinceLaunch > 180 ? 'Unlocking' : `${180 - daysSinceLaunch} days remaining`}
+                                </p>
+                              </div>
+                              <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                                <p className="text-xs text-gray-400 mb-1">Daily Token Unlocks</p>
+                                <p className="text-lg font-bold text-yellow-400">{formatNumber(dailyNewSupply)}</p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  ${formatNumber(dailyNewSupplyValue)} value
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
                           {/* Selling Pressure Breakdown */}
                           <div className="mb-6">
-                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Selling Pressure Sources</h4>
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Estimated Daily Selling Pressure by Source</h4>
                             <div className="space-y-2">
                               {Object.entries(sellingPressure).map(([source, amount]) => {
                                 const percentage = (amount / totalSellingPressure) * 100;
-                                const displayName = source === 'ico' ? 'ICO Participants' :
-                                                   source === 'team' ? 'Team Vesting' :
-                                                   source === 'investors' ? 'Early Investors' :
-                                                   source === 'community' ? 'Community Trading' :
-                                                   'Market Makers';
+                                const displayName = source === 'marketSupply' ? 'Market Supply (ICO/Trading)' :
+                                                   source === 'teamUnlocks' ? 'Team Vesting Unlocks' :
+                                                   source === 'investorUnlocks' ? 'Strategic Investor Unlocks' :
+                                                   source === 'communityActivity' ? 'Community Trading Activity' :
+                                                   source === 'ecosystemGrants' ? 'Ecosystem Grant Unlocks' :
+                                                   'Market Makers & Arbitrage';
+                                
+                                const isUnlock = source.includes('Unlocks') || source.includes('Grants');
                                 
                                 return (
                                   <div key={source} className="relative">
                                     <div className="flex justify-between items-center mb-1">
-                                      <span className="text-xs text-gray-400">{displayName}</span>
+                                      <span className="text-xs text-gray-400">
+                                        {displayName}
+                                        {isUnlock && <span className="ml-1 text-yellow-500">(New Supply)</span>}
+                                      </span>
                                       <span className="text-xs font-medium text-gray-300">
                                         ${formatNumber(amount)} ({percentage.toFixed(0)}%)
                                       </span>
@@ -1219,10 +1280,11 @@ export default function PumpfunDashboard() {
                                     <div className="w-full bg-gray-700/30 rounded-full h-2">
                                       <div 
                                         className={`h-full rounded-full transition-all duration-500 ${
-                                          source === 'ico' ? 'bg-purple-500' :
-                                          source === 'team' ? 'bg-blue-500' :
-                                          source === 'investors' ? 'bg-yellow-500' :
-                                          source === 'community' ? 'bg-green-500' :
+                                          source === 'marketSupply' ? 'bg-purple-500' :
+                                          source === 'teamUnlocks' ? 'bg-blue-500' :
+                                          source === 'investorUnlocks' ? 'bg-red-500' :
+                                          source === 'communityActivity' ? 'bg-green-500' :
+                                          source === 'ecosystemGrants' ? 'bg-yellow-500' :
                                           'bg-gray-500'
                                         }`}
                                         style={{ width: `${percentage}%` }}
@@ -1301,14 +1363,58 @@ export default function PumpfunDashboard() {
                             </div>
                           </div>
                           
+                          {/* Token Unlock Timeline */}
+                          <div className="mb-6">
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Major Unlock Events Timeline</h4>
+                            <div className="space-y-3 text-xs">
+                              <div className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${daysSinceLaunch >= 0 ? 'bg-green-500' : 'bg-gray-500'}`} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-300">TGE (Jan 9, 2025)</p>
+                                  <p className="text-gray-500">33% ICO allocation + partial community unlock</p>
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${daysSinceLaunch >= 90 ? 'bg-green-500' : 'bg-gray-500'}`} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-300">3 Months (Apr 2025)</p>
+                                  <p className="text-gray-500">Livestreaming rewards fully distributed</p>
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${daysSinceLaunch >= 180 ? 'bg-yellow-500' : 'bg-gray-500'}`} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-300">6 Months (Jul 2025)</p>
+                                  <p className="text-gray-500">Team tokens begin unlocking (20% over 18 months)</p>
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${daysSinceLaunch >= 365 ? 'bg-red-500' : 'bg-gray-500'}`} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-300">12 Months (Jan 2026)</p>
+                                  <p className="text-gray-500">Strategic investors fully vested (13%)</p>
+                                </div>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1 ${daysSinceLaunch >= 730 ? 'bg-purple-500' : 'bg-gray-500'}`} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-300">24 Months (Jan 2027)</p>
+                                  <p className="text-gray-500">All vesting complete, full circulation achieved</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
                           {/* Risk Warning */}
                           <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-800/50 rounded-lg">
                             <div className="flex items-start gap-2">
                               <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
                               <div className="text-xs text-gray-300">
-                                <strong>Risk Notice:</strong> The estimated {sellingPressureRatio.toFixed(1)}% daily selling pressure 
-                                relative to market cap indicates {sellingPressureRatio > 10 ? 'extreme' : sellingPressureRatio > 5 ? 'high' : 'moderate'} volatility risk. 
-                                ICO participants (33% allocation) and early investors (13% allocation) represent significant potential selling pressure.
+                                <strong>Risk Analysis:</strong> Daily selling pressure of {sellingPressureRatio.toFixed(1)}% relative to market cap indicates {sellingPressureRatio > 10 ? 'extreme' : sellingPressureRatio > 5 ? 'high' : 'moderate'} volatility risk.
+                                {daysSinceLaunch < 180 ? ' Team tokens remain locked for ' + (180 - daysSinceLaunch) + ' more days, reducing immediate unlock pressure.' : 
+                                 ' Team tokens are now unlocking daily, adding ' + formatNumber(dailyUnlockRates.team) + ' tokens to potential selling pressure.'}
+                                {' Strategic investors are '}
+                                {daysSinceLaunch >= 365 ? 'fully vested.' : 'unlocking ' + formatNumber(dailyUnlockRates.existingInvestors) + ' tokens daily.'}
                               </div>
                             </div>
                           </div>
