@@ -156,6 +156,7 @@ Changelog:
 - July 14, 2025: Integrated Dune Analytics API for on-chain blockchain data querying - Added comprehensive service for Hyperliquid dashboard metrics from x3research, includes volume/liquidity metrics, user analytics, trading metrics, asset performance data, and custom query execution capabilities
 - July 14, 2025: Enhanced README.md with comprehensive documentation including Dune Analytics integration guide, API endpoints documentation, and setup instructions for GitHub deployment
 - July 16, 2025: Removed /hyperliquid-dune dashboard page per user request, maintaining Dune Analytics API integration for other dashboard features
+- July 16, 2025: Enhanced interactive dashboard to display live CoinGecko pricing data with 24h price changes for all tokens in both grid and table views
 ```
 
 ## User Preferences

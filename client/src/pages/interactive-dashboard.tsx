@@ -556,6 +556,11 @@ export default function InteractiveDashboard() {
                     <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Current Price</div>
                     <div className={`text-lg font-semibold ${getPerformanceColor(token.performancePercent)}`}>
                       ${formatPrice(token.currentPrice)}
+                      {token.priceChange24h !== undefined && (
+                        <span className={`text-xs ml-2 ${token.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          ({token.priceChange24h >= 0 ? '+' : ''}{token.priceChange24h.toFixed(1)}%)
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="bg-black/30 p-3 rounded-lg border border-gray-800">
@@ -615,7 +620,14 @@ export default function InteractiveDashboard() {
                       <td className="p-4 text-sm">{token.exchange}</td>
                       <td className="p-4 text-right">${formatPrice(token.listingPrice)}</td>
                       <td className={`p-4 text-right ${getPerformanceColor(token.performancePercent)}`}>
-                        ${formatPrice(token.currentPrice)}
+                        <div>
+                          ${formatPrice(token.currentPrice)}
+                          {token.priceChange24h !== undefined && (
+                            <div className={`text-xs ${token.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {token.priceChange24h >= 0 ? '+' : ''}{token.priceChange24h.toFixed(1)}%
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className={`p-4 text-right font-bold ${getPerformanceColor(token.performancePercent)}`}>
                         {token.performancePercent}%
