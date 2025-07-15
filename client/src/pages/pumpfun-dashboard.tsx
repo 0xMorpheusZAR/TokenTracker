@@ -739,7 +739,7 @@ export default function PumpfunDashboard() {
                     <CardContent>
                       <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-400">
                         <AnimatedValue 
-                          value={pumpTokenData?.fullyDilutedValuation ? (pumpTokenData.fullyDilutedValuation / 719840000).toFixed(2) : 7.45} 
+                          value={pumpTokenData?.fully_diluted_valuation ? parseFloat((pumpTokenData.fully_diluted_valuation / 719840000).toFixed(2)) : 7.45} 
                           suffix="x"
                           format="number"
                         />
@@ -1296,7 +1296,7 @@ export default function PumpfunDashboard() {
                     <div className="p-4 bg-gray-900/50 rounded-lg">
                       <p className="text-sm text-gray-400 mb-1">Current Valuation/Revenue</p>
                       <p className="text-xl font-bold text-purple-400">
-                        {pumpTokenData?.fullyDilutedValuation ? (pumpTokenData.fullyDilutedValuation / 719840000).toFixed(1) : '7.5'}x
+                        {pumpTokenData?.fully_diluted_valuation ? (pumpTokenData.fully_diluted_valuation / 719840000).toFixed(1) : '7.5'}x
                       </p>
                       <p className="text-xs text-gray-500 mt-1">Based on $719.8M total revenue</p>
                     </div>
@@ -1849,11 +1849,20 @@ export default function PumpfunDashboard() {
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-start gap-2">
                           <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
-                          <span className="text-gray-300">86% revenue decline from February peak ($14M to ~$1M daily)</span>
+                          <span className="text-gray-300">95% revenue decline from February peak ($14M to ~$619k daily)</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
-                          <span className="text-gray-300">Market share loss from ~100% to 45% in under 10 days</span>
+                          <span className="text-gray-300">Market share loss from ~100% to {marketShareData?.data && marketShareData.data.length > 0 ? 
+                            (() => {
+                              const latestDate = marketShareData.data[0].dt;
+                              const latestData = marketShareData.data.filter((d: any) => d.dt === latestDate);
+                              const bonkVolume = parseFloat(latestData.find((d: any) => d.category === 'bonk')?.volume_usd || '0');
+                              const pumpVolume = parseFloat(latestData.find((d: any) => d.category === 'pumpdotfun')?.volume_usd || '0');
+                              const totalVolume = bonkVolume + pumpVolume;
+                              const pumpShare = totalVolume > 0 ? Math.round((pumpVolume / totalVolume) * 100) : 0;
+                              return pumpShare;
+                            })() : '33'}% in under 10 days</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <AlertCircle className="h-4 w-4 text-red-400 mt-0.5" />
@@ -1876,7 +1885,7 @@ export default function PumpfunDashboard() {
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-start gap-2">
                           <Info className="h-4 w-4 text-blue-400 mt-0.5" />
-                          <span className="text-gray-300">Current: {pumpTokenData?.fullyDilutedValuation ? (pumpTokenData.fullyDilutedValuation / 719840000).toFixed(1) : '7.5'}x revenue multiple</span>
+                          <span className="text-gray-300">Current: {pumpTokenData?.fully_diluted_valuation ? (pumpTokenData.fully_diluted_valuation / 719840000).toFixed(1) : '7.5'}x revenue multiple</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Info className="h-4 w-4 text-blue-400 mt-0.5" />
@@ -1923,7 +1932,7 @@ export default function PumpfunDashboard() {
                       <p className="text-sm font-medium mb-1">Revenue Foundation</p>
                       <p className="text-xs text-gray-400">$719.84M total revenue generated</p>
                       <p className="text-xs text-gray-400">$835.16M total fees collected</p>
-                      <p className="text-xs text-gray-400">Current: {pumpTokenData?.fullyDilutedValuation ? (pumpTokenData.fullyDilutedValuation / 719840000).toFixed(1) : '7.5'}x revenue multiple</p>
+                      <p className="text-xs text-gray-400">Current: {pumpTokenData?.fully_diluted_valuation ? (pumpTokenData.fully_diluted_valuation / 719840000).toFixed(1) : '7.5'}x revenue multiple</p>
                       <p className="text-xs text-gray-400">"Cheap for crypto standards (50-100x typical)"</p>
                     </div>
                     
