@@ -170,7 +170,6 @@ Changelog:
 - July 16, 2025: Integrated market share data from Dune Analytics Query #5468582, calculating real-time volume-based market share percentages between Pump.fun and Bonk.fun platforms with dynamic updates every 10 minutes - shows Bonk.fun at 67% market share based on latest volume data
 - July 16, 2025: Fixed 24H Trading Volume comparison display to dynamically sort platforms by actual volume with the higher volume platform appearing first in green, corrected comparison calculation to accurately show which platform processes more volume
 - July 16, 2025: Updated Market Dominance Collapse timeline to extend through July 15th, removed "The 8-Day Implosion" subtitle for cleaner presentation while maintaining timeline visualization with 4 data points showing progression from 95-100% to 33% market share
-- July 16, 2025: Added comprehensive Daily Selling Pressure Analysis to /pumpfun dashboard featuring real-time PUMP token data integration - calculates estimated daily selling pressure based on token distribution (33% ICO, 20% team, 13% investors), displays pressure breakdown by source with visual progress bars, shows risk assessment with color-coded indicators, replaced Radar chart with simpler risk factor visualization to avoid Chart.js scale registration issues
 ```
 
 ## User Preferences
