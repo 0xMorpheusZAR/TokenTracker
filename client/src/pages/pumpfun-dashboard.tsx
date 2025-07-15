@@ -85,7 +85,7 @@ export default function PumpfunDashboard() {
   const [trumpImpactData, setTrumpImpactData] = useState<any>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch Bonk.fun revenue data from Dune Analytics
+  // Fetch Bonk.fun revenue data from Dune Analytics with 10 minute refresh
   const { data: bonkfunRevenueData, isLoading: loadingBonkfunRevenue } = useQuery({
     queryKey: ['/api/dune/bonkfun/revenue'],
     queryFn: async () => {
@@ -93,9 +93,11 @@ export default function PumpfunDashboard() {
       if (!response.ok) throw new Error('Failed to fetch Bonk.fun revenue from Dune');
       return response.json();
     },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
   });
 
-  // Fetch Pump.fun revenue data from Dune Analytics
+  // Fetch Pump.fun revenue data from Dune Analytics with 10 minute refresh
   const { data: pumpfunRevenueData, isLoading: loadingPumpfunRevenue } = useQuery({
     queryKey: ['/api/dune/pumpfun/revenue'],
     queryFn: async () => {
@@ -103,6 +105,8 @@ export default function PumpfunDashboard() {
       if (!response.ok) throw new Error('Failed to fetch Pump.fun revenue from Dune');
       return response.json();
     },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
   });
 
   // Fetch Pump.fun volume data from Dune Analytics
