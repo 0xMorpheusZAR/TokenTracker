@@ -969,6 +969,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/dune/graduation-rates", async (req, res) => {
+    try {
+      const graduationData = await duneService.getGraduationRates();
+      if (!graduationData) {
+        return res.status(500).json({ error: "Failed to fetch graduation rates data" });
+      }
+      res.json({
+        data: graduationData,
+        source: "Dune Analytics",
+        queryId: 5129526
+      });
+    } catch (error) {
+      console.error("Failed to fetch graduation rates:", error);
+      res.status(500).json({ error: "Failed to fetch graduation rates data" });
+    }
+  });
+
+  app.get("/api/dune/market-share", async (req, res) => {
+    try {
+      const marketShareData = await duneService.getMarketShare();
+      if (!marketShareData) {
+        return res.status(500).json({ error: "Failed to fetch market share data" });
+      }
+      res.json({
+        data: marketShareData,
+        source: "Dune Analytics",
+        queryId: 5468582
+      });
+    } catch (error) {
+      console.error("Failed to fetch market share:", error);
+      res.status(500).json({ error: "Failed to fetch market share data" });
+    }
+  });
+
   app.post("/api/dune/query/:queryId/execute", async (req, res) => {
     try {
       const { queryId } = req.params;

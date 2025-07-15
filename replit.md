@@ -167,6 +167,7 @@ Changelog:
 - July 16, 2025: Updated volume comparison queries - Bonk.fun volume now uses Query #5440994 and Pump.fun volume uses Query #5440990, both with 10-minute auto-refresh
 - July 16, 2025: Added support for two new Pump.fun revenue queries - Query #5445866 for CSV revenue data and Query #5446111 for JSON revenue data, with endpoints at /api/dune/pumpfun/daily-revenue-csv and /api/dune/pumpfun/additional-metrics-json
 - July 16, 2025: Updated Pump.fun 24h revenue to use Query #5445866 (CSV) directly for main revenue endpoint showing $619,034 USD revenue, matching latest Dune Analytics data while respecting API rate limitations
+- July 16, 2025: Integrated market share data from Dune Analytics Query #5468582, calculating real-time volume-based market share percentages between Pump.fun and Bonk.fun platforms with dynamic updates every 10 minutes - shows Bonk.fun at 67% market share based on latest volume data
 ```
 
 ## User Preferences

@@ -163,6 +163,30 @@ export default function PumpfunDashboard() {
     },
   });
 
+  // Fetch graduation rates data from Dune Analytics with 10 minute refresh
+  const { data: graduationRatesData, isLoading: loadingGraduationRates } = useQuery({
+    queryKey: ['/api/dune/graduation-rates'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/graduation-rates');
+      if (!response.ok) throw new Error('Failed to fetch graduation rates from Dune');
+      return response.json();
+    },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
+  });
+
+  // Fetch market share data from Dune Analytics with 10 minute refresh
+  const { data: marketShareData, isLoading: loadingMarketShare } = useQuery({
+    queryKey: ['/api/dune/market-share'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/market-share');
+      if (!response.ok) throw new Error('Failed to fetch market share from Dune');
+      return response.json();
+    },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
+  });
+
   // Chart configuration
   const chartOptions: ChartOptions<any> = {
     responsive: true,
@@ -1268,13 +1292,48 @@ export default function PumpfunDashboard() {
                     </div>
                     <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-800/50">
                       <p className="text-sm text-gray-400 mb-1">Current Market Share</p>
-                      <p className="text-2xl font-bold text-orange-400">{pumpfunMetrics.competitorMetrics.pumpfunMarketShare}%</p>
+                      <p className="text-2xl font-bold text-orange-400">
+                        {(() => {
+                          if (marketShareData?.data && marketShareData.data.length > 0) {
+                            const latestDate = marketShareData.data[0].dt;
+                            const latestData = marketShareData.data.filter((d: any) => d.dt === latestDate);
+                            
+                            const bonkVolume = parseFloat(latestData.find((d: any) => d.category === 'bonk')?.volume_usd || '0');
+                            const pumpVolume = parseFloat(latestData.find((d: any) => d.category === 'pumpdotfun')?.volume_usd || '0');
+                            const totalVolume = bonkVolume + pumpVolume;
+                            
+                            const pumpShare = totalVolume > 0 ? Math.round((pumpVolume / totalVolume) * 100) : 0;
+                            return `${pumpShare}%`;
+                          }
+                          return `${pumpfunMetrics.competitorMetrics.pumpfunMarketShare}%`;
+                        })()}
+                      </p>
                       <p className="text-xs text-gray-500 mt-1">Lost in {pumpfunMetrics.competitorMetrics.marketShareCollapseTime} days</p>
                     </div>
                     <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/50">
                       <p className="text-sm text-gray-400 mb-1">Bonk.fun Market Share</p>
-                      <p className="text-2xl font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunMarketShare}%</p>
-                      <p className="text-xs text-gray-500 mt-1">By volume (July 2025)</p>
+                      <p className="text-2xl font-bold text-yellow-400">
+                        {(() => {
+                          if (marketShareData?.data && marketShareData.data.length > 0) {
+                            const latestDate = marketShareData.data[0].dt;
+                            const latestData = marketShareData.data.filter((d: any) => d.dt === latestDate);
+                            
+                            const bonkVolume = parseFloat(latestData.find((d: any) => d.category === 'bonk')?.volume_usd || '0');
+                            const pumpVolume = parseFloat(latestData.find((d: any) => d.category === 'pumpdotfun')?.volume_usd || '0');
+                            const totalVolume = bonkVolume + pumpVolume;
+                            
+                            const bonkShare = totalVolume > 0 ? Math.round((bonkVolume / totalVolume) * 100) : 0;
+                            return `${bonkShare}%`;
+                          }
+                          return `${pumpfunMetrics.competitorMetrics.bonkfunMarketShare}%`;
+                        })()}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        By volume (July 2025)
+                        {marketShareData && (
+                          <span className="text-blue-400 ml-2">via Dune Analytics</span>
+                        )}
+                      </p>
                     </div>
                   </div>
                   
@@ -1409,15 +1468,41 @@ export default function PumpfunDashboard() {
                         </Badge>
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-yellow-400">Bonk.fun</span>
-                          <span className="text-sm font-bold text-yellow-400">{pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches.toLocaleString()} tokens</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-400">Pump.fun</span>
-                          <span className="text-sm font-bold text-gray-400">{pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches.toLocaleString()} tokens</span>
-                        </div>
-                        <Progress value={(pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches / pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches) * 100} className="h-2 mt-2" />
+                        {(() => {
+                          // Get latest launch data from Dune data
+                          const latestBonkfun = graduationRatesData?.data?.find((d: any) => 
+                            d.platform === 'LetsBonk' && d.block_date === graduationRatesData.data[0].block_date
+                          );
+                          const latestPumpfun = graduationRatesData?.data?.find((d: any) => 
+                            d.platform === 'Pumpdotfun' && d.block_date === graduationRatesData.data[0].block_date
+                          );
+                          
+                          const bonkfunLaunches = latestBonkfun ? 
+                            parseInt(latestBonkfun.daily_token_launches) : 
+                            pumpfunMetrics.competitorMetrics.bonkfunDailyLaunches;
+                          const pumpfunLaunches = latestPumpfun ? 
+                            parseInt(latestPumpfun.daily_token_launches) : 
+                            pumpfunMetrics.competitorMetrics.pumpfunDailyLaunches;
+                          
+                          return (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-yellow-400">Bonk.fun</span>
+                                <span className="text-sm font-bold text-yellow-400">{bonkfunLaunches.toLocaleString()} tokens</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-400">Pump.fun</span>
+                                <span className="text-sm font-bold text-gray-400">{pumpfunLaunches.toLocaleString()} tokens</span>
+                              </div>
+                              <Progress value={(pumpfunLaunches / bonkfunLaunches) * 100} className="h-2 mt-2" />
+                              {graduationRatesData && (
+                                <div className="text-xs text-gray-500 text-right mt-1">
+                                  <span className="text-blue-400">via Dune Analytics</span>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -1435,17 +1520,54 @@ export default function PumpfunDashboard() {
                         </Tooltip>
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-400">Bonk.fun</span>
-                          <span className="text-sm font-bold text-green-400">{pumpfunMetrics.competitorMetrics.graduationRateBonk}%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-400">Pump.fun</span>
-                          <span className="text-sm font-bold text-gray-400">{pumpfunMetrics.competitorMetrics.graduationRatePump}%</span>
-                        </div>
-                        <div className="mt-2 pt-2 border-t border-gray-700">
-                          <p className="text-xs text-blue-400">Higher quality ratio on Bonk.fun</p>
-                        </div>
+                        {(() => {
+                          // Get latest graduation rates from Dune data
+                          const latestBonkfun = graduationRatesData?.data?.find((d: any) => 
+                            d.platform === 'LetsBonk' && d.block_date === graduationRatesData.data[0].block_date
+                          );
+                          const latestPumpfun = graduationRatesData?.data?.find((d: any) => 
+                            d.platform === 'Pumpdotfun' && d.block_date === graduationRatesData.data[0].block_date
+                          );
+                          
+                          const bonkfunRate = latestBonkfun ? 
+                            (parseFloat(latestBonkfun.graduation_rate) * 100).toFixed(2) : 
+                            pumpfunMetrics.competitorMetrics.graduationRateBonk;
+                          const pumpfunRate = latestPumpfun ? 
+                            (parseFloat(latestPumpfun.graduation_rate) * 100).toFixed(2) : 
+                            pumpfunMetrics.competitorMetrics.graduationRatePump;
+                          
+                          return (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-green-400">Bonk.fun</span>
+                                <span className="text-sm font-bold text-green-400">{bonkfunRate}%</span>
+                              </div>
+                              {latestBonkfun && (
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span>{formatNumber(latestBonkfun.daily_graduations)} graduations</span>
+                                  <span className="text-blue-400">via Dune Analytics</span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-400">Pump.fun</span>
+                                <span className="text-sm font-bold text-gray-400">{pumpfunRate}%</span>
+                              </div>
+                              {latestPumpfun && (
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span>{formatNumber(latestPumpfun.daily_graduations)} graduations</span>
+                                  <span className="text-blue-400">via Dune Analytics</span>
+                                </div>
+                              )}
+                              <div className="mt-2 pt-2 border-t border-gray-700">
+                                <p className="text-xs text-blue-400">
+                                  {parseFloat(bonkfunRate) > parseFloat(pumpfunRate) ? 
+                                    'Higher quality ratio on Bonk.fun' : 
+                                    'Similar graduation rates across platforms'}
+                                </p>
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
