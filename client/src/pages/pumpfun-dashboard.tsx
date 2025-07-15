@@ -1423,39 +1423,77 @@ export default function PumpfunDashboard() {
                         <span className="text-xs text-gray-500">DEX Volume</span>
                       </div>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-green-400">Bonk.fun</span>
-                          <span className="text-sm font-bold text-green-400">
-                            ${bonkfunVolumeData?.total_volume_usd_24h ? 
-                              formatNumber(bonkfunVolumeData.total_volume_usd_24h) : 
-                              '168M'}
-                          </span>
-                        </div>
-                        {bonkfunVolumeData && (
-                          <div className="text-xs text-gray-500 text-right">
-                            <span className="text-blue-400">via Dune Analytics</span>
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-400">Pump.fun</span>
-                          <span className="text-sm font-bold text-gray-400">
-                            ${pumpfunVolumeData?.total_volume_usd_24h ? 
-                              formatNumber(pumpfunVolumeData.total_volume_usd_24h) : 
-                              '92M'}
-                          </span>
-                        </div>
-                        {pumpfunVolumeData && (
-                          <div className="text-xs text-gray-500 text-right">
-                            <span className="text-blue-400">via Dune Analytics</span>
-                          </div>
-                        )}
-                        <div className="mt-2 pt-2 border-t border-gray-700">
-                          <p className="text-xs text-orange-400">
-                            Bonk.fun processes {bonkfunVolumeData && pumpfunVolumeData ? 
-                              `${((bonkfunVolumeData.total_volume_usd_24h / pumpfunVolumeData.total_volume_usd_24h) || 1.8).toFixed(1)}x` : 
-                              '~1.8x'} more volume
-                          </p>
-                        </div>
+                        {(() => {
+                          const bonkVolume = bonkfunVolumeData?.total_volume_usd_24h || 168000000;
+                          const pumpVolume = pumpfunVolumeData?.total_volume_usd_24h || 92000000;
+                          const pumpHasHigherVolume = pumpVolume > bonkVolume;
+                          
+                          return (
+                            <>
+                              {/* Show platform with higher volume first */}
+                              {pumpHasHigherVolume ? (
+                                <>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-green-400">Pump.fun</span>
+                                    <span className="text-sm font-bold text-green-400">
+                                      ${formatNumber(pumpVolume)}
+                                    </span>
+                                  </div>
+                                  {pumpfunVolumeData && (
+                                    <div className="text-xs text-gray-500 text-right">
+                                      <span className="text-blue-400">via Dune Analytics</span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-400">Bonk.fun</span>
+                                    <span className="text-sm font-bold text-gray-400">
+                                      ${formatNumber(bonkVolume)}
+                                    </span>
+                                  </div>
+                                  {bonkfunVolumeData && (
+                                    <div className="text-xs text-gray-500 text-right">
+                                      <span className="text-blue-400">via Dune Analytics</span>
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-green-400">Bonk.fun</span>
+                                    <span className="text-sm font-bold text-green-400">
+                                      ${formatNumber(bonkVolume)}
+                                    </span>
+                                  </div>
+                                  {bonkfunVolumeData && (
+                                    <div className="text-xs text-gray-500 text-right">
+                                      <span className="text-blue-400">via Dune Analytics</span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-400">Pump.fun</span>
+                                    <span className="text-sm font-bold text-gray-400">
+                                      ${formatNumber(pumpVolume)}
+                                    </span>
+                                  </div>
+                                  {pumpfunVolumeData && (
+                                    <div className="text-xs text-gray-500 text-right">
+                                      <span className="text-blue-400">via Dune Analytics</span>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                              
+                              <div className="mt-2 pt-2 border-t border-gray-700">
+                                <p className="text-xs text-orange-400">
+                                  {pumpHasHigherVolume ? 
+                                    `Pump.fun processes ${(pumpVolume / bonkVolume).toFixed(1)}x more volume` :
+                                    `Bonk.fun processes ${(bonkVolume / pumpVolume).toFixed(1)}x more volume`
+                                  }
+                                </p>
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
