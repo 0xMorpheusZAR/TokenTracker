@@ -1534,16 +1534,22 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-xs text-gray-500">Market Cap</p>
                       <p className="text-sm font-medium text-gray-300">
-                        ${formatNumber(pumpTokenData?.marketCap || 600000000)}
+                        ${formatNumber(pumpTokenData?.marketCap || 0)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">FDV</p>
-                      <p className="text-sm font-medium text-gray-300">$4.0B</p>
+                      <p className="text-sm font-medium text-gray-300">
+                        ${formatNumber(pumpTokenData?.fullyDilutedValuation || 0)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Circulating</p>
-                      <p className="text-sm font-medium text-gray-300">15%</p>
+                      <p className="text-sm font-medium text-gray-300">
+                        {pumpTokenData?.circulatingSupply && pumpTokenData?.maxSupply 
+                          ? `${((pumpTokenData.circulatingSupply / pumpTokenData.maxSupply) * 100).toFixed(1)}%`
+                          : 'N/A'}
+                      </p>
                     </div>
                   </div>
                 </div>
