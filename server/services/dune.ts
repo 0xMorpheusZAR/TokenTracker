@@ -74,13 +74,13 @@ const HYPERLIQUID_QUERIES = {
 // Dashboard URL: https://dune.com/adam_tehc
 const BONKFUN_QUERIES = {
   REVENUE_24H: 5431407, // Query for Bonk.fun 24h revenue in SOL and USD
-  VOLUME_24H: 5436125 // Query for Bonk.fun 24h volume in USD
+  VOLUME_24H: 5440994 // Query for Bonk.fun 24h volume in USD (updated)
 };
 
 // Pump.fun queries
 const PUMPFUN_QUERIES = {
   REVENUE_24H: 5436123, // Query for Pump.fun 24h revenue in SOL and USD
-  VOLUME_24H: 5436124 // Query for Pump.fun 24h volume in USD
+  VOLUME_24H: 5440990 // Query for Pump.fun 24h volume in USD (updated)
 };
 
 export class DuneService {

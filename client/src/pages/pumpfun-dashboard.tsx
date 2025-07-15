@@ -109,7 +109,7 @@ export default function PumpfunDashboard() {
     refetchIntervalInBackground: true,
   });
 
-  // Fetch Pump.fun volume data from Dune Analytics
+  // Fetch Pump.fun volume data from Dune Analytics with 10 minute refresh
   const { data: pumpfunVolumeData, isLoading: loadingPumpfunVolume } = useQuery({
     queryKey: ['/api/dune/pumpfun/volume'],
     queryFn: async () => {
@@ -117,9 +117,11 @@ export default function PumpfunDashboard() {
       if (!response.ok) throw new Error('Failed to fetch Pump.fun volume from Dune');
       return response.json();
     },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
   });
 
-  // Fetch Bonk.fun volume data from Dune Analytics
+  // Fetch Bonk.fun volume data from Dune Analytics with 10 minute refresh
   const { data: bonkfunVolumeData, isLoading: loadingBonkfunVolume } = useQuery({
     queryKey: ['/api/dune/bonkfun/volume'],
     queryFn: async () => {
@@ -127,6 +129,8 @@ export default function PumpfunDashboard() {
       if (!response.ok) throw new Error('Failed to fetch Bonk.fun volume from Dune');
       return response.json();
     },
+    refetchInterval: 10 * 60 * 1000, // Refresh every 10 minutes
+    refetchIntervalInBackground: true,
   });
 
   // Fetch live Pump.fun token data from CoinGecko
