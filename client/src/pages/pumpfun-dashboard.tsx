@@ -1280,6 +1280,18 @@ export default function PumpfunDashboard() {
                 <CardDescription>
                   How a new competitor collapsed Pump.fun's dominance in days
                 </CardDescription>
+                <div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+                  Data analytics powered by 
+                  <a 
+                    href="https://dune.com/adam_tehc/pumpfun" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-orange-400 hover:text-orange-300 underline underline-offset-2"
+                  >
+                    adam_tehc
+                  </a>
+                  on Dune
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Market Share Collapse Timeline */}
@@ -1331,9 +1343,6 @@ export default function PumpfunDashboard() {
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
                         By volume (July 2025)
-                        {marketShareData && (
-                          <span className="text-blue-400 ml-2">via Dune Analytics</span>
-                        )}
                       </p>
                     </div>
                   </div>
@@ -1394,20 +1403,7 @@ export default function PumpfunDashboard() {
                                 formatNumber(bonkfunRevenueData.revenue_usd) : 
                                 '1,040,000'}
                             </p>
-                            {bonkfunRevenueData && (
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <span className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">
-                                    via Dune Analytics
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-xs">
-                                    Data by <a href="https://dune.com/adam_tehc" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">adam_tehc</a>
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
+
                           </div>
                         </div>
                         
@@ -1425,9 +1421,7 @@ export default function PumpfunDashboard() {
                                 formatNumber(pumpfunRevenueData.revenue_usd) : 
                                 '619,034'}
                             </p>
-                            {pumpfunRevenueData && (
-                              <span className="text-xs text-blue-400">via Dune Analytics</span>
-                            )}
+
                           </div>
                         </div>
                         
@@ -1458,9 +1452,7 @@ export default function PumpfunDashboard() {
                                   <p className="text-xl font-bold text-green-400">
                                     ${formatNumber(pumpVolume)}
                                   </p>
-                                  {pumpfunVolumeData && (
-                                    <span className="text-xs text-blue-400">via Dune Analytics</span>
-                                  )}
+
                                 </div>
                               </div>
                               
@@ -1471,9 +1463,7 @@ export default function PumpfunDashboard() {
                                   <p className="text-xl font-bold text-gray-400">
                                     ${formatNumber(bonkVolume)}
                                   </p>
-                                  {bonkfunVolumeData && (
-                                    <span className="text-xs text-blue-400">via Dune Analytics</span>
-                                  )}
+
                                 </div>
                               </div>
                               
@@ -1541,11 +1531,7 @@ export default function PumpfunDashboard() {
                                 </div>
                               </div>
                               
-                              {graduationRatesData && (
-                                <div className="text-center pt-2">
-                                  <span className="text-xs text-blue-400">via Dune Analytics</span>
-                                </div>
-                              )}
+
                             </>
                           );
                         })()}
@@ -1611,9 +1597,7 @@ export default function PumpfunDashboard() {
                                 <p className="text-sm text-purple-400 font-medium">
                                   Higher quality ratio on Bonk.fun
                                 </p>
-                                {graduationRatesData && (
-                                  <span className="text-xs text-blue-400">via Dune Analytics</span>
-                                )}
+
                               </div>
                             </>
                           );
