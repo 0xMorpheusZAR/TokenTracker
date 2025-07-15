@@ -28,25 +28,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
           
           if (liveData) {
+            const circulatingSupply = liveData.circulating_supply || 0;
+            const totalSupply = liveData.total_supply || liveData.max_supply || 0;
+            const circulatingSupplyPercentage = totalSupply > 0 ? (circulatingSupply / totalSupply) * 100 : 0;
+            
             return {
               ...token,
-              currentPrice: liveData.current_price?.toFixed(6) || token.currentPrice,
+              currentPrice: liveData.current_price || parseFloat(token.currentPrice),
+              currentPriceFormatted: liveData.current_price?.toFixed(6) || token.currentPrice,
               marketCap: liveData.market_cap || 0,
               volume24h: liveData.total_volume || 0,
-              priceChange24h: liveData.price_change_percentage_24h?.toFixed(2) || "0",
-              priceChange7d: liveData.price_change_percentage_7d?.toFixed(2) || "0",
-              priceChange30d: liveData.price_change_percentage_30d?.toFixed(2) || "0",
+              priceChange24h: liveData.price_change_percentage_24h || 0,
+              priceChange7d: liveData.price_change_percentage_7d || 0,
+              priceChange30d: liveData.price_change_percentage_30d || 0,
               ath: liveData.ath || parseFloat(token.currentPrice),
               athDate: liveData.ath_date || token.listingDate,
-              circulatingSupply: liveData.circulating_supply || 0,
-              totalSupply: liveData.total_supply || 0,
+              athDeclinePercent: liveData.ath && liveData.current_price ? 
+                (((liveData.ath - liveData.current_price) / liveData.ath) * 100).toFixed(1) :
+                token.athDeclinePercent,
+              circulatingSupply: circulatingSupply,
+              totalSupply: totalSupply,
               maxSupply: liveData.max_supply || 0,
               fdv: liveData.fully_diluted_valuation || 0,
+              circulatingSupplyPercentage: circulatingSupplyPercentage,
               lastUpdated: new Date().toISOString(),
               // Recalculate performance with real current price
               performancePercent: liveData.current_price ? 
                 (((liveData.current_price - parseFloat(token.listingPrice)) / parseFloat(token.listingPrice)) * 100).toFixed(1) :
-                token.performancePercent
+                token.performancePercent,
+              // Add HIGH FDV flag
+              isHighFdv: liveData.fully_diluted_valuation > 1000000000 || token.peakFdv.includes('B')
             };
           }
           return token;

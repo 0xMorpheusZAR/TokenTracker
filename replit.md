@@ -155,7 +155,7 @@ Changelog:
 - July 9, 2025: Updated Pump.fun Dashboard with latest market analysis - Revenue down 86% from February highs, valuation multiple reduced to 5.59x, ICO raise reduced from $1B to $600M (15% of supply), updated tokenomics (33% ICO, 24% community), institutional skepticism from Dragonfly Capital, mixed community sentiment ("everyone complained but still aped in")
 - July 14, 2025: Integrated Dune Analytics API for on-chain blockchain data querying - Added comprehensive service for Hyperliquid dashboard metrics from x3research, includes volume/liquidity metrics, user analytics, trading metrics, asset performance data, and custom query execution capabilities
 - July 14, 2025: Enhanced README.md with comprehensive documentation including Dune Analytics integration guide, API endpoints documentation, and setup instructions for GitHub deployment
-- July 14, 2025: Created dedicated Hyperliquid on-chain analytics page at /hyperliquid-dune route with interactive visualizations - Features 5 tabs (Volume, Users, Trading, Assets, Performance), real-time charts using Chart.js, comprehensive metrics display, and graceful error handling with mock data fallback when API queries are unavailable
+- July 16, 2025: Removed /hyperliquid-dune dashboard page per user request, maintaining Dune Analytics API integration for other dashboard features
 ```
 
 ## User Preferences

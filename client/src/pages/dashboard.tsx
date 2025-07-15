@@ -317,7 +317,14 @@ export default function Dashboard() {
                     <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
                     Critical Risk Assets
                   </CardTitle>
-                  <Badge variant="destructive" className="text-xs animate-pulse">LIVE</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="destructive" className="text-xs animate-pulse">LIVE</Badge>
+                    {coinGeckoStatus?.connected && (
+                      <Badge variant="secondary" className="text-xs bg-green-900/20 text-green-400 border-green-700">
+                        CoinGecko Pro
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -339,8 +346,8 @@ export default function Dashboard() {
                         </div>
                         <div className="text-right">
                           <div className="text-sm font-mono text-white">${token.currentPrice?.toFixed(4) || '0.0000'}</div>
-                          <div className="text-xs font-bold text-red-400">
-                            {token.priceChange24h ? `${token.priceChange24h.toFixed(1)}%` : '-15.2%'} (24h)
+                          <div className={`text-xs font-bold ${token.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {token.priceChange24h !== undefined ? `${token.priceChange24h >= 0 ? '+' : ''}${token.priceChange24h.toFixed(1)}%` : '-15.2%'} (24h)
                           </div>
                         </div>
                       </div>
@@ -348,7 +355,7 @@ export default function Dashboard() {
                         <div className="bg-gray-900/50 rounded px-2 py-1">
                           <div className="text-gray-500">ATH Loss</div>
                           <div className="text-red-400 font-bold">
-                            -{((token.ath - token.currentPrice) / token.ath * 100).toFixed(1)}%
+                            -{token.athDeclinePercent || ((token.ath - token.currentPrice) / token.ath * 100).toFixed(1)}%
                           </div>
                         </div>
                         <div className="bg-gray-900/50 rounded px-2 py-1">
