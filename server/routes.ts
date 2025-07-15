@@ -852,6 +852,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/dune/bonkfun/revenue", async (req, res) => {
+    try {
+      const revenueData = await duneService.getBonkfunRevenue24h();
+      if (!revenueData) {
+        return res.status(500).json({ error: "Failed to fetch Bonk.fun revenue data" });
+      }
+      res.json({
+        ...revenueData,
+        source: "Dune Analytics",
+        creator: "adam_tehc",
+        dashboard: "https://dune.com/adam_tehc"
+      });
+    } catch (error) {
+      console.error("Failed to fetch Bonk.fun revenue:", error);
+      res.status(500).json({ error: "Failed to fetch revenue data" });
+    }
+  });
+
   app.post("/api/dune/query/:queryId/execute", async (req, res) => {
     try {
       const { queryId } = req.params;

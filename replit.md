@@ -159,6 +159,8 @@ Changelog:
 - July 16, 2025: Enhanced interactive dashboard to display live CoinGecko pricing data with 24h price changes for all tokens in both grid and table views
 - July 16, 2025: Integrated live Pump.fun ($PUMP) token data from CoinGecko Pro API into /pumpfun dashboard - displays real-time pricing, market cap, volume, ATH/ATL, supply metrics, and price changes
 - July 16, 2025: Updated Pump.fun metrics with latest CSV data (July 14, 2025) - Total fees: $835.16M, Total revenue: $719.84M, revenue ratio 86.2%, enhanced competition analysis with detailed head-to-head metrics, market share collapse timeline visualization, and updated Monte Carlo price targets based on competitive dynamics
+- July 16, 2025: Integrated DefiLlama protocol data for both Pump.fun and Letsbonk.fun in competition tab - displays TVL, volume, user metrics, and protocol comparison with TVL ratio and volume share analysis
+- July 16, 2025: Added Bonk.fun 24h revenue data from Dune Analytics (Query #5431407 by adam_tehc) - shows revenue in both SOL and USD with proper attribution to dashboard creator
 ```
 
 ## User Preferences

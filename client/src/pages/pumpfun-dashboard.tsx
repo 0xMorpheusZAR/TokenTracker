@@ -95,6 +95,26 @@ export default function PumpfunDashboard() {
     },
   });
 
+  // Fetch Letsbonk.fun data from DefiLlama
+  const { data: letsbonkData, isLoading: loadingLetsbonk } = useQuery({
+    queryKey: ['/api/defillama/protocol/letsbonk.fun'],
+    queryFn: async () => {
+      const response = await fetch('/api/defillama/protocol/letsbonk.fun');
+      if (!response.ok) throw new Error('Failed to fetch Letsbonk.fun data');
+      return response.json();
+    },
+  });
+
+  // Fetch Bonk.fun revenue data from Dune Analytics
+  const { data: bonkfunRevenueData, isLoading: loadingBonkfunRevenue } = useQuery({
+    queryKey: ['/api/dune/bonkfun/revenue'],
+    queryFn: async () => {
+      const response = await fetch('/api/dune/bonkfun/revenue');
+      if (!response.ok) throw new Error('Failed to fetch Bonk.fun revenue from Dune');
+      return response.json();
+    },
+  });
+
   // Fetch live Pump.fun token data from CoinGecko
   const { data: pumpTokenData, isLoading: loadingPumpToken } = useQuery({
     queryKey: ['/api/coingecko/pump'],
@@ -1271,13 +1291,34 @@ export default function PumpfunDashboard() {
                     <div className="bg-gray-800/50 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-gray-300">Daily Protocol Revenue</span>
-                        <span className="text-xs text-gray-500">July 7, 2025</span>
+                        <span className="text-xs text-gray-500">24h Revenue</span>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-green-400">Bonk.fun</span>
-                          <span className="text-sm font-bold text-green-400">${pumpfunMetrics.competitorMetrics.bonkfunDailyRevenue.toLocaleString()}</span>
+                          <span className="text-sm font-bold text-green-400">
+                            ${bonkfunRevenueData?.revenue_usd ? 
+                              formatNumber(bonkfunRevenueData.revenue_usd) : 
+                              pumpfunMetrics.competitorMetrics.bonkfunDailyRevenue.toLocaleString()}
+                          </span>
                         </div>
+                        {bonkfunRevenueData && (
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>({formatNumber(bonkfunRevenueData.revenue_sol)} SOL)</span>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <span className="text-blue-400 hover:text-blue-300 cursor-pointer">
+                                  via Dune Analytics
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-xs">
+                                  Data by <a href="https://dune.com/adam_tehc" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">adam_tehc</a>
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-400">Pump.fun</span>
                           <span className="text-sm font-bold text-gray-400">${pumpfunMetrics.competitorMetrics.pumpfunDailyRevenue.toLocaleString()}</span>
@@ -1366,6 +1407,129 @@ export default function PumpfunDashboard() {
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* DefiLlama Protocol Data */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-100">Real-Time Protocol Metrics (DefiLlama)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Pump.fun Protocol Data */}
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-purple-800/50">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-medium text-purple-300">Pump.fun Protocol</h4>
+                        <Badge variant="outline" className="text-xs border-purple-500/50 text-purple-400">
+                          DefiLlama
+                        </Badge>
+                      </div>
+                      {loadingPumpfun ? (
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-full bg-gray-700" />
+                          <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                          <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                        </div>
+                      ) : pumpfunData ? (
+                        <div className="space-y-2 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">TVL:</span>
+                            <span className="text-gray-200">${formatNumber(pumpfunData.tvl || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">24h Volume:</span>
+                            <span className="text-gray-200">${formatNumber(pumpfunData.volume24h || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Total Users:</span>
+                            <span className="text-gray-200">{formatNumber(pumpfunData.totalUsers || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Active Users (24h):</span>
+                            <span className="text-gray-200">{formatNumber(pumpfunData.dailyActiveUsers || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Chains:</span>
+                            <span className="text-gray-200">{pumpfunData.chains?.join(', ') || 'Solana'}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500">Data unavailable</p>
+                      )}
+                    </div>
+
+                    {/* Letsbonk.fun Protocol Data */}
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-yellow-800/50">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-medium text-yellow-300">Letsbonk.fun Protocol</h4>
+                        <Badge variant="outline" className="text-xs border-yellow-500/50 text-yellow-400">
+                          DefiLlama
+                        </Badge>
+                      </div>
+                      {loadingLetsbonk ? (
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-full bg-gray-700" />
+                          <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                          <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                        </div>
+                      ) : letsbonkData ? (
+                        <div className="space-y-2 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">TVL:</span>
+                            <span className="text-gray-200">${formatNumber(letsbonkData.tvl || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">24h Volume:</span>
+                            <span className="text-gray-200">${formatNumber(letsbonkData.volume24h || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Total Users:</span>
+                            <span className="text-gray-200">{formatNumber(letsbonkData.totalUsers || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Active Users (24h):</span>
+                            <span className="text-gray-200">{formatNumber(letsbonkData.dailyActiveUsers || 0)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Chains:</span>
+                            <span className="text-gray-200">{letsbonkData.chains?.join(', ') || 'Solana'}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500">Data unavailable</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Combined Metrics */}
+                  {pumpfunData && letsbonkData && (
+                    <div className="mt-4 bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                      <h4 className="text-sm font-semibold text-gray-200 mb-3">Protocol Comparison</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">TVL Ratio</p>
+                          <div className="flex items-center gap-2">
+                            <Progress 
+                              value={(pumpfunData.tvl || 0) / ((pumpfunData.tvl || 0) + (letsbonkData.tvl || 0)) * 100} 
+                              className="h-2 flex-1" 
+                            />
+                            <span className="text-xs text-gray-300">
+                              {((pumpfunData.tvl || 0) / ((pumpfunData.tvl || 0) + (letsbonkData.tvl || 0)) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Volume Share</p>
+                          <div className="flex items-center gap-2">
+                            <Progress 
+                              value={(letsbonkData.volume24h || 0) / ((pumpfunData.volume24h || 0) + (letsbonkData.volume24h || 0)) * 100} 
+                              className="h-2 flex-1 bg-purple-900/20" 
+                            />
+                            <span className="text-xs text-yellow-400">
+                              {((letsbonkData.volume24h || 0) / ((pumpfunData.volume24h || 0) + (letsbonkData.volume24h || 0)) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* BONK Token Performance */}
