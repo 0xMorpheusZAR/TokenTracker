@@ -950,9 +950,7 @@ export default function PumpfunDashboard() {
                           ? '249,342,585,782.80'
                           : selectedScenario === 'bearish'
                           ? '437,589,225,182.31'
-                          : formatNumber(
-                              top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
-                            )}
+                          : '92,589,719,153.04'}
                       </p>
                     </div>
                   </>
