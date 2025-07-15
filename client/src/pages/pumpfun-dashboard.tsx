@@ -9,7 +9,7 @@ import {
   ChevronRight, RefreshCw, Info, Clock, Zap, Target, AlertCircle,
   BarChart3, PieChart, TrendingUp as TrendUp, Users, ArrowLeft
 } from "lucide-react";
-import { Line, Bar, Doughnut, Radar } from "react-chartjs-2";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
@@ -1236,65 +1236,68 @@ export default function PumpfunDashboard() {
                           
                           {/* Visual Pressure Gauge */}
                           <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Selling Pressure Intensity</h4>
-                            <div className="relative h-32">
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-center">
-                                  <p className={`text-3xl font-bold ${
-                                    sellingPressureRatio > 10 ? 'text-red-400' :
-                                    sellingPressureRatio > 5 ? 'text-yellow-400' :
-                                    'text-green-400'
-                                  }`}>
-                                    {sellingPressureRatio.toFixed(1)}%
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">of Market Cap</p>
-                                </div>
+                            <h4 className="text-sm font-semibold text-gray-200 mb-3">Selling Pressure Risk Assessment</h4>
+                            <div className="space-y-4">
+                              {/* Main Pressure Indicator */}
+                              <div className="text-center py-4">
+                                <p className={`text-4xl font-bold mb-1 ${
+                                  sellingPressureRatio > 10 ? 'text-red-400' :
+                                  sellingPressureRatio > 5 ? 'text-yellow-400' :
+                                  'text-green-400'
+                                }`}>
+                                  {sellingPressureRatio.toFixed(1)}%
+                                </p>
+                                <p className="text-sm text-gray-400">Daily Selling Pressure / Market Cap</p>
+                                <p className={`text-xs mt-2 font-medium ${
+                                  sellingPressureRatio > 10 ? 'text-red-400' :
+                                  sellingPressureRatio > 5 ? 'text-yellow-400' :
+                                  'text-green-400'
+                                }`}>
+                                  {sellingPressureRatio > 10 ? 'EXTREME RISK' :
+                                   sellingPressureRatio > 5 ? 'HIGH RISK' :
+                                   'MODERATE RISK'}
+                                </p>
                               </div>
-                              <Radar
-                                data={{
-                                  labels: ['Liquidity', 'Volume', 'Volatility', 'Distribution', 'Sentiment'],
-                                  datasets: [{
-                                    label: 'Risk Factors',
-                                    data: [
-                                      Math.min((dailyVolume / (circulatingSupply * currentPrice)) * 10, 10),
-                                      Math.min(sellingPressureRatio, 10),
-                                      7.5, // High volatility for meme token
-                                      8.0, // Concentrated distribution risk
-                                      6.0  // Mixed sentiment
-                                    ],
-                                    backgroundColor: 'rgba(168, 85, 247, 0.2)',
-                                    borderColor: 'rgb(168, 85, 247)',
-                                    pointBackgroundColor: 'rgb(168, 85, 247)',
-                                    pointBorderColor: '#fff',
-                                    pointHoverBackgroundColor: '#fff',
-                                    pointHoverBorderColor: 'rgb(168, 85, 247)'
-                                  }]
-                                }}
-                                options={{
-                                  ...chartOptions,
-                                  scales: {
-                                    r: {
-                                      angleLines: {
-                                        color: 'rgba(148, 163, 184, 0.1)'
-                                      },
-                                      grid: {
-                                        color: 'rgba(148, 163, 184, 0.1)'
-                                      },
-                                      pointLabels: {
-                                        color: '#94a3b8',
-                                        font: { size: 10 }
-                                      },
-                                      suggestedMin: 0,
-                                      suggestedMax: 10,
-                                      ticks: {
-                                        stepSize: 2,
-                                        color: '#64748b',
-                                        font: { size: 8 }
-                                      }
-                                    }
+                              
+                              {/* Risk Factors */}
+                              <div className="space-y-2">
+                                <h5 className="text-xs font-medium text-gray-300 mb-2">Risk Factors</h5>
+                                {[
+                                  { 
+                                    name: 'Liquidity', 
+                                    value: Math.min((dailyVolume / (circulatingSupply * currentPrice)) * 10, 10),
+                                    color: 'bg-blue-500'
+                                  },
+                                  { 
+                                    name: 'Volume Volatility', 
+                                    value: 7.5,
+                                    color: 'bg-purple-500'
+                                  },
+                                  { 
+                                    name: 'Distribution Risk', 
+                                    value: 8.0,
+                                    color: 'bg-red-500'
+                                  },
+                                  { 
+                                    name: 'Market Sentiment', 
+                                    value: 6.0,
+                                    color: 'bg-yellow-500'
                                   }
-                                }}
-                              />
+                                ].map((factor) => (
+                                  <div key={factor.name}>
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="text-xs text-gray-400">{factor.name}</span>
+                                      <span className="text-xs font-medium text-gray-300">{factor.value.toFixed(1)}/10</span>
+                                    </div>
+                                    <div className="w-full bg-gray-700/30 rounded-full h-1.5">
+                                      <div 
+                                        className={`h-full rounded-full transition-all duration-500 ${factor.color}`}
+                                        style={{ width: `${factor.value * 10}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                           
