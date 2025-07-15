@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { 
   AlertTriangle, TrendingDown, TrendingUp, DollarSign, Activity, 
   ChevronRight, RefreshCw, Info, Clock, Zap, Target, AlertCircle,
-  BarChart3, PieChart, TrendingUp as TrendUp, Users, ArrowLeft
+  BarChart3, PieChart, TrendingUp as TrendUp, Users, ArrowLeft, Rocket
 } from "lucide-react";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
@@ -1375,12 +1375,14 @@ export default function PumpfunDashboard() {
                   </div>
                 </div>
 
-                {/* Head-to-Head Metrics - Sleek Visual Design */}
-                <div className="bg-gradient-to-br from-gray-900/80 via-gray-900/90 to-black/80 rounded-xl p-6 border border-gray-700/50">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-gray-100">Head-to-Head Metrics (July 2025)</h3>
-                  </div>
+                {/* Head-to-Head Metrics - Redesigned Layout */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-gray-100 mb-4 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-orange-500" />
+                    Head-to-Head Metrics (July 2025)
+                  </h3>
                   
+                  {/* Top Row - Revenue and Volume Side by Side */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* Daily Protocol Revenue - Enhanced Design */}
                     <div className="bg-gray-800/60 rounded-lg p-5 border border-gray-700/50 backdrop-blur-sm">
@@ -1604,35 +1606,69 @@ export default function PumpfunDashboard() {
                         })()}
                       </div>
                     </div>
+                  </div>
 
-                    {/* Fee Model Innovation */}
-                    <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-800/50">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-purple-300">Revolutionary Fee Model</span>
-                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/50">
+                  {/* Bottom Row - Fee Model Innovation Full Width */}
+                  <div className="bg-gradient-to-r from-purple-900/30 to-orange-900/30 rounded-lg p-6 border border-purple-800/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-bold text-purple-300 flex items-center gap-2">
+                          <Zap className="h-5 w-5 text-yellow-400" />
+                          Revolutionary Fee Model
+                        </h4>
+                        <Badge className="bg-gradient-to-r from-purple-500/20 to-orange-500/20 text-orange-300 border-orange-500/50 font-semibold">
                           Game Changer
                         </Badge>
                       </div>
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-sm font-medium text-yellow-400 mb-1">Bonk.fun Innovation</p>
-                          <ul className="space-y-1 text-xs text-gray-300">
-                            <li>• {pumpfunMetrics.competitorMetrics.bonkfunRevenueShare}% of fees buy BONK token</li>
-                            <li>• 50% of purchased BONK burned forever</li>
-                            <li>• ~${pumpfunMetrics.competitorMetrics.bonkfunBurnAmount.toLocaleString()} burned daily</li>
-                            <li>• Creates constant deflationary pressure</li>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-yellow-900/20 rounded-lg p-4 border border-yellow-800/30">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="p-1.5 bg-yellow-500/20 rounded">
+                              <Rocket className="h-4 w-4 text-yellow-400" />
+                            </div>
+                            <p className="text-sm font-semibold text-yellow-400">Bonk.fun Innovation</p>
+                          </div>
+                          <ul className="space-y-2 text-xs text-gray-300">
+                            <li className="flex items-start gap-2">
+                              <span className="text-yellow-500 mt-0.5">•</span>
+                              <span>{pumpfunMetrics.competitorMetrics.bonkfunRevenueShare}% of fees buy BONK token</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-yellow-500 mt-0.5">•</span>
+                              <span>50% of purchased BONK burned forever</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-yellow-500 mt-0.5">•</span>
+                              <span>~${pumpfunMetrics.competitorMetrics.bonkfunBurnAmount.toLocaleString()} burned daily</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-yellow-500 mt-0.5">•</span>
+                              <span>Creates constant deflationary pressure</span>
+                            </li>
                           </ul>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-400 mb-1">Pump.fun Response</p>
-                          <ul className="space-y-1 text-xs text-gray-400">
-                            <li>• {pumpfunMetrics.competitorMetrics.pumpfunPlannedShare}% revenue share planned</li>
-                            <li>• "Extractive model" criticism persists</li>
-                            <li>• No burn mechanism announced</li>
+                        <div className="bg-gray-800/40 rounded-lg p-4 border border-gray-700/50">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="p-1.5 bg-gray-600/20 rounded">
+                              <AlertCircle className="h-4 w-4 text-gray-400" />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-400">Pump.fun Response</p>
+                          </div>
+                          <ul className="space-y-2 text-xs text-gray-400">
+                            <li className="flex items-start gap-2">
+                              <span className="text-gray-500 mt-0.5">•</span>
+                              <span>{pumpfunMetrics.competitorMetrics.pumpfunPlannedShare}% revenue share planned</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-gray-500 mt-0.5">•</span>
+                              <span>"Extractive model" criticism persists</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-gray-500 mt-0.5">•</span>
+                              <span>No burn mechanism announced</span>
+                            </li>
                           </ul>
                         </div>
                       </div>
-                    </div>
                   </div>
                 </div>
 
