@@ -746,7 +746,7 @@ export default function PumpfunDashboard() {
                     <CardContent>
                       <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-400">
                         <AnimatedValue 
-                          value={pumpTokenData?.fully_diluted_valuation ? parseFloat((pumpTokenData.fully_diluted_valuation / 719840000).toFixed(2)) : 7.45} 
+                          value={pumpTokenData?.fullyDilutedValuation ? parseFloat((pumpTokenData.fullyDilutedValuation / 719840000).toFixed(2)) : 7.45} 
                           suffix="x"
                           format="number"
                         />
@@ -2095,8 +2095,8 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-sm text-gray-400">Current Price</p>
                       <p className="text-3xl font-bold text-white">
-                        {pumpTokenData?.current_price ? 
-                          `$${pumpTokenData.current_price.toFixed(6)}` : 
+                        {pumpTokenData?.currentPrice ? 
+                          `$${pumpTokenData.currentPrice.toFixed(6)}` : 
                           <span className="text-gray-500">Loading...</span>}
                       </p>
                     </div>
@@ -2109,24 +2109,24 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-xs text-gray-500">Market Cap</p>
                       <p className="text-sm font-medium text-gray-300">
-                        {pumpTokenData?.market_cap ? 
-                          `$${formatNumber(pumpTokenData.market_cap)}` :
+                        {pumpTokenData?.marketCap ? 
+                          `$${formatNumber(pumpTokenData.marketCap)}` :
                           <span className="text-gray-500">-</span>}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">FDV</p>
                       <p className="text-sm font-medium text-gray-300">
-                        {pumpTokenData?.fully_diluted_valuation ? 
-                          `$${formatNumber(pumpTokenData.fully_diluted_valuation)}` :
+                        {pumpTokenData?.fullyDilutedValuation ? 
+                          `$${formatNumber(pumpTokenData.fullyDilutedValuation)}` :
                           <span className="text-gray-500">-</span>}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Circulating</p>
                       <p className="text-sm font-medium text-gray-300">
-                        {pumpTokenData?.circulating_supply && pumpTokenData?.max_supply 
-                          ? `${((pumpTokenData.circulating_supply / pumpTokenData.max_supply) * 100).toFixed(1)}%`
+                        {pumpTokenData?.circulatingSupply && pumpTokenData?.maxSupply 
+                          ? `${((pumpTokenData.circulatingSupply / pumpTokenData.maxSupply) * 100).toFixed(1)}%`
                           : <span className="text-gray-500">-</span>}
                       </p>
                     </div>
@@ -2147,8 +2147,8 @@ export default function PumpfunDashboard() {
                       <div>
                         <p className="text-2xl font-bold text-red-400">$0.0025</p>
                         <p className="text-sm text-gray-400">
-                          {pumpTokenData?.current_price ? 
-                            `${((0.0025 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                          {pumpTokenData?.currentPrice ? 
+                            `${((0.0025 - pumpTokenData.currentPrice) / pumpTokenData.currentPrice * 100).toFixed(0)}%` 
                             : '-53%'} from current
                         </p>
                       </div>
@@ -2182,8 +2182,8 @@ export default function PumpfunDashboard() {
                       <div>
                         <p className="text-2xl font-bold text-yellow-400">$0.0058</p>
                         <p className="text-sm text-gray-400">
-                          {pumpTokenData?.current_price ? 
-                            `${((0.0058 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                          {pumpTokenData?.currentPrice ? 
+                            `${((0.0058 - pumpTokenData.currentPrice) / pumpTokenData.currentPrice * 100).toFixed(0)}%` 
                             : '+9%'} from current
                         </p>
                       </div>
@@ -2217,8 +2217,8 @@ export default function PumpfunDashboard() {
                       <div>
                         <p className="text-2xl font-bold text-green-400">$0.0085</p>
                         <p className="text-sm text-gray-400">
-                          {pumpTokenData?.current_price ? 
-                            `+${((0.0085 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                          {pumpTokenData?.currentPrice ? 
+                            `+${((0.0085 - pumpTokenData.currentPrice) / pumpTokenData.currentPrice * 100).toFixed(0)}%` 
                             : '+59%'} from current
                         </p>
                       </div>
