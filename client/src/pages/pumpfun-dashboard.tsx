@@ -141,6 +141,8 @@ export default function PumpfunDashboard() {
       if (!response.ok) throw new Error('Failed to fetch Pump.fun token data');
       return response.json();
     },
+    refetchInterval: 30 * 1000, // Refresh every 30 seconds for live data
+    refetchIntervalInBackground: true,
   });
 
   // Fetch current altcoin data
@@ -2088,7 +2090,9 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-sm text-gray-400">Current Price</p>
                       <p className="text-3xl font-bold text-white">
-                        ${pumpTokenData?.current_price?.toFixed(6) || '0.005330'}
+                        {pumpTokenData?.current_price ? 
+                          `$${pumpTokenData.current_price.toFixed(6)}` : 
+                          <span className="text-gray-500">Loading...</span>}
                       </p>
                     </div>
                     <div className="text-right">
@@ -2100,13 +2104,17 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-xs text-gray-500">Market Cap</p>
                       <p className="text-sm font-medium text-gray-300">
-                        ${formatNumber(pumpTokenData?.market_cap || 1899608855)}
+                        {pumpTokenData?.market_cap ? 
+                          `$${formatNumber(pumpTokenData.market_cap)}` :
+                          <span className="text-gray-500">-</span>}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">FDV</p>
                       <p className="text-sm font-medium text-gray-300">
-                        ${formatNumber(pumpTokenData?.fully_diluted_valuation || 5366126710)}
+                        {pumpTokenData?.fully_diluted_valuation ? 
+                          `$${formatNumber(pumpTokenData.fully_diluted_valuation)}` :
+                          <span className="text-gray-500">-</span>}
                       </p>
                     </div>
                     <div>
@@ -2114,7 +2122,7 @@ export default function PumpfunDashboard() {
                       <p className="text-sm font-medium text-gray-300">
                         {pumpTokenData?.circulating_supply && pumpTokenData?.max_supply 
                           ? `${((pumpTokenData.circulating_supply / pumpTokenData.max_supply) * 100).toFixed(1)}%`
-                          : '35.4%'}
+                          : <span className="text-gray-500">-</span>}
                       </p>
                     </div>
                   </div>
@@ -2241,7 +2249,14 @@ export default function PumpfunDashboard() {
                           datasets: [
                             {
                               label: 'P75 (Bullish)',
-                              data: [0.004, 0.0058, 0.0065, 0.0070, 0.0075, 0.0085],
+                              data: [
+                                pumpTokenData?.current_price || 0.005330,
+                                (pumpTokenData?.current_price || 0.005330) * 1.09,
+                                (pumpTokenData?.current_price || 0.005330) * 1.22,
+                                (pumpTokenData?.current_price || 0.005330) * 1.31,
+                                (pumpTokenData?.current_price || 0.005330) * 1.41,
+                                0.0085
+                              ],
                               borderColor: 'rgb(34, 197, 94)',
                               backgroundColor: 'rgba(34, 197, 94, 0.1)',
                               tension: 0.4,
@@ -2250,7 +2265,14 @@ export default function PumpfunDashboard() {
                             },
                             {
                               label: 'P50 (Base)',
-                              data: [0.004, 0.0058, 0.0058, 0.0058, 0.0058, 0.0058],
+                              data: [
+                                pumpTokenData?.current_price || 0.005330,
+                                0.0058,
+                                0.0058,
+                                0.0058,
+                                0.0058,
+                                0.0058
+                              ],
                               borderColor: 'rgb(250, 204, 21)',
                               backgroundColor: 'rgba(250, 204, 21, 0.1)',
                               tension: 0.4,
@@ -2259,7 +2281,14 @@ export default function PumpfunDashboard() {
                             },
                             {
                               label: 'P35 (Bearish)',
-                              data: [0.004, 0.0045, 0.0038, 0.0032, 0.0028, 0.0025],
+                              data: [
+                                pumpTokenData?.current_price || 0.005330,
+                                (pumpTokenData?.current_price || 0.005330) * 0.84,
+                                (pumpTokenData?.current_price || 0.005330) * 0.71,
+                                (pumpTokenData?.current_price || 0.005330) * 0.60,
+                                (pumpTokenData?.current_price || 0.005330) * 0.53,
+                                0.0025
+                              ],
                               borderColor: 'rgb(239, 68, 68)',
                               backgroundColor: 'rgba(239, 68, 68, 0.1)',
                               tension: 0.4,
@@ -2348,7 +2377,11 @@ export default function PumpfunDashboard() {
                       <div className="space-y-4">
                         <div>
                           <p className="text-sm text-gray-400 mb-1">Expected Return (90 days)</p>
-                          <p className="text-2xl font-bold text-yellow-400">-28.5%</p>
+                          <p className="text-2xl font-bold text-yellow-400">
+                            {pumpTokenData?.current_price ? 
+                              `${((0.0058 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(1)}%` :
+                              '+8.9%'}
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-400 mb-1">Risk/Reward Ratio</p>
@@ -2356,7 +2389,11 @@ export default function PumpfunDashboard() {
                         </div>
                         <div>
                           <p className="text-sm text-gray-400 mb-1">Confidence Interval (95%)</p>
-                          <p className="text-sm font-medium text-gray-300">$0.0008 - $0.0095</p>
+                          <p className="text-sm font-medium text-gray-300">
+                            {pumpTokenData?.current_price ? 
+                              `$${(pumpTokenData.current_price * 0.15).toFixed(4)} - $${(pumpTokenData.current_price * 1.78).toFixed(4)}` :
+                              '$0.0008 - $0.0095'}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
