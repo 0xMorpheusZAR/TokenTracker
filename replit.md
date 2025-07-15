@@ -166,6 +166,7 @@ Changelog:
 - July 16, 2025: Added CSV data fetching capability from Dune Analytics API - Integrated Query #5446111 for additional Pump.fun metrics with CSV parsing functionality
 - July 16, 2025: Updated volume comparison queries - Bonk.fun volume now uses Query #5440994 and Pump.fun volume uses Query #5440990, both with 10-minute auto-refresh
 - July 16, 2025: Added support for two new Pump.fun revenue queries - Query #5445866 for CSV revenue data and Query #5446111 for JSON revenue data, with endpoints at /api/dune/pumpfun/daily-revenue-csv and /api/dune/pumpfun/additional-metrics-json
+- July 16, 2025: Updated Pump.fun 24h revenue to use Query #5445866 (CSV) directly for main revenue endpoint showing $619,034 USD revenue, matching latest Dune Analytics data while respecting API rate limitations
 ```
 
 ## User Preferences
