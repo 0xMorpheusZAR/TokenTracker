@@ -2437,52 +2437,6 @@ export default function PumpfunDashboard() {
         </Tabs>
         </div>
       </div>
-
-      {/* Creator Attribution Footer - Big and Prominent */}
-      <footer className="relative z-20 mt-20 py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-t from-gray-900 via-gray-800/50 to-transparent border-t border-purple-800/30">
-        <div className="max-w-7xl mx-auto text-center space-y-8">
-          <a 
-            href="https://x.com/0xMorpheusXBT" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-4 px-12 py-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full transition-all duration-300 hover:from-purple-500 hover:to-pink-500 hover:scale-110 hover:shadow-2xl hover:shadow-purple-500/50 font-bold transform"
-          >
-            <span className="text-2xl">Created by</span>
-            <span className="text-3xl font-black bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">@0xMorpheusXBT</span>
-            <svg className="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-          
-          <div className="space-y-2">
-            <p className="text-lg text-gray-300">
-              Real-time Pump.fun Analytics & $PUMP Token Tracker
-            </p>
-            <p className="text-sm text-gray-500">
-              Live data • Monte Carlo simulations • Competition analysis • Updated every 30 seconds
-            </p>
-          </div>
-
-          {/* Additional Social Links */}
-          <div className="flex items-center justify-center gap-6 pt-4">
-            <a 
-              href="https://x.com/0xMorpheusXBT"
-              target="_blank"
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Follow on X/Twitter
-            </a>
-            <span className="text-gray-600">•</span>
-            <a 
-              href="/"
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Back to Dashboard
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
