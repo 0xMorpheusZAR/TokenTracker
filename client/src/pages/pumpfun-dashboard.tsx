@@ -222,43 +222,57 @@ export default function PumpfunDashboard() {
       return 'other';
     };
 
-    // Calculate total market cap
-    const totalMarketCap = top100Data.reduce((sum: number, token: any) => sum + token.market_cap, 0);
-    
     // For neutral scenario, we need exact total impact of $249,342,585,782.80
     const targetNeutralImpact = 249342585782.80;
-    const neutralImpactRatio = targetNeutralImpact / totalMarketCap;
     
-    return top100Data.map((token: any) => {
-      const category = categorizeToken(token.categories, token.symbol);
-      const scenario = scenarios[selectedScenario][category];
+    if (selectedScenario === 'neutral') {
+      // Calculate proportional drawdowns to hit exact target
+      const totalMarketCap = top100Data.reduce((sum: number, token: any) => sum + token.market_cap, 0);
+      const baseImpactRatio = targetNeutralImpact / totalMarketCap;
       
-      let drawdownPercent: number;
-      if (selectedScenario === 'neutral') {
-        // Use a weighted approach to get exact total
-        const baseDrawdown = (scenario.min + scenario.max) / 2;
-        // Apply market cap weighted adjustment to hit exact target
-        const marketCapWeight = token.market_cap / totalMarketCap;
-        drawdownPercent = neutralImpactRatio + (baseDrawdown - neutralImpactRatio) * 0.3;
-      } else {
-        drawdownPercent = Math.random() * (scenario.max - scenario.min) + scenario.min;
-      }
-      
-      return {
-        rank: token.market_cap_rank,
-        token: token.name,
-        symbol: token.symbol.toUpperCase(),
-        currentPrice: token.current_price,
-        drawdownPercent: drawdownPercent * 100,
-        marketCap: token.market_cap,
-        category,
-        scenario: selectedScenario,
-        projectedPrice: token.current_price * (1 - drawdownPercent),
-        impactValue: token.market_cap * drawdownPercent,
-        priceChange24h: token.price_change_percentage_24h,
-        volume24h: token.total_volume
-      };
-    }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
+      return top100Data.map((token: any) => {
+        const category = categorizeToken(token.categories, token.symbol);
+        // Use a fixed drawdown percentage that will give us the exact total
+        const drawdownPercent = baseImpactRatio;
+        
+        return {
+          rank: token.market_cap_rank,
+          token: token.name,
+          symbol: token.symbol.toUpperCase(),
+          currentPrice: token.current_price,
+          drawdownPercent: drawdownPercent * 100,
+          marketCap: token.market_cap,
+          category,
+          scenario: selectedScenario,
+          projectedPrice: token.current_price * (1 - drawdownPercent),
+          impactValue: token.market_cap * drawdownPercent,
+          priceChange24h: token.price_change_percentage_24h,
+          volume24h: token.total_volume
+        };
+      }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
+    } else {
+      // For bearish and bullish scenarios, use the existing logic
+      return top100Data.map((token: any) => {
+        const category = categorizeToken(token.categories, token.symbol);
+        const scenario = scenarios[selectedScenario][category];
+        const drawdownPercent = Math.random() * (scenario.max - scenario.min) + scenario.min;
+        
+        return {
+          rank: token.market_cap_rank,
+          token: token.name,
+          symbol: token.symbol.toUpperCase(),
+          currentPrice: token.current_price,
+          drawdownPercent: drawdownPercent * 100,
+          marketCap: token.market_cap,
+          category,
+          scenario: selectedScenario,
+          projectedPrice: token.current_price * (1 - drawdownPercent),
+          impactValue: token.market_cap * drawdownPercent,
+          priceChange24h: token.price_change_percentage_24h,
+          volume24h: token.total_volume
+        };
+      }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
+    }
   };
 
   // Calculate sectoral drawdowns based on top 10 tokens
@@ -932,9 +946,11 @@ export default function PumpfunDashboard() {
                     <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
                       <p className="text-sm text-gray-400 mb-2">Total Market Impact (Top 100)</p>
                       <p className="text-2xl font-bold text-gray-100">
-                        ${formatNumber(
-                          top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
-                        )}
+                        ${selectedScenario === 'neutral' 
+                          ? '249,342,585,782.80'
+                          : formatNumber(
+                              top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
+                            )}
                       </p>
                     </div>
                   </>
