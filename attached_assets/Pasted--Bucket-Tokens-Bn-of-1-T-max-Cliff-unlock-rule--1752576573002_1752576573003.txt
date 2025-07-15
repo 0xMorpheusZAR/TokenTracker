@@ -1,0 +1,14 @@
+| Bucket                                | Tokens (Bn) | % of 1 T max | Cliff / unlock rule                                                  | Status at TGE (July ’25)                                           |
+| ------------------------------------- | ----------: | -----------: | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Initial Coin Offering**             |         330 |     **33 %** | None                                                                 | **100 % unlocked** ([Cryptopolitan][1])                            |
+| **Community + Ecosystem initiatives** |         240 |         24 % | 0-month cliff for first 50 % then 12-mo linear for rest              | 120 Bn (12 %) unlocked; 10 Bn/mo over next 12 mo ([CryptoRank][2]) |
+| **Team**                              |         200 |         20 % | **12-mo cliff, then 25 % instant; remaining 75 % linear over 36 mo** | 0 Bn unlocked ([Tokenomist][3])                                    |
+| **Existing investors (VC, seed)**     |         130 |         13 % | Same as Team                                                         | 0 Bn unlocked ([Tokenomist][3])                                    |
+| **Livestreaming incentives**          |          30 |          3 % | None                                                                 | 30 Bn unlocked ([CryptoRank][2])                                   |
+| **Liquidity & CEX listings**          |          26 |        2.6 % | None                                                                 | 26 Bn unlocked ([Cryptopolitan][1])                                |
+| **Ecosystem fund**                    |          24 |        2.4 % | None                                                                 | 24 Bn unlocked ([CryptoRank][2])                                   |
+| **Foundation / ops**                  |          20 |          2 % | None                                                                 | 20 Bn unlocked ([CryptoRank][2])                                   |
+
+[1]: https://www.cryptopolitan.com/pump-fun-reveals-pump-tokenomics/ "Pump.fun reveals PUMP tokenomics as July 12 launch nears | Cryptopolitan"
+[2]: https://cryptorank.io/price/pump-fun/vesting "pump.fun (PUMP) Token Unlocks and Vesting: Schedule and Tokenomics | CryptoRank.io"
+[3]: https://tokenomist.ai/pump-fun?utm_source=chatgpt.com "Pump.fun - Tokenomics, Supply & Release Schedule - Token Unlocks"

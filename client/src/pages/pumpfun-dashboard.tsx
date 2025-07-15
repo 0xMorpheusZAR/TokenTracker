@@ -1140,22 +1140,26 @@ export default function PumpfunDashboard() {
                       const currentPrice = pumpTokenData.currentPrice || 0;
                       const dailyVolume = pumpTokenData.totalVolume || 0;
                       
-                      // Token distribution percentages
+                      // Token distribution percentages (excluding community 24% for airdrop)
                       const distribution = {
-                        ico: 0.33,
-                        community: 0.24,
-                        team: 0.20,
-                        investors: 0.13,
-                        others: 0.10
+                        ico: 0.33,           // 330B tokens - 100% unlocked at TGE
+                        team: 0.20,          // 200B tokens - 12-month cliff
+                        investors: 0.13,     // 130B tokens - 12-month cliff
+                        livestreaming: 0.03, // 30B tokens - 100% unlocked
+                        liquidity: 0.026,    // 26B tokens - 100% unlocked
+                        ecosystem: 0.024,    // 24B tokens - 100% unlocked
+                        foundation: 0.02     // 20B tokens - 100% unlocked
                       };
                       
                       // Estimated daily selling pressure by category
+                      // Note: Community (24%) excluded as it will be used for airdrops
                       const sellingPressure = {
-                        ico: dailyVolume * 0.30, // ICO participants may sell 30% of daily volume
-                        team: dailyVolume * 0.05, // Team vesting with 5% pressure
-                        investors: dailyVolume * 0.15, // Early investors taking profits
-                        community: dailyVolume * 0.25, // Community trading activity
-                        marketMakers: dailyVolume * 0.25 // Market makers & arbitrage
+                        ico: dailyVolume * 0.35,        // ICO participants - highest selling pressure
+                        liquidity: dailyVolume * 0.20,   // Market makers & liquidity provision
+                        livestreaming: dailyVolume * 0.15, // Livestreaming rewards being sold
+                        ecosystem: dailyVolume * 0.10,   // Ecosystem fund activities
+                        foundation: dailyVolume * 0.08,  // Foundation operational needs
+                        otherTrading: dailyVolume * 0.12 // General trading & arbitrage
                       };
                       
                       const totalSellingPressure = Object.values(sellingPressure).reduce((a, b) => a + b, 0);
@@ -1202,11 +1206,12 @@ export default function PumpfunDashboard() {
                             <div className="space-y-2">
                               {Object.entries(sellingPressure).map(([source, amount]) => {
                                 const percentage = (amount / totalSellingPressure) * 100;
-                                const displayName = source === 'ico' ? 'ICO Participants' :
-                                                   source === 'team' ? 'Team Vesting' :
-                                                   source === 'investors' ? 'Early Investors' :
-                                                   source === 'community' ? 'Community Trading' :
-                                                   'Market Makers';
+                                const displayName = source === 'ico' ? 'ICO Participants (33%)' :
+                                                   source === 'liquidity' ? 'Liquidity & CEX (2.6%)' :
+                                                   source === 'livestreaming' ? 'Livestreaming (3%)' :
+                                                   source === 'ecosystem' ? 'Ecosystem Fund (2.4%)' :
+                                                   source === 'foundation' ? 'Foundation (2%)' :
+                                                   'Other Trading Activity';
                                 
                                 return (
                                   <div key={source} className="relative">
@@ -1220,9 +1225,10 @@ export default function PumpfunDashboard() {
                                       <div 
                                         className={`h-full rounded-full transition-all duration-500 ${
                                           source === 'ico' ? 'bg-purple-500' :
-                                          source === 'team' ? 'bg-blue-500' :
-                                          source === 'investors' ? 'bg-yellow-500' :
-                                          source === 'community' ? 'bg-green-500' :
+                                          source === 'liquidity' ? 'bg-blue-500' :
+                                          source === 'livestreaming' ? 'bg-yellow-500' :
+                                          source === 'ecosystem' ? 'bg-green-500' :
+                                          source === 'foundation' ? 'bg-orange-500' :
                                           'bg-gray-500'
                                         }`}
                                         style={{ width: `${percentage}%` }}
@@ -1306,7 +1312,8 @@ export default function PumpfunDashboard() {
                               <div className="text-xs text-gray-300">
                                 <strong>Risk Notice:</strong> The estimated {sellingPressureRatio.toFixed(1)}% daily selling pressure 
                                 relative to market cap indicates {sellingPressureRatio > 10 ? 'extreme' : sellingPressureRatio > 5 ? 'high' : 'moderate'} volatility risk. 
-                                ICO participants (33% allocation) and early investors (13% allocation) represent significant potential selling pressure.
+                                ICO participants (33% allocation) represent the largest potential selling pressure. 
+                                <span className="text-green-400"> Note: Community allocation (24%) excluded from pressure calculations as it will be used for airdrops.</span>
                               </div>
                             </div>
                           </div>
