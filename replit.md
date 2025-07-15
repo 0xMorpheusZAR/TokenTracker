@@ -157,6 +157,7 @@ Changelog:
 - July 14, 2025: Enhanced README.md with comprehensive documentation including Dune Analytics integration guide, API endpoints documentation, and setup instructions for GitHub deployment
 - July 16, 2025: Removed /hyperliquid-dune dashboard page per user request, maintaining Dune Analytics API integration for other dashboard features
 - July 16, 2025: Enhanced interactive dashboard to display live CoinGecko pricing data with 24h price changes for all tokens in both grid and table views
+- July 16, 2025: Integrated live Pump.fun ($PUMP) token data from CoinGecko Pro API into /pumpfun dashboard - displays real-time pricing, market cap, volume, ATH/ATL, supply metrics, and price changes
 ```
 
 ## User Preferences

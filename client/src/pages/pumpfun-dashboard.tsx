@@ -95,6 +95,16 @@ export default function PumpfunDashboard() {
     },
   });
 
+  // Fetch live Pump.fun token data from CoinGecko
+  const { data: pumpTokenData, isLoading: loadingPumpToken } = useQuery({
+    queryKey: ['/api/coingecko/pump'],
+    queryFn: async () => {
+      const response = await fetch('/api/coingecko/pump');
+      if (!response.ok) throw new Error('Failed to fetch Pump.fun token data');
+      return response.json();
+    },
+  });
+
   // Fetch current altcoin data
   const { data: altcoinData, isLoading: loadingAltcoins } = useQuery({
     queryKey: ['/api/coingecko/detailed'],
@@ -370,6 +380,125 @@ export default function PumpfunDashboard() {
           </motion.div>
 
 
+
+          {/* Live Token Data Section */}
+          {loadingPumpToken ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="mb-8"
+            >
+              <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border-purple-500/30 shadow-2xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center justify-center gap-3">
+                    <RefreshCw className="h-6 w-6 text-purple-400 animate-spin" />
+                    <p className="text-gray-300">Loading live $PUMP token data...</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : pumpTokenData ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mb-8"
+            >
+              <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border-purple-500/30 shadow-2xl">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-gray-100 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold">PUMP</span>
+                    </div>
+                    <span>Live $PUMP Token Data</span>
+                    <Badge variant="outline" className="ml-auto text-green-400 border-green-400/50">
+                      {pumpTokenData.symbol?.toUpperCase() || 'PUMP'}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">Current Price</p>
+                      <p className="text-xl font-bold text-white">
+                        ${pumpTokenData.currentPrice?.toFixed(6) || '0.0000'}
+                      </p>
+                      {pumpTokenData.priceChange24h !== undefined && (
+                        <p className={`text-sm mt-1 ${pumpTokenData.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {pumpTokenData.priceChange24h >= 0 ? '+' : ''}{pumpTokenData.priceChange24h.toFixed(2)}% (24h)
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">Market Cap</p>
+                      <p className="text-xl font-bold text-white">
+                        ${formatNumber(pumpTokenData.marketCap || 0)}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Rank #{pumpTokenData.marketCapRank || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">24h Volume</p>
+                      <p className="text-xl font-bold text-white">
+                        ${formatNumber(pumpTokenData.totalVolume || 0)}
+                      </p>
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">FDV</p>
+                      <p className="text-xl font-bold text-white">
+                        ${formatNumber(pumpTokenData.fullyDilutedValuation || 0)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Additional metrics */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">All Time High</p>
+                      <p className="text-lg font-bold text-white">
+                        ${pumpTokenData.ath?.toFixed(6) || '0.0000'}
+                      </p>
+                      {pumpTokenData.athChangePercentage !== undefined && (
+                        <p className="text-xs text-red-400 mt-1">
+                          {pumpTokenData.athChangePercentage.toFixed(2)}% from ATH
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">All Time Low</p>
+                      <p className="text-lg font-bold text-white">
+                        ${pumpTokenData.atl?.toFixed(6) || '0.0000'}
+                      </p>
+                      {pumpTokenData.atlChangePercentage !== undefined && (
+                        <p className="text-xs text-green-400 mt-1">
+                          +{pumpTokenData.atlChangePercentage.toFixed(2)}% from ATL
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">Circulating Supply</p>
+                      <p className="text-lg font-bold text-white">
+                        {formatNumber(pumpTokenData.circulatingSupply || 0)}
+                      </p>
+                      {pumpTokenData.maxSupply && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {((pumpTokenData.circulatingSupply / pumpTokenData.maxSupply) * 100).toFixed(1)}% of max
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                      <p className="text-xs text-gray-400 mb-1">Price Change (30d)</p>
+                      <p className={`text-lg font-bold ${pumpTokenData.priceChange30d >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {pumpTokenData.priceChange30d >= 0 ? '+' : ''}{pumpTokenData.priceChange30d?.toFixed(2) || '0.00'}%
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : null}
 
           {/* Key Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">

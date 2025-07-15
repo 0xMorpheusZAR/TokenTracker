@@ -304,6 +304,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Pump.fun token data endpoint
+  app.get("/api/coingecko/pump", async (req, res) => {
+    try {
+      const pumpData = await coinGeckoService.getDetailedTokenData(['PUMP']);
+      
+      if (!pumpData || pumpData.length === 0) {
+        return res.status(404).json({ error: "Pump.fun token not found" });
+      }
+      
+      // Get additional Pump.fun details
+      const tokenDetails = await coinGeckoService.getTokenDetails('PUMP');
+      
+      // Extract relevant data for the dashboard
+      const pumpToken = pumpData[0];
+      
+      res.json({
+        id: pumpToken.id,
+        symbol: pumpToken.symbol,
+        name: pumpToken.name,
+        currentPrice: pumpToken.current_price,
+        marketCap: pumpToken.market_cap,
+        marketCapRank: pumpToken.market_cap_rank,
+        fullyDilutedValuation: pumpToken.fully_diluted_valuation,
+        totalVolume: pumpToken.total_volume,
+        priceChange24h: pumpToken.price_change_percentage_24h,
+        priceChange7d: pumpToken.price_change_percentage_7d,
+        priceChange30d: pumpToken.price_change_percentage_30d,
+        priceChange1y: pumpToken.price_change_percentage_1y,
+        ath: pumpToken.ath,
+        athChangePercentage: pumpToken.ath_change_percentage,
+        athDate: pumpToken.ath_date,
+        atl: pumpToken.atl,
+        atlChangePercentage: pumpToken.atl_change_percentage,
+        atlDate: pumpToken.atl_date,
+        circulatingSupply: pumpToken.circulating_supply,
+        totalSupply: pumpToken.total_supply,
+        maxSupply: pumpToken.max_supply,
+        sparklineData: pumpToken.sparkline_in_7d,
+        lastUpdated: pumpToken.last_updated,
+        details: tokenDetails || {}
+      });
+    } catch (error) {
+      console.error("Failed to fetch Pump.fun data:", error);
+      res.status(500).json({ error: "Failed to fetch Pump.fun data" });
+    }
+  });
+
   // EstateX live data endpoint
   app.get("/api/estatex/live", async (req, res) => {
     try {

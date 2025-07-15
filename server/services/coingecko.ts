@@ -84,7 +84,8 @@ export class CoinGeckoService {
       'OMNI': 'omni-network',
       'HYPE': 'hyperliquid',
       'W': 'wormhole',
-      'ESX': 'estatex'
+      'ESX': 'estatex',
+      'PUMP': 'pump-fun'  // Pump.fun token
     };
     
     return tokenMap[symbol.toUpperCase()] || symbol.toLowerCase();
