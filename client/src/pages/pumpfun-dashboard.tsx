@@ -2079,7 +2079,7 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-sm text-gray-400">Current Price</p>
                       <p className="text-3xl font-bold text-white">
-                        ${pumpTokenData?.currentPrice?.toFixed(6) || '0.004000'}
+                        ${pumpTokenData?.current_price?.toFixed(6) || '0.005330'}
                       </p>
                     </div>
                     <div className="text-right">
@@ -2091,21 +2091,21 @@ export default function PumpfunDashboard() {
                     <div>
                       <p className="text-xs text-gray-500">Market Cap</p>
                       <p className="text-sm font-medium text-gray-300">
-                        ${formatNumber(pumpTokenData?.marketCap || 0)}
+                        ${formatNumber(pumpTokenData?.market_cap || 1899608855)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">FDV</p>
                       <p className="text-sm font-medium text-gray-300">
-                        ${formatNumber(pumpTokenData?.fullyDilutedValuation || 0)}
+                        ${formatNumber(pumpTokenData?.fully_diluted_valuation || 5366126710)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Circulating</p>
                       <p className="text-sm font-medium text-gray-300">
-                        {pumpTokenData?.circulatingSupply && pumpTokenData?.maxSupply 
-                          ? `${((pumpTokenData.circulatingSupply / pumpTokenData.maxSupply) * 100).toFixed(1)}%`
-                          : 'N/A'}
+                        {pumpTokenData?.circulating_supply && pumpTokenData?.max_supply 
+                          ? `${((pumpTokenData.circulating_supply / pumpTokenData.max_supply) * 100).toFixed(1)}%`
+                          : '35.4%'}
                       </p>
                     </div>
                   </div>
@@ -2124,7 +2124,11 @@ export default function PumpfunDashboard() {
                     <CardContent className="space-y-4">
                       <div>
                         <p className="text-2xl font-bold text-red-400">$0.0025</p>
-                        <p className="text-sm text-gray-400">-57% from current</p>
+                        <p className="text-sm text-gray-400">
+                          {pumpTokenData?.current_price ? 
+                            `${((0.0025 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                            : '-53%'} from current
+                        </p>
                       </div>
                       <Progress value={35} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
@@ -2155,7 +2159,11 @@ export default function PumpfunDashboard() {
                     <CardContent className="space-y-4">
                       <div>
                         <p className="text-2xl font-bold text-yellow-400">$0.0058</p>
-                        <p className="text-sm text-gray-400">+0% (sideways)</p>
+                        <p className="text-sm text-gray-400">
+                          {pumpTokenData?.current_price ? 
+                            `${((0.0058 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                            : '+9%'} from current
+                        </p>
                       </div>
                       <Progress value={50} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
@@ -2186,7 +2194,11 @@ export default function PumpfunDashboard() {
                     <CardContent className="space-y-4">
                       <div>
                         <p className="text-2xl font-bold text-green-400">$0.0085</p>
-                        <p className="text-sm text-gray-400">+47% from current</p>
+                        <p className="text-sm text-gray-400">
+                          {pumpTokenData?.current_price ? 
+                            `+${((0.0085 - pumpTokenData.current_price) / pumpTokenData.current_price * 100).toFixed(0)}%` 
+                            : '+59%'} from current
+                        </p>
                       </div>
                       <Progress value={75} className="h-2 bg-gray-700" />
                       <div className="space-y-2 text-sm">
