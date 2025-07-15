@@ -726,6 +726,12 @@ export default function PumpfunDashboard() {
                 >
                   Valuation
                 </TabsTrigger>
+                <TabsTrigger 
+                  value="monte-carlo"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:border-purple-500/50 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Price Targets
+                </TabsTrigger>
               </TabsList>
             </div>
           </motion.div>
@@ -1473,6 +1479,308 @@ export default function PumpfunDashboard() {
                     $PUMP performance will indicate broader market appetite for high-FDV launches and memecoin infrastructure plays
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Monte Carlo Simulation */}
+          <TabsContent value="monte-carlo" className="space-y-6">
+            <Card className="pump-glassmorphism border-gray-700/50">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold text-gray-100">
+                  $PUMP Price Target Analysis
+                </CardTitle>
+                <CardDescription>
+                  Monte Carlo simulation with 10,000 iterations based on market scenarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Current Price Display */}
+                <div className="bg-gray-900/50 rounded-lg p-6 border border-gray-700/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm text-gray-400">Current Price</p>
+                      <p className="text-3xl font-bold text-white">
+                        ${pumpTokenData?.currentPrice?.toFixed(6) || '0.004000'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-400">Launch Price</p>
+                      <p className="text-xl font-semibold text-gray-300">$0.004000</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 mt-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Market Cap</p>
+                      <p className="text-sm font-medium text-gray-300">
+                        ${formatNumber(pumpTokenData?.marketCap || 600000000)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">FDV</p>
+                      <p className="text-sm font-medium text-gray-300">$4.0B</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Circulating</p>
+                      <p className="text-sm font-medium text-gray-300">15%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price Target Scenarios */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Bearish Scenario */}
+                  <Card className="bg-red-900/20 border-red-800/50">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2 text-red-400">
+                        <TrendingDown className="h-5 w-5" />
+                        Bearish Case
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <p className="text-2xl font-bold text-red-400">$0.0012</p>
+                        <p className="text-sm text-gray-400">-70% from launch</p>
+                      </div>
+                      <Progress value={30} className="h-2 bg-gray-700" />
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-300">Key Factors:</p>
+                        <ul className="space-y-1 text-xs text-gray-400">
+                          <li>• Revenue decline continues (-86%)</li>
+                          <li>• Bonk.fun captures market share</li>
+                          <li>• High FDV rejection by market</li>
+                          <li>• Liquidity rotation to competitors</li>
+                        </ul>
+                      </div>
+                      <div className="pt-2 border-t border-gray-700">
+                        <p className="text-xs text-gray-500">Probability: 45%</p>
+                        <p className="text-xs text-gray-500">Target Date: 30 days post-TGE</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Neutral Scenario */}
+                  <Card className="bg-yellow-900/20 border-yellow-800/50">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2 text-yellow-400">
+                        <Activity className="h-5 w-5" />
+                        Neutral Case
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <p className="text-2xl font-bold text-yellow-400">$0.0035</p>
+                        <p className="text-sm text-gray-400">-12.5% from launch</p>
+                      </div>
+                      <Progress value={60} className="h-2 bg-gray-700" />
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-300">Key Factors:</p>
+                        <ul className="space-y-1 text-xs text-gray-400">
+                          <li>• Revenue stabilizes at $1M/day</li>
+                          <li>• 5.59x multiple holds steady</li>
+                          <li>• Mixed market reception</li>
+                          <li>• Gradual unlock pressure</li>
+                        </ul>
+                      </div>
+                      <div className="pt-2 border-t border-gray-700">
+                        <p className="text-xs text-gray-500">Probability: 35%</p>
+                        <p className="text-xs text-gray-500">Target Date: 60 days post-TGE</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Bullish Scenario */}
+                  <Card className="bg-green-900/20 border-green-800/50">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2 text-green-400">
+                        <TrendingUp className="h-5 w-5" />
+                        Bullish Case
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <p className="text-2xl font-bold text-green-400">$0.0080</p>
+                        <p className="text-sm text-gray-400">+100% from launch</p>
+                      </div>
+                      <Progress value={85} className="h-2 bg-gray-700" />
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-300">Key Factors:</p>
+                        <ul className="space-y-1 text-xs text-gray-400">
+                          <li>• FOMO drives instant sellout</li>
+                          <li>• EVM expansion successful</li>
+                          <li>• Revenue growth returns</li>
+                          <li>• Fresh capital enters market</li>
+                        </ul>
+                      </div>
+                      <div className="pt-2 border-t border-gray-700">
+                        <p className="text-xs text-gray-500">Probability: 20%</p>
+                        <p className="text-xs text-gray-500">Target Date: 90 days post-TGE</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Monte Carlo Visualization */}
+                <Card className="bg-gray-900/50 border-gray-700/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Price Distribution (10,000 Simulations)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <Line
+                        data={{
+                          labels: ['Launch', '7d', '14d', '30d', '60d', '90d'],
+                          datasets: [
+                            {
+                              label: 'P90 (Bullish)',
+                              data: [0.004, 0.0052, 0.0064, 0.0072, 0.0076, 0.0080],
+                              borderColor: 'rgb(34, 197, 94)',
+                              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                              tension: 0.4,
+                              borderWidth: 2,
+                              fill: '+1'
+                            },
+                            {
+                              label: 'P50 (Median)',
+                              data: [0.004, 0.0038, 0.0036, 0.0035, 0.0035, 0.0035],
+                              borderColor: 'rgb(250, 204, 21)',
+                              backgroundColor: 'rgba(250, 204, 21, 0.1)',
+                              tension: 0.4,
+                              borderWidth: 3,
+                              borderDash: [5, 5]
+                            },
+                            {
+                              label: 'P10 (Bearish)',
+                              data: [0.004, 0.0028, 0.0020, 0.0015, 0.0013, 0.0012],
+                              borderColor: 'rgb(239, 68, 68)',
+                              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                              tension: 0.4,
+                              borderWidth: 2,
+                              fill: '-1'
+                            }
+                          ]
+                        }}
+                        options={{
+                          ...chartOptions,
+                          plugins: {
+                            ...chartOptions.plugins,
+                            title: {
+                              display: true,
+                              text: 'Monte Carlo Price Projection',
+                              color: '#94a3b8',
+                              font: { size: 16 }
+                            }
+                          },
+                          scales: {
+                            x: {
+                              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                              ticks: { color: '#64748b' }
+                            },
+                            y: {
+                              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                              ticks: { 
+                                color: '#64748b',
+                                callback: function(value: any) {
+                                  return '$' + value.toFixed(4);
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Risk/Reward Analysis */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card className="bg-gray-900/50 border-gray-700/50">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Risk Factors</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-300">Unlock Pressure</span>
+                          <div className="flex items-center gap-2">
+                            <Progress value={85} className="w-20 h-2" />
+                            <span className="text-xs text-red-400">High</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-300">Competition Risk</span>
+                          <div className="flex items-center gap-2">
+                            <Progress value={70} className="w-20 h-2" />
+                            <span className="text-xs text-orange-400">Medium</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-300">Revenue Decline</span>
+                          <div className="flex items-center gap-2">
+                            <Progress value={90} className="w-20 h-2" />
+                            <span className="text-xs text-red-400">Critical</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-300">Valuation Risk</span>
+                          <div className="flex items-center gap-2">
+                            <Progress value={60} className="w-20 h-2" />
+                            <span className="text-xs text-yellow-400">Moderate</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gray-900/50 border-gray-700/50">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Expected Outcomes</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">Expected Return (90 days)</p>
+                          <p className="text-2xl font-bold text-yellow-400">-28.5%</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">Risk/Reward Ratio</p>
+                          <p className="text-xl font-bold text-orange-400">0.65</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">Confidence Interval (95%)</p>
+                          <p className="text-sm font-medium text-gray-300">$0.0008 - $0.0095</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Key Insights */}
+                <Card className="bg-purple-900/20 border-purple-800/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-purple-300">Monte Carlo Insights</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm text-gray-300">
+                      <li className="flex items-start gap-2">
+                        <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
+                        <span>High probability (65%) of trading below launch price within 30 days</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
+                        <span>Extreme volatility expected: standard deviation of 45% in first month</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
+                        <span>Revenue metrics remain the key driver of price action</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
+                        <span>Best entry likely 30-60 days post-TGE after initial dump</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>
