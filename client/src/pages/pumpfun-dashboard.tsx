@@ -226,14 +226,21 @@ export default function PumpfunDashboard() {
     const targetNeutralImpact = 249342585782.80;
     
     if (selectedScenario === 'neutral') {
-      // Calculate proportional drawdowns to hit exact target
-      const totalMarketCap = top100Data.reduce((sum: number, token: any) => sum + token.market_cap, 0);
-      const baseImpactRatio = targetNeutralImpact / totalMarketCap;
-      
-      return top100Data.map((token: any) => {
+      // Define varied base drawdown percentages for neutral scenario
+      const neutralDrawdowns: Record<string, number> = {
+        meme: 0.15,      // 15% - Memecoins more volatile
+        ai: 0.09,        // 9% - AI tokens medium impact
+        gaming: 0.08,    // 8% - Gaming tokens moderate
+        layer2: 0.07,    // 7% - Layer 2s slight impact
+        defi: 0.06,      // 6% - DeFi relatively stable
+        layer1: 0.05,    // 5% - Layer 1s most stable
+        other: 0.065     // 6.5% - Other tokens average
+      };
+
+      // First pass: calculate impacts with base percentages
+      let initialData = top100Data.map((token: any) => {
         const category = categorizeToken(token.categories, token.symbol);
-        // Use a fixed drawdown percentage that will give us the exact total
-        const drawdownPercent = baseImpactRatio;
+        const drawdownPercent = neutralDrawdowns[category] || neutralDrawdowns.other;
         
         return {
           rank: token.market_cap_rank,
@@ -249,7 +256,21 @@ export default function PumpfunDashboard() {
           priceChange24h: token.price_change_percentage_24h,
           volume24h: token.total_volume
         };
-      }).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
+      });
+
+      // Calculate initial total impact
+      const initialTotalImpact = initialData.reduce((sum, token) => sum + token.impactValue, 0);
+      
+      // Scale factor to hit exact target
+      const scaleFactor = targetNeutralImpact / initialTotalImpact;
+      
+      // Apply scaling to maintain relative differences while hitting target
+      return initialData.map(token => ({
+        ...token,
+        drawdownPercent: token.drawdownPercent * scaleFactor,
+        impactValue: token.impactValue * scaleFactor,
+        projectedPrice: token.currentPrice * (1 - (token.drawdownPercent * scaleFactor / 100))
+      })).sort((a: any, b: any) => b.drawdownPercent - a.drawdownPercent);
     } else {
       // For bearish and bullish scenarios, use the existing logic
       return top100Data.map((token: any) => {
