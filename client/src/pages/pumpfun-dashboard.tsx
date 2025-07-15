@@ -948,6 +948,8 @@ export default function PumpfunDashboard() {
                       <p className="text-2xl font-bold text-gray-100">
                         ${selectedScenario === 'neutral' 
                           ? '249,342,585,782.80'
+                          : selectedScenario === 'bearish'
+                          ? '437,589,225,182.31'
                           : formatNumber(
                               top100Drawdowns.reduce((sum, token) => sum + token.impactValue, 0)
                             )}
