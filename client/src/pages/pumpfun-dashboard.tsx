@@ -1190,6 +1190,7 @@ export default function PumpfunDashboard() {
                     <p className="text-xs text-red-300">
                       -42% to -55% from current levels
                     </p>
+                    <p className="text-xs text-red-200 mt-2">Timeframe: 2-4 months</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1233,6 +1234,7 @@ export default function PumpfunDashboard() {
                     <p className="text-xs text-green-300">
                       +54% to +92% from current levels
                     </p>
+                    <p className="text-xs text-green-200 mt-2">Timeframe: 6-12 months</p>
                   </div>
                 </CardContent>
               </Card>
@@ -1278,7 +1280,10 @@ export default function PumpfunDashboard() {
                       <div className="bg-blue-900/30 rounded-lg p-4">
                         <p className="text-2xl font-bold text-blue-400">$0.0085 - $0.0095</p>
                         <p className="text-sm text-gray-400 mt-1">+9% to +22% from current</p>
-                        <p className="text-xs text-gray-500 mt-2">70% probability scenario</p>
+                        <div className="mt-2 pt-2 border-t border-blue-800/50">
+                          <p className="text-xs text-gray-500">70% probability scenario</p>
+                          <p className="text-xs text-blue-300 mt-1">Timeframe: 3-6 months</p>
+                        </div>
                       </div>
                     </div>
                   </div>
