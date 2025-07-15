@@ -1501,9 +1501,6 @@ export default function PumpfunDashboard() {
                     <div className="bg-gray-800/50 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-gray-300">Daily Token Launches</span>
-                        <Badge variant="outline" className="text-xs border-red-500/50 text-red-400">
-                          Peak: 71,735 (Jan 23)
-                        </Badge>
                       </div>
                       <div className="space-y-2">
                         {(() => {
