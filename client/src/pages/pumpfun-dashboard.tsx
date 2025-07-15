@@ -354,7 +354,7 @@ export default function PumpfunDashboard() {
     totalRevenue: 715360000, // $715.36M total
     peakDailyRevenue: 14000000, // $14M peak
     currentDailyRevenue: 1000000, // $1M current
-    tgeValuation: 4000000000, // $4B FDV
+
     tokenSupply: 1000000000000, // 1T total
     publicSalePercent: 15, // 15%
     salePrice: 0.004, // $0.004 per token
@@ -598,38 +598,7 @@ export default function PumpfunDashboard() {
               </TooltipProvider>
             </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Card className="pump-glassmorphism pump-metric-card border-blue-500/20 hover:border-blue-500/40 cursor-help">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm text-gray-400 flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4" />
-                        TGE Valuation
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-400">
-                        <AnimatedValue value={pumpfunMetrics.tgeValuation} format="currency" />
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Zap className="h-3 w-3 text-blue-400" />
-                        <p className="text-xs text-gray-500">Fully diluted</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Initial fully diluted valuation at token launch</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </motion.div>
+
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -869,7 +838,7 @@ export default function PumpfunDashboard() {
               <CardHeader>
                 <CardTitle>Top 100 Altcoin Drawdown Simulation</CardTitle>
                 <CardDescription>
-                  Analyzing potential impact of $PUMP TGE on the top 100 cryptocurrencies by market cap
+                  Analyzing potential impact of $PUMP launch on the top 100 cryptocurrencies by market cap
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -1581,7 +1550,7 @@ export default function PumpfunDashboard() {
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 45%</p>
-                        <p className="text-xs text-gray-500">Target Date: 30 days post-TGE</p>
+                        <p className="text-xs text-gray-500">Target Date: 30 days from launch</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1611,7 +1580,7 @@ export default function PumpfunDashboard() {
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 35%</p>
-                        <p className="text-xs text-gray-500">Target Date: 60 days post-TGE</p>
+                        <p className="text-xs text-gray-500">Target Date: 60 days from launch</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1641,7 +1610,7 @@ export default function PumpfunDashboard() {
                       </div>
                       <div className="pt-2 border-t border-gray-700">
                         <p className="text-xs text-gray-500">Probability: 20%</p>
-                        <p className="text-xs text-gray-500">Target Date: 90 days post-TGE</p>
+                        <p className="text-xs text-gray-500">Target Date: 90 days from launch</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -1803,7 +1772,7 @@ export default function PumpfunDashboard() {
                       </li>
                       <li className="flex items-start gap-2">
                         <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5" />
-                        <span>Best entry likely 30-60 days post-TGE after initial dump</span>
+                        <span>Best entry likely 30-60 days after launch following initial dump</span>
                       </li>
                     </ul>
                   </CardContent>
