@@ -79,9 +79,10 @@ const BONKFUN_QUERIES = {
 
 // Pump.fun queries
 const PUMPFUN_QUERIES = {
-  REVENUE_24H: 5436123, // Query for Pump.fun 24h revenue in SOL and USD
+  REVENUE_24H: 5446111, // Query for Pump.fun 24h revenue in SOL and USD (updated to new query)
   VOLUME_24H: 5440990, // Query for Pump.fun 24h volume in USD (updated)
-  ADDITIONAL_METRICS: 5446111 // Additional metrics query
+  ADDITIONAL_METRICS: 5446111, // Additional metrics query
+  DAILY_REVENUE_CSV: 5445866 // Daily revenue CSV query
 };
 
 export class DuneService {
@@ -482,9 +483,13 @@ export class DuneService {
       const result = await this.getLatestResults(queryId);
       if (result && result.result && result.result.rows.length > 0) {
         const row = result.result.rows[0];
+        // Handle both number and string formats
+        const revenueSol = typeof row.revenue_sol === 'string' ? parseFloat(row.revenue_sol) : row.revenue_sol;
+        const revenueUsd = typeof row.revenue_usd === 'string' ? parseFloat(row.revenue_usd) : row.revenue_usd;
+        
         return {
-          revenue_sol: row.revenue_sol || 0,
-          revenue_usd: row.revenue_usd || 0
+          revenue_sol: revenueSol || 0,
+          revenue_usd: revenueUsd || 0
         };
       }
     } catch (error) {
@@ -629,6 +634,57 @@ export class DuneService {
       console.error('Error fetching additional metrics:', error);
       return null;
     }
+  }
+
+  /**
+   * Get daily revenue data from CSV
+   * @returns Parsed revenue data or null
+   */
+  async getDailyRevenueCSV(): Promise<any | null> {
+    const queryId = PUMPFUN_QUERIES.DAILY_REVENUE_CSV;
+    
+    try {
+      const csvData = await this.getCSVResults(queryId);
+      if (!csvData) return null;
+      
+      // Parse CSV data
+      const lines = csvData.split('\n').filter(line => line.trim());
+      if (lines.length < 2) return null;
+      
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        return row;
+      });
+      
+      return rows;
+    } catch (error) {
+      console.error('Error fetching daily revenue CSV:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get additional metrics data using regular API
+   * @returns Metrics data or null
+   */
+  async getAdditionalMetricsJSON(): Promise<any | null> {
+    const queryId = PUMPFUN_QUERIES.ADDITIONAL_METRICS;
+    
+    try {
+      const result = await this.getLatestResults(queryId);
+      if (result && result.result && result.result.rows.length > 0) {
+        return result.result.rows;
+      }
+    } catch (error) {
+      console.error('Error fetching additional metrics JSON:', error);
+    }
+    
+    return null;
   }
 }
 

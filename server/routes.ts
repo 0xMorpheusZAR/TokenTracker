@@ -935,6 +935,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/dune/pumpfun/daily-revenue-csv", async (req, res) => {
+    try {
+      const revenueData = await duneService.getDailyRevenueCSV();
+      if (!revenueData) {
+        return res.status(500).json({ error: "Failed to fetch daily revenue CSV data" });
+      }
+      res.json({
+        data: revenueData,
+        source: "Dune Analytics",
+        queryId: 5445866
+      });
+    } catch (error) {
+      console.error("Failed to fetch daily revenue CSV:", error);
+      res.status(500).json({ error: "Failed to fetch revenue data" });
+    }
+  });
+
+  app.get("/api/dune/pumpfun/additional-metrics-json", async (req, res) => {
+    try {
+      const metricsData = await duneService.getAdditionalMetricsJSON();
+      if (!metricsData) {
+        return res.status(500).json({ error: "Failed to fetch additional metrics JSON data" });
+      }
+      res.json({
+        data: metricsData,
+        source: "Dune Analytics",
+        queryId: 5446111
+      });
+    } catch (error) {
+      console.error("Failed to fetch additional metrics JSON:", error);
+      res.status(500).json({ error: "Failed to fetch metrics data" });
+    }
+  });
+
   app.post("/api/dune/query/:queryId/execute", async (req, res) => {
     try {
       const { queryId } = req.params;
