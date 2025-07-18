@@ -410,7 +410,7 @@ class VeloService {
 
   async getTopCoinsMarketCaps(): Promise<VeloCapData[]> {
     try {
-      const csvData = await this.getMarketCaps(['BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'MATIC', 'LINK', 'UNI', 'AAVE']);
+      const csvData = await this.getMarketCaps(['BTC', 'ETH', 'SOL', 'ADA', 'LINK', 'AVAX', 'DOT', 'UNI', 'AAVE', 'MATIC']);
       return this.parseMarketCapsCSV(csvData);
     } catch (error) {
       console.error('Failed to fetch top coins market caps:', error);

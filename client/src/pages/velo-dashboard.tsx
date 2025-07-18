@@ -76,6 +76,9 @@ interface VeloOptionsData {
   type?: string;
 }
 
+// Define the top 10 cryptocurrencies to track
+const TOP_10_COINS = ['BTC', 'ETH', 'SOL', 'ADA', 'LINK', 'AVAX', 'DOT', 'UNI', 'AAVE', 'MATIC'];
+
 function VeloDashboard() {
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [selectedExchange, setSelectedExchange] = useState('coinbase');
@@ -93,6 +96,12 @@ function VeloDashboard() {
   // Fetch market caps
   const { data: marketCaps, isLoading: capsLoading } = useQuery({
     queryKey: ['/api/velo/caps', refreshTime],
+    refetchInterval: 30000,
+  });
+
+  // Fetch comprehensive top 10 data
+  const { data: top10Data, isLoading: top10Loading } = useQuery({
+    queryKey: ['/api/velo/top10', refreshTime],
     refetchInterval: 30000,
   });
 
@@ -278,7 +287,7 @@ function VeloDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {capsLoading ? (
+            {top10Loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -288,18 +297,18 @@ function VeloDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                {marketCaps?.data?.slice(0, 10).map((cap: VeloCapData, index: number) => (
+                {(top10Data?.data || marketCaps?.data?.slice(0, 10))?.map((coin: any, index: number) => (
                   <div
-                    key={cap.coin}
+                    key={coin.coin}
                     className="group relative p-4 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700 hover:border-emerald-400/50 transition-all duration-300 hover:transform hover:scale-105"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-cyan-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                     
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-bold text-xl text-white">{cap.coin}</span>
-                        <Badge className={`text-xs ${index < 3 ? 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-gray-900' : 'bg-gray-700'}`}>
-                          #{index + 1}
+                        <span className="font-bold text-xl text-white">{coin.coin}</span>
+                        <Badge className={`text-xs ${coin.rank <= 3 ? 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-gray-900' : 'bg-gray-700'}`}>
+                          #{coin.rank || index + 1}
                         </Badge>
                       </div>
                       
@@ -307,21 +316,14 @@ function VeloDashboard() {
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-gray-500">Market Cap</span>
                           <span className="text-emerald-400 font-semibold">
-                            {formatNumber(cap.circ_dollars)}
+                            {coin.marketCapFormatted || formatNumber(coin.market_cap || 0)}
                           </span>
-                        </div>
-                        
-                        <div className="w-full bg-gray-700 rounded-full h-1.5">
-                          <div 
-                            className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-1.5 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min((cap.circ_dollars / cap.fdv_dollars) * 100, 100)}%` }}
-                          />
                         </div>
                         
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-gray-500">FDV</span>
                           <span className="text-cyan-400">
-                            {formatNumber(cap.fdv_dollars)}
+                            {coin.fdvFormatted || formatNumber(coin.fdv || 0)}
                           </span>
                         </div>
                         
@@ -329,7 +331,7 @@ function VeloDashboard() {
                           <div className="flex justify-between items-center text-xs">
                             <span className="text-gray-500">Supply</span>
                             <span className="text-gray-300">
-                              {(cap.circ / 1e6).toFixed(2)}M
+                              {coin.supplyFormatted || formatNumber(coin.supply || 0)}
                             </span>
                           </div>
                         </div>
