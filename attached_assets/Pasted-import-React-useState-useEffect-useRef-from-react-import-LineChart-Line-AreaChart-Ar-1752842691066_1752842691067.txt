@@ -1,0 +1,1208 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart } from 'recharts';
+import { Activity, TrendingUp, DollarSign, BarChart2, FileText, Clock, AlertCircle, ChevronDown, Settings, RefreshCw, Filter, Calendar, Globe, Zap, Eye, TrendingDown, Award, Layers, ChevronUp, Maximize2, Bell, Moon, Sun, Wifi, WifiOff, ArrowUpRight, ArrowDownRight, Target, Shield, Sparkles, Flame, Rocket, AlertTriangle, Percent } from 'lucide-react';
+
+// Animated Number Component
+function AnimatedNumber({ value, format = 'number', prefix = '', suffix = '' }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const prevValue = useRef(0);
+
+  useEffect(() => {
+    const startValue = prevValue.current;
+    const endValue = value;
+    const duration = 1000;
+    const startTime = Date.now();
+
+    const animate = () => {
+      const now = Date.now();
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentValue = startValue + (endValue - startValue) * easeOutQuart;
+      
+      setDisplayValue(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        prevValue.current = endValue;
+      }
+    };
+
+    animate();
+  }, [value]);
+
+  const formatValue = () => {
+    if (format === 'currency') {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(displayValue);
+    } else if (format === 'percent') {
+      return `${displayValue.toFixed(2)}%`;
+    }
+    return displayValue.toFixed(2);
+  };
+
+  return <span>{prefix}{formatValue()}{suffix}</span>;
+}
+
+// Sparkline Component
+function Sparkline({ data, color = '#3B82F6', height = 40 }) {
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <AreaChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+        <defs>
+          <linearGradient id={`gradient-${color}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+            <stop offset="100%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <Area
+          type="monotone"
+          dataKey="value"
+          stroke={color}
+          strokeWidth={2}
+          fill={`url(#gradient-${color})`}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
+
+// Enhanced mock data generators
+const generatePriceData = () => {
+  const now = Date.now();
+  return Array.from({ length: 100 }, (_, i) => ({
+    time: now - (100 - i) * 60000,
+    binance: 43000 + Math.sin(i / 10) * 500 + Math.random() * 200,
+    coinbase: 43050 + Math.sin(i / 10) * 500 + Math.random() * 200,
+    ftx: 42980 + Math.sin(i / 10) * 500 + Math.random() * 200,
+    okx: 43020 + Math.sin(i / 10) * 500 + Math.random() * 200,
+    volume: 1000000 + Math.random() * 500000,
+  }));
+};
+
+const generateSparklineData = () => {
+  return Array.from({ length: 20 }, (_, i) => ({
+    value: Math.random() * 100 + 50
+  }));
+};
+
+const generateFundingData = () => {
+  const exchanges = ['Binance', 'Bybit', 'OKX', 'dYdX', 'Bitget'];
+  return exchanges.map(exchange => ({
+    exchange,
+    btc: (Math.random() * 0.02 - 0.01),
+    eth: (Math.random() * 0.02 - 0.01),
+    sol: (Math.random() * 0.03 - 0.015),
+    avgFunding: (Math.random() * 0.02 - 0.01),
+  }));
+};
+
+const generateOptionsSkew = () => {
+  const strikes = [35000, 37500, 40000, 42500, 45000, 47500, 50000];
+  return strikes.map(strike => ({
+    strike,
+    '7d': 45 + Math.sin(strike / 5000) * 10 + Math.random() * 5,
+    '30d': 50 + Math.sin(strike / 5000) * 15 + Math.random() * 5,
+    '90d': 55 + Math.sin(strike / 5000) * 20 + Math.random() * 5,
+  }));
+};
+
+const generateOpenInterest = () => {
+  const data = [];
+  const now = Date.now();
+  for (let i = 30; i >= 0; i--) {
+    data.push({
+      date: new Date(now - i * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      futures: 15000000000 + Math.sin(i / 5) * 2000000000,
+      options: 8000000000 + Math.sin(i / 7) * 1000000000,
+      perpetuals: 12000000000 + Math.sin(i / 6) * 1500000000,
+    });
+  }
+  return data;
+};
+
+const generateNewsData = () => {
+  const priorities = ['high', 'medium', 'low'];
+  const sources = ['Velo', 'CoinDesk', 'The Block', 'Decrypt', 'CoinTelegraph'];
+  const coins = [['BTC'], ['ETH'], ['SOL'], ['BTC', 'ETH'], ['AVAX'], ['MATIC']];
+  const sentiments = ['bullish', 'bearish', 'neutral'];
+  
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    time: Date.now() - i * 3600000,
+    headline: [
+      "Major Exchange Announces New Perpetual Contracts for DeFi Tokens",
+      "DeFi Protocol Reaches $1B TVL Milestone Amid Market Rally",
+      "Institutional Adoption Surges in Q4 with $500M Inflows",
+      "Options Volume Hits Record High as Volatility Increases",
+      "New Layer 2 Solution Launches with 100k TPS Capability",
+      "Regulatory Framework Update Expected to Boost Adoption",
+      "Whale Activity Detected: $50M BTC Accumulation",
+      "Cross-Chain Bridge Facilitates $500M in Daily Volume",
+      "Market Maker Adds Support for 20 New Trading Pairs",
+      "Protocol Governance Vote Passes with 95% Approval"
+    ][i],
+    source: sources[Math.floor(Math.random() * sources.length)],
+    priority: priorities[Math.floor(Math.random() * priorities.length)],
+    coins: coins[Math.floor(Math.random() * coins.length)],
+    sentiment: sentiments[Math.floor(Math.random() * sentiments.length)],
+    impact: Math.floor(Math.random() * 5) + 1,
+  }));
+};
+
+const generateMarketCaps = () => {
+  return [
+    { coin: 'BTC', cap: 845673000000, change: 2.3, sparkline: generateSparklineData() },
+    { coin: 'ETH', cap: 287432000000, change: 3.7, sparkline: generateSparklineData() },
+    { coin: 'BNB', cap: 87654000000, change: -1.2, sparkline: generateSparklineData() },
+    { coin: 'SOL', cap: 45678000000, change: 5.4, sparkline: generateSparklineData() },
+    { coin: 'XRP', cap: 34567000000, change: 1.8, sparkline: generateSparklineData() },
+  ];
+};
+
+const generateVolumeProfile = () => {
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+  return hours.map(hour => ({
+    hour: `${hour}:00`,
+    spot: 1500000000 + Math.sin(hour / 4) * 500000000,
+    futures: 2500000000 + Math.sin(hour / 3) * 800000000,
+    options: 800000000 + Math.sin(hour / 5) * 300000000,
+  }));
+};
+
+const generateExchangeComparison = () => {
+  const metrics = ['Volume', 'Liquidity', 'Spreads', 'Fees', 'Uptime'];
+  return {
+    binance: metrics.map(() => 80 + Math.random() * 20),
+    coinbase: metrics.map(() => 75 + Math.random() * 20),
+    okx: metrics.map(() => 70 + Math.random() * 25),
+    bybit: metrics.map(() => 72 + Math.random() * 23),
+  };
+};
+
+// Generate Top Performers data
+const generateTopPerformers = () => {
+  const tokens = [
+    { symbol: 'PEPE', name: 'Pepe', category: 'meme' },
+    { symbol: 'WLD', name: 'Worldcoin', category: 'ai' },
+    { symbol: 'ARB', name: 'Arbitrum', category: 'l2' },
+    { symbol: 'IMX', name: 'Immutable X', category: 'gaming' },
+    { symbol: 'OP', name: 'Optimism', category: 'l2' },
+    { symbol: 'FET', name: 'Fetch.ai', category: 'ai' },
+    { symbol: 'MATIC', name: 'Polygon', category: 'l2' },
+    { symbol: 'SAND', name: 'Sandbox', category: 'gaming' },
+    { symbol: 'SHIB', name: 'Shiba Inu', category: 'meme' },
+    { symbol: 'AAVE', name: 'Aave', category: 'defi' },
+    { symbol: 'UNI', name: 'Uniswap', category: 'defi' },
+    { symbol: 'GALA', name: 'Gala', category: 'gaming' },
+    { symbol: 'DOGE', name: 'Dogecoin', category: 'meme' },
+    { symbol: 'OCEAN', name: 'Ocean Protocol', category: 'ai' },
+    { symbol: 'CRV', name: 'Curve', category: 'defi' },
+  ];
+
+  return tokens.map(token => ({
+    ...token,
+    price: Math.random() * 10 + 0.1,
+    change4h: (Math.random() - 0.3) * 30,
+    change1d: (Math.random() - 0.3) * 50,
+    change1w: (Math.random() - 0.3) * 100,
+    volume24h: Math.random() * 500000000 + 10000000,
+    marketCap: Math.random() * 5000000000 + 100000000,
+    sparkline: generateSparklineData(),
+  }));
+};
+
+// Generate Sector Update data
+const generateSectorData = () => {
+  const sectors = [
+    { name: 'DeFi', icon: '💰', totalCap: 45000000000 },
+    { name: 'Layer 2', icon: '🔗', totalCap: 28000000000 },
+    { name: 'AI Tokens', icon: '🤖', totalCap: 12000000000 },
+    { name: 'Gaming', icon: '🎮', totalCap: 8000000000 },
+    { name: 'Meme Coins', icon: '🐸', totalCap: 35000000000 },
+    { name: 'Layer 1', icon: '🌐', totalCap: 380000000000 },
+  ];
+
+  return sectors.map(sector => ({
+    ...sector,
+    change4h: (Math.random() - 0.5) * 10,
+    change1d: (Math.random() - 0.5) * 20,
+    change1w: (Math.random() - 0.5) * 40,
+    topGainer: { symbol: 'XXX', change: Math.random() * 50 },
+    topLoser: { symbol: 'YYY', change: -Math.random() * 30 },
+    volume24h: Math.random() * 2000000000 + 100000000,
+    dominance: (sector.totalCap / 500000000000) * 100,
+  }));
+};
+
+// Generate Funding Rate Spike data
+const generateFundingSpikes = () => {
+  const exchanges = ['Binance', 'Bybit', 'OKX', 'dYdX', 'Bitget'];
+  const pairs = ['BTC-PERP', 'ETH-PERP', 'SOL-PERP', 'MATIC-PERP', 'ARB-PERP', 'OP-PERP'];
+  const spikes = [];
+
+  for (let i = 0; i < 10; i++) {
+    spikes.push({
+      id: i,
+      exchange: exchanges[Math.floor(Math.random() * exchanges.length)],
+      pair: pairs[Math.floor(Math.random() * pairs.length)],
+      currentRate: (Math.random() * 0.1 - 0.05),
+      previousRate: (Math.random() * 0.02 - 0.01),
+      spike: 0,
+      time: Date.now() - Math.random() * 3600000,
+      openInterest: Math.random() * 100000000 + 10000000,
+      volume1h: Math.random() * 50000000 + 5000000,
+    });
+    spikes[i].spike = Math.abs(spikes[i].currentRate - spikes[i].previousRate);
+  }
+
+  return spikes.sort((a, b) => b.spike - a.spike);
+};
+
+function EnhancedVeloDashboard() {
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
+  const [selectedProduct, setSelectedProduct] = useState('spot');
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  const [wsConnected, setWsConnected] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [expandedChart, setExpandedChart] = useState(null);
+  
+  // Mock data states
+  const [priceData, setPriceData] = useState(generatePriceData());
+  const [fundingData, setFundingData] = useState(generateFundingData());
+  const [optionsSkew, setOptionsSkew] = useState(generateOptionsSkew());
+  const [openInterest, setOpenInterest] = useState(generateOpenInterest());
+  const [newsData, setNewsData] = useState(generateNewsData());
+  const [marketCaps, setMarketCaps] = useState(generateMarketCaps());
+  const [volumeProfile, setVolumeProfile] = useState(generateVolumeProfile());
+  const [exchangeComparison, setExchangeComparison] = useState(generateExchangeComparison());
+  
+  // New feature states
+  const [topPerformers, setTopPerformers] = useState(generateTopPerformers());
+  const [sectorData, setSectorData] = useState(generateSectorData());
+  const [fundingSpikes, setFundingSpikes] = useState(generateFundingSpikes());
+  const [selectedTimeframe2, setSelectedTimeframe2] = useState('1d');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Simulate WebSocket connection
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWsConnected(prev => !prev);
+      setTimeout(() => setWsConnected(true), 2000);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Simulate real-time updates with smoother transitions
+  useEffect(() => {
+    if (!autoRefresh) return;
+    
+    const interval = setInterval(() => {
+      setPriceData(prev => {
+        const newData = [...prev.slice(1)];
+        const lastPrice = prev[prev.length - 1];
+        const trend = Math.sin(Date.now() / 10000) * 30;
+        newData.push({
+          time: Date.now(),
+          binance: lastPrice.binance + trend + (Math.random() - 0.5) * 20,
+          coinbase: lastPrice.coinbase + trend + (Math.random() - 0.5) * 20,
+          ftx: lastPrice.ftx + trend + (Math.random() - 0.5) * 20,
+          okx: lastPrice.okx + trend + (Math.random() - 0.5) * 20,
+          volume: 1000000 + Math.random() * 500000,
+        });
+        return newData;
+      });
+
+      // Update market caps with new sparkline data
+      setMarketCaps(prev => prev.map(item => ({
+        ...item,
+        change: item.change + (Math.random() - 0.5) * 0.2,
+        sparkline: [...item.sparkline.slice(1), { value: Math.random() * 100 + 50 }]
+      })));
+
+      // Simulate funding rate updates
+      if (Math.random() > 0.7) {
+        setFundingData(generateFundingData());
+      }
+
+      // Update top performers
+      setTopPerformers(prev => prev.map(token => ({
+        ...token,
+        price: token.price * (1 + (Math.random() - 0.5) * 0.01),
+        change4h: token.change4h + (Math.random() - 0.5) * 0.5,
+        change1d: token.change1d + (Math.random() - 0.5) * 0.3,
+        change1w: token.change1w + (Math.random() - 0.5) * 0.1,
+        sparkline: [...token.sparkline.slice(1), { value: Math.random() * 100 + 50 }]
+      })));
+
+      // Update sector data
+      if (Math.random() > 0.8) {
+        setSectorData(generateSectorData());
+      }
+
+      // Update funding spikes
+      if (Math.random() > 0.9) {
+        setFundingSpikes(generateFundingSpikes());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
+
+  // Simulate notifications
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.8) {
+        const types = ['price', 'funding', 'news', 'volume'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        const messages = {
+          price: 'BTC crossed $43,500 on Binance',
+          funding: 'Funding rate spike detected on perpetuals',
+          news: 'Breaking: New regulatory framework announced',
+          volume: '24h volume reached new ATH'
+        };
+        
+        addNotification(messages[type], type);
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const addNotification = (message, type = 'info') => {
+    const id = Date.now();
+    setNotifications(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 5000);
+  };
+
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString();
+  };
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const formatLargeNumber = (num) => {
+    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+    if (num >= 1e6) return `$${(num / 1e6).toFixed(2)}M`;
+    return `$${(num / 1e3).toFixed(2)}K`;
+  };
+
+  const formatFundingRate = (rate) => {
+    return (rate * 100).toFixed(4);
+  };
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-gray-900/95 backdrop-blur-lg p-3 rounded-lg border border-gray-700/50 shadow-xl">
+          <p className="text-sm font-medium text-gray-300 mb-2">{label}</p>
+          {payload.map((entry, index) => (
+            <div key={index} className="flex items-center justify-between space-x-4">
+              <span className="text-xs" style={{ color: entry.color }}>{entry.name}:</span>
+              <span className="text-xs font-medium">{entry.value.toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-950' : 'bg-gray-50'} text-gray-100 relative overflow-hidden`}>
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse animation-delay-4000"></div>
+      </div>
+
+      {/* Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {notifications.map(notification => (
+          <div
+            key={notification.id}
+            className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 rounded-lg p-4 shadow-2xl animate-slide-in-right max-w-sm"
+          >
+            <div className="flex items-center space-x-2">
+              <Bell className="w-4 h-4 text-blue-400" />
+              <p className="text-sm">{notification.message}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-10 p-4 lg:p-6">
+        {/* Header */}
+        <div className="mb-6 backdrop-blur-lg bg-gray-900/50 rounded-2xl p-6 border border-gray-800/50">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-blue-500 blur-xl opacity-50"></div>
+                <h1 className="relative text-3xl lg:text-4xl font-bold flex items-center">
+                  <Zap className="mr-2 text-blue-400" />
+                  Velo Pro Dashboard
+                </h1>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className={`px-3 py-1 ${wsConnected ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'} rounded-full text-sm flex items-center backdrop-blur-sm`}>
+                  <div className={`w-2 h-2 ${wsConnected ? 'bg-green-400' : 'bg-red-400'} rounded-full mr-2 ${wsConnected ? 'animate-pulse' : ''}`}></div>
+                  {wsConnected ? <Wifi className="w-3 h-3 mr-1" /> : <WifiOff className="w-3 h-3 mr-1" />}
+                  {wsConnected ? 'Connected' : 'Reconnecting...'}
+                </span>
+                <button className="p-2 bg-gray-800/50 backdrop-blur-sm rounded-lg hover:bg-gray-700/50 transition-all">
+                  <Bell className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 bg-gray-800/50 backdrop-blur-sm rounded-lg hover:bg-gray-700/50 transition-all"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={() => setAutoRefresh(!autoRefresh)}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-all backdrop-blur-sm ${
+                  autoRefresh ? 'bg-blue-600/80 hover:bg-blue-700/80 shadow-lg shadow-blue-600/20' : 'bg-gray-800/50 hover:bg-gray-700/50'
+                }`}
+              >
+                <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+                <span>{autoRefresh ? 'Live' : 'Paused'}</span>
+              </button>
+              <button className="p-2 bg-gray-800/50 backdrop-blur-sm rounded-lg hover:bg-gray-700/50 transition-all">
+                <Settings className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Product & Timeframe Selectors */}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center space-x-2 bg-gray-800/30 backdrop-blur-sm rounded-lg p-1">
+              {['spot', 'futures', 'options'].map(product => (
+                <button
+                  key={product}
+                  onClick={() => setSelectedProduct(product)}
+                  className={`px-4 py-2 rounded-lg capitalize transition-all ${
+                    selectedProduct === product
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'hover:bg-gray-700/50'
+                  }`}
+                >
+                  {product}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center space-x-1 bg-gray-800/30 backdrop-blur-sm rounded-lg p-1">
+              {['1m', '5m', '15m', '1h', '4h', '1d'].map(tf => (
+                <button
+                  key={tf}
+                  onClick={() => setSelectedTimeframe(tf)}
+                  className={`px-3 py-2 rounded text-sm transition-all ${
+                    selectedTimeframe === tf
+                      ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
+                      : 'hover:bg-gray-700/50'
+                  }`}
+                >
+                  {tf}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Key Metrics Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: 'Total Volume 24h', value: 45234567890, change: 12.3, icon: Activity, color: 'blue' },
+            { label: 'Open Interest', value: 23456789012, change: -5.7, icon: Target, color: 'purple' },
+            { label: 'Avg Funding Rate', value: 0.0125, change: 0.003, icon: TrendingUp, color: 'green', format: 'percent' },
+            { label: 'Active Contracts', value: 1234, change: 45, icon: Shield, color: 'cyan' },
+          ].map((metric, index) => (
+            <div key={index} className="bg-gray-900/50 backdrop-blur-lg rounded-xl p-4 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-400">{metric.label}</span>
+                <metric.icon className={`w-5 h-5 text-${metric.color}-400`} />
+              </div>
+              <div className="text-2xl font-bold mb-1">
+                <AnimatedNumber 
+                  value={metric.value} 
+                  format={metric.format || 'currency'} 
+                />
+              </div>
+              <div className={`flex items-center text-sm ${metric.change > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {metric.change > 0 ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
+                <AnimatedNumber value={Math.abs(metric.change)} format={metric.format === 'percent' ? 'percent' : 'number'} suffix={metric.format === 'percent' ? '' : '%'} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {/* Cross-Exchange Price Comparison */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 xl:col-span-2 border border-gray-800/50 hover:border-gray-700/50 transition-all group">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center">
+                <TrendingUp className="mr-2 text-green-400" />
+                Cross-Exchange BTC/USDT Price
+              </h2>
+              <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={() => setExpandedChart('price')}
+                  className="p-1 hover:bg-gray-800/50 rounded transition-all"
+                >
+                  <Maximize2 className="w-4 h-4 text-gray-400" />
+                </button>
+                <select className="bg-gray-800/50 backdrop-blur-sm rounded px-2 py-1 text-sm border border-gray-700/50">
+                  <option>All Exchanges</option>
+                  <option>Top 5 by Volume</option>
+                  <option>Custom Selection</option>
+                </select>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={priceData}>
+                <defs>
+                  <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                <XAxis 
+                  dataKey="time" 
+                  tickFormatter={formatTime}
+                  stroke="#9CA3AF"
+                />
+                <YAxis 
+                  yAxisId="price"
+                  domain={['dataMin - 100', 'dataMax + 100']}
+                  tickFormatter={(value) => `$${value.toFixed(0)}`}
+                  stroke="#9CA3AF"
+                />
+                <YAxis 
+                  yAxisId="volume"
+                  orientation="right"
+                  tickFormatter={formatLargeNumber}
+                  stroke="#9CA3AF"
+                  opacity={0.5}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Area
+                  yAxisId="volume"
+                  type="monotone"
+                  dataKey="volume"
+                  stroke="#8884d8"
+                  fillOpacity={1}
+                  fill="url(#colorVolume)"
+                  name="Volume"
+                />
+                <Line yAxisId="price" type="monotone" dataKey="binance" stroke="#F59E0B" strokeWidth={2} dot={false} />
+                <Line yAxisId="price" type="monotone" dataKey="coinbase" stroke="#3B82F6" strokeWidth={2} dot={false} />
+                <Line yAxisId="price" type="monotone" dataKey="ftx" stroke="#10B981" strokeWidth={2} dot={false} />
+                <Line yAxisId="price" type="monotone" dataKey="okx" stroke="#A78BFA" strokeWidth={2} dot={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Market Caps with Sparklines */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <Award className="mr-2 text-yellow-400" />
+              Market Caps
+            </h2>
+            <div className="space-y-3">
+              {marketCaps.map(({ coin, cap, change, sparkline }) => (
+                <div key={coin} className="p-3 bg-gray-800/30 backdrop-blur-sm rounded-xl hover:bg-gray-800/50 transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                        <div className="relative w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl flex items-center justify-center font-bold text-sm">
+                          {coin}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-semibold">
+                          <AnimatedNumber value={cap} format="currency" />
+                        </div>
+                        <div className="text-xs text-gray-400">Market Cap</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-sm font-medium flex items-center ${change > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {change > 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+                        <AnimatedNumber value={Math.abs(change)} suffix="%" />
+                      </div>
+                      <div className="text-xs text-gray-500">24h</div>
+                    </div>
+                  </div>
+                  <div className="h-10 -mb-1">
+                    <Sparkline data={sparkline} color={change > 0 ? '#10B981' : '#EF4444'} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Enhanced Funding Rates */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <BarChart2 className="mr-2 text-purple-400" />
+              Perpetual Funding Rates
+            </h2>
+            <div className="space-y-2">
+              {fundingData.map(({ exchange, btc, eth, sol, avgFunding }) => (
+                <div key={exchange} className="p-3 bg-gray-800/30 backdrop-blur-sm rounded-xl hover:bg-gray-800/50 transition-all">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium">{exchange}</span>
+                    <div className={`text-sm font-medium ${avgFunding > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      Avg: {formatFundingRate(avgFunding)}%
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">BTC:</span>
+                      <span className={btc > 0 ? 'text-green-400' : 'text-red-400'}>
+                        {formatFundingRate(btc)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">ETH:</span>
+                      <span className={eth > 0 ? 'text-green-400' : 'text-red-400'}>
+                        {formatFundingRate(eth)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">SOL:</span>
+                      <span className={sol > 0 ? 'text-green-400' : 'text-red-400'}>
+                        {formatFundingRate(sol)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${avgFunding > 0 ? 'bg-green-500' : 'bg-red-500'} transition-all`}
+                      style={{ width: `${Math.abs(avgFunding) * 5000}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Options IV Skew with gradient background */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 lg:col-span-2 border border-gray-800/50 hover:border-gray-700/50 transition-all relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-purple-900/20"></div>
+            <div className="relative">
+              <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <Layers className="mr-2 text-indigo-400" />
+                BTC Options Implied Volatility Skew
+              </h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={optionsSkew}>
+                  <defs>
+                    <linearGradient id="gradient7d" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="gradient30d" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="gradient90d" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                  <XAxis 
+                    dataKey="strike" 
+                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                    stroke="#9CA3AF"
+                  />
+                  <YAxis 
+                    label={{ value: 'IV (%)', angle: -90, position: 'insideLeft' }}
+                    stroke="#9CA3AF"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Line type="monotone" dataKey="7d" stroke="#F59E0B" strokeWidth={3} dot={false} name="7 Days" />
+                  <Line type="monotone" dataKey="30d" stroke="#3B82F6" strokeWidth={3} dot={false} name="30 Days" />
+                  <Line type="monotone" dataKey="90d" stroke="#10B981" strokeWidth={3} dot={false} name="90 Days" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Open Interest with gradient fills */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 xl:col-span-3 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <DollarSign className="mr-2 text-green-400" />
+              Total Open Interest Across Markets
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={openInterest}>
+                <defs>
+                  <linearGradient id="colorFutures" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1}/>
+                  </linearGradient>
+                  <linearGradient id="colorOptions" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1}/>
+                  </linearGradient>
+                  <linearGradient id="colorPerpetuals" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                <XAxis dataKey="date" stroke="#9CA3AF" />
+                <YAxis tickFormatter={formatLargeNumber} stroke="#9CA3AF" />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Area type="monotone" dataKey="futures" stackId="1" stroke="#F59E0B" fillOpacity={1} fill="url(#colorFutures)" strokeWidth={2} />
+                <Area type="monotone" dataKey="options" stackId="1" stroke="#3B82F6" fillOpacity={1} fill="url(#colorOptions)" strokeWidth={2} />
+                <Area type="monotone" dataKey="perpetuals" stackId="1" stroke="#10B981" fillOpacity={1} fill="url(#colorPerpetuals)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 24h Volume Profile with gradient bars */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 lg:col-span-2 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <Activity className="mr-2 text-blue-400" />
+              24h Volume Profile by Hour
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={volumeProfile}>
+                <defs>
+                  <linearGradient id="barGradient1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.8}/>
+                    <stop offset="100%" stopColor="#F59E0B" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="barGradient2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                    <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                  </linearGradient>
+                  <linearGradient id="barGradient3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10B981" stopOpacity={0.8}/>
+                    <stop offset="100%" stopColor="#10B981" stopOpacity={0.3}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+                <XAxis dataKey="hour" stroke="#9CA3AF" />
+                <YAxis tickFormatter={formatLargeNumber} stroke="#9CA3AF" />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="spot" fill="url(#barGradient1)" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="futures" fill="url(#barGradient2)" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="options" fill="url(#barGradient3)" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Exchange Performance Radar with glow effect */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-blue-900/20"></div>
+            <div className="relative">
+              <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <Globe className="mr-2 text-cyan-400" />
+                Exchange Performance Metrics
+              </h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={[
+                  { metric: 'Volume', ...exchangeComparison },
+                  { metric: 'Liquidity', ...exchangeComparison },
+                  { metric: 'Spreads', ...exchangeComparison },
+                  { metric: 'Fees', ...exchangeComparison },
+                  { metric: 'Uptime', ...exchangeComparison },
+                ]}>
+                  <defs>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <PolarGrid stroke="#374151" />
+                  <PolarAngleAxis dataKey="metric" stroke="#9CA3AF" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#9CA3AF" />
+                  <Radar name="Binance" dataKey="binance" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.3} strokeWidth={2} filter="url(#glow)" />
+                  <Radar name="Coinbase" dataKey="coinbase" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.3} strokeWidth={2} filter="url(#glow)" />
+                  <Radar name="OKX" dataKey="okx" stroke="#10B981" fill="#10B981" fillOpacity={0.3} strokeWidth={2} filter="url(#glow)" />
+                  <Radar name="Bybit" dataKey="bybit" stroke="#A78BFA" fill="#A78BFA" fillOpacity={0.3} strokeWidth={2} filter="url(#glow)" />
+                  <Legend />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Top Performers Section */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 xl:col-span-2 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center">
+                <Rocket className="mr-2 text-orange-400" />
+                Top Performers
+              </h2>
+              <div className="flex items-center space-x-2">
+                {/* Timeframe Selector */}
+                <div className="flex items-center space-x-1 bg-gray-800/30 backdrop-blur-sm rounded-lg p-1">
+                  {['4h', '1d', '1w'].map(tf => (
+                    <button
+                      key={tf}
+                      onClick={() => setSelectedTimeframe2(tf)}
+                      className={`px-3 py-1 rounded text-sm transition-all ${
+                        selectedTimeframe2 === tf
+                          ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
+                          : 'hover:bg-gray-700/50'
+                      }`}
+                    >
+                      {tf.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+                {/* Category Filter */}
+                <select 
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="bg-gray-800/50 backdrop-blur-sm rounded px-3 py-1 text-sm border border-gray-700/50"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="defi">DeFi</option>
+                  <option value="l2">Layer 2</option>
+                  <option value="ai">AI Tokens</option>
+                  <option value="gaming">Gaming</option>
+                  <option value="meme">Meme Coins</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto custom-scrollbar">
+              {topPerformers
+                .filter(token => selectedCategory === 'all' || token.category === selectedCategory)
+                .sort((a, b) => {
+                  const timeKey = selectedTimeframe2 === '4h' ? 'change4h' : selectedTimeframe2 === '1d' ? 'change1d' : 'change1w';
+                  return b[timeKey] - a[timeKey];
+                })
+                .slice(0, 10)
+                .map((token, index) => {
+                  const changeKey = selectedTimeframe2 === '4h' ? 'change4h' : selectedTimeframe2 === '1d' ? 'change1d' : 'change1w';
+                  const change = token[changeKey];
+                  
+                  return (
+                    <div key={token.symbol} className="p-3 bg-gray-800/30 backdrop-blur-sm rounded-xl hover:bg-gray-800/50 transition-all group">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                            <div className="relative w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center font-bold text-xs">
+                              #{index + 1}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <span className="font-semibold">{token.symbol}</span>
+                              <span className="text-xs text-gray-400">{token.name}</span>
+                            </div>
+                            <div className="text-sm text-gray-400">${token.price.toFixed(4)}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-lg font-bold flex items-center ${change > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {change > 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                            {Math.abs(change).toFixed(2)}%
+                          </div>
+                          <div className="text-xs text-gray-500">Vol: {formatLargeNumber(token.volume24h)}</div>
+                        </div>
+                      </div>
+                      <div className="mt-2 h-8">
+                        <Sparkline data={token.sparkline} color={change > 0 ? '#10B981' : '#EF4444'} height={32} />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* Sector Update Section */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center">
+                <Layers className="mr-2 text-purple-400" />
+                Sector Update
+              </h2>
+              <div className="flex items-center space-x-1 bg-gray-800/30 backdrop-blur-sm rounded-lg p-1">
+                {['4h', '1d', '1w'].map(tf => (
+                  <button
+                    key={tf}
+                    onClick={() => setSelectedTimeframe2(tf)}
+                    className={`px-3 py-1 rounded text-sm transition-all ${
+                      selectedTimeframe2 === tf
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                        : 'hover:bg-gray-700/50'
+                    }`}
+                  >
+                    {tf.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {sectorData.map((sector) => {
+                const changeKey = selectedTimeframe2 === '4h' ? 'change4h' : selectedTimeframe2 === '1d' ? 'change1d' : 'change1w';
+                const change = sector[changeKey];
+                
+                return (
+                  <div key={sector.name} className="p-4 bg-gray-800/30 backdrop-blur-sm rounded-xl hover:bg-gray-800/50 transition-all">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{sector.icon}</span>
+                        <div>
+                          <h3 className="font-semibold">{sector.name}</h3>
+                          <div className="text-xs text-gray-400">
+                            {formatLargeNumber(sector.totalCap)} • {sector.dominance.toFixed(1)}% dominance
+                          </div>
+                        </div>
+                      </div>
+                      <div className={`text-xl font-bold ${change > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {change > 0 ? '+' : ''}{change.toFixed(2)}%
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400">24h Volume:</span>
+                        <span>{formatLargeNumber(sector.volume24h)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400">Top Gainer:</span>
+                        <span className="text-green-400">+{sector.topGainer.change.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 h-1 bg-gray-700 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${change > 0 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-pink-500'} transition-all`}
+                        style={{ width: `${Math.min(Math.abs(change) * 2, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Funding Rate Spike Alert Section */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 xl:col-span-2 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center">
+                <AlertTriangle className="mr-2 text-yellow-400" />
+                Funding Rate Spikes
+              </h2>
+              <span className="text-sm text-gray-400">Monitoring unusual funding rate changes</span>
+            </div>
+            
+            <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+              {fundingSpikes.slice(0, 8).map((spike) => {
+                const isExtreme = Math.abs(spike.currentRate) > 0.05;
+                const rateChange = spike.currentRate - spike.previousRate;
+                
+                return (
+                  <div 
+                    key={spike.id} 
+                    className={`p-4 rounded-xl transition-all ${
+                      isExtreme 
+                        ? 'bg-red-900/20 border border-red-800/50 backdrop-blur-sm' 
+                        : 'bg-gray-800/30 border border-gray-700/30 backdrop-blur-sm'
+                    } hover:bg-gray-800/50`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <span className="font-semibold">{spike.pair}</span>
+                          <span className="text-sm text-gray-400">on {spike.exchange}</span>
+                          {isExtreme && (
+                            <span className="px-2 py-1 bg-red-900/50 text-red-400 rounded text-xs font-medium animate-pulse">
+                              EXTREME
+                            </span>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div>
+                            <span className="text-gray-400">Current Rate:</span>
+                            <div className={`font-bold ${spike.currentRate > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {formatFundingRate(spike.currentRate)}%
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">Change:</span>
+                            <div className={`font-bold flex items-center ${rateChange > 0 ? 'text-yellow-400' : 'text-orange-400'}`}>
+                              <Percent className="w-3 h-3 mr-1" />
+                              {Math.abs(rateChange * 100).toFixed(3)}%
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">Open Interest:</span>
+                            <div className="font-medium">{formatLargeNumber(spike.openInterest)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">1h Volume:</span>
+                            <div className="font-medium">{formatLargeNumber(spike.volume1h)}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <Clock className="w-4 h-4 text-gray-500" />
+                        <span className="text-xs text-gray-500">{new Date(spike.time).toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Enhanced News Feed */}
+          <div className="bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 col-span-1 xl:col-span-3 border border-gray-800/50 hover:border-gray-700/50 transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center">
+                <FileText className="mr-2 text-orange-400" />
+                Real-Time News & Events
+              </h2>
+              <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                View All →
+              </button>
+            </div>
+            <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+              {newsData.map((news) => (
+                <div key={news.id} className="p-4 bg-gray-800/30 backdrop-blur-sm rounded-xl hover:bg-gray-800/50 transition-all group">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          news.priority === 'high' ? 'bg-red-900/50 text-red-400' :
+                          news.priority === 'medium' ? 'bg-yellow-900/50 text-yellow-400' :
+                          'bg-gray-600/50 text-gray-400'
+                        }`}>
+                          {news.priority.toUpperCase()}
+                        </span>
+                        {news.coins.map(coin => (
+                          <span key={coin} className="px-2 py-1 bg-blue-900/30 text-blue-400 rounded text-xs">
+                            {coin}
+                          </span>
+                        ))}
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          news.sentiment === 'bullish' ? 'bg-green-900/30 text-green-400' :
+                          news.sentiment === 'bearish' ? 'bg-red-900/30 text-red-400' :
+                          'bg-gray-700/30 text-gray-400'
+                        }`}>
+                          {news.sentiment === 'bullish' ? '🚀' : news.sentiment === 'bearish' ? '🐻' : '😐'} {news.sentiment}
+                        </span>
+                      </div>
+                      <h3 className="font-medium mb-2 group-hover:text-blue-400 transition-colors">{news.headline}</h3>
+                      <div className="flex items-center space-x-4 text-xs text-gray-400">
+                        <span>{news.source}</span>
+                        <span>{new Date(news.time).toLocaleString()}</span>
+                        <div className="flex items-center space-x-1">
+                          <Flame className="w-3 h-3" />
+                          <span>Impact: {news.impact}/5</span>
+                        </div>
+                      </div>
+                    </div>
+                    <AlertCircle className="w-4 h-4 text-gray-500 ml-4 group-hover:text-gray-400 transition-colors" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced API Status Footer */}
+        <div className="mt-6 p-6 bg-gray-900/50 backdrop-blur-lg rounded-2xl border border-gray-800/50">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center space-x-6 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-green-500 blur-sm"></div>
+                  <div className="relative w-2 h-2 bg-green-400 rounded-full"></div>
+                </div>
+                <span className="text-gray-400">API Status: <span className="text-green-400 font-medium">Operational</span></span>
+              </div>
+              <div className="text-gray-400">
+                Latency: <span className="text-blue-400 font-medium">12ms</span>
+              </div>
+              <div className="text-gray-400">
+                Requests: <span className="text-yellow-400 font-medium">45,231</span> / 100,000
+              </div>
+              <div className="text-gray-400">
+                WebSocket: <span className="text-green-400 font-medium">22 connections</span>
+              </div>
+            </div>
+            <div className="text-xs text-gray-500">
+              Last Update: {new Date().toLocaleString()} | Resolution: {selectedTimeframe} | Mode: {selectedProduct}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        @keyframes slide-in-right {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s ease-out;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+export default EnhancedVeloDashboard;

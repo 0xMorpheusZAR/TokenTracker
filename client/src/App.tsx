@@ -15,6 +15,7 @@ import RevenueDashboard from "@/pages/revenue-dashboard";
 import PumpfunDashboard from "@/pages/pumpfun-dashboard";
 
 import VeloDashboard from "@/pages/velo-dashboard";
+import EnhancedVeloDashboard from "@/pages/enhanced-dashboard";
 
 import NotFound from "@/pages/not-found";
 
@@ -34,7 +35,7 @@ function Router() {
       <Route path="/revenue-dashboard" component={RevenueDashboard} />
       <Route path="/pumpfun" component={PumpfunDashboard} />
 
-      <Route path="/velo-dashboard" component={VeloDashboard} />
+      <Route path="/velo-dashboard" component={EnhancedVeloDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
