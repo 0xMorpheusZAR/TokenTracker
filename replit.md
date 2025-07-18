@@ -178,6 +178,7 @@ Changelog:
 - July 18, 2025: Created Custom Analytics Dashboard (/custom-dashboard) with multi-source data integration - Features tabbed interface for overview, price charts, market caps, news feed, and DeFi analytics with real-time auto-refresh capabilities and configurable asset selection
 - July 18, 2025: Enhanced main dashboard navigation with "Multi-API" button featuring cyan gradient styling and animated effects - Provides direct access to comprehensive custom dashboard integrating Velo Pro, CoinGecko Pro, Dune Analytics, and DefiLlama Pro APIs
 - July 18, 2025: Fixed Monte Carlo Price Target Analysis data loading by resolving property naming inconsistencies between API response (camelCase) and frontend usage - Updated currentPrice, marketCap, fullyDilutedValuation, and circulatingSupply calculations for accurate real-time display
+- July 18, 2025: Incorporated comprehensive news feed functionality into custom dashboard - Integrated CoinGecko trending coins and global market data to generate real-time news items when Velo news API is unavailable, displays trending tokens with price changes, global market overview with total market cap and Bitcoin/ETH dominance, significant price movements as alerts, enhanced news UI with source badges, priority indicators, and clickable links
 ```
 
 ## User Preferences

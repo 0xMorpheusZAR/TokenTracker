@@ -296,6 +296,40 @@ export class CoinGeckoService {
       };
     }
   }
+
+  // Get trending coins for news feed
+  async getTrending(): Promise<any> {
+    try {
+      const response = await fetch(
+        `${this.getApiUrl()}/search/trending`,
+        { headers: this.getHeaders() }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch trending coins:', error);
+      throw error;
+    }
+  }
+
+  // Get global market data for insights
+  async getGlobalData(): Promise<any> {
+    try {
+      const response = await fetch(
+        `${this.getApiUrl()}/global`,
+        { headers: this.getHeaders() }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch global market data:', error);
+      throw error;
+    }
+  }
 }
 
 export const coinGeckoService = new CoinGeckoService();

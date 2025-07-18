@@ -778,41 +778,76 @@ function CustomDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {veloDashboard?.news?.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-700/30 rounded-lg border border-gray-600/30">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-white mb-2">{item.headline}</h3>
-                          <p className="text-gray-400 text-sm mb-2">{item.summary}</p>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <span>{item.source}</span>
-                            <span>•</span>
-                            <span>{new Date(item.time).toLocaleString()}</span>
-                            <span>•</span>
-                            <Badge variant="outline" className="text-xs">
-                              {item.priority}
-                            </Badge>
-                          </div>
-                          {item.coins.length > 0 && (
-                            <div className="flex gap-1 mt-2">
-                              {item.coins.map(coin => (
-                                <Badge key={coin} variant="secondary" className="text-xs">
-                                  {coin}
-                                </Badge>
-                              ))}
+                  {veloDashboard?.news && veloDashboard.news.length > 0 ? (
+                    veloDashboard.news.map((item) => (
+                      <div key={item.id} className="p-4 bg-gray-700/30 rounded-lg border border-gray-600/30 hover:bg-gray-700/40 transition-all duration-200">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="font-medium text-white mb-2 text-lg">{item.headline}</h3>
+                            <p className="text-gray-400 text-sm mb-3 leading-relaxed">{item.summary}</p>
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                              <Badge variant={
+                                item.source === 'CoinGecko Trending' ? 'default' : 
+                                item.source === 'Market Overview' ? 'secondary' :
+                                item.source === 'Price Alert' ? 'destructive' : 'outline'
+                              } className="text-xs">
+                                {item.source}
+                              </Badge>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(item.time).toLocaleTimeString('en-US', { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })}
+                              </span>
+                              {item.priority && (
+                                <>
+                                  <span>•</span>
+                                  <span className={`font-medium ${
+                                    item.priority === 1 ? 'text-red-400' :
+                                    item.priority === 2 ? 'text-orange-400' :
+                                    item.priority === 3 ? 'text-yellow-400' :
+                                    'text-gray-400'
+                                  }`}>
+                                    {item.priority === 1 ? 'High' :
+                                     item.priority === 2 ? 'Medium' :
+                                     item.priority === 3 ? 'Low' : 'Info'}
+                                  </span>
+                                </>
+                              )}
                             </div>
+                            {item.coins && item.coins.length > 0 && (
+                              <div className="flex gap-1 mt-3">
+                                {item.coins.map(coin => (
+                                  <Badge key={coin} variant="secondary" className="text-xs">
+                                    {coin}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          {item.link && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="hover:bg-gray-700/50"
+                              onClick={() => window.open(item.link, '_blank')}
+                            >
+                              <Globe className="w-3 h-3 mr-1" />
+                              View
+                            </Button>
                           )}
                         </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => window.open(item.link, '_blank')}
-                        >
-                          Read More
-                        </Button>
                       </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-12">
+                      <Newspaper className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-400">No news items available</p>
+                      <p className="text-gray-500 text-sm mt-2">News will appear here once data is loaded</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
