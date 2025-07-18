@@ -66,6 +66,7 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 - **Session management** with connect-pg-simple
 
 ### External APIs
+- **Velo Data API** for cross-exchange futures, options, and spot market data
 - **CoinGecko Pro API** for real-time pricing data
 - **CryptoRank API** for unlock schedule data
 - **Dune Analytics API** for on-chain blockchain metrics and custom queries
@@ -219,6 +220,105 @@ To use Dune Analytics features, add your API key to the environment:
 ```bash
 DUNE_API_KEY=pZBvRD0acWVAtWRwnTtOuZgUvuETutIt
 ```
+
+## 🚀 Velo Data API Integration
+
+The dashboard integrates with Velo Data API to provide cross-exchange market data for futures, options, and spot markets.
+
+### Features
+- **Cross-Exchange Data**: Aggregate data from major exchanges
+- **High Resolution**: 1-minute granularity for recent data
+- **Multiple Asset Classes**: Futures, options, and spot markets
+- **Market Caps**: Real-time cryptocurrency market capitalizations
+- **News Feed**: Crypto news with priority indicators (requires additional permissions)
+
+### TypeScript Implementation
+
+```typescript
+// Initialize the Velo service
+const veloService = new VeloService();
+
+// Get market data
+const btcData = await veloService.getMarketData({
+  type: 'spot',
+  exchanges: ['coinbase'],
+  products: ['BTC-USD'],
+  columns: ['close_price', 'volume'],
+  begin: Date.now() - 86400000, // 24 hours ago
+  end: Date.now(),
+  resolution: '1h'
+});
+
+// Get options data
+const optionsData = await veloService.getOptionsData({
+  coin: 'BTC',
+  columns: ['strike', 'mark_price', 'implied_volatility'],
+  begin: Date.now() - 3600000,
+  end: Date.now()
+});
+```
+
+### Python Alternative
+
+For data science workflows, you can use the official [velo-python library](https://github.com/velodataorg/velo-python):
+
+```bash
+pip install velodata
+```
+
+```python
+from velodata import lib as velo
+
+# Initialize client
+client = velo.client('your_api_key')
+
+# Get market data
+params = {
+    'type': 'spot',
+    'exchanges': ['coinbase'],
+    'products': ['BTC-USD'],
+    'columns': ['close_price', 'volume'],
+    'begin': client.timestamp() - 86400000,
+    'end': client.timestamp(),
+    'resolution': '1h'
+}
+
+# Returns pandas DataFrame
+df = client.get_rows(params)
+
+# Stream news updates
+import asyncio
+async def stream_news():
+    async for message in client.news.stream_news():
+        if message not in ('connected', 'heartbeat', 'closed'):
+            print(json.loads(message))
+
+asyncio.run(stream_news())
+```
+
+### API Endpoints
+
+```javascript
+// Get market data
+GET /api/velo/market-data
+
+// Get market caps
+GET /api/velo/caps
+
+// Get options data
+GET /api/velo/options
+
+// Get multi-asset dashboard
+GET /api/velo/dashboard
+```
+
+### Setup Requirements
+Add your Velo API key to the environment:
+```bash
+VELO_API_KEY=your_velo_api_key
+```
+
+For detailed Velo API documentation, see our [Velo Integration Guide](./README-velo-integration.md).
 
 ## 🤝 Contributing
 
