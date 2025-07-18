@@ -220,6 +220,39 @@ class VeloService {
     return data;
   }
 
+  // Options data
+  async getOptionsData(params: {
+    coin?: string;
+    columns?: string[];
+    begin?: number;
+    end?: number;
+  }): Promise<any[]> {
+    try {
+      const queryParams: any = {
+        type: 'options'
+      };
+      
+      if (params.coin) {
+        queryParams.coins = params.coin;
+      }
+      if (params.columns?.length) {
+        queryParams.columns = params.columns.join(',');
+      }
+      if (params.begin) {
+        queryParams.begin = params.begin;
+      }
+      if (params.end) {
+        queryParams.end = params.end;
+      }
+
+      const csvData = await this.makeRequest('/rows', queryParams);
+      return this.parseMarketDataCSV(csvData);
+    } catch (error) {
+      console.error('Failed to fetch options data:', error);
+      throw error;
+    }
+  }
+
   // Options term structure
   async getOptionsTermStructure(coins: string[]): Promise<string> {
     try {
@@ -268,6 +301,33 @@ class VeloService {
       });
 
       data.push(row as VeloCapData);
+    }
+
+    return data;
+  }
+
+  // Parse products CSV (for spot, futures, options lists)
+  parseProductsCSV(csvData: string): any[] {
+    const lines = csvData.trim().split('\n');
+    if (lines.length < 2) return [];
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    const data: any[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      const row: any = {};
+
+      headers.forEach((header, index) => {
+        const value = values[index];
+        if (header === 'begin' && value) {
+          row[header] = parseInt(value);
+        } else {
+          row[header] = value;
+        }
+      });
+
+      data.push(row);
     }
 
     return data;

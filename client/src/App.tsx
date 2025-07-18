@@ -14,6 +14,7 @@ import BlofinCompetition from "@/pages/blofin-competition";
 import RevenueDashboard from "@/pages/revenue-dashboard";
 import PumpfunDashboard from "@/pages/pumpfun-dashboard";
 import CustomDashboard from "@/pages/custom-dashboard";
+import VeloDashboard from "@/pages/velo-dashboard";
 
 import NotFound from "@/pages/not-found";
 
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/revenue-dashboard" component={RevenueDashboard} />
       <Route path="/pumpfun" component={PumpfunDashboard} />
       <Route path="/custom-dashboard" component={CustomDashboard} />
+      <Route path="/velo-dashboard" component={VeloDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

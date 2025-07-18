@@ -1068,6 +1068,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get spot pairs
+  app.get("/api/velo/spot", async (req, res) => {
+    try {
+      const csvData = await veloService.getSpotPairs();
+      const parsedData = veloService.parseProductsCSV(csvData);
+      res.json(parsedData);
+    } catch (error) {
+      console.error("Failed to fetch spot pairs:", error);
+      res.status(500).json({ error: "Failed to fetch spot pairs" });
+    }
+  });
+
+  // Get futures contracts
+  app.get("/api/velo/futures", async (req, res) => {
+    try {
+      const csvData = await veloService.getFuturesContracts();
+      const parsedData = veloService.parseProductsCSV(csvData);
+      res.json(parsedData);
+    } catch (error) {
+      console.error("Failed to fetch futures contracts:", error);
+      res.status(500).json({ error: "Failed to fetch futures contracts" });
+    }
+  });
+
+  // Get options contracts
+  app.get("/api/velo/options", async (req, res) => {
+    try {
+      const csvData = await veloService.getOptionsContracts();
+      const parsedData = veloService.parseProductsCSV(csvData);
+      res.json(parsedData);
+    } catch (error) {
+      console.error("Failed to fetch options contracts:", error);
+      res.status(500).json({ error: "Failed to fetch options contracts" });
+    }
+  });
+
+  // Get options data
+  app.get("/api/velo/options-data", async (req, res) => {
+    try {
+      const { coin, columns, begin, end } = req.query;
+      
+      const params: any = {};
+      if (coin) params.coin = coin as string;
+      if (columns) params.columns = (columns as string).split(',');
+      if (begin) params.begin = parseInt(begin as string);
+      if (end) params.end = parseInt(end as string);
+
+      const data = await veloService.getOptionsData(params);
+      res.json({
+        data: data,
+        parameters: params,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch options data:", error);
+      res.status(500).json({ error: "Failed to fetch options data" });
+    }
+  });
+
+  // Get market caps simplified
+  app.get("/api/velo/caps", async (req, res) => {
+    try {
+      const marketCaps = await veloService.getTopCoinsMarketCaps();
+      res.json({
+        data: marketCaps,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch market caps:", error);
+      res.status(500).json({ error: "Failed to fetch market caps" });
+    }
+  });
+
   // Get supported products and exchanges
   app.get("/api/velo/products", async (req, res) => {
     try {
