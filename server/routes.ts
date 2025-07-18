@@ -7,6 +7,7 @@ import { duneService } from "./services/dune";
 import { whopService } from "./services/whop";
 import { discordService } from "./services/discord";
 import { defiLlamaService } from "./services/defillama";
+import { veloService } from "./services/velo";
 import { insertTokenSchema, insertUnlockEventSchema, insertPriceHistorySchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -1024,6 +1025,280 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error(`Failed to execute query ${req.params.queryId}:`, error);
       res.status(500).json({ error: "Failed to execute query" });
+    }
+  });
+
+  // ====================
+  // VELO API ENDPOINTS
+  // ====================
+
+  // Velo status and health check
+  app.get("/api/velo/status", async (req, res) => {
+    try {
+      const status = await veloService.getStatus();
+      res.json({
+        ...status,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch Velo status:", error);
+      res.status(500).json({ error: "Failed to fetch Velo status" });
+    }
+  });
+
+  // Get supported products and exchanges
+  app.get("/api/velo/products", async (req, res) => {
+    try {
+      const { type } = req.query;
+      
+      let products;
+      switch (type) {
+        case 'futures':
+          products = await veloService.getFuturesContracts();
+          break;
+        case 'options':
+          products = await veloService.getOptionsContracts();
+          break;
+        case 'spot':
+          products = await veloService.getSpotPairs();
+          break;
+        default:
+          return res.status(400).json({ error: "Type parameter required (futures, options, or spot)" });
+      }
+
+      res.json({
+        data: products,
+        type,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error(`Failed to fetch ${req.query.type} products:`, error);
+      res.status(500).json({ error: `Failed to fetch ${req.query.type} products` });
+    }
+  });
+
+  // Market data endpoint
+  app.get("/api/velo/market-data", async (req, res) => {
+    try {
+      const {
+        type,
+        exchanges,
+        products,
+        coins,
+        columns,
+        begin,
+        end,
+        resolution = '1h'
+      } = req.query;
+
+      if (!type) {
+        return res.status(400).json({ error: "Type parameter required (futures, options, or spot)" });
+      }
+
+      const params: any = {
+        type: type as string,
+        resolution: resolution as string
+      };
+
+      if (exchanges) params.exchanges = (exchanges as string).split(',');
+      if (products) params.products = (products as string).split(',');
+      if (coins) params.coins = (coins as string).split(',');
+      if (columns) params.columns = (columns as string).split(',');
+      if (begin) params.begin = parseInt(begin as string);
+      if (end) params.end = parseInt(end as string);
+
+      const csvData = await veloService.getMarketData(params);
+      const parsedData = veloService.parseMarketDataCSV(csvData);
+
+      res.json({
+        data: parsedData,
+        raw_csv: csvData,
+        parameters: params,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch market data:", error);
+      res.status(500).json({ error: "Failed to fetch market data" });
+    }
+  });
+
+  // Market caps for multiple coins
+  app.get("/api/velo/market-caps", async (req, res) => {
+    try {
+      const { coins } = req.query;
+      
+      if (!coins) {
+        return res.status(400).json({ error: "Coins parameter required (comma-separated)" });
+      }
+
+      const coinsList = (coins as string).split(',');
+      const csvData = await veloService.getMarketCaps(coinsList);
+      const parsedData = veloService.parseMarketCapsCSV(csvData);
+
+      res.json({
+        data: parsedData,
+        coins: coinsList,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch market caps:", error);
+      res.status(500).json({ error: "Failed to fetch market caps" });
+    }
+  });
+
+  // Options term structure
+  app.get("/api/velo/options-terms", async (req, res) => {
+    try {
+      const { coins } = req.query;
+      
+      if (!coins) {
+        return res.status(400).json({ error: "Coins parameter required (comma-separated)" });
+      }
+
+      const coinsList = (coins as string).split(',');
+      const termsData = await veloService.getOptionsTermStructure(coinsList);
+
+      res.json({
+        data: termsData,
+        coins: coinsList,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch options terms:", error);
+      res.status(500).json({ error: "Failed to fetch options term structure" });
+    }
+  });
+
+  // Crypto news
+  app.get("/api/velo/news", async (req, res) => {
+    try {
+      const { hours = 24 } = req.query;
+      const hoursNum = parseInt(hours as string);
+      
+      const news = await veloService.getCryptoNews(hoursNum);
+
+      res.json({
+        data: news,
+        timeframe_hours: hoursNum,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch crypto news:", error);
+      res.status(500).json({ error: "Failed to fetch crypto news" });
+    }
+  });
+
+  // BTC 24h price data
+  app.get("/api/velo/btc/24h", async (req, res) => {
+    try {
+      const btcData = await veloService.getBTCSpotPrice24h();
+      
+      res.json({
+        data: btcData,
+        asset: "BTC",
+        timeframe: "24h",
+        resolution: "1h",
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch BTC 24h data:", error);
+      res.status(500).json({ error: "Failed to fetch BTC 24h data" });
+    }
+  });
+
+  // ETH 24h price data
+  app.get("/api/velo/eth/24h", async (req, res) => {
+    try {
+      const ethData = await veloService.getETHSpotPrice24h();
+      
+      res.json({
+        data: ethData,
+        asset: "ETH",
+        timeframe: "24h",
+        resolution: "1h",
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch ETH 24h data:", error);
+      res.status(500).json({ error: "Failed to fetch ETH 24h data" });
+    }
+  });
+
+  // Top coins market caps
+  app.get("/api/velo/top-market-caps", async (req, res) => {
+    try {
+      const marketCaps = await veloService.getTopCoinsMarketCaps();
+      
+      res.json({
+        data: marketCaps,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch top market caps:", error);
+      res.status(500).json({ error: "Failed to fetch top market caps" });
+    }
+  });
+
+  // Multi-asset price data for dashboard
+  app.get("/api/velo/multi-asset", async (req, res) => {
+    try {
+      const { assets, timeframe = '1h' } = req.query;
+      
+      if (!assets) {
+        return res.status(400).json({ error: "Assets parameter required (comma-separated)" });
+      }
+
+      const assetsList = (assets as string).split(',');
+      const timeframeValue = timeframe as '1h' | '4h' | '1d';
+      
+      const multiAssetData = await veloService.getMultiAssetPriceData(assetsList, timeframeValue);
+
+      res.json({
+        data: multiAssetData,
+        assets: assetsList,
+        timeframe: timeframeValue,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error("Failed to fetch multi-asset data:", error);
+      res.status(500).json({ error: "Failed to fetch multi-asset data" });
+    }
+  });
+
+  // Combined dashboard data endpoint
+  app.get("/api/velo/dashboard", async (req, res) => {
+    try {
+      const { assets = 'BTC,ETH,SOL,ADA,DOT' } = req.query;
+      const assetsList = (assets as string).split(',');
+
+      // Fetch multiple data sources in parallel
+      const [
+        marketCaps,
+        btc24h,
+        eth24h,
+        news,
+        multiAssetData
+      ] = await Promise.all([
+        veloService.getTopCoinsMarketCaps(),
+        veloService.getBTCSpotPrice24h(),
+        veloService.getETHSpotPrice24h(),
+        veloService.getCryptoNews(24),
+        veloService.getMultiAssetPriceData(assetsList, '1h')
+      ]);
+
+      res.json({
+        market_caps: marketCaps,
+        btc_24h: btc24h,
+        eth_24h: eth24h,
+        news: news.slice(0, 10), // Latest 10 news items
+        multi_asset_data: multiAssetData,
+        assets: assetsList,
+        provider: "Velo Pro API",
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard data" });
     }
   });
 

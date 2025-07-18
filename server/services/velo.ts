@@ -1,0 +1,386 @@
+import { Buffer } from 'buffer';
+
+interface VeloConfig {
+  apiKey: string;
+  baseUrl: string;
+}
+
+interface VeloMarketData {
+  time: number;
+  open_price?: number;
+  high_price?: number;
+  low_price?: number;
+  close_price?: number;
+  coin_volume?: number;
+  dollar_volume?: number;
+  funding_rate?: number;
+  buy_trades?: number;
+  sell_trades?: number;
+  total_trades?: number;
+}
+
+interface VeloCapData {
+  coin: string;
+  time: number;
+  market_cap: number;
+}
+
+interface VeloNewsItem {
+  id: number;
+  time: number;
+  headline: string;
+  source: string;
+  priority: string;
+  coins: string[];
+  summary: string;
+  link: string;
+}
+
+interface VeloProduct {
+  exchange: string;
+  symbol: string;
+  product: string;
+  type: string;
+}
+
+class VeloService {
+  private config: VeloConfig;
+
+  constructor() {
+    this.config = {
+      apiKey: process.env.VELO_API_KEY || '',
+      baseUrl: 'https://api.velo.xyz/api/v1'
+    };
+
+    if (!this.config.apiKey) {
+      console.warn('Velo API key not found. Some features may be limited.');
+    }
+  }
+
+  private getAuthHeaders(): Record<string, string> {
+    const credentials = Buffer.from(`api:${this.config.apiKey}`).toString('base64');
+    return {
+      'Authorization': `Basic ${credentials}`,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  private async makeRequest<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+    const url = new URL(`${this.config.baseUrl}${endpoint}`);
+    
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          url.searchParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: this.getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Velo API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (contentType?.includes('text/csv') || contentType?.includes('text/plain')) {
+      return await response.text() as T;
+    }
+    
+    return await response.json() as T;
+  }
+
+  // Helper endpoints
+  async getStatus(): Promise<any> {
+    try {
+      return await this.makeRequest('/status');
+    } catch (error) {
+      console.error('Failed to fetch Velo status:', error);
+      throw error;
+    }
+  }
+
+  async getFuturesContracts(): Promise<VeloProduct[]> {
+    try {
+      return await this.makeRequest('/futures');
+    } catch (error) {
+      console.error('Failed to fetch futures contracts:', error);
+      throw error;
+    }
+  }
+
+  async getOptionsContracts(): Promise<VeloProduct[]> {
+    try {
+      return await this.makeRequest('/options');
+    } catch (error) {
+      console.error('Failed to fetch options contracts:', error);
+      throw error;
+    }
+  }
+
+  async getSpotPairs(): Promise<VeloProduct[]> {
+    try {
+      return await this.makeRequest('/spot');
+    } catch (error) {
+      console.error('Failed to fetch spot pairs:', error);
+      throw error;
+    }
+  }
+
+  // Core data endpoint
+  async getMarketData(params: {
+    type: 'futures' | 'options' | 'spot';
+    exchanges?: string[];
+    products?: string[];
+    coins?: string[];
+    columns?: string[];
+    begin?: number;
+    end?: number;
+    resolution?: string;
+  }): Promise<string> {
+    try {
+      const queryParams: Record<string, any> = {
+        type: params.type
+      };
+
+      if (params.exchanges?.length) {
+        queryParams.exchanges = params.exchanges.join(',');
+      }
+      if (params.products?.length) {
+        queryParams.products = params.products.join(',');
+      }
+      if (params.coins?.length) {
+        queryParams.coins = params.coins.join(',');
+      }
+      if (params.columns?.length) {
+        queryParams.columns = params.columns.join(',');
+      }
+      if (params.begin) {
+        queryParams.begin = params.begin;
+      }
+      if (params.end) {
+        queryParams.end = params.end;
+      }
+      if (params.resolution) {
+        queryParams.resolution = params.resolution;
+      }
+
+      return await this.makeRequest('/rows', queryParams);
+    } catch (error) {
+      console.error('Failed to fetch market data:', error);
+      throw error;
+    }
+  }
+
+  // Parse CSV data helper
+  parseMarketDataCSV(csvData: string): VeloMarketData[] {
+    const lines = csvData.trim().split('\n');
+    if (lines.length < 2) return [];
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    const data: VeloMarketData[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      const row: any = {};
+
+      headers.forEach((header, index) => {
+        const value = values[index];
+        if (header === 'time') {
+          row[header] = parseInt(value);
+        } else if (value && value !== '') {
+          row[header] = parseFloat(value) || value;
+        }
+      });
+
+      data.push(row as VeloMarketData);
+    }
+
+    return data;
+  }
+
+  // Options term structure
+  async getOptionsTermStructure(coins: string[]): Promise<string> {
+    try {
+      return await this.makeRequest('/terms', {
+        coins: coins.join(',')
+      });
+    } catch (error) {
+      console.error('Failed to fetch options term structure:', error);
+      throw error;
+    }
+  }
+
+  // Market caps
+  async getMarketCaps(coins: string[]): Promise<string> {
+    try {
+      return await this.makeRequest('/caps', {
+        coins: coins.join(',')
+      });
+    } catch (error) {
+      console.error('Failed to fetch market caps:', error);
+      throw error;
+    }
+  }
+
+  // Parse market caps CSV
+  parseMarketCapsCSV(csvData: string): VeloCapData[] {
+    const lines = csvData.trim().split('\n');
+    if (lines.length < 2) return [];
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    const data: VeloCapData[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      const row: any = {};
+
+      headers.forEach((header, index) => {
+        const value = values[index];
+        if (header === 'time') {
+          row[header] = parseInt(value);
+        } else if (header === 'market_cap') {
+          row[header] = parseFloat(value);
+        } else {
+          row[header] = value;
+        }
+      });
+
+      data.push(row as VeloCapData);
+    }
+
+    return data;
+  }
+
+  // News endpoint
+  async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
+    try {
+      const params: Record<string, any> = {};
+      if (beginTimestamp) {
+        params.begin = beginTimestamp;
+      }
+
+      return await this.makeRequest('/news', params);
+    } catch (error) {
+      console.error('Failed to fetch news:', error);
+      throw error;
+    }
+  }
+
+  // Convenience methods for common use cases
+  async getBTCSpotPrice24h(): Promise<VeloMarketData[]> {
+    try {
+      const end = Date.now();
+      const begin = end - (24 * 60 * 60 * 1000); // 24 hours ago
+
+      const csvData = await this.getMarketData({
+        type: 'spot',
+        exchanges: ['coinbase'],
+        products: ['BTC-USD'],
+        columns: ['close_price', 'dollar_volume'],
+        begin,
+        end,
+        resolution: '1h'
+      });
+
+      return this.parseMarketDataCSV(csvData);
+    } catch (error) {
+      console.error('Failed to fetch BTC 24h data:', error);
+      throw error;
+    }
+  }
+
+  async getETHSpotPrice24h(): Promise<VeloMarketData[]> {
+    try {
+      const end = Date.now();
+      const begin = end - (24 * 60 * 60 * 1000); // 24 hours ago
+
+      const csvData = await this.getMarketData({
+        type: 'spot',
+        exchanges: ['coinbase'],
+        products: ['ETH-USD'],
+        columns: ['close_price', 'dollar_volume'],
+        begin,
+        end,
+        resolution: '1h'
+      });
+
+      return this.parseMarketDataCSV(csvData);
+    } catch (error) {
+      console.error('Failed to fetch ETH 24h data:', error);
+      throw error;
+    }
+  }
+
+  async getTopCoinsMarketCaps(): Promise<VeloCapData[]> {
+    try {
+      const csvData = await this.getMarketCaps(['BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'AVAX', 'MATIC', 'LINK', 'UNI', 'AAVE']);
+      return this.parseMarketCapsCSV(csvData);
+    } catch (error) {
+      console.error('Failed to fetch top coins market caps:', error);
+      throw error;
+    }
+  }
+
+  async getCryptoNews(hours: number = 24): Promise<VeloNewsItem[]> {
+    try {
+      const beginTimestamp = Date.now() - (hours * 60 * 60 * 1000);
+      return await this.getNews(beginTimestamp);
+    } catch (error) {
+      console.error('Failed to fetch crypto news:', error);
+      throw error;
+    }
+  }
+
+  // Multi-asset price data for dashboard charts
+  async getMultiAssetPriceData(assets: string[], timeframe: '1h' | '4h' | '1d' = '1h'): Promise<Record<string, VeloMarketData[]>> {
+    const results: Record<string, VeloMarketData[]> = {};
+    
+    const end = Date.now();
+    let begin: number;
+    let resolution: string;
+
+    switch (timeframe) {
+      case '1h':
+        begin = end - (24 * 60 * 60 * 1000); // 24 hours
+        resolution = '1h';
+        break;
+      case '4h':
+        begin = end - (7 * 24 * 60 * 60 * 1000); // 7 days
+        resolution = '4h';
+        break;
+      case '1d':
+        begin = end - (30 * 24 * 60 * 60 * 1000); // 30 days
+        resolution = '1d';
+        break;
+    }
+
+    for (const asset of assets) {
+      try {
+        const csvData = await this.getMarketData({
+          type: 'spot',
+          exchanges: ['coinbase', 'binance'],
+          coins: [asset],
+          columns: ['close_price', 'dollar_volume', 'high_price', 'low_price'],
+          begin,
+          end,
+          resolution
+        });
+
+        results[asset] = this.parseMarketDataCSV(csvData);
+      } catch (error) {
+        console.error(`Failed to fetch data for ${asset}:`, error);
+        results[asset] = [];
+      }
+    }
+
+    return results;
+  }
+}
+
+export const veloService = new VeloService();
+export type { VeloMarketData, VeloCapData, VeloNewsItem, VeloProduct };

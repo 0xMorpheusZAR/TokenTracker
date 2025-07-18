@@ -46,6 +46,7 @@ The application uses a normalized schema with three core entities:
 - **Database operations**: CRUD operations for tokens, unlock events, and price history
 
 ### External Integrations
+- **Velo Pro API**: Cross-exchange crypto market data (futures, options, spot) with high resolution 1-minute data
 - **CryptoRank API**: Service for fetching real-time token unlock data and vesting schedules
 - **CoinGecko API**: Primary data source for accurate real-time and historical price data
 - **DefiLlama API**: Protocol TVL and revenue data for 1,100+ DeFi protocols
@@ -103,8 +104,10 @@ The application uses a normalized schema with three core entities:
 
 ### Environment Configuration
 - **DATABASE_URL**: PostgreSQL connection string (required)
+- **VELO_API_KEY**: Velo Pro API for cross-exchange market data
 - **CRYPTORANK_API_KEY**: CryptoRank API authentication for unlock data
 - **COINGECKO_PRO_API_KEY**: CoinGecko Pro API for enhanced pricing data
+- **DUNE_API_KEY**: Dune Analytics API for on-chain data queries
 - **NODE_ENV**: Environment-specific behavior
 
 ## Changelog
@@ -171,6 +174,10 @@ Changelog:
 - July 16, 2025: Fixed 24H Trading Volume comparison display to dynamically sort platforms by actual volume with the higher volume platform appearing first in green, corrected comparison calculation to accurately show which platform processes more volume
 - July 16, 2025: Updated Market Dominance Collapse timeline to extend through July 15th, removed "The 8-Day Implosion" subtitle for cleaner presentation while maintaining timeline visualization with 4 data points showing progression from 95-100% to 33% market share
 - July 16, 2025: Enhanced creator attribution (@0xMorpheusXBT) visibility on Pump.fun Dashboard with much larger text (2xl/3xl font sizes), prominent gradient styling, dedicated footer section with hover animations, and improved header placement with gradient background badge
+- July 18, 2025: Integrated comprehensive Velo Pro API framework with full service implementation - Added 15+ endpoints for futures/options/spot market data, real-time price feeds, market caps, options term structure, crypto news, and multi-asset dashboard data aggregation
+- July 18, 2025: Created Custom Analytics Dashboard (/custom-dashboard) with multi-source data integration - Features tabbed interface for overview, price charts, market caps, news feed, and DeFi analytics with real-time auto-refresh capabilities and configurable asset selection
+- July 18, 2025: Enhanced main dashboard navigation with "Multi-API" button featuring cyan gradient styling and animated effects - Provides direct access to comprehensive custom dashboard integrating Velo Pro, CoinGecko Pro, Dune Analytics, and DefiLlama Pro APIs
+- July 18, 2025: Fixed Monte Carlo Price Target Analysis data loading by resolving property naming inconsistencies between API response (camelCase) and frontend usage - Updated currentPrice, marketCap, fullyDilutedValuation, and circulatingSupply calculations for accurate real-time display
 ```
 
 ## User Preferences
