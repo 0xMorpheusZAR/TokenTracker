@@ -844,8 +844,9 @@ function CustomDashboard() {
                   ) : (
                     <div className="text-center py-12">
                       <Newspaper className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400">No news items available</p>
-                      <p className="text-gray-500 text-sm mt-2">News will appear here once data is loaded</p>
+                      <p className="text-gray-400">No news items available from Velo News API</p>
+                      <p className="text-gray-500 text-sm mt-2">Velo news data will appear here when available</p>
+                      <p className="text-gray-600 text-xs mt-4">Note: Your API key may require additional permissions for news access</p>
                     </div>
                   )}
                 </div>

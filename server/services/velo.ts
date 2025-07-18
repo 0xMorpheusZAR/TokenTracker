@@ -277,14 +277,29 @@ class VeloService {
   async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
     try {
       const params: Record<string, any> = {};
-      if (beginTimestamp) {
+      if (beginTimestamp !== undefined) {
         params.begin = beginTimestamp;
       }
 
-      return await this.makeRequest('/news', params);
+      // Try multiple possible endpoints
+      const endpoints = ['/news', '/v1/news', '/api/news'];
+      let lastError: any;
+
+      for (const endpoint of endpoints) {
+        try {
+          return await this.makeRequest(endpoint, params);
+        } catch (error: any) {
+          lastError = error;
+          console.log(`Failed to fetch news from ${endpoint}:`, error.message);
+        }
+      }
+
+      // If all endpoints fail, return empty array
+      console.error('All news endpoints failed:', lastError);
+      return [];
     } catch (error) {
       console.error('Failed to fetch news:', error);
-      throw error;
+      return [];
     }
   }
 
