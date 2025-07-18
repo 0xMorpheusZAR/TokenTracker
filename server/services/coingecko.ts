@@ -72,6 +72,18 @@ export class CoinGeckoService {
   // Map token symbols to CoinGecko IDs - Updated June 27, 2025
   private getTokenId(symbol: string): string {
     const tokenMap: Record<string, string> = {
+      // Top 10 coins
+      'BTC': 'bitcoin',
+      'ETH': 'ethereum',
+      'SOL': 'solana',
+      'ADA': 'cardano',
+      'LINK': 'chainlink',
+      'AVAX': 'avalanche-2',
+      'DOT': 'polkadot',
+      'UNI': 'uniswap',
+      'AAVE': 'aave',
+      'MATIC': 'matic-network',
+      // Other tokens
       'PORTAL': 'portal',
       'STRK': 'starknet', 
       'AEVO': 'aevo',

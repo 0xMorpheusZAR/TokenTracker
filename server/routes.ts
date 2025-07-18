@@ -1150,64 +1150,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get comprehensive top 10 data
+  // Get comprehensive top 10 data from CoinGecko
   app.get("/api/velo/top10", async (req, res) => {
     try {
-      const marketCaps = await veloService.getTopCoinsMarketCaps();
+      // Define the top 10 coins we want to fetch
+      const top10Symbols = ['BTC', 'ETH', 'SOL', 'ADA', 'LINK', 'AVAX', 'DOT', 'UNI', 'AAVE', 'MATIC'];
       
-      // Use a simpler approach with estimated prices based on market cap
-      const estimatedPrices: Record<string, number> = {
-        BTC: 96000,
-        ETH: 3400,
-        SOL: 186,
-        ADA: 0.90,
-        LINK: 22,
-        AVAX: 38,
-        DOT: 7.2,
-        UNI: 12.5,
-        AAVE: 350,
-        MATIC: 0.55
-      };
+      // Fetch data from CoinGecko
+      const detailedData = await coinGeckoService.getDetailedTokenData(top10Symbols);
       
-      // Estimated total supplies
-      const totalSupplies: Record<string, number> = {
-        BTC: 21000000,
-        ETH: 120000000,
-        SOL: 570000000,
-        ADA: 45000000000,
-        LINK: 1000000000,
-        AVAX: 450000000,
-        DOT: 1400000000,
-        UNI: 1000000000,
-        AAVE: 16000000,
-        MATIC: 10000000000
-      };
+      if (!detailedData || !Array.isArray(detailedData)) {
+        throw new Error('Failed to fetch data from CoinGecko');
+      }
       
-      const top10Data = ['BTC', 'ETH', 'SOL', 'ADA', 'LINK', 'AVAX', 'DOT', 'UNI', 'AAVE', 'MATIC'].map((coin, index) => {
-        const marketCapData = marketCaps.find(mc => mc.coin === coin);
-        const marketCap = parseFloat(marketCapData?.circ_dollars || '0');
-        const fdvFromData = parseFloat(marketCapData?.fdv_dollars || '0');
-        const circulatingSupply = parseFloat(marketCapData?.circ || '0');
-        const price = estimatedPrices[coin] || 0;
+      // Map the data to match our format
+      const top10Data = top10Symbols.map((symbol, index) => {
+        const coinData = detailedData.find(item => 
+          item.symbol?.toUpperCase() === symbol
+        );
+        
+        if (!coinData) {
+          return {
+            coin: symbol,
+            rank: index + 1,
+            price: 0,
+            marketCap: 0,
+            fdv: 0,
+            supply: 0,
+            priceFormatted: '$0.00',
+            marketCapFormatted: '$0',
+            fdvFormatted: '$0',
+            supplyFormatted: '0'
+          };
+        }
+        
+        const price = coinData.current_price || 0;
+        const marketCap = coinData.market_cap || 0;
+        const fdv = coinData.fully_diluted_valuation || marketCap;
+        const supply = coinData.circulating_supply || 0;
         
         return {
-          coin,
+          coin: symbol,
           rank: index + 1,
           price,
           marketCap,
-          fdv: fdvFromData || (price * totalSupplies[coin]),
-          supply: circulatingSupply,
+          fdv,
+          supply,
           priceFormatted: price > 1 ? `$${price.toFixed(2)}` : `$${price.toFixed(4)}`,
           marketCapFormatted: formatLargeNumber(marketCap),
-          fdvFormatted: formatLargeNumber(fdvFromData || (price * totalSupplies[coin])),
-          supplyFormatted: formatLargeNumber(circulatingSupply)
+          fdvFormatted: formatLargeNumber(fdv),
+          supplyFormatted: supply > 1000000 ? `${(supply / 1000000).toFixed(2)}M` : supply.toFixed(0)
         };
       });
       
       res.json({
         data: top10Data,
         timestamp: Date.now(),
-        provider: "Velo Pro API"
+        provider: "CoinGecko Pro API"
       });
     } catch (error) {
       console.error("Failed to fetch top 10 data:", error);

@@ -283,7 +283,7 @@ function VeloDashboard() {
               Market Capitalizations
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Real-time market cap data from Velo • Top 10 cryptocurrencies
+              Real-time market cap data from CoinGecko • Top 10 cryptocurrencies
             </CardDescription>
           </CardHeader>
           <CardContent>
