@@ -179,6 +179,7 @@ Changelog:
 - July 18, 2025: Built comprehensive Velo-exclusive Dashboard at /velo-dashboard - Features real-time market caps for top 10 coins, spot market price charts with volume analysis, futures contracts overview across multiple exchanges (Bybit, Binance, OKEx, Hyperliquid), options data from Deribit, cross-exchange analytics with total market statistics and BTC dominance, fully powered by Velo Data API with 30-second auto-refresh, added "Velo Data" navigation button with emerald gradient styling to main dashboard
 - July 18, 2025: Removed Custom Analytics Dashboard (/custom-dashboard) per user request - Cleaned up multi-source data integration dashboard including removal of Multi-API button from main navigation
 - July 18, 2025: Updated Top 10 cryptocurrencies section to use CoinGecko Pro API instead of Velo API - Added coin ID mappings for BTC, ETH, SOL, ADA, LINK, AVAX, DOT, UNI, AAVE, MATIC in CoinGecko service, displays real-time pricing with Market Cap, FDV, and Circulating Supply data
+- July 18, 2025: Created comprehensive VELO-API-DOCUMENTATION.md file with extensive documentation of all Velo API endpoints - Includes detailed parameter tables, data structures, authentication methods, response formats, code examples in TypeScript and Python, WebSocket streaming documentation, rate limits, error handling, and advanced usage patterns for institutional-grade crypto market data access
 ```
 
 ## User Preferences
