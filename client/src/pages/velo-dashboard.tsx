@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Card,
@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   LineChart,
   TrendingUp,
@@ -33,6 +34,8 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownRight,
+  Search,
+  Filter,
 } from 'lucide-react';
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
@@ -81,6 +84,10 @@ function VeloDashboard() {
   const [selectedExchange, setSelectedExchange] = useState('coinbase');
   const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
   const [refreshTime, setRefreshTime] = useState(new Date());
+  const [spotSearchQuery, setSpotSearchQuery] = useState('');
+  const [spotExchangeFilter, setSpotExchangeFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
@@ -214,6 +221,69 @@ function VeloDashboard() {
     if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`;
     return `$${value.toFixed(2)}`;
   };
+
+  // Get unique exchanges from spot products
+  const availableSpotExchanges = useMemo(() => {
+    if (!spotProducts) return [];
+    const exchanges = new Set<string>();
+    spotProducts.forEach((p: VeloProduct) => exchanges.add(p.exchange));
+    return Array.from(exchanges).sort();
+  }, [spotProducts]);
+
+  // Filter spot products based on search and exchange filter
+  const filteredSpotProducts = useMemo(() => {
+    if (!spotProducts) return [];
+    
+    let filtered = [...spotProducts];
+    
+    // Apply search filter
+    if (spotSearchQuery) {
+      const query = spotSearchQuery.toLowerCase();
+      filtered = filtered.filter((p: VeloProduct) => 
+        p.coin.toLowerCase().includes(query) ||
+        p.product.toLowerCase().includes(query) ||
+        p.exchange.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply exchange filter
+    if (spotExchangeFilter !== 'all') {
+      filtered = filtered.filter((p: VeloProduct) => p.exchange === spotExchangeFilter);
+    }
+    
+    return filtered;
+  }, [spotProducts, spotSearchQuery, spotExchangeFilter]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredSpotProducts.length / itemsPerPage);
+  const paginatedSpotProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredSpotProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredSpotProducts, currentPage, itemsPerPage]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [spotSearchQuery, spotExchangeFilter]);
+
+  // Calculate statistics
+  const uniqueSpotCoins = useMemo(() => {
+    const coins = new Set<string>();
+    filteredSpotProducts.forEach((p: VeloProduct) => coins.add(p.coin));
+    return coins;
+  }, [filteredSpotProducts]);
+
+  const uniqueSpotExchanges = useMemo(() => {
+    const exchanges = new Set<string>();
+    filteredSpotProducts.forEach((p: VeloProduct) => exchanges.add(p.exchange));
+    return exchanges;
+  }, [filteredSpotProducts]);
+
+  const usdPairsCount = useMemo(() => {
+    return filteredSpotProducts.filter((p: VeloProduct) => 
+      p.product.includes('USD') || p.product.includes('USDT') || p.product.includes('USDC')
+    ).length;
+  }, [filteredSpotProducts]);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden">
@@ -588,6 +658,143 @@ function VeloDashboard() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Spot Markets Snapshot - All Available Markets */}
+            <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <div className="p-2 bg-emerald-400/10 rounded-lg">
+                    <Database className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  All Spot Markets Snapshot
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Complete overview of {spotProducts?.length || 0} available spot markets across all exchanges
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Search and Filter Controls */}
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      type="text"
+                      placeholder="Search by coin symbol or exchange..."
+                      value={spotSearchQuery}
+                      onChange={(e) => setSpotSearchQuery(e.target.value)}
+                      className="pl-10 bg-gray-800/50 border-gray-700 focus:border-emerald-400"
+                    />
+                  </div>
+                  
+                  <Select value={spotExchangeFilter} onValueChange={setSpotExchangeFilter}>
+                    <SelectTrigger className="w-48 bg-gray-800/50 border-gray-700">
+                      <SelectValue placeholder="Filter by exchange" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Exchanges</SelectItem>
+                      {availableSpotExchanges.map(exchange => (
+                        <SelectItem key={exchange} value={exchange}>{exchange.toUpperCase()}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Markets Grid */}
+                <div className="space-y-4">
+                  {/* Summary Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">Total Markets</p>
+                      <p className="text-2xl font-bold text-emerald-400">{filteredSpotProducts.length}</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">Unique Coins</p>
+                      <p className="text-2xl font-bold text-cyan-400">{uniqueSpotCoins.size}</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">Exchanges</p>
+                      <p className="text-2xl font-bold text-blue-400">{uniqueSpotExchanges.size}</p>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">USD Pairs</p>
+                      <p className="text-2xl font-bold text-purple-400">{usdPairsCount}</p>
+                    </div>
+                  </div>
+
+                  {/* Markets Table */}
+                  <div className="bg-gray-950/50 rounded-lg border border-gray-800 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-800">
+                            <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">Coin</th>
+                            <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">Product</th>
+                            <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">Exchange</th>
+                            <th className="text-left p-4 text-xs font-medium text-gray-400 uppercase tracking-wider">Listed Since</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-800">
+                          {paginatedSpotProducts.map((product: VeloProduct, idx: number) => (
+                            <tr key={`${product.exchange}-${product.product}-${idx}`} className="hover:bg-gray-800/30 transition-colors">
+                              <td className="p-4">
+                                <span className="font-semibold text-white">{product.coin}</span>
+                              </td>
+                              <td className="p-4">
+                                <span className="text-sm text-gray-300 font-mono">{product.product}</span>
+                              </td>
+                              <td className="p-4">
+                                <Badge className={`text-xs ${
+                                  product.exchange === 'binance' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30' :
+                                  product.exchange === 'bybit' ? 'bg-orange-600/20 text-orange-400 border-orange-600/30' :
+                                  product.exchange === 'coinbase' ? 'bg-blue-600/20 text-blue-400 border-blue-600/30' :
+                                  product.exchange === 'okex' ? 'bg-green-600/20 text-green-400 border-green-600/30' :
+                                  product.exchange === 'hyperliquid' ? 'bg-purple-600/20 text-purple-400 border-purple-600/30' :
+                                  'bg-gray-700'
+                                }`}>
+                                  {product.exchange.toUpperCase()}
+                                </Badge>
+                              </td>
+                              <td className="p-4">
+                                <span className="text-sm text-gray-400">
+                                  {product.begin ? new Date(product.begin).toLocaleDateString() : 'N/A'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    {/* Pagination */}
+                    <div className="p-4 border-t border-gray-800 flex items-center justify-between">
+                      <p className="text-sm text-gray-400">
+                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredSpotProducts.length)} of {filteredSpotProducts.length} markets
+                      </p>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-700 hover:bg-gray-800"
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-700 hover:bg-gray-800"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Futures Tab */}
