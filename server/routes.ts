@@ -1271,20 +1271,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { assets = 'BTC,ETH,SOL,ADA,DOT' } = req.query;
       const assetsList = (assets as string).split(',');
 
-      // Fetch multiple data sources in parallel
-      const [
-        marketCaps,
-        btc24h,
-        eth24h,
-        news,
-        multiAssetData
-      ] = await Promise.all([
-        veloService.getTopCoinsMarketCaps(),
-        veloService.getBTCSpotPrice24h(),
-        veloService.getETHSpotPrice24h(),
-        veloService.getCryptoNews(24),
-        veloService.getMultiAssetPriceData(assetsList, '1h')
+      // Fetch multiple data sources in parallel with error handling for each
+      const results = await Promise.allSettled([
+        veloService.getTopCoinsMarketCaps().catch(err => {
+          console.error("Failed to fetch market caps:", err);
+          return [];
+        }),
+        veloService.getBTCSpotPrice24h().catch(err => {
+          console.error("Failed to fetch BTC 24h:", err);
+          return [];
+        }),
+        veloService.getETHSpotPrice24h().catch(err => {
+          console.error("Failed to fetch ETH 24h:", err);
+          return [];
+        }),
+        veloService.getCryptoNews(24).catch(err => {
+          console.error("Failed to fetch news:", err);
+          return [];
+        }),
+        veloService.getMultiAssetPriceData(assetsList, '1h').catch(err => {
+          console.error("Failed to fetch multi-asset data:", err);
+          return {};
+        })
       ]);
+
+      // Extract results with fallbacks
+      const marketCaps = results[0].status === 'fulfilled' ? results[0].value : [];
+      const btc24h = results[1].status === 'fulfilled' ? results[1].value : [];
+      const eth24h = results[2].status === 'fulfilled' ? results[2].value : [];
+      const news = results[3].status === 'fulfilled' ? results[3].value : [];
+      const multiAssetData = results[4].status === 'fulfilled' ? results[4].value : {};
 
       res.json({
         market_caps: marketCaps,

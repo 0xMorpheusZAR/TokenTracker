@@ -109,7 +109,12 @@ class VeloService {
   // Helper endpoints
   async getStatus(): Promise<any> {
     try {
-      return await this.makeRequest('/status');
+      const result = await this.makeRequest<string>('/status');
+      // If the response is just "ok", return a structured response
+      if (result === 'ok') {
+        return { status: 'ok', connected: true };
+      }
+      return result;
     } catch (error) {
       console.error('Failed to fetch Velo status:', error);
       throw error;
