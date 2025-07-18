@@ -87,11 +87,23 @@ class VeloService {
     }
 
     const contentType = response.headers.get('content-type');
-    if (contentType?.includes('text/csv') || contentType?.includes('text/plain')) {
-      return await response.text() as T;
+    const responseText = await response.text();
+    
+    // Check if response is CSV by content type or by examining the data
+    if (contentType?.includes('text/csv') || 
+        contentType?.includes('text/plain') ||
+        endpoint === '/rows' ||  // rows endpoint returns CSV
+        (responseText.includes(',') && responseText.includes('\n') && !responseText.startsWith('{'))) {
+      return responseText as T;
     }
     
-    return await response.json() as T;
+    // Parse as JSON
+    try {
+      return JSON.parse(responseText) as T;
+    } catch (error) {
+      console.error('Failed to parse response as JSON:', responseText.substring(0, 100));
+      throw new Error(`Invalid JSON response from Velo API: ${error}`);
+    }
   }
 
   // Helper endpoints

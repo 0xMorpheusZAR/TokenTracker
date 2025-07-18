@@ -57,7 +57,11 @@ interface VeloMarketData {
 interface VeloCapData {
   coin: string;
   time: number;
-  market_cap: number;
+  circ?: string;
+  circ_dollars?: string;
+  fdv?: string;
+  fdv_dollars?: string;
+  market_cap?: number;
 }
 
 interface VeloNewsItem {
@@ -129,6 +133,17 @@ function CustomDashboard() {
       return response.json();
     },
     refetchInterval: 60000,
+  });
+
+  // CoinGecko Market Data for percentage changes
+  const { data: cgMarketData } = useQuery({
+    queryKey: ['/api/coingecko/detailed'],
+    queryFn: async () => {
+      const response = await fetch('/api/coingecko/detailed');
+      if (!response.ok) throw new Error('Failed to fetch CoinGecko market data');
+      return response.json();
+    },
+    refetchInterval: refreshInterval,
   });
 
   // Velo Status
@@ -551,23 +566,202 @@ function CustomDashboard() {
 
           {/* Market Caps Tab */}
           <TabsContent value="market-caps" className="space-y-6">
+            {/* Market Cap Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {veloDashboard?.market_caps?.map((cap) => {
+                const marketCap = parseFloat(cap.circ_dollars || cap.market_cap?.toString() || '0');
+                const fdv = parseFloat(cap.fdv_dollars || '0');
+                const circSupply = parseFloat(cap.circ || '0');
+                const circulatingRatio = fdv > 0 ? (marketCap / fdv) * 100 : 100;
+                
+                // Get real percentage changes from CoinGecko data
+                const cgToken = cgMarketData?.find((token: any) => 
+                  token.symbol?.toUpperCase() === cap.coin.toUpperCase()
+                );
+                const change24h = cgToken?.price_change_percentage_24h || 0;
+                const change7d = cgToken?.price_change_percentage_7d || 0;
+                
+                return (
+                  <Card key={cap.coin} className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm hover:border-gray-600/50 transition-all">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">{cap.coin.charAt(0)}</span>
+                          </div>
+                          <h3 className="font-bold text-white text-lg">{cap.coin}</h3>
+                        </div>
+                        <Badge 
+                          variant="outline" 
+                          className={`${change24h >= 0 ? 'text-green-400 border-green-400/50' : 'text-red-400 border-red-400/50'}`}
+                        >
+                          {change24h >= 0 ? '+' : ''}{change24h.toFixed(2)}%
+                        </Badge>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-xs text-gray-400">Market Cap</p>
+                          <p className="text-xl font-bold text-white">{formatNumber(marketCap)}</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-xs text-gray-400">24h Change</p>
+                            <p className={getChangeColor(change24h)}>
+                              {change24h >= 0 ? '+' : ''}{change24h.toFixed(2)}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400">7d Change</p>
+                            <p className={getChangeColor(change7d)}>
+                              {change7d >= 0 ? '+' : ''}{change7d.toFixed(2)}%
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Circulating Supply</p>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
+                              style={{ width: `${circulatingRatio}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-gray-400 mt-1">{circulatingRatio.toFixed(1)}% of Total Supply</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Market Dominance Chart */}
             <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Market Capitalizations</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <PieChart className="w-5 h-5 text-purple-400" />
+                  Market Dominance
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {veloDashboard?.market_caps?.map((cap) => (
-                    <div key={cap.coin} className="p-4 bg-gray-700/30 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-white">{cap.coin}</span>
-                        <span className="text-green-400">{formatNumber(cap.market_cap)}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="h-64">
+                    {veloDashboard?.market_caps && veloDashboard.market_caps.length > 0 ? (
+                      <Bar
+                        data={{
+                          labels: veloDashboard.market_caps.map(cap => cap.coin),
+                          datasets: [{
+                            label: 'Market Cap (Billions)',
+                            data: veloDashboard.market_caps.map(cap => {
+                              const marketCap = parseFloat(cap.circ_dollars || cap.market_cap?.toString() || '0');
+                              return marketCap / 1e9; // Convert to billions
+                            }),
+                            backgroundColor: [
+                              'rgba(249, 115, 22, 0.5)',  // Orange for BTC
+                              'rgba(59, 130, 246, 0.5)',  // Blue for ETH
+                              'rgba(168, 85, 247, 0.5)',  // Purple for SOL
+                              'rgba(236, 72, 153, 0.5)',  // Pink for others
+                              'rgba(34, 197, 94, 0.5)',   // Green
+                            ],
+                            borderColor: [
+                              'rgba(249, 115, 22, 1)',
+                              'rgba(59, 130, 246, 1)',
+                              'rgba(168, 85, 247, 1)',
+                              'rgba(236, 72, 153, 1)',
+                              'rgba(34, 197, 94, 1)',
+                            ],
+                            borderWidth: 1,
+                          }]
+                        }}
+                        options={{
+                          ...chartOptions,
+                          plugins: {
+                            ...chartOptions.plugins,
+                            title: {
+                              display: true,
+                              text: 'Market Capitalization Comparison',
+                              color: '#fff',
+                            },
+                          },
+                          scales: {
+                            ...chartOptions.scales,
+                            y: {
+                              ...chartOptions.scales?.y,
+                              title: {
+                                display: true,
+                                text: 'Market Cap (Billions USD)',
+                                color: '#9ca3af',
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400">
+                        Loading market dominance data...
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Updated: {new Date(cap.time).toLocaleString()}
-                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-gray-400">Market Share Breakdown</h4>
+                    {veloDashboard?.market_caps?.map((cap, index) => {
+                      const marketCap = parseFloat(cap.circ_dollars || cap.market_cap?.toString() || '0');
+                      const totalMarketCap = veloDashboard.market_caps.reduce((sum, c) => {
+                        return sum + parseFloat(c.circ_dollars || c.market_cap?.toString() || '0');
+                      }, 0);
+                      const dominance = (marketCap / totalMarketCap) * 100;
+                      
+                      return (
+                        <div key={cap.coin} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-white font-medium">{cap.coin}</span>
+                            <span className="text-sm text-gray-400">{dominance.toFixed(2)}%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full transition-all duration-500"
+                              style={{ 
+                                width: `${dominance}%`,
+                                backgroundColor: [
+                                  '#f97316', // Orange
+                                  '#3b82f6', // Blue
+                                  '#a855f7', // Purple
+                                  '#ec4899', // Pink
+                                  '#22c55e', // Green
+                                ][index % 5]
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Real-time Updates Status */}
+            <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-500/20 rounded-lg animate-pulse">
+                      <Activity className="w-5 h-5 text-green-400" />
                     </div>
-                  ))}
+                    <div>
+                      <p className="text-sm font-medium text-white">Live Market Data</p>
+                      <p className="text-xs text-gray-400">Updates every {refreshInterval / 1000} seconds</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">Last Updated</p>
+                    <p className="text-sm text-white">
+                      {veloDashboard?.timestamp ? new Date(veloDashboard.timestamp).toLocaleTimeString() : 'Loading...'}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
