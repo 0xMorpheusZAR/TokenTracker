@@ -216,77 +216,123 @@ function VeloDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 via-gray-950 to-cyan-900/20" />
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-emerald-400/30 rounded-full animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 5}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="container mx-auto p-6 space-y-6 relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between backdrop-blur-sm bg-gray-900/30 rounded-xl p-6 border border-gray-800">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
               Velo Data Dashboard
             </h1>
-            <p className="text-gray-400 mt-2">
+            <p className="text-gray-400 mt-2 flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
               Powered exclusively by Velo Data API • Cross-exchange market analytics
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Badge variant="outline" className="flex items-center gap-2 px-4 py-2">
-              <Clock className="w-4 h-4" />
-              {refreshTime.toLocaleTimeString()}
+            <Badge variant="outline" className="flex items-center gap-2 px-4 py-2 bg-gray-900/50 border-emerald-400/50">
+              <Clock className="w-4 h-4 text-emerald-400" />
+              <span className="text-emerald-400">{refreshTime.toLocaleTimeString()}</span>
             </Badge>
             <Button
               onClick={() => setRefreshTime(new Date())}
               variant="outline"
               size="icon"
-              className="animate-pulse"
+              className="border-emerald-400/50 hover:bg-emerald-400/10 hover:border-emerald-400 transition-all"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4 text-emerald-400" />
             </Button>
           </div>
         </div>
 
         {/* Market Caps Overview */}
-        <Card className="bg-gray-900/50 border-gray-800">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-400" />
+        <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-2xl">
+              <div className="p-2 bg-emerald-400/10 rounded-lg">
+                <DollarSign className="w-6 h-6 text-emerald-400" />
+              </div>
               Market Capitalizations
             </CardTitle>
-            <CardDescription>Real-time market cap data from Velo</CardDescription>
+            <CardDescription className="text-gray-400">
+              Real-time market cap data from Velo • Top 10 cryptocurrencies
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {capsLoading ? (
-              <div className="text-center py-8">Loading market caps...</div>
+              <div className="flex items-center justify-center py-12">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-3 h-3 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {marketCaps?.data?.map((cap: VeloCapData) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                {marketCaps?.data?.slice(0, 10).map((cap: VeloCapData, index: number) => (
                   <div
                     key={cap.coin}
-                    className="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-all"
+                    className="group relative p-4 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700 hover:border-emerald-400/50 transition-all duration-300 hover:transform hover:scale-105"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-lg">{cap.coin}</span>
-                      <Badge variant="outline" className="text-xs">
-                        #{marketCaps.data.indexOf(cap) + 1}
-                      </Badge>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Market Cap:</span>
-                        <span className="text-green-400 font-medium">
-                          {formatNumber(cap.circ_dollars)}
-                        </span>
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-cyan-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-bold text-xl text-white">{cap.coin}</span>
+                        <Badge className={`text-xs ${index < 3 ? 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-gray-900' : 'bg-gray-700'}`}>
+                          #{index + 1}
+                        </Badge>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">FDV:</span>
-                        <span className="text-blue-400">
-                          {formatNumber(cap.fdv_dollars)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Circulating:</span>
-                        <span className="text-gray-300">
-                          {(cap.circ / 1e6).toFixed(2)}M
-                        </span>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500">Market Cap</span>
+                          <span className="text-emerald-400 font-semibold">
+                            {formatNumber(cap.circ_dollars)}
+                          </span>
+                        </div>
+                        
+                        <div className="w-full bg-gray-700 rounded-full h-1.5">
+                          <div 
+                            className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-1.5 rounded-full transition-all duration-1000"
+                            style={{ width: `${Math.min((cap.circ_dollars / cap.fdv_dollars) * 100, 100)}%` }}
+                          />
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-500">FDV</span>
+                          <span className="text-cyan-400">
+                            {formatNumber(cap.fdv_dollars)}
+                          </span>
+                        </div>
+                        
+                        <div className="pt-2 border-t border-gray-700">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="text-gray-500">Supply</span>
+                            <span className="text-gray-300">
+                              {(cap.circ / 1e6).toFixed(2)}M
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -360,29 +406,57 @@ function VeloDashboard() {
 
             {/* Price Display */}
             {marketData?.data && marketData.data.length > 0 && (
-              <Card className="bg-gray-900/50 border-gray-800">
+              <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all">
                 <CardContent className="pt-6">
                   <div className="flex items-baseline justify-between">
-                    <div>
-                      <p className="text-sm text-gray-400">
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-400 flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
                         {selectedCoin}/USD · {selectedExchange.toUpperCase()}
                       </p>
-                      <p className="text-3xl font-bold">
+                      <p className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                         ${marketData.data[marketData.data.length - 1]?.close_price?.toFixed(2) || '0.00'}
                       </p>
                     </div>
                     {priceChange && (
-                      <div className={`flex items-center gap-2 ${priceChange.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`flex items-center gap-2 p-3 rounded-lg ${
+                        priceChange.isPositive 
+                          ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20' 
+                          : 'bg-red-400/10 text-red-400 border border-red-400/20'
+                      }`}>
                         {priceChange.isPositive ? (
-                          <ArrowUpRight className="w-5 h-5" />
+                          <ArrowUpRight className="w-6 h-6" />
                         ) : (
-                          <ArrowDownRight className="w-5 h-5" />
+                          <ArrowDownRight className="w-6 h-6" />
                         )}
-                        <span className="text-xl font-semibold">
+                        <span className="text-2xl font-semibold">
                           {Math.abs(priceChange.value).toFixed(2)}%
                         </span>
                       </div>
                     )}
+                  </div>
+                  
+                  <div className="mt-4 grid grid-cols-4 gap-4 pt-4 border-t border-gray-800">
+                    <div>
+                      <p className="text-xs text-gray-500">24h High</p>
+                      <p className="text-sm font-medium text-emerald-400">
+                        ${Math.max(...marketData.data.map((d: VeloMarketData) => d.close_price)).toFixed(2)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">24h Low</p>
+                      <p className="text-sm font-medium text-red-400">
+                        ${Math.min(...marketData.data.map((d: VeloMarketData) => d.close_price)).toFixed(2)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Data Points</p>
+                      <p className="text-sm font-medium text-gray-300">{marketData.data.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Timeframe</p>
+                      <p className="text-sm font-medium text-gray-300">{selectedTimeframe.toUpperCase()}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -390,37 +464,75 @@ function VeloDashboard() {
 
             {/* Price Chart */}
             {priceChartData && (
-              <Card className="bg-gray-900/50 border-gray-800">
+              <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all">
                 <CardHeader>
-                  <CardTitle>Price Chart</CardTitle>
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-2 bg-cyan-400/10 rounded-lg">
+                      <LineChart className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    Price Movement
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    {selectedCoin}/USD price over the last 24 hours
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[400px]">
+                  <div className="h-[400px] p-4 bg-gray-950/50 rounded-lg border border-gray-800">
                     <Line 
                       data={priceChartData} 
                       options={{
                         responsive: true,
                         maintainAspectRatio: false,
+                        interaction: {
+                          mode: 'index',
+                          intersect: false,
+                        },
                         plugins: {
                           legend: {
                             display: false,
+                          },
+                          tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#e5e7eb',
+                            borderColor: 'rgba(52, 211, 153, 0.3)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                              label: function(context: any) {
+                                return `Price: $${context.parsed.y.toFixed(2)}`;
+                              }
+                            }
                           },
                         },
                         scales: {
                           x: {
                             grid: {
-                              color: 'rgba(255, 255, 255, 0.1)',
+                              color: 'rgba(255, 255, 255, 0.05)',
+                              drawBorder: false,
                             },
                             ticks: {
-                              color: 'rgba(255, 255, 255, 0.6)',
+                              color: 'rgba(255, 255, 255, 0.4)',
+                              font: {
+                                size: 11,
+                              },
                             },
                           },
                           y: {
                             grid: {
-                              color: 'rgba(255, 255, 255, 0.1)',
+                              color: 'rgba(255, 255, 255, 0.05)',
+                              drawBorder: false,
                             },
                             ticks: {
-                              color: 'rgba(255, 255, 255, 0.6)',
+                              color: 'rgba(255, 255, 255, 0.4)',
+                              font: {
+                                size: 11,
+                              },
+                              callback: function(value: any) {
+                                return '$' + value.toFixed(0);
+                              }
                             },
                           },
                         },
@@ -480,30 +592,52 @@ function VeloDashboard() {
 
           {/* Futures Tab */}
           <TabsContent value="futures" className="space-y-6">
-            <Card className="bg-gray-900/50 border-gray-800">
+            <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all">
               <CardHeader>
-                <CardTitle>Available Futures Contracts</CardTitle>
-                <CardDescription>Cross-exchange futures products</CardDescription>
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <div className="p-2 bg-blue-400/10 rounded-lg">
+                    <TrendingUp className="w-6 h-6 text-blue-400" />
+                  </div>
+                  Available Futures Contracts
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Cross-exchange futures products • {futuresProducts?.length || 0} total contracts
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {futuresProducts?.slice(0, 30).map((product: VeloProduct, idx: number) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {futuresProducts?.slice(0, 40).map((product: VeloProduct, idx: number) => (
                     <div
                       key={`${product.exchange}-${product.product}-${idx}`}
-                      className="p-4 bg-gray-800/50 rounded-lg border border-gray-700"
+                      className="group relative p-4 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl border border-gray-700 hover:border-blue-400/50 transition-all duration-300 hover:transform hover:scale-105"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">{product.coin}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          {product.exchange}
-                        </Badge>
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                      
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-bold text-lg text-white">{product.coin}</span>
+                          <Badge className={`text-xs ${
+                            product.exchange === 'binance' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30' :
+                            product.exchange === 'bybit' ? 'bg-orange-600/20 text-orange-400 border-orange-600/30' :
+                            product.exchange === 'okex' ? 'bg-blue-600/20 text-blue-400 border-blue-600/30' :
+                            product.exchange === 'hyperliquid' ? 'bg-purple-600/20 text-purple-400 border-purple-600/30' :
+                            'bg-gray-700'
+                          }`}>
+                            {product.exchange.toUpperCase()}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-sm text-gray-300 font-mono">{product.product}</p>
+                        
+                        {product.begin && (
+                          <div className="mt-3 pt-3 border-t border-gray-700">
+                            <p className="text-xs text-gray-500">
+                              <Clock className="inline w-3 h-3 mr-1" />
+                              Since {new Date(product.begin).toLocaleDateString()}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-sm text-gray-400">{product.product}</p>
-                      {product.begin && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Since: {new Date(product.begin).toLocaleDateString()}
-                        </p>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -586,27 +720,44 @@ function VeloDashboard() {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-gray-900/50 border-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="backdrop-blur-sm bg-gray-900/30 border-gray-800 hover:border-gray-700 transition-all">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Database className="w-5 h-5" />
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-400/10 rounded-lg">
+                      <Database className="w-5 h-5 text-purple-400" />
+                    </div>
                     Data Coverage
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Spot Products:</span>
-                      <span className="font-medium">{spotProducts?.length || 0}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Spot Products</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-24 bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-purple-400 to-pink-400" style={{ width: '75%' }} />
+                        </div>
+                        <span className="font-bold text-purple-400">{spotProducts?.length || 0}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Futures Contracts:</span>
-                      <span className="font-medium">{futuresProducts?.length || 0}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Futures Contracts</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-24 bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-blue-400 to-cyan-400" style={{ width: '85%' }} />
+                        </div>
+                        <span className="font-bold text-blue-400">{futuresProducts?.length || 0}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Options Products:</span>
-                      <span className="font-medium">{optionsProducts?.length || 0}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Options Products</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-24 bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-emerald-400 to-green-400" style={{ width: '25%' }} />
+                        </div>
+                        <span className="font-bold text-emerald-400">{optionsProducts?.length || 0}</span>
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Market Cap Coverage:</span>
