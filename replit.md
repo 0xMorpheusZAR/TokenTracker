@@ -180,6 +180,7 @@ Changelog:
 - July 18, 2025: Removed Custom Analytics Dashboard (/custom-dashboard) per user request - Cleaned up multi-source data integration dashboard including removal of Multi-API button from main navigation
 - July 18, 2025: Updated Top 10 cryptocurrencies section to use CoinGecko Pro API instead of Velo API - Added coin ID mappings for BTC, ETH, SOL, ADA, LINK, AVAX, DOT, UNI, AAVE, MATIC in CoinGecko service, displays real-time pricing with Market Cap, FDV, and Circulating Supply data
 - July 18, 2025: Created comprehensive VELO-API-DOCUMENTATION.md file with extensive documentation of all Velo API endpoints - Includes detailed parameter tables, data structures, authentication methods, response formats, code examples in TypeScript and Python, WebSocket streaming documentation, rate limits, error handling, and advanced usage patterns for institutional-grade crypto market data access
+- July 19, 2025: Built comprehensive Altseason Analysis Dashboard at /altseason route - Features real-time Altcoin Season Index (75% threshold), Bitcoin dominance tracking, ETH/BTC ratio analysis with critical levels (0.065-0.075 resistance), top altcoins vs Bitcoin performance comparison, historical seasonal patterns visualization showing January-May altseason trends, market cap distribution pie chart, and trading strategy guide - Dashboard illustrates thesis from show presentation using CoinGecko Pro API for all data
 ```
 
 ## User Preferences

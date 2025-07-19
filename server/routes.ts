@@ -1563,6 +1563,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Altseason routes
+  app.locals.coingeckoService = coinGeckoService;
+  app.use('/api/altseason', (await import('./routes/altseason.js')).default);
+
   const httpServer = createServer(app);
   return httpServer;
 }
