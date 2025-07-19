@@ -270,12 +270,13 @@ export default function AltseasonDashboard() {
         >
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-x">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-x">
                 Altseason Analysis Dashboard
               </h1>
-              <p className="text-gray-300 text-lg flex items-center gap-2">
-                <Activity className="w-5 h-5 text-purple-400" />
-                Real-time tracking of altcoin season indicators and market dynamics
+              <p className="text-gray-300 text-sm sm:text-base lg:text-lg flex items-center gap-2">
+                <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
+                <span className="hidden sm:inline">Real-time tracking of altcoin season indicators and market dynamics</span>
+                <span className="sm:hidden">Real-time altseason tracking</span>
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -284,19 +285,14 @@ export default function AltseasonDashboard() {
                 size="sm"
                 onClick={() => setAutoRefresh(!autoRefresh)}
                 className={cn(
-                  "border-gray-700 hover:bg-gray-800",
-                  autoRefresh && "bg-green-900/20 border-green-700"
+                  "text-white border-gray-600 hover:bg-gray-700",
+                  autoRefresh && "bg-green-900/20 border-green-700 text-green-400"
                 )}
               >
                 <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
                 {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
               </Button>
-              <Link href="/dashboard">
-                <Button variant="outline" className="border-purple-700 hover:bg-purple-900/20 text-purple-400">
-                  <ArrowUpRight className="w-4 h-4 mr-2" />
-                  Main Dashboard
-                </Button>
-              </Link>
+
             </div>
           </div>
 
@@ -321,8 +317,8 @@ export default function AltseasonDashboard() {
                   </AlertTitle>
                   <AlertDescription className="mt-2">
                     {metrics?.isAltseason 
-                      ? `${metrics.outperformingCount} out of 49 top altcoins (${metrics.altseasonIndex}%) are outperforming Bitcoin over the last 90 days. This officially qualifies as an altseason!`
-                      : `Currently ${metrics?.outperformingCount || 0} out of 49 top altcoins (${metrics?.altseasonIndex || 0}%) are outperforming Bitcoin. We need 75% to officially enter altseason.`
+                      ? `${metrics.outperformingCount} out of top 49 altcoins (${metrics.altseasonIndex}%) are outperforming Bitcoin over the last 90 days. This officially qualifies as an altseason!`
+                      : `Currently ${metrics?.outperformingCount || 0} out of top 49 altcoins (${metrics?.altseasonIndex || 0}%) are outperforming Bitcoin. We need 75% to officially enter altseason.`
                     }
                   </AlertDescription>
                 </Alert>
@@ -333,23 +329,25 @@ export default function AltseasonDashboard() {
 
         {/* Enhanced Tab Navigation */}
         <Tabs value={selectedView} onValueChange={(v) => setSelectedView(v as any)} className="mb-8">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-gray-800/50 backdrop-blur-lg">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600">
-              <Eye className="w-4 h-4 mr-2" />
-              Overview
+          <TabsList className="grid w-full grid-cols-3 max-w-full sm:max-w-md mx-auto bg-gray-800/50 backdrop-blur-lg">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300 text-xs sm:text-sm">
+              <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Overview</span>
+              <span className="sm:hidden">View</span>
             </TabsTrigger>
-            <TabsTrigger value="analysis" className="data-[state=active]:bg-purple-600">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Analysis
+            <TabsTrigger value="analysis" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300 text-xs sm:text-sm">
+              <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Analysis</span>
+              <span className="sm:hidden">Stats</span>
             </TabsTrigger>
-            <TabsTrigger value="education" className="data-[state=active]:bg-purple-600">
-              <BookOpen className="w-4 h-4 mr-2" />
+            <TabsTrigger value="education" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300 text-xs sm:text-sm">
+              <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
               Learn
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {/* Enhanced Altseason Index Gauge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -358,9 +356,9 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-purple-600 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="flex items-center">
-                        <Gauge className="mr-2 text-purple-400" />
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center text-sm sm:text-base">
+                        <Gauge className="mr-1 sm:mr-2 text-purple-400 w-4 h-4 sm:w-5 sm:h-5" />
                         Altseason Index
                       </span>
                       <Badge className={cn(
@@ -385,10 +383,10 @@ export default function AltseasonDashboard() {
                             fill={altseasonIndexData[0].fill}
                             background={{ fill: '#1F2937' }}
                           />
-                          <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-3xl font-bold fill-white">
+                          <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-3xl font-bold" fill="#FFFFFF">
                             {metrics?.altseasonIndex || 0}%
                           </text>
-                          <text x="50%" y="65%" textAnchor="middle" dominantBaseline="middle" className="text-sm fill-gray-400">
+                          <text x="50%" y="65%" textAnchor="middle" dominantBaseline="middle" className="text-sm" fill="#9CA3AF">
                             {metrics?.isAltseason ? 'Active' : 'Inactive'}
                           </text>
                         </RadialBarChart>
@@ -423,9 +421,9 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="flex items-center">
-                        <Bitcoin className="mr-2 text-orange-400" />
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center text-sm sm:text-base">
+                        <Bitcoin className="mr-1 sm:mr-2 text-orange-400 w-4 h-4 sm:w-5 sm:h-5" />
                         Bitcoin Dominance
                       </span>
                       <HoverCard>
@@ -434,12 +432,12 @@ export default function AltseasonDashboard() {
                         </HoverCardTrigger>
                         <HoverCardContent className="w-80 bg-gray-900/95 border-gray-700">
                           <div className="space-y-2">
-                            <h4 className="text-sm font-semibold">Bitcoin Dominance Explained</h4>
+                            <h4 className="text-sm font-semibold text-white">Bitcoin Dominance Explained</h4>
                             <p className="text-xs text-gray-400">
                               Bitcoin dominance represents BTC's percentage of the total crypto market cap. Lower dominance often indicates capital flowing into altcoins, a key altseason signal.
                             </p>
                             <div className="pt-2 border-t border-gray-700">
-                              <p className="text-xs font-medium">Key Levels:</p>
+                              <p className="text-xs font-medium text-white">Key Levels:</p>
                               <ul className="text-xs text-gray-400 mt-1 space-y-1">
                                 <li>• Above 65%: Strong BTC dominance</li>
                                 <li>• 55-65%: Balanced market</li>
@@ -492,9 +490,9 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-green-600 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <PieChartIcon className="mr-2 text-green-400" />
-                      Market Cap Distribution
+                    <CardTitle className="flex items-center text-white">
+                      <PieChartIcon className="mr-1 sm:mr-2 text-green-400 w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="text-sm sm:text-base">Market Cap Distribution</span>
                     </CardTitle>
                     <CardDescription>Current market share breakdown</CardDescription>
                   </CardHeader>
@@ -568,7 +566,7 @@ export default function AltseasonDashboard() {
             </div>
 
             {/* ETH/BTC Ratio Chart */}
-            <div className="lg:col-span-3 mt-6">
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-4 lg:mt-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -576,14 +574,14 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all duration-300">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
+                    <CardTitle className="flex items-center justify-between text-white">
                       <span className="flex items-center">
                         <Target className="mr-2 text-indigo-400" />
-                        ETH/BTC Ratio - Key Altseason Indicator
+                        <span className="text-base sm:text-lg">ETH/BTC Ratio - Key Altseason Indicator</span>
                       </span>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-2xl font-bold">
+                          <p className="text-xl sm:text-2xl font-bold text-white">
                             <AnimatedCounter value={ethBtcData?.currentRatio || 0} decimals={4} />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
@@ -661,19 +659,24 @@ export default function AltseasonDashboard() {
               {/* Top Altcoins Performance */}
               <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-yellow-600 transition-all">
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
+                  <CardTitle className="flex items-center justify-between text-white">
                     <span className="flex items-center">
                       <Rocket className="mr-2 text-yellow-400" />
-                      Top Altcoins vs Bitcoin Performance
+                      <span className="text-sm sm:text-base">Top Altcoins vs Bitcoin Performance</span>
                     </span>
                     <div className="flex gap-2">
-                      {['24h', '7d', '30d', '90d'].map(tf => (
+                      {['7d', '30d', '90d'].map(tf => (
                         <Button
                           key={tf}
                           variant={selectedTimeframe === tf ? "default" : "outline"}
                           size="sm"
                           onClick={() => setSelectedTimeframe(tf)}
-                          className={selectedTimeframe === tf ? "bg-purple-600" : ""}
+                          className={cn(
+                            "text-white",
+                            selectedTimeframe === tf 
+                              ? "bg-purple-600 hover:bg-purple-700" 
+                              : "border-gray-600 hover:bg-gray-700"
+                          )}
                         >
                           {tf}
                         </Button>
@@ -770,9 +773,9 @@ export default function AltseasonDashboard() {
               {/* Historical Seasonal Patterns */}
               <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-emerald-600 transition-all">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-white">
                     <Calendar className="mr-2 text-emerald-400" />
-                    Historical Seasonal Patterns
+                    <span className="text-sm sm:text-base">Historical Seasonal Patterns</span>
                   </CardTitle>
                   <CardDescription>Monthly BTC dominance averages show clear patterns</CardDescription>
                 </CardHeader>
@@ -781,13 +784,43 @@ export default function AltseasonDashboard() {
                     <BarChart data={historicalData?.seasonalPattern || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 12, fill: '#9CA3AF' }} />
-                      <YAxis stroke="#9CA3AF" tick={{ fontSize: 12, fill: '#9CA3AF' }} />
-                      <Tooltip />
+                      <YAxis 
+                        stroke="#9CA3AF" 
+                        tick={{ fontSize: 12, fill: '#9CA3AF' }} 
+                        domain={[40, 70]}
+                        tickFormatter={(value) => `${value}%`}
+                      />
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-gray-900/95 p-3 rounded-lg shadow-lg border border-gray-700">
+                                <p className="text-sm font-medium text-white">
+                                  {payload[0].payload.month}
+                                </p>
+                                <p className="text-sm font-bold text-emerald-400">
+                                  BTC Dominance: {payload[0].value}%
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {payload[0].value < 60 ? 'Favorable for altcoins' : 'Bitcoin dominant'}
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
                       <Bar 
                         dataKey="avgBtcDominance" 
-                        fill="#10B981"
                         radius={[8, 8, 0, 0]}
-                      />
+                      >
+                        {historicalData?.seasonalPattern?.map((entry: any, index: number) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.avgBtcDominance < 60 ? "#10B981" : entry.avgBtcDominance < 65 ? "#F59E0B" : "#EF4444"}
+                          />
+                        ))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                   <Alert className="mt-4 bg-emerald-900/20 border-emerald-700">
@@ -807,9 +840,9 @@ export default function AltseasonDashboard() {
               {/* What is Altseason? */}
               <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-white">
                     <Lightbulb className="mr-2 text-yellow-400" />
-                    What is Altseason?
+                    <span className="text-sm sm:text-base">What is Altseason?</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
