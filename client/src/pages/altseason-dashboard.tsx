@@ -141,7 +141,7 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '', decimals = 0 }: {
   }, [value]);
 
   return (
-    <span>
+    <span className="text-white">
       {prefix}{displayValue.toFixed(decimals)}{suffix}
     </span>
   );
@@ -557,7 +557,7 @@ export default function AltseasonDashboard() {
                               />
                               <span className="text-gray-400">{entry.name}</span>
                             </div>
-                            <span className="font-medium">{entry.value.toFixed(1)}%</span>
+                            <span className="font-medium text-white">{entry.value.toFixed(1)}%</span>
                           </motion.div>
                         ))}
                       </AnimatePresence>
@@ -612,12 +612,13 @@ export default function AltseasonDashboard() {
                         <XAxis 
                           dataKey="date" 
                           stroke="#9CA3AF"
-                          tick={{ fontSize: 12 }}
+                          tick={{ fontSize: 12, fill: '#9CA3AF' }}
                         />
                         <YAxis 
                           stroke="#9CA3AF"
-                          tick={{ fontSize: 12 }}
-                          domain={['dataMin - 0.005', 'dataMax + 0.005']}
+                          tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                          domain={['dataMin', 'dataMax']}
+                          tickFormatter={(value) => value.toFixed(4)}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Area 
@@ -779,8 +780,8 @@ export default function AltseasonDashboard() {
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={historicalData?.seasonalPattern || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 12, fill: '#9CA3AF' }} />
+                      <YAxis stroke="#9CA3AF" tick={{ fontSize: 12, fill: '#9CA3AF' }} />
                       <Tooltip />
                       <Bar 
                         dataKey="avgBtcDominance" 
