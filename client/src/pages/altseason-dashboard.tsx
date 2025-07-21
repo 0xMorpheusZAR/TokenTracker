@@ -447,12 +447,6 @@ export default function AltseasonDashboard() {
                         <span className="text-gray-400">Outperforming BTC:</span>
                         <span className="font-medium text-purple-400">{metrics?.outperformingCount || 0}/50 coins</span>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">BTC 30d Change:</span>
-                        <span className={cn("font-medium", metrics?.btcChange90d > 0 ? "text-green-400" : "text-red-400")}>
-                          {formatPercentage(metrics?.btcChange90d || 0)}
-                        </span>
-                      </div>
                       <Progress 
                         value={metrics?.altseasonIndex || 0} 
                         className="h-2 mt-3"
