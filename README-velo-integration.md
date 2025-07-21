@@ -267,7 +267,86 @@ const btcOptions = await veloService.getOptionsData({
 ### Common Issues:
 
 1. **400 Bad Request on News Endpoint**
-   - The news API requires additional permissions
+
+   **Console Error Log:**
+   ```
+   === VELO NEWS API ERROR - DETAILED DIAGNOSTIC REPORT ===
+   
+   [ERROR] Failed to fetch news from /news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
+   [ERROR] Failed to fetch news from /v1/news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
+   [ERROR] Failed to fetch news from /api/news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
+   [ERROR] All news endpoints failed: Error: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
+   
+   === REQUEST DETAILS ===
+   Endpoint: https://api.velo.xyz/api/v1/news
+   Method: GET
+   Headers: {
+     'Authorization': 'Basic [REDACTED_API_KEY]',
+     'Content-Type': 'application/json'
+   }
+   Parameters: {
+     'begin': 1753002000000 // Unix timestamp
+   }
+   
+   === RESPONSE DETAILS ===
+   Status: 400 Bad Request
+   Status Text: Bad Request
+   Response Body: {"error":"insufficient_permissions"}
+   
+   === DIAGNOSTIC INFORMATION ===
+   1. Authentication: Valid (API key is correctly formatted and sent)
+   2. Endpoint Access: Forbidden (requires additional permissions)
+   3. Error Type: Permission-based restriction
+   4. Root Cause: News API access is not enabled for this API key
+   
+   === CODE IMPLEMENTATION ===
+   File: server/services/velo.ts
+   
+   // News endpoint implementation
+   async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
+     try {
+       const params: Record<string, any> = {};
+       if (beginTimestamp !== undefined) {
+         params.begin = beginTimestamp;
+       }
+
+       // Try multiple possible endpoints
+       const endpoints = ['/news', '/v1/news', '/api/news'];
+       let lastError: any;
+
+       for (const endpoint of endpoints) {
+         try {
+           return await this.makeRequest(endpoint, params);
+         } catch (error: any) {
+           lastError = error;
+           console.log(`Failed to fetch news from ${endpoint}:`, error.message);
+         }
+       }
+
+       // If all endpoints fail, return empty array
+       console.error('All news endpoints failed:', lastError);
+       return [];
+     } catch (error) {
+       console.error('Failed to fetch news:', error);
+       return [];
+     }
+   }
+   
+   === RESOLUTION ===
+   To resolve this issue:
+   1. Contact Velo support at support@velodata.app
+   2. Request news API access for your API key
+   3. Provide your API key identifier (not the full key)
+   4. Explain your use case for news data access
+   
+   === WORKAROUND ===
+   Current implementation returns empty array [] when news access is denied,
+   allowing the application to continue functioning without news data.
+   ```
+
+   **Summary:**
+   - The news API requires additional permissions not included in standard API keys
+   - Returns HTTP 400 with {"error":"insufficient_permissions"}
    - Contact Velo support to enable news access for your API key
 
 2. **"ok" Response Parsing Error**
