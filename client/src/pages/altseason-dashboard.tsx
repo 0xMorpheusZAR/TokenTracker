@@ -44,9 +44,11 @@ const TradingViewWidget = () => {
       script.innerHTML = JSON.stringify({
         "symbol": "CRYPTOCAP:BTC.D",
         "width": "100%",
+        "height": 90,
         "colorTheme": "dark",
-        "isTransparent": true,
-        "locale": "en"
+        "isTransparent": false,
+        "locale": "en",
+        "largeChartUrl": ""
       });
 
       containerRef.current.appendChild(script);
@@ -60,10 +62,19 @@ const TradingViewWidget = () => {
   }, []);
 
   return (
-    <div className="tradingview-widget-container" ref={containerRef}>
-      <div className="tradingview-widget-container__widget"></div>
-      <div className="text-xs text-gray-500 text-center mt-2">
-        Data from TradingView
+    <div className="relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 rounded-lg blur-xl"></div>
+      <div className="relative bg-gray-900/50 rounded-lg border border-orange-700/30 overflow-hidden backdrop-blur-sm">
+        <div className="tradingview-widget-container p-4" ref={containerRef}>
+          <div className="tradingview-widget-container__widget"></div>
+        </div>
+        <div className="px-4 pb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+            <span className="text-xs text-gray-400">Live from TradingView</span>
+          </div>
+          <Bitcoin className="w-4 h-4 text-orange-400/50" />
+        </div>
       </div>
     </div>
   );
@@ -491,11 +502,15 @@ export default function AltseasonDashboard() {
                     </CardTitle>
                     <CardDescription>Market share of total crypto market cap</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-0">
                     {/* TradingView BTC.D Widget */}
-                    <div className="mt-2">
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
                       <TradingViewWidget />
-                    </div>
+                    </motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
