@@ -366,9 +366,22 @@ export default function VeloNewsDashboard() {
                         {/* Header */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
-                              {item.headline}
-                            </h3>
+                            {item.link ? (
+                              <a
+                                href={item.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group"
+                              >
+                                <h3 className="text-lg font-semibold text-white mb-2 leading-tight group-hover:text-emerald-400 transition-colors cursor-pointer">
+                                  {item.headline}
+                                </h3>
+                              </a>
+                            ) : (
+                              <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
+                                {item.headline}
+                              </h3>
+                            )}
                             
                             <div className="flex items-center gap-4 text-sm">
                               <div className="flex items-center text-gray-400">

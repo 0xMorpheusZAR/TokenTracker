@@ -339,6 +339,16 @@ const btcOptions = await veloService.getOptionsData({
    - Priority levels for news importance
    - Coin tagging for filtered views
    - Auto-refresh functionality in dashboard
+   - News source links (when available)
+   
+   **Link Functionality:**
+   - Headlines are clickable when links are available (hover turns emerald-400)
+   - "Read more" button with external link icon appears at bottom of news items
+   - Links open in new tab for better user experience
+   - Current API data has `link: null` but functionality is ready when populated
+   
+   **Example File Created:**
+   - `velo-news-with-links-example.json` - Shows how news items appear with links
    
    **Note:** The number "1337" refers to a news story ID, not the count of stories. The actual count varies based on the time range queried.
    
