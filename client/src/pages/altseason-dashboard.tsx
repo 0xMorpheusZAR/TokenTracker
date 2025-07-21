@@ -452,11 +452,14 @@ export default function AltseasonDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-6">
-                      <div className="text-4xl font-bold mb-2 flex items-baseline">
-                        <AnimatedCounter value={metrics?.bitcoinDominance || 0} decimals={2} suffix="%" />
-                        {metrics?.bitcoinDominance < 60 && (
-                          <TrendingDown className="w-6 h-6 ml-2 text-green-400" />
-                        )}
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-lg font-semibold text-gray-400">BTC.d:</span>
+                        <div className="text-4xl font-bold flex items-baseline">
+                          <AnimatedCounter value={metrics?.bitcoinDominance || 0} decimals={2} suffix="%" />
+                          {metrics?.bitcoinDominance < 60 && (
+                            <TrendingDown className="w-6 h-6 ml-2 text-green-400" />
+                          )}
+                        </div>
                       </div>
                       <Progress 
                         value={metrics?.bitcoinDominance || 0} 
