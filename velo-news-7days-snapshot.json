@@ -1,0 +1,236 @@
+{
+  "data": {
+    "stories": [
+      {
+        "id": 1321,
+        "headline": "UNKNOWN COMPANY, AQUA 1, THAT GAVE $100M TO TRUMP’S WORLD LIBERTY FINANCIAL REVEALED TO BE DISGRACED MM FIRM WEB3PORT",
+        "source": null,
+        "priority": 1,
+        "summary": null,
+        "link": "https://www.jacobsilverman.com/p/revealed-trumps-100-million-man?utm_campaign=post&utm_medium=web",
+        "time": 1752561569745,
+        "effectiveTime": 1752561569745,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1322,
+        "headline": "DOJ ENDS PROBE INTO POLYMARKET",
+        "source": "BBG",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752591866625,
+        "effectiveTime": 1752591866625,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1323,
+        "headline": "WHITEHOUSE OFFICIAL SAYS TRUMP LIKELY TO FIRE POWELL SOON",
+        "source": "BBG",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752679109952,
+        "effectiveTime": 1752679109952,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1324,
+        "headline": "Trump Denies Reports He's Planning To Fire Powell",
+        "source": "Reuters",
+        "priority": 2,
+        "summary": null,
+        "link": null,
+        "time": 1752681505847,
+        "effectiveTime": 1752681505847,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1325,
+        "headline": "BLACKROCK APPLIES TO ADD STAKING TO ITS ETHEREUM ETF",
+        "source": "FILING",
+        "priority": 1,
+        "summary": null,
+        "link": "https://listingcenter.nasdaq.com/assets/rulebook/nasdaq/filings/SR-NASDAQ-2025-053.pdf",
+        "time": 1752770973972,
+        "effectiveTime": 1752770973972,
+        "effectivePrice": 3393.99,
+        "coins": [
+          "ETH"
+        ]
+      },
+      {
+        "id": 1326,
+        "headline": "House Passes Crypto Market Structure Bill, Sends To Senate - BBG",
+        "source": "Tree",
+        "priority": 2,
+        "summary": null,
+        "link": null,
+        "time": 1752780668046,
+        "effectiveTime": 1752780642332,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1327,
+        "headline": "STABLECOIN GENIUS ACT PASSES US HOUSE VOTE",
+        "source": null,
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752782171125,
+        "effectiveTime": 1752782171125,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1328,
+        "headline": "ROBERT LESHNER GIVES UP TRYING TO TAKE CONTROL OF NASDAQ LISTED LQR HOUSE AFTER ORIGINAL 56.9% STAKE GETS DILUTED TO 8.7%",
+        "source": "FILING",
+        "priority": 1,
+        "summary": null,
+        "link": "https://www.sec.gov/Archives/edgar/data/1843165/000207612825000003/xslSCHEDULE_13D_X01/primary_doc.xml",
+        "time": 1752783625902,
+        "effectiveTime": 1752783625902,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1329,
+        "headline": "JOSEPH LUBIN'S SBET TO RAISE $5B FOR FURTHER ETHEREUM PURCHASES",
+        "source": "FILING",
+        "priority": 1,
+        "summary": null,
+        "link": "https://www.sec.gov/Archives/edgar/data/1981535/000164117225020052/form424b5.htm",
+        "time": 1752784202382,
+        "effectiveTime": 1752784202382,
+        "effectivePrice": 3396.84,
+        "coins": [
+          "ETH"
+        ]
+      },
+      {
+        "id": 1330,
+        "headline": "Trump Set To Open US Retirement Market To Crypto Investments:ft. - BBG",
+        "source": "Tree",
+        "priority": 2,
+        "summary": null,
+        "link": null,
+        "time": 1752785993235,
+        "effectiveTime": 1752785981233,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1331,
+        "headline": "COINBASE STOCK HITS ALL TIME HIGH FOR THE FIRST TIME SINCE 2021",
+        "source": "MARKET",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752845964567,
+        "effectiveTime": 1752845964567,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1332,
+        "headline": "TRUMP TO SIGN GENIUS ACT INTO LAW TODAY",
+        "source": "BO HINES",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752851108540,
+        "effectiveTime": 1752851108540,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1333,
+        "headline": "PUMP.FUN'S NEWLY LAUNCHED $PUMP TOKEN CRASHES BELOW ICO PRICE OF $4B FDV ONLY DAYS AFTER LAUNCH, SENDING ALL HOLDERS OF THE COIN INTO A LOSS",
+        "source": "MARKET",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1752867365048,
+        "effectiveTime": 1752867365048,
+        "effectivePrice": 0.004118,
+        "coins": [
+          "PUMP"
+        ]
+      },
+      {
+        "id": 1334,
+        "headline": "POLYMARKET TO ROLL OUT NEW MARKET RESOLUTION SYSTEM LATER THIS YEAR FOLLOWING ZELENSKY SUIT DRAMA",
+        "source": "DOCUMENTATION",
+        "priority": 1,
+        "summary": null,
+        "link": "https://docs.polymarket.com/polymarket-learn/trading/holding-rewards",
+        "time": 1752928579993,
+        "effectiveTime": 1752928579993,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1335,
+        "headline": "TRUMP BACKED WORLD LIBERTY TO IMPOSE NEW VESTING SCHEDULE ON PUBLIC SALE BUYERS, DESPITE PREVIOUSLY STATING THEY WOULD BE FULLY UNLOCKED",
+        "source": "X",
+        "priority": 1,
+        "summary": null,
+        "link": "https://x.com/worldlibertyfi/status/1946572178876498109",
+        "time": 1752936065138,
+        "effectiveTime": 1752936065138,
+        "effectivePrice": null,
+        "coins": []
+      },
+      {
+        "id": 1336,
+        "headline": "ETHENA'S STABLECOIN USDE SUPPLY PASSES $6B HITTING ALL TIME HIGHS",
+        "source": "MARKET",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1753018286151,
+        "effectiveTime": 1753018286151,
+        "effectivePrice": 0.4872,
+        "coins": [
+          "ENA"
+        ]
+      },
+      {
+        "id": 1337,
+        "headline": "PANTERA BACKED ETHER MACHINE RAISES $1.5B FOR ETHEREUM COMPANY, TO USE $800M TO ACQUIRE ETHEREUM",
+        "source": "PRESS RELEASE",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1753092772535,
+        "effectiveTime": 1753092772535,
+        "effectivePrice": 3775.61,
+        "coins": [
+          "ETH"
+        ]
+      },
+      {
+        "id": 1338,
+        "headline": "ETHENA TO CREATE  COMPANY \"STABLECOINX\" AND USE $260M OF FUNDS TO BUY ETHENA TOKENS ON OPEN MARKET",
+        "source": null,
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1753104350249,
+        "effectiveTime": 1753104350249,
+        "effectivePrice": 0.4953,
+        "coins": [
+          "ENA"
+        ]
+      }
+    ]
+  },
+  "timeframe_hours": 168,
+  "provider": "Velo Pro API"
+}

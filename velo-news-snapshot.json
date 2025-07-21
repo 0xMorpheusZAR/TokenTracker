@@ -1,0 +1,36 @@
+{
+  "data": {
+    "stories": [
+      {
+        "id": 1337,
+        "headline": "PANTERA BACKED ETHER MACHINE RAISES $1.5B FOR ETHEREUM COMPANY, TO USE $800M TO ACQUIRE ETHEREUM",
+        "source": "PRESS RELEASE",
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1753092772535,
+        "effectiveTime": 1753092772535,
+        "effectivePrice": 3775.61,
+        "coins": [
+          "ETH"
+        ]
+      },
+      {
+        "id": 1338,
+        "headline": "ETHENA TO CREATE  COMPANY \"STABLECOINX\" AND USE $260M OF FUNDS TO BUY ETHENA TOKENS ON OPEN MARKET",
+        "source": null,
+        "priority": 1,
+        "summary": null,
+        "link": null,
+        "time": 1753104350249,
+        "effectiveTime": 1753104350249,
+        "effectivePrice": 0.4953,
+        "coins": [
+          "ENA"
+        ]
+      }
+    ]
+  },
+  "timeframe_hours": 24,
+  "provider": "Velo Pro API"
+}

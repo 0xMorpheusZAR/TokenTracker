@@ -355,8 +355,9 @@ class VeloService {
       }
 
       const data = await response.json();
-      console.log(`Successfully fetched ${data.length} news items from Velo`);
-      return data;
+      const newsCount = Array.isArray(data) ? data.length : (data.stories?.length || 0);
+      console.log(`Successfully fetched ${newsCount} news items from Velo`);
+      return Array.isArray(data) ? data : (data.stories || []);
     } catch (error) {
       console.error('Failed to fetch news:', error);
       return [];
