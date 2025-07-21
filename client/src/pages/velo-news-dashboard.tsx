@@ -101,11 +101,13 @@ export default function VeloNewsDashboard() {
     }
   }, [newsData]);
 
-  // Filter news based on selections and ensure it's from the past 24 hours
-  const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+  // Filter news based on selections - showing Friday January 17th, 2025
+  const friday17Start = new Date('2025-01-17T00:00:00').getTime();
+  const friday17End = new Date('2025-01-17T23:59:59').getTime();
+  
   const filteredNews = newsData.filter((item: VeloNewsItem) => {
-    // Ensure news is from the past 24 hours
-    const timeMatch = item.time >= twentyFourHoursAgo;
+    // Show news from Friday January 17th
+    const timeMatch = item.time >= friday17Start && item.time <= friday17End;
     const coinMatch = selectedCoin === 'all' || item.coins.includes(selectedCoin.toUpperCase());
     const priorityMatch = selectedPriority === 'all' || 
       (selectedPriority === 'high' && (item.priority === 1 || item.priority === '1')) ||
@@ -118,10 +120,10 @@ export default function VeloNewsDashboard() {
   // Get unique coins from all news items
   const allCoins = Array.from(new Set(newsData.flatMap((item: VeloNewsItem) => item.coins))).sort();
 
-  // Calculate time range
-  const now = new Date();
-  const twentyFourHoursAgoDate = new Date(twentyFourHoursAgo);
-  const timeRangeString = `${twentyFourHoursAgoDate.toLocaleDateString()} ${twentyFourHoursAgoDate.toLocaleTimeString()} - ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  // Calculate time range for Friday January 17th
+  const friday17StartDate = new Date(friday17Start);
+  const friday17EndDate = new Date(friday17End);
+  const timeRangeString = `${friday17StartDate.toLocaleDateString()} ${friday17StartDate.toLocaleTimeString()} - ${friday17EndDate.toLocaleDateString()} ${friday17EndDate.toLocaleTimeString()}`;
 
   // Priority badge component
   const PriorityBadge = ({ priority }: { priority: number | string }) => {
@@ -167,7 +169,7 @@ export default function VeloNewsDashboard() {
               <Activity className="w-10 h-10 mr-3 text-emerald-400" />
               Velo News Feed
             </h1>
-            <p className="text-gray-400">All cryptocurrency news from the past 24 hours</p>
+            <p className="text-gray-400">All cryptocurrency news from Friday, January 17th, 2025</p>
           </div>
           
           <div className="flex items-center gap-4">
@@ -218,7 +220,7 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">24h Stories</p>
+                  <p className="text-gray-400 text-sm">Friday's Stories</p>
                   <p className="text-2xl font-bold text-white">{filteredNews.length}</p>
                 </div>
                 <Bell className="w-8 h-8 text-purple-400" />
@@ -230,7 +232,7 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">24h High Priority</p>
+                  <p className="text-gray-400 text-sm">Friday's High Priority</p>
                   <p className="text-2xl font-bold text-red-400">
                     {filteredNews.filter((n: VeloNewsItem) => n.priority === 1 || n.priority === '1').length}
                   </p>
@@ -275,7 +277,7 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center justify-center gap-3">
               <Clock className="w-5 h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium">
-                Showing all news from the past 24 hours
+                Showing all news from Friday, January 17th, 2025
               </p>
               <span className="text-emerald-300 text-sm">
                 ({timeRangeString})
