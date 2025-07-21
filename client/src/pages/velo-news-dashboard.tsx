@@ -101,29 +101,28 @@ export default function VeloNewsDashboard() {
     }
   }, [newsData]);
 
-  // Filter news based on selections - showing Friday January 17th, 2025
-  const friday17Start = new Date('2025-01-17T00:00:00').getTime();
-  const friday17End = new Date('2025-01-17T23:59:59').getTime();
-  
+  // Filter news based on selections - showing all available news
   const filteredNews = newsData.filter((item: VeloNewsItem) => {
-    // Show news from Friday January 17th
-    const timeMatch = item.time >= friday17Start && item.time <= friday17End;
     const coinMatch = selectedCoin === 'all' || item.coins.includes(selectedCoin.toUpperCase());
     const priorityMatch = selectedPriority === 'all' || 
       (selectedPriority === 'high' && (item.priority === 1 || item.priority === '1')) ||
       (selectedPriority === 'normal' && (item.priority === 2 || item.priority === '2')) ||
       (selectedPriority === 'low' && (item.priority > 2 || parseInt(item.priority as string) > 2));
     
-    return timeMatch && coinMatch && priorityMatch;
+    return coinMatch && priorityMatch;
   });
 
   // Get unique coins from all news items
   const allCoins = Array.from(new Set(newsData.flatMap((item: VeloNewsItem) => item.coins))).sort();
 
-  // Calculate time range for Friday January 17th
-  const friday17StartDate = new Date(friday17Start);
-  const friday17EndDate = new Date(friday17End);
-  const timeRangeString = `${friday17StartDate.toLocaleDateString()} ${friday17StartDate.toLocaleTimeString()} - ${friday17EndDate.toLocaleDateString()} ${friday17EndDate.toLocaleTimeString()}`;
+  // Calculate time range for available news
+  const sortedNews = [...newsData].sort((a: VeloNewsItem, b: VeloNewsItem) => a.time - b.time);
+  const oldestNews = sortedNews[0];
+  const newestNews = sortedNews[sortedNews.length - 1];
+  
+  const timeRangeString = oldestNews && newestNews
+    ? `${new Date(oldestNews.time).toLocaleString()} - ${new Date(newestNews.time).toLocaleString()}`
+    : 'No news available';
 
   // Priority badge component
   const PriorityBadge = ({ priority }: { priority: number | string }) => {
@@ -169,7 +168,7 @@ export default function VeloNewsDashboard() {
               <Activity className="w-10 h-10 mr-3 text-emerald-400" />
               Velo News Feed
             </h1>
-            <p className="text-gray-400">All cryptocurrency news from Friday, January 17th, 2025</p>
+            <p className="text-gray-400">Live cryptocurrency news updates from Velo Data API</p>
           </div>
           
           <div className="flex items-center gap-4">
@@ -220,7 +219,7 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Friday's Stories</p>
+                  <p className="text-gray-400 text-sm">Total Stories</p>
                   <p className="text-2xl font-bold text-white">{filteredNews.length}</p>
                 </div>
                 <Bell className="w-8 h-8 text-purple-400" />
@@ -232,7 +231,7 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Friday's High Priority</p>
+                  <p className="text-gray-400 text-sm">High Priority</p>
                   <p className="text-2xl font-bold text-red-400">
                     {filteredNews.filter((n: VeloNewsItem) => n.priority === 1 || n.priority === '1').length}
                   </p>
@@ -277,7 +276,7 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center justify-center gap-3">
               <Clock className="w-5 h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium">
-                Showing all news from Friday, January 17th, 2025
+                Showing all available news updates
               </p>
               <span className="text-emerald-300 text-sm">
                 ({timeRangeString})
