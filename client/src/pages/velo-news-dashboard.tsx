@@ -79,7 +79,7 @@ export default function VeloNewsDashboard() {
   // Fetch news data with auto-refresh
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
     queryKey: ['/api/velo/news'],
-    refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
+    refetchInterval: autoRefresh ? 60000 : false, // Refresh every 60 seconds (1 minute)
     staleTime: 0, // Always consider data stale to ensure fresh updates
   });
 
@@ -197,7 +197,7 @@ export default function VeloNewsDashboard() {
               )}
             >
               <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
-              {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
+              {autoRefresh ? 'Auto-refresh ON (1 min)' : 'Auto-refresh OFF'}
             </Button>
 
             {/* Manual refresh */}
