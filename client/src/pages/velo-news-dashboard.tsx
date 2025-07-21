@@ -101,19 +101,27 @@ export default function VeloNewsDashboard() {
     }
   }, [newsData]);
 
-  // Filter news based on selections
+  // Filter news based on selections and ensure it's from the past 24 hours
+  const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
   const filteredNews = newsData.filter((item: VeloNewsItem) => {
+    // Ensure news is from the past 24 hours
+    const timeMatch = item.time >= twentyFourHoursAgo;
     const coinMatch = selectedCoin === 'all' || item.coins.includes(selectedCoin.toUpperCase());
     const priorityMatch = selectedPriority === 'all' || 
       (selectedPriority === 'high' && (item.priority === 1 || item.priority === '1')) ||
       (selectedPriority === 'normal' && (item.priority === 2 || item.priority === '2')) ||
       (selectedPriority === 'low' && (item.priority > 2 || parseInt(item.priority as string) > 2));
     
-    return coinMatch && priorityMatch;
+    return timeMatch && coinMatch && priorityMatch;
   });
 
   // Get unique coins from all news items
   const allCoins = Array.from(new Set(newsData.flatMap((item: VeloNewsItem) => item.coins))).sort();
+
+  // Calculate time range
+  const now = new Date();
+  const twentyFourHoursAgoDate = new Date(twentyFourHoursAgo);
+  const timeRangeString = `${twentyFourHoursAgoDate.toLocaleDateString()} ${twentyFourHoursAgoDate.toLocaleTimeString()} - ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
 
   // Priority badge component
   const PriorityBadge = ({ priority }: { priority: number | string }) => {
@@ -159,7 +167,7 @@ export default function VeloNewsDashboard() {
               <Activity className="w-10 h-10 mr-3 text-emerald-400" />
               Velo News Feed
             </h1>
-            <p className="text-gray-400">Real-time cryptocurrency news and market events</p>
+            <p className="text-gray-400">All cryptocurrency news from the past 24 hours</p>
           </div>
           
           <div className="flex items-center gap-4">
@@ -210,8 +218,8 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Total Stories</p>
-                  <p className="text-2xl font-bold text-white">{newsData.length}</p>
+                  <p className="text-gray-400 text-sm">24h Stories</p>
+                  <p className="text-2xl font-bold text-white">{filteredNews.length}</p>
                 </div>
                 <Bell className="w-8 h-8 text-purple-400" />
               </div>
@@ -222,9 +230,9 @@ export default function VeloNewsDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">High Priority</p>
+                  <p className="text-gray-400 text-sm">24h High Priority</p>
                   <p className="text-2xl font-bold text-red-400">
-                    {newsData.filter((n: VeloNewsItem) => n.priority === 1 || n.priority === '1').length}
+                    {filteredNews.filter((n: VeloNewsItem) => n.priority === 1 || n.priority === '1').length}
                   </p>
                 </div>
                 <AlertCircle className="w-8 h-8 text-red-400" />
@@ -258,6 +266,23 @@ export default function VeloNewsDashboard() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Time Range Indicator */}
+      <div className="max-w-7xl mx-auto mb-4">
+        <Card className="bg-emerald-900/20 border-emerald-500/30">
+          <CardContent className="p-3">
+            <div className="flex items-center justify-center gap-3">
+              <Clock className="w-5 h-5 text-emerald-400" />
+              <p className="text-emerald-400 font-medium">
+                Showing all news from the past 24 hours
+              </p>
+              <span className="text-emerald-300 text-sm">
+                ({timeRangeString})
+              </span>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
