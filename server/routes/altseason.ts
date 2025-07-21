@@ -166,7 +166,11 @@ router.get('/altcoins-performance', async (req, res) => {
     }
     
     // Filter out Bitcoin and ETH derivatives, then get exactly top 50 altcoins
-    const ethDerivatives = ['wrapped-steth', 'staked-ether', 'wsteth', 'weeth', 'steth', 'lido-staked-ether', 'rocket-pool-eth', 'frax-ether', 'sfrxeth'];
+    const ethDerivatives = [
+      'wrapped-steth', 'staked-ether', 'wsteth', 'weeth', 'steth', 
+      'lido-staked-ether', 'rocket-pool-eth', 'frax-ether', 'sfrxeth',
+      'wbeth', 'weth', 'wrapped-ether', 'wrapped-beacon-eth', 'binance-wrapped-eth'
+    ];
     const top50Altcoins = topCoins
       .filter(coin => coin.id !== 'bitcoin' && !ethDerivatives.includes(coin.id))
       .slice(0, 50);

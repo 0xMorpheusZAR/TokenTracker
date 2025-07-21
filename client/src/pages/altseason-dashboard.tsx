@@ -773,13 +773,14 @@ export default function AltseasonDashboard() {
                           size="sm"
                           onClick={() => setSelectedTimeframe(tf)}
                           className={cn(
-                            "text-white font-medium px-4 py-2 transition-all duration-300",
+                            "font-bold px-4 py-2 transition-all duration-300",
                             selectedTimeframe === tf 
-                              ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/25" 
-                              : "border-gray-600 hover:bg-gray-700 hover:border-purple-500"
+                              ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/25 text-white" 
+                              : "bg-gray-700/50 border-gray-600 hover:bg-gray-700 hover:border-purple-500 text-gray-100"
                           )}
+                          style={{ color: selectedTimeframe === tf ? '#ffffff' : '#f3f4f6' }}
                         >
-                          {tf.toUpperCase()}
+                          <span className="font-bold">{tf.toUpperCase()}</span>
                         </Button>
                       ))}
                     </div>
