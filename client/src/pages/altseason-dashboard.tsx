@@ -274,9 +274,7 @@ export default function AltseasonDashboard() {
       date: new Date(point.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       ratio: point.ratio,
       ma7,
-      ma30,
-      resistance: 0.075,
-      support: 0.065
+      ma30
     };
   }) || [];
 
@@ -621,13 +619,8 @@ export default function AltseasonDashboard() {
                         </div>
                       </div>
                     </CardTitle>
-                    <CardDescription className="flex items-center gap-4">
-                      <Badge variant="outline" className="text-red-400 border-red-700">
-                        Resistance: 0.075 BTC
-                      </Badge>
-                      <Badge variant="outline" className="text-green-400 border-green-700">
-                        Support: 0.065 BTC
-                      </Badge>
+                    <CardDescription>
+                      Breaking above 0.075 often precedes broader alt rallies
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -676,8 +669,6 @@ export default function AltseasonDashboard() {
                           dot={false}
                           name="30D MA"
                         />
-                        <ReferenceLine y={0.075} stroke="#EF4444" strokeDasharray="5 5" />
-                        <ReferenceLine y={0.065} stroke="#10B981" strokeDasharray="5 5" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
