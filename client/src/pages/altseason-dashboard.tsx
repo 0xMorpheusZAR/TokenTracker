@@ -708,18 +708,6 @@ export default function AltseasonDashboard() {
                           stroke="#10B981"
                           strokeDasharray="5 5"
                           strokeWidth={2}
-                          label={{
-                            value: `Current: ${ethBtcData?.currentRatio?.toFixed(4) || '0.0317'}`,
-                            position: "left",
-                            style: { 
-                              fill: "#10B981", 
-                              fontSize: 12, 
-                              fontWeight: 700,
-                              backgroundColor: "rgba(0,0,0,0.8)",
-                              padding: "2px 6px",
-                              borderRadius: "4px"
-                            }
-                          }}
                         />
                         
                         <Area 
