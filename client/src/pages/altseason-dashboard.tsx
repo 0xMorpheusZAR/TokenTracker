@@ -754,26 +754,6 @@ export default function AltseasonDashboard() {
                         />
                       </AreaChart>
                     </ResponsiveContainer>
-                    
-                    {/* Approaching Resistance Alert */}
-                    {ethBtcData?.currentRatio > 0.031 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="mt-4 p-3 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg border border-red-700/50"
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                          <span className="text-sm font-medium text-red-400">
-                            ETH/BTC approaching resistance zone (0.0320 - 0.0325)
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1">
-                          Watch for potential rejection or breakout at these levels
-                        </p>
-                      </motion.div>
-                    )}
                   </CardContent>
                 </Card>
               </motion.div>
