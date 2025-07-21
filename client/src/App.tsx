@@ -16,6 +16,7 @@ import PumpfunDashboard from "@/pages/pumpfun-dashboard";
 
 import VeloDashboard from "@/pages/velo-dashboard";
 import EnhancedVeloDashboard from "@/pages/enhanced-dashboard";
+import VeloNewsDashboard from "@/pages/velo-news-dashboard";
 import AltseasonDashboard from "@/pages/altseason-dashboard";
 
 import NotFound from "@/pages/not-found";
@@ -36,7 +37,7 @@ function Router() {
       <Route path="/revenue-dashboard" component={RevenueDashboard} />
       <Route path="/pumpfun" component={PumpfunDashboard} />
 
-      <Route path="/velo-dashboard" component={EnhancedVeloDashboard} />
+      <Route path="/velo-dashboard" component={VeloNewsDashboard} />
       <Route path="/altseason" component={AltseasonDashboard} />
       <Route component={NotFound} />
     </Switch>
