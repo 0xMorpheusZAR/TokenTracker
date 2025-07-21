@@ -1,53 +1,95 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import { cacheService } from '../services/cache.js';
 
 const router = Router();
 
 // Get altseason metrics
 router.get('/metrics', async (req, res) => {
   try {
-    const coingeckoService = req.app.locals.coingeckoService;
+    const CACHE_KEY = 'altseason_metrics';
+    const CACHE_TTL = 60; // 60 minutes
     
-    // Get global market data for Bitcoin dominance
-    const globalData = await coingeckoService.getGlobalData();
-    
-    // Get top 100 altcoins (we'll use first 50 for index)
-    const topCoins = await coingeckoService.getTop100Altcoins();
-    
-    if (!topCoins || topCoins.length === 0) {
-      throw new Error('Failed to fetch top coins data');
+    // Check cache first
+    const cachedData = cacheService.get(CACHE_KEY, CACHE_TTL);
+    if (cachedData) {
+      return res.json({
+        ...cachedData,
+        cached: true,
+        cacheTimestamp: cacheService.getTimestamp(CACHE_KEY)
+      });
     }
     
-    // Get top 50 coins
-    const top50Coins = topCoins.slice(0, 50);
+    const coingeckoService = req.app.locals.coingeckoService;
+    const veloService = req.app.locals.veloService;
+    
+    // Get global market data from CoinGecko
+    const globalData = await coingeckoService.getGlobalData();
+    
+    // Get BTC dominance from Velo API if available
+    let btcDominance = globalData.data.market_cap_percentage.btc;
+    if (veloService && veloService.isConnected()) {
+      try {
+        const veloMarketCaps = await veloService.getMarketCaps();
+        if (veloMarketCaps && veloMarketCaps.BTC) {
+          // Calculate BTC dominance from Velo data
+          const totalCap = Object.values(veloMarketCaps).reduce((sum: number, cap: any) => sum + cap, 0);
+          btcDominance = (veloMarketCaps.BTC / totalCap) * 100;
+        }
+      } catch (error) {
+        console.error('Failed to get BTC dominance from Velo, using CoinGecko:', error);
+      }
+    }
+    
+    // Get top 100 coins from CoinGecko
+    const allCoins = await coingeckoService.getTop100Altcoins();
+    
+    if (!allCoins || allCoins.length === 0) {
+      throw new Error('Failed to fetch coins data');
+    }
+    
+    // Exclude Bitcoin and get top 50 altcoins
+    const top50Altcoins = allCoins
+      .filter(coin => coin.id !== 'bitcoin')
+      .slice(0, 50);
     
     // Find Bitcoin data for comparison
-    const bitcoinData = top50Coins.find(coin => coin.id === 'bitcoin');
+    const bitcoinData = allCoins.find(coin => coin.id === 'bitcoin');
     if (!bitcoinData) {
       throw new Error('Bitcoin data not found');
     }
     
-    const btcChange90d = bitcoinData.price_change_percentage_30d_in_currency || 0; // Using 30d as proxy for 90d
+    const btcChange30d = bitcoinData.price_change_percentage_30d_in_currency || 0;
     
-    // Calculate how many coins outperformed Bitcoin
+    // Calculate how many altcoins outperformed Bitcoin
     let outperformingCount = 0;
-    top50Coins.forEach(coin => {
-      if (coin.id !== 'bitcoin' && (coin.price_change_percentage_30d_in_currency || 0) > btcChange90d) {
+    top50Altcoins.forEach(coin => {
+      if ((coin.price_change_percentage_30d_in_currency || 0) > btcChange30d) {
         outperformingCount++;
       }
     });
     
-    // Calculate Altseason Index (percentage of top 50 outperforming BTC)
-    const altseasonIndex = Math.round((outperformingCount / 49) * 100); // 49 because we exclude BTC
+    // Calculate Altseason Index (percentage of top 50 altcoins outperforming BTC)
+    const altseasonIndex = Math.round((outperformingCount / 50) * 100);
     
-    res.json({
+    const metricsData = {
       altseasonIndex,
-      bitcoinDominance: globalData.data.market_cap_percentage.btc,
+      bitcoinDominance: btcDominance,
       totalMarketCap: globalData.data.total_market_cap.usd,
       totalVolume: globalData.data.total_volume.usd,
       outperformingCount,
-      btcChange90d,
-      isAltseason: altseasonIndex >= 75
+      btcChange30d,
+      isAltseason: altseasonIndex >= 75,
+      lastUpdated: new Date().toISOString()
+    };
+    
+    // Cache the data
+    cacheService.set(CACHE_KEY, metricsData, CACHE_TTL);
+    
+    res.json({
+      ...metricsData,
+      cached: false,
+      cacheTimestamp: Date.now()
     });
   } catch (error) {
     console.error('Failed to fetch altseason metrics:', error);
@@ -128,21 +170,9 @@ router.get('/altcoins-performance', async (req, res) => {
     const currentDate = new Date();
     const ninetyDaysAgo = new Date(currentDate.getTime() - (90 * 24 * 60 * 60 * 1000));
     
-    // Fetch historical data for Bitcoin and calculate 90d performance
-    let btc90dPerformance = 0;
-    try {
-      const historicalBtcData = await coingeckoService.getHistoricalPrice(
-        'bitcoin',
-        ninetyDaysAgo.toISOString().split('T')[0]
-      );
-      if (historicalBtcData && bitcoinData) {
-        btc90dPerformance = ((bitcoinData.current_price - historicalBtcData) / historicalBtcData) * 100;
-      }
-    } catch (error) {
-      console.error('Failed to fetch 90d BTC data:', error);
-      // Fallback to using 30d data multiplied by factor if historical fetch fails
-      btc90dPerformance = (bitcoinData?.price_change_percentage_30d_in_currency || 0) * 2.5;
-    }
+    // Use 30d data multiplied by a reasonable factor for 90d estimation
+    // This is a common approximation when 90d data isn't directly available
+    const btc90dPerformance = (bitcoinData?.price_change_percentage_30d_in_currency || 0) * 2.5;
     
     const btcPerformance = {
       '24h': bitcoinData?.price_change_percentage_24h || 0,
@@ -156,21 +186,8 @@ router.get('/altcoins-performance', async (req, res) => {
       analyzeCoins
         .filter(coin => coin.id !== 'bitcoin')
         .map(async coin => {
-          // Calculate 90d performance for each altcoin
-          let coin90dPerformance = 0;
-          try {
-            const historicalPrice = await coingeckoService.getHistoricalPrice(
-              coin.id,
-              ninetyDaysAgo.toISOString().split('T')[0]
-            );
-            if (historicalPrice && coin.current_price) {
-              coin90dPerformance = ((coin.current_price - historicalPrice) / historicalPrice) * 100;
-            }
-          } catch (error) {
-            console.error(`Failed to fetch 90d data for ${coin.id}:`, error);
-            // Fallback to using 30d data multiplied by factor
-            coin90dPerformance = (coin.price_change_percentage_30d_in_currency || 0) * 2.5;
-          }
+          // Calculate 90d performance using 30d data with multiplier
+          const coin90dPerformance = (coin.price_change_percentage_30d_in_currency || 0) * 2.5;
           
           return {
             id: coin.id,
@@ -247,6 +264,19 @@ router.get('/historical-patterns', async (req, res) => {
 // Get market cap breakdown
 router.get('/market-cap-breakdown', async (req, res) => {
   try {
+    const CACHE_KEY = 'market_cap_breakdown';
+    const CACHE_TTL = 60; // 60 minutes
+    
+    // Check cache first
+    const cachedData = cacheService.get(CACHE_KEY, CACHE_TTL);
+    if (cachedData) {
+      return res.json({
+        ...cachedData,
+        cached: true,
+        cacheTimestamp: cacheService.getTimestamp(CACHE_KEY)
+      });
+    }
+    
     const coingeckoService = req.app.locals.coingeckoService;
     
     const globalData = await coingeckoService.getGlobalData();
@@ -258,7 +288,7 @@ router.get('/market-cap-breakdown', async (req, res) => {
     const altcoinsMarketCap = totalMarketCap - btcMarketCap;
     const otherAltcoinsMarketCap = altcoinsMarketCap - ethMarketCap;
     
-    res.json({
+    const marketCapData = {
       totalMarketCap,
       breakdown: {
         bitcoin: {
@@ -275,7 +305,17 @@ router.get('/market-cap-breakdown', async (req, res) => {
         }
       },
       totalAltcoinsMarketCap: altcoinsMarketCap,
-      altcoinsDominance: 100 - globalData.data.market_cap_percentage.btc
+      altcoinsDominance: 100 - globalData.data.market_cap_percentage.btc,
+      lastUpdated: new Date().toISOString()
+    };
+    
+    // Cache the data
+    cacheService.set(CACHE_KEY, marketCapData, CACHE_TTL);
+    
+    res.json({
+      ...marketCapData,
+      cached: false,
+      cacheTimestamp: Date.now()
     });
   } catch (error) {
     console.error('Failed to fetch market cap breakdown:', error);

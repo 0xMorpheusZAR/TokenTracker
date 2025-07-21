@@ -395,7 +395,7 @@ export default function AltseasonDashboard() {
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Outperforming BTC:</span>
-                        <span className="font-medium text-purple-400">{metrics?.outperformingCount || 0}/49 coins</span>
+                        <span className="font-medium text-purple-400">{metrics?.outperformingCount || 0}/50 coins</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">BTC 30d Change:</span>
