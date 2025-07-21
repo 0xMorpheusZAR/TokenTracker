@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar,
-  ComposedChart, Scatter, ScatterChart, ZAxis, ReferenceLine, RadarChart, PolarGrid, 
+  ComposedChart, Scatter, ScatterChart, ZAxis, ReferenceLine, ReferenceArea, RadarChart, PolarGrid, 
   PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 import { 
@@ -631,6 +631,13 @@ export default function AltseasonDashboard() {
                             <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8}/>
                             <stop offset="95%" stopColor="#6366F1" stopOpacity={0}/>
                           </linearGradient>
+                          <linearGradient id="resistanceGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#EF4444" stopOpacity={0.3}/>
+                            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.05}/>
+                          </linearGradient>
+                          <pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="10" height="10">
+                            <path d="M0,10 l10,-10 M-2.5,2.5 l5,-5 M7.5,12.5 l5,-5" stroke="#EF4444" strokeWidth="0.5" opacity="0.2"/>
+                          </pattern>
                         </defs>
                         <CartesianGrid 
                           strokeDasharray="3 3" 
@@ -659,11 +666,68 @@ export default function AltseasonDashboard() {
                             fontWeight: 500
                           }}
                           tickLine={{ stroke: '#4B5563', strokeWidth: 1 }}
-                          domain={['dataMin', 'dataMax']}
-                          tickFormatter={(value) => value.toFixed(4)}
+                          domain={[0.025, 0.040]}
+                          ticks={[0.025, 0.030, 0.032, 0.035, 0.040]}
+                          tickFormatter={(value) => value.toFixed(3)}
                           dx={-10}
                         />
                         <Tooltip content={<CustomTooltip />} />
+                        
+                        {/* Resistance Zones */}
+                        <ReferenceArea 
+                          y1={0.032} 
+                          y2={0.0325}
+                          fill="url(#resistanceGradient)"
+                          strokeOpacity={0}
+                          label={{
+                            value: "Immediate Resistance",
+                            position: "right",
+                            style: { 
+                              fill: "#EF4444", 
+                              fontSize: 11, 
+                              fontWeight: 600,
+                              textShadow: "0 0 4px rgba(0,0,0,0.8)"
+                            }
+                          }}
+                        />
+                        <ReferenceArea 
+                          y1={0.035} 
+                          y2={0.036}
+                          fill="url(#diagonalHatch)"
+                          fillOpacity={0.5}
+                          strokeOpacity={0}
+                          label={{
+                            value: "Major HTF Resistance",
+                            position: "right",
+                            style: { 
+                              fill: "#F59E0B", 
+                              fontSize: 11, 
+                              fontWeight: 600,
+                              textShadow: "0 0 4px rgba(0,0,0,0.8)"
+                            }
+                          }}
+                        />
+                        
+                        {/* Current Price Indicator */}
+                        <ReferenceLine 
+                          y={ethBtcData?.currentRatio || 0.0317}
+                          stroke="#10B981"
+                          strokeDasharray="5 5"
+                          strokeWidth={2}
+                          label={{
+                            value: `Current: ${ethBtcData?.currentRatio?.toFixed(4) || '0.0317'}`,
+                            position: "left",
+                            style: { 
+                              fill: "#10B981", 
+                              fontSize: 12, 
+                              fontWeight: 700,
+                              backgroundColor: "rgba(0,0,0,0.8)",
+                              padding: "2px 6px",
+                              borderRadius: "4px"
+                            }
+                          }}
+                        />
+                        
                         <Area 
                           type="monotone" 
                           dataKey="ratio" 
@@ -690,6 +754,26 @@ export default function AltseasonDashboard() {
                         />
                       </AreaChart>
                     </ResponsiveContainer>
+                    
+                    {/* Approaching Resistance Alert */}
+                    {ethBtcData?.currentRatio > 0.031 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="mt-4 p-3 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg border border-red-700/50"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium text-red-400">
+                            ETH/BTC approaching resistance zone (0.0320 - 0.0325)
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Watch for potential rejection or breakout at these levels
+                        </p>
+                      </motion.div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
