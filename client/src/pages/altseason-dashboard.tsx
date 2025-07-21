@@ -620,7 +620,7 @@ export default function AltseasonDashboard() {
                       </div>
                     </CardTitle>
                     <CardDescription>
-                      Breaking above 0.075 often precedes broader alt rallies
+                      Historical ETH/BTC price ratio movement
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -632,17 +632,36 @@ export default function AltseasonDashboard() {
                             <stop offset="95%" stopColor="#6366F1" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <CartesianGrid 
+                          strokeDasharray="3 3" 
+                          stroke="#374151" 
+                          opacity={0.1}
+                          vertical={false}
+                        />
                         <XAxis 
                           dataKey="date" 
-                          stroke="#9CA3AF"
-                          tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                          stroke="transparent"
+                          axisLine={{ stroke: '#4B5563', strokeWidth: 1 }}
+                          tick={{ 
+                            fontSize: 11, 
+                            fill: '#9CA3AF',
+                            fontWeight: 500
+                          }}
+                          tickLine={{ stroke: '#4B5563', strokeWidth: 1 }}
+                          dy={10}
                         />
                         <YAxis 
-                          stroke="#9CA3AF"
-                          tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                          stroke="transparent"
+                          axisLine={{ stroke: '#4B5563', strokeWidth: 1 }}
+                          tick={{ 
+                            fontSize: 11, 
+                            fill: '#9CA3AF',
+                            fontWeight: 500
+                          }}
+                          tickLine={{ stroke: '#4B5563', strokeWidth: 1 }}
                           domain={['dataMin', 'dataMax']}
                           tickFormatter={(value) => value.toFixed(4)}
+                          dx={-10}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Area 
