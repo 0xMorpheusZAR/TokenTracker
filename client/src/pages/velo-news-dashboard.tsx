@@ -79,7 +79,9 @@ export default function VeloNewsDashboard() {
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [newItemsCount, setNewItemsCount] = useState(0);
+  const [newCoins, setNewCoins] = useState<string[]>([]);
   const previousNewsIds = useRef<Set<number>>(new Set());
+  const previousCoins = useRef<Set<string>>(new Set());
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Fetch news data with auto-refresh - optimized for fastest possible updates
@@ -117,9 +119,10 @@ export default function VeloNewsDashboard() {
     staleTime: 0
   });
 
-  // Track new items
+  // Track new items and new coins
   useEffect(() => {
     if (newsData.length > 0) {
+      // Track new news items
       const currentIds = new Set(newsData.map((item: VeloNewsItem) => item.id));
       const newIds = [...currentIds].filter(id => !previousNewsIds.current.has(id));
       
@@ -130,6 +133,22 @@ export default function VeloNewsDashboard() {
       }
       
       previousNewsIds.current = currentIds;
+
+      // Track new coins
+      const currentCoins = new Set<string>();
+      newsData.forEach((item: VeloNewsItem) => {
+        item.coins.forEach((coin: string) => currentCoins.add(coin));
+      });
+      
+      const newCoinsList = [...currentCoins].filter(coin => !previousCoins.current.has(coin));
+      
+      if (previousCoins.current.size > 0 && newCoinsList.length > 0) {
+        setNewCoins(newCoinsList);
+        // Auto-dismiss new coins notification after 10 seconds
+        setTimeout(() => setNewCoins([]), 10000);
+      }
+      
+      previousCoins.current = currentCoins;
     }
   }, [newsData]);
 
@@ -217,6 +236,19 @@ export default function VeloNewsDashboard() {
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   {newItemsCount} new {newItemsCount === 1 ? 'story' : 'stories'}
+                </motion.div>
+              )}
+              
+              {/* New coins notification */}
+              {newCoins.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="bg-purple-500/20 text-purple-400 px-4 py-2 rounded-lg border border-purple-500/30 flex items-center"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {newCoins.length} new {newCoins.length === 1 ? 'ticker' : 'tickers'}: {newCoins.join(', ')}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -324,17 +356,34 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center gap-4">
               <Filter className="w-5 h-5 text-gray-400" />
               
-              {/* Coin filter */}
-              <select
-                value={selectedCoin}
-                onChange={(e) => setSelectedCoin(e.target.value)}
-                className="bg-gray-700 text-white rounded-lg px-4 py-2 border border-gray-600 focus:border-emerald-500 focus:outline-none"
-              >
-                <option value="all">All Coins</option>
-                {allCoins.map(coin => (
-                  <option key={coin} value={coin.toLowerCase()}>{coin}</option>
-                ))}
-              </select>
+              {/* Coin filter with new coins indicator */}
+              <div className="relative">
+                <select
+                  value={selectedCoin}
+                  onChange={(e) => setSelectedCoin(e.target.value)}
+                  className="bg-gray-700 text-white rounded-lg px-4 py-2 pr-8 border border-gray-600 focus:border-emerald-500 focus:outline-none"
+                >
+                  <option value="all">All Coins ({allCoins.length})</option>
+                  {allCoins.map(coin => (
+                    <option key={coin} value={coin.toLowerCase()}>
+                      {coin}
+                      {newCoins.includes(coin) && ' 🆕'}
+                    </option>
+                  ))}
+                </select>
+                
+                {/* New coins notification */}
+                {newCoins.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-2 py-1 rounded-full font-bold"
+                  >
+                    +{newCoins.length}
+                  </motion.div>
+                )}
+              </div>
 
               {/* Priority filter */}
               <select
