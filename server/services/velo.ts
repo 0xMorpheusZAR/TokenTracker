@@ -333,30 +333,30 @@ class VeloService {
     return data;
   }
 
-  // News endpoint
+  // News endpoint - uses different base URL
   async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
     try {
-      const params: Record<string, any> = {};
+      const newsBaseUrl = 'https://api.velo.xyz/api/n';
+      const url = new URL(`${newsBaseUrl}/news`);
+      
       if (beginTimestamp !== undefined) {
-        params.begin = beginTimestamp;
+        url.searchParams.append('begin', beginTimestamp.toString());
       }
 
-      // Try multiple possible endpoints
-      const endpoints = ['/news', '/v1/news', '/api/news'];
-      let lastError: any;
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
 
-      for (const endpoint of endpoints) {
-        try {
-          return await this.makeRequest(endpoint, params);
-        } catch (error: any) {
-          lastError = error;
-          console.log(`Failed to fetch news from ${endpoint}:`, error.message);
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`News API error: ${response.status} ${response.statusText} - ${errorText}`);
+        return [];
       }
 
-      // If all endpoints fail, return empty array
-      console.error('All news endpoints failed:', lastError);
-      return [];
+      const data = await response.json();
+      console.log(`Successfully fetched ${data.length} news items from Velo`);
+      return data;
     } catch (error) {
       console.error('Failed to fetch news:', error);
       return [];

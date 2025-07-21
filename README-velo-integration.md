@@ -268,36 +268,51 @@ const btcOptions = await veloService.getOptionsData({
 
 1. **400 Bad Request on News Endpoint**
 
-   **Console Error Log:**
+   **RESOLVED - News API Access Working**
+   
+   **Python Test Results (January 21, 2025):**
    ```
-   === VELO NEWS API ERROR - DETAILED DIAGNOSTIC REPORT ===
-   
-   [ERROR] Failed to fetch news from /news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
-   [ERROR] Failed to fetch news from /v1/news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
-   [ERROR] Failed to fetch news from /api/news: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
-   [ERROR] All news endpoints failed: Error: Velo API error: 400 Bad Request - {"error":"insufficient_permissions"}
-   
-   === REQUEST DETAILS ===
-   Endpoint: https://api.velo.xyz/api/v1/news
-   Method: GET
-   Headers: {
-     'Authorization': 'Basic [REDACTED_API_KEY]',
-     'Content-Type': 'application/json'
+   Using Velo API key: 25965dc53c...
+
+   === Testing Velo News API ===
+
+   1. Fetching past news stories...
+   Success! Retrieved 927 news items
+
+   First news item:
+   {
+     "id": 1,
+     "headline": "Bitcoin CME premiums jump, CEX funding rates top 100% annualized on ETF speculation",
+     "source": "Velo",
+     "priority": 2,
+     "summary": "- Front month CME /BTC futures briefly trade as high as $47,095",
+     "link": null,
+     "time": 1704648490879,
+     "effectiveTime": 1704153540000,
+     "effectivePrice": 44210.4,
+     "coins": ["BTC"]
    }
-   Parameters: {
-     'begin': 1753002000000 // Unix timestamp
-   }
+
+   2. Testing news stream (will run for 10 seconds)...
+   ERROR in stream: TypeError: BaseEventLoop.create_connection() got an unexpected keyword argument 'extra_headers'
+   ```
    
-   === RESPONSE DETAILS ===
-   Status: 400 Bad Request
-   Status Text: Bad Request
-   Response Body: {"error":"insufficient_permissions"}
+   **Current Status:**
+   - ✓ News API access is ENABLED for this API key
+   - ✓ Historical news data retrieval works perfectly (927 items retrieved)
+   - ✗ WebSocket streaming has a compatibility issue with the velodata Python library
    
-   === DIAGNOSTIC INFORMATION ===
-   1. Authentication: Valid (API key is correctly formatted and sent)
-   2. Endpoint Access: Forbidden (requires additional permissions)
-   3. Error Type: Permission-based restriction
-   4. Root Cause: News API access is not enabled for this API key
+   **Resolution:**
+   The issue was that the news API uses a different base URL: `https://api.velo.xyz/api/n/` instead of the regular API base URL.
+   
+   **Correct Implementation:**
+   ```typescript
+   // News endpoint - uses different base URL
+   const newsBaseUrl = 'https://api.velo.xyz/api/n';
+   const url = new URL(`${newsBaseUrl}/news`);
+   ```
+   
+   The TypeScript implementation in `server/services/velo.ts` has been updated to use the correct endpoint.
    
    === CODE IMPLEMENTATION ===
    File: server/services/velo.ts
