@@ -312,13 +312,13 @@ export default function AltseasonDashboard() {
                     : "bg-orange-900/20 border-orange-700"
                 )}>
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle className="text-lg font-semibold">
+                  <AlertTitle className="text-lg font-semibold text-white">
                     {metrics?.isAltseason ? "🚀 ALTSEASON ACTIVE!" : "⏳ Pre-Altseason Phase"}
                   </AlertTitle>
-                  <AlertDescription className="mt-2">
+                  <AlertDescription className="mt-2 text-white">
                     {metrics?.isAltseason 
-                      ? `${metrics.outperformingCount} out of top 49 altcoins (${metrics.altseasonIndex}%) are outperforming Bitcoin over the last 90 days. This officially qualifies as an altseason!`
-                      : `Currently ${metrics?.outperformingCount || 0} out of top 49 altcoins (${metrics?.altseasonIndex || 0}%) are outperforming Bitcoin. We need 75% to officially enter altseason.`
+                      ? `${metrics.outperformingCount} out of top 50 altcoins (${metrics.altseasonIndex}%) are outperforming Bitcoin over the last 30 days. This officially qualifies as an altseason!`
+                      : `Currently ${metrics?.outperformingCount || 0} out of top 50 altcoins (${metrics?.altseasonIndex || 0}%) are outperforming Bitcoin. We need 75% to officially enter altseason.`
                     }
                   </AlertDescription>
                 </Alert>
@@ -875,7 +875,7 @@ export default function AltseasonDashboard() {
               {/* Trading Strategy Guide */}
               <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-white">
                     <Shield className="mr-2 text-cyan-400" />
                     Altseason Trading Strategy
                   </CardTitle>
@@ -916,7 +916,7 @@ export default function AltseasonDashboard() {
               {/* Key Indicators */}
               <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 lg:col-span-2">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-white">
                     <Crosshair className="mr-2 text-indigo-400" />
                     Key Altseason Indicators
                   </CardTitle>
@@ -929,7 +929,7 @@ export default function AltseasonDashboard() {
                     >
                       <h4 className="font-semibold text-purple-400 mb-2">Altseason Index</h4>
                       <p className="text-sm text-gray-300">
-                        Tracks what percentage of top 49 altcoins are outperforming Bitcoin over 90 days. 
+                        Tracks what percentage of top 50 altcoins are outperforming Bitcoin over 30 days. 
                         Above 75% = Official Altseason.
                       </p>
                     </motion.div>
