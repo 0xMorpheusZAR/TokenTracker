@@ -47,6 +47,15 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 - 190K+ active users tracking
 - Comprehensive performance analysis
 
+### 📰 Velo News Dashboard
+- **Ultra-fast 10-second refresh rate** for immediate news discovery
+- **Real-time crypto news** from Velo Data API
+- **Seamless BloFin integration** - headlines link directly to futures trading
+- **Priority filtering** - High/Normal/Low priority news categorization
+- **Coin-specific filtering** - Filter news by cryptocurrency
+- **Trade buttons** with neon styling for instant BloFin access
+- **Auto-refresh toggle** with visual indicators
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -66,7 +75,7 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 - **Session management** with connect-pg-simple
 
 ### External APIs
-- **Velo Data API** for cross-exchange futures, options, and spot market data
+- **Velo Data API** for cross-exchange futures, options, spot market data, and real-time news
 - **CoinGecko Pro API** for real-time pricing data
 - **CryptoRank API** for unlock schedule data
 - **Dune Analytics API** for on-chain blockchain metrics and custom queries
@@ -102,6 +111,7 @@ DATABASE_URL=postgresql://user:password@host:port/database
 # API Keys
 COINGECKO_PRO_API_KEY=your_coingecko_pro_key
 CRYPTORANK_API_KEY=your_cryptorank_key
+VELO_API_KEY=your_velo_api_key
 
 # Optional APIs
 DUNE_API_KEY=your_dune_key

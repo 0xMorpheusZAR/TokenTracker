@@ -1413,6 +1413,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Velo Live Spot Prices endpoint for news items
+  app.get("/api/velo/spot-prices", async (req, res) => {
+    try {
+      const { symbols } = req.query;
+      if (!symbols) {
+        return res.status(400).json({ error: 'Symbols parameter required' });
+      }
+      
+      const symbolList = (symbols as string).split(',');
+      const prices: Record<string, number> = {};
+      
+      // Try to fetch market caps which includes current prices
+      try {
+        const marketCaps = await veloService.getTopCoinsMarketCaps();
+        
+        // Map the market cap data to extract prices
+        symbolList.forEach(symbol => {
+          const coinData = marketCaps.find(item => item.coin.toUpperCase() === symbol.toUpperCase());
+          if (coinData && coinData.market_cap) {
+            // For now, use a placeholder price since direct spot price isn't available
+            // This will show effective price only in the dashboard
+            prices[symbol] = 0; // Will be enhanced when Velo provides spot price endpoint
+          }
+        });
+      } catch (error) {
+        console.error('Failed to fetch market caps:', error);
+        
+        // Fallback: Try spot endpoint with minimal parameters
+        for (const symbol of symbolList) {
+          try {
+            const spotPairs = await veloService.getSpotPairs();
+            const parsedPairs = veloService.parseProductsCSV(spotPairs);
+            
+            // Find a spot pair for this coin
+            const pair = parsedPairs.find(p => p.coin === symbol && p.quote_currency === 'USD');
+            if (pair) {
+              // Try to get recent price data
+              const end = Date.now();
+              const begin = end - 300000; // 5 minutes ago
+              
+              const spotData = await veloService.getMarketData({
+                type: 'spot',
+                products: [pair.product],
+                columns: ['close_price'],
+                begin,
+                end,
+                resolution: '1m'
+              });
+              
+              const parsedData = veloService.parseMarketDataCSV(spotData);
+              if (parsedData.length > 0) {
+                prices[symbol] = parsedData[parsedData.length - 1].close_price || 0;
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to fetch spot price for ${symbol}:`, error);
+          }
+        }
+      }
+      
+      res.json(prices);
+    } catch (error) {
+      console.error('Failed to fetch spot prices from Velo:', error);
+      res.status(500).json({ error: 'Failed to fetch spot prices' });
+    }
+  });
+
   // BTC 24h price data
   app.get("/api/velo/btc/24h", async (req, res) => {
     try {

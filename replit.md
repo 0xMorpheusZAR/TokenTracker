@@ -187,6 +187,7 @@ Changelog:
 - July 21, 2025: Removed Historical Seasonal Patterns section and BTC 30d Change display from Altseason Dashboard - Simplified Analysis tab to focus on top altcoins performance, ensured backend correctly tracks exactly top 50 altcoins excluding Bitcoin with hourly updates from CoinGecko API
 - July 21, 2025: Built Velo News Dashboard with ultra-fast 10-second refresh rate for real-time crypto news scanning, integrated BloFin futures trading links for each coin, removed price display per user request
 - July 21, 2025: Implemented seamless news link routing to BloFin - All news headlines now link directly to BloFin futures trading page with relevant coin pair, replaced "Read more" links with "Trade on BloFin" for unified trading experience
+- July 21, 2025: Integrated comprehensive effective pricing from Velo API - News dashboard now displays both effective price (at time of news) and live spot price with real-time comparison, added `/api/velo/spot-prices` endpoint for fetching current market prices, shows price change percentage with trend indicators
 ```
 
 ## User Preferences

@@ -301,6 +301,8 @@ const btcOptions = await veloService.getOptionsData({
    - ✓ News API access is ENABLED for this API key
    - ✓ Historical news data retrieval works perfectly
    - ✓ Dashboard successfully pulls live news stories
+   - ✓ Effective pricing integrated from Velo API for all news items
+   - ✓ Live spot price comparison showing real-time price changes
    - ✗ WebSocket streaming has a compatibility issue with the velodata Python library
    
    **Live API Proof (January 21, 2025):**
@@ -320,6 +322,8 @@ const btcOptions = await veloService.getOptionsData({
      "source": "PRESS RELEASE",
      "priority": 1,
      "time": 1753092772535,
+     "effectiveTime": 1753092772535,
+     "effectivePrice": 3775.61,
      "coins": ["ETH"]
    },
    {
@@ -328,7 +332,35 @@ const btcOptions = await veloService.getOptionsData({
      "source": null,
      "priority": 1,
      "time": 1753104350249,
+     "effectiveTime": 1753104350249,
+     "effectivePrice": 0.4953,
      "coins": ["ENA"]
+   }
+   ```
+   
+   **Effective Pricing Feature:**
+   The Velo News Dashboard now displays comprehensive pricing data for all news items:
+   
+   1. **Effective Price**: The price at the time the news was published (from Velo API)
+   2. **Live Price**: Current spot price fetched from Velo's spot market data endpoint
+   3. **Price Change**: Percentage difference between effective and current price
+   
+   **Implementation Details:**
+   - `/api/velo/spot-prices` endpoint fetches live spot prices for specified symbols
+   - Uses Velo's market data endpoint with 1-minute resolution for most current prices
+   - Updates every 30 seconds when auto-refresh is enabled
+   - Shows price movement with trend indicators (↑ green for positive, ↓ red for negative)
+   
+   **Sample API Call:**
+   ```bash
+   GET /api/velo/spot-prices?symbols=BTC,ETH,ENA
+   
+   Response:
+   {
+     "BTC": 100450.00,
+     "ETH": 3812.45,
+     "ENA": 0.5102
+   }A"]
    }
    ```
    
