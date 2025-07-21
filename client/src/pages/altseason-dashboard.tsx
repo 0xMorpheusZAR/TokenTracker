@@ -876,68 +876,6 @@ export default function AltseasonDashboard() {
                   </ScrollArea>
                 </CardContent>
               </Card>
-
-              {/* Historical Seasonal Patterns */}
-              <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-emerald-600 transition-all">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-white">
-                    <Calendar className="mr-2 text-emerald-400" />
-                    <span className="text-sm sm:text-base">Historical Seasonal Patterns</span>
-                  </CardTitle>
-                  <CardDescription>Monthly BTC dominance averages show clear patterns</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <BarChart data={historicalData?.seasonalPattern || []}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 12, fill: '#9CA3AF' }} />
-                      <YAxis 
-                        stroke="#9CA3AF" 
-                        tick={{ fontSize: 12, fill: '#9CA3AF' }} 
-                        domain={[40, 70]}
-                        tickFormatter={(value) => `${value}%`}
-                      />
-                      <Tooltip 
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-gray-900/95 p-3 rounded-lg shadow-lg border border-gray-700">
-                                <p className="text-sm font-medium text-white">
-                                  {payload[0].payload.month}
-                                </p>
-                                <p className="text-sm font-bold text-emerald-400">
-                                  BTC Dominance: {payload[0].value}%
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {payload[0].value < 60 ? 'Favorable for altcoins' : 'Bitcoin dominant'}
-                                </p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Bar 
-                        dataKey="avgBtcDominance" 
-                        radius={[8, 8, 0, 0]}
-                      >
-                        {historicalData?.seasonalPattern?.map((entry: any, index: number) => (
-                          <Cell 
-                            key={`cell-${index}`} 
-                            fill={entry.avgBtcDominance < 60 ? "#10B981" : entry.avgBtcDominance < 65 ? "#F59E0B" : "#EF4444"}
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                  <Alert className="mt-4 bg-emerald-900/20 border-emerald-700">
-                    <Sparkles className="h-4 w-4" />
-                    <AlertDescription>
-                      Historically, January-May shows the strongest altcoin performance
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
             </div>
           </TabsContent>
 
