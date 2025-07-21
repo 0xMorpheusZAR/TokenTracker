@@ -273,8 +273,18 @@ export default function VeloNewsDashboard() {
               size="sm"
               onClick={() => refetch()}
               disabled={isLoading}
+              className={cn(
+                "bg-gray-700/80 hover:bg-gray-600 border-gray-500 text-white",
+                "shadow-lg hover:shadow-xl transition-all duration-200",
+                "min-w-[48px] h-[40px] flex items-center justify-center",
+                isLoading && "bg-emerald-600/20 border-emerald-500"
+              )}
+              title="Manual refresh"
             >
-              <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
+              <RefreshCw className={cn(
+                "w-5 h-5", 
+                isLoading && "animate-spin text-emerald-400"
+              )} />
             </Button>
           </div>
         </div>
