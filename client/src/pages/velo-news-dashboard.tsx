@@ -369,22 +369,17 @@ export default function VeloNewsDashboard() {
                         {/* Header */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            {item.link ? (
-                              <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group"
-                              >
-                                <h3 className="text-lg font-semibold text-white mb-2 leading-tight group-hover:text-emerald-400 transition-colors cursor-pointer">
-                                  {item.headline}
-                                </h3>
-                              </a>
-                            ) : (
-                              <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
+                            <a
+                              href={item.coins.length > 0 ? `https://blofin.com/futures/${item.coins[0]}-USDT` : '#'}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group relative"
+                              title={item.coins.length > 0 ? `Trade ${item.coins[0]} on BloFin` : ''}
+                            >
+                              <h3 className="text-lg font-semibold text-white mb-2 leading-tight group-hover:text-emerald-400 transition-colors cursor-pointer">
                                 {item.headline}
                               </h3>
-                            )}
+                            </a>
                             
                             <div className="flex items-center gap-4 text-sm">
                               <div className="flex items-center text-gray-400">
@@ -460,14 +455,14 @@ export default function VeloNewsDashboard() {
                             </div>
                           )}
                           
-                          {item.link && (
+                          {item.coins.length > 0 && (
                             <a
-                              href={item.link}
+                              href={`https://blofin.com/futures/${item.coins[0]}-USDT`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
                             >
-                              Read more
+                              Trade on BloFin
                               <ExternalLink className="w-3 h-3 ml-1" />
                             </a>
                           )}

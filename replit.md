@@ -185,6 +185,8 @@ Changelog:
 - July 21, 2025: Integrated TradingView widget for Bitcoin Dominance - Added embedded TradingView single quote widget displaying real-time BTC.D (Bitcoin Dominance) data from CRYPTOCAP:BTC.D symbol, shows live price data with dark theme integration in the Bitcoin Dominance card section of the Altseason Dashboard
 - July 21, 2025: Enhanced ETH/BTC ratio chart with resistance zones visualization - Added immediate resistance zone at 0.0320-0.0325 with red gradient, major HTF resistance zone at 0.0350-0.0360 with orange hatching pattern, current price indicator line, improved Y-axis scale with specific levels, removed text references to resistance breakouts per user request
 - July 21, 2025: Removed Historical Seasonal Patterns section and BTC 30d Change display from Altseason Dashboard - Simplified Analysis tab to focus on top altcoins performance, ensured backend correctly tracks exactly top 50 altcoins excluding Bitcoin with hourly updates from CoinGecko API
+- July 21, 2025: Built Velo News Dashboard with ultra-fast 10-second refresh rate for real-time crypto news scanning, integrated BloFin futures trading links for each coin, removed price display per user request
+- July 21, 2025: Implemented seamless news link routing to BloFin - All news headlines now link directly to BloFin futures trading page with relevant coin pair, replaced "Read more" links with "Trade on BloFin" for unified trading experience
 ```
 
 ## User Preferences
