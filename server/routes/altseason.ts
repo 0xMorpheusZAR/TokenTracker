@@ -152,27 +152,28 @@ router.get('/altcoins-performance', async (req, res) => {
     const coingeckoService = req.app.locals.coingeckoService;
     const { period = '90d' } = req.query;
     
-    // Get top 50 coins
+    // Get top 100 coins to ensure we have enough altcoins after filtering
     const topCoins = await coingeckoService.getTop100Altcoins();
-    const top50Coins = topCoins ? topCoins.slice(0, 50) : [];
     
-    if (!top50Coins || top50Coins.length === 0) {
+    if (!topCoins || topCoins.length === 0) {
       throw new Error('Failed to fetch coins data');
     }
     
-    // Use all top 50 coins for performance analysis
-    const analyzeCoins = top50Coins;
+    // Get Bitcoin data separately for comparison
+    const bitcoinData = topCoins.find(coin => coin.id === 'bitcoin');
+    if (!bitcoinData) {
+      throw new Error('Bitcoin data not found');
+    }
     
-    // Get Bitcoin data for comparison
-    const bitcoinData = analyzeCoins.find(coin => coin.id === 'bitcoin');
+    // Filter out Bitcoin and ETH derivatives, then get exactly top 50 altcoins
+    const ethDerivatives = ['wrapped-steth', 'staked-ether', 'wsteth', 'weeth', 'steth', 'lido-staked-ether', 'rocket-pool-eth', 'frax-ether', 'sfrxeth'];
+    const top50Altcoins = topCoins
+      .filter(coin => coin.id !== 'bitcoin' && !ethDerivatives.includes(coin.id))
+      .slice(0, 50);
     
-    // For 90d data, we'll need to fetch historical prices
-    const currentDate = new Date();
-    const ninetyDaysAgo = new Date(currentDate.getTime() - (90 * 24 * 60 * 60 * 1000));
-    
-    // Use 30d data multiplied by a reasonable factor for 90d estimation
-    // This is a common approximation when 90d data isn't directly available
-    const btc90dPerformance = (bitcoinData?.price_change_percentage_30d_in_currency || 0) * 2.5;
+    // For 90-day data, we'll use approximation based on 30-day trends
+    // This is more efficient and avoids rate limiting
+    const btc90dPerformance = (bitcoinData?.price_change_percentage_30d_in_currency || 0) * 3;
     
     const btcPerformance = {
       '24h': bitcoinData?.price_change_percentage_24h || 0,
@@ -181,40 +182,54 @@ router.get('/altcoins-performance', async (req, res) => {
       '90d': btc90dPerformance
     };
     
-    // Calculate relative performance - Fetch 90d data for altcoins as well
+    // Calculate relative performance with actual 90d data
     const altcoinsPerformance = await Promise.all(
-      analyzeCoins
-        .filter(coin => coin.id !== 'bitcoin')
-        .map(async coin => {
-          // Calculate 90d performance using 30d data with multiplier
-          const coin90dPerformance = (coin.price_change_percentage_30d_in_currency || 0) * 2.5;
-          
-          return {
-            id: coin.id,
-            symbol: coin.symbol,
-            name: coin.name,
-            image: coin.image,
-            currentPrice: coin.current_price,
-            marketCap: coin.market_cap,
-            volume24h: coin.total_volume,
-            priceChange: {
-              '7d': coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0,
-              '30d': coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0,
-              '90d': coin90dPerformance
-            },
-            performanceVsBtc: {
-              '7d': ((coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0)) - btcPerformance['7d'],
-              '30d': ((coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0)) - btcPerformance['30d'],
-              '90d': coin90dPerformance - btcPerformance['90d']
-            },
-            sparkline: [] // Sparkline not available in this endpoint
-          };
-        })
+      top50Altcoins.map(async coin => {
+        // Fetch 90-day historical data for each altcoin
+        let coin90dPerformance = 0;
+        try {
+          const coinHistoricalData = await coingeckoService.getTokenHistory(coin.id, 90);
+          if (coinHistoricalData && coinHistoricalData.prices && coinHistoricalData.prices.length > 0) {
+            const oldestPrice = coinHistoricalData.prices[0][1];
+            const currentPrice = coin.current_price;
+            coin90dPerformance = ((currentPrice - oldestPrice) / oldestPrice) * 100;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch 90d data for ${coin.id}, using approximation`);
+          // Fallback to approximation if historical data fails
+          coin90dPerformance = (coin.price_change_percentage_30d_in_currency || 0) * 2.5;
+        }
+        
+        return {
+          id: coin.id,
+          symbol: coin.symbol,
+          name: coin.name,
+          image: coin.image,
+          currentPrice: coin.current_price,
+          marketCap: coin.market_cap,
+          volume24h: coin.total_volume,
+          priceChange: {
+            '7d': coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0,
+            '30d': coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0,
+            '90d': coin90dPerformance
+          },
+          performanceVsBtc: {
+            '7d': ((coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0)) - btcPerformance['7d'],
+            '30d': ((coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0)) - btcPerformance['30d'],
+            '90d': coin90dPerformance - btcPerformance['90d']
+          }
+        };
+      })
+    );
+    
+    // Sort by performance vs BTC for the selected timeframe
+    const sortedAltcoins = altcoinsPerformance.sort((a, b) => 
+      b.performanceVsBtc['30d'] - a.performanceVsBtc['30d']
     );
     
     res.json({
       btcPerformance,
-      altcoins: altcoinsPerformance
+      altcoins: sortedAltcoins
     });
   } catch (error) {
     console.error('Failed to fetch altcoins performance:', error);

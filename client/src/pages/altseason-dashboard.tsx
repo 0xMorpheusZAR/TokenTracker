@@ -773,13 +773,13 @@ export default function AltseasonDashboard() {
                           size="sm"
                           onClick={() => setSelectedTimeframe(tf)}
                           className={cn(
-                            "text-white",
+                            "text-white font-medium px-4 py-2 transition-all duration-300",
                             selectedTimeframe === tf 
-                              ? "bg-purple-600 hover:bg-purple-700" 
-                              : "border-gray-600 hover:bg-gray-700"
+                              ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/25" 
+                              : "border-gray-600 hover:bg-gray-700 hover:border-purple-500"
                           )}
                         >
-                          {tf}
+                          {tf.toUpperCase()}
                         </Button>
                       ))}
                     </div>
@@ -794,22 +794,29 @@ export default function AltseasonDashboard() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-all"
+                          className={cn(
+                            "p-4 rounded-xl transition-all duration-300 cursor-pointer",
+                            "bg-gradient-to-br from-gray-800/50 to-gray-900/50",
+                            "border border-gray-700/50 hover:border-purple-500/50",
+                            "hover:shadow-xl hover:shadow-purple-500/10",
+                            coin.performanceVsBtc[selectedTimeframe] > 20 && "ring-2 ring-green-500/30 bg-gradient-to-br from-green-900/20 to-gray-900/50"
+                          )}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                               <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50"></div>
                                 <img 
                                   src={coin.image} 
                                   alt={coin.name} 
-                                  className="w-10 h-10 rounded-full"
+                                  className="w-12 h-12 rounded-full relative z-10 ring-2 ring-gray-700"
                                 />
-                                <div className="absolute -bottom-1 -right-1 bg-purple-600 rounded-full px-1.5 text-xs font-bold">
+                                <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full px-2 py-0.5 text-xs font-bold shadow-lg z-20">
                                   #{index + 1}
                                 </div>
                               </div>
                               <div>
-                                <div className="font-semibold flex items-center">
+                                <div className="font-semibold flex items-center text-white">
                                   {coin.name} 
                                   <span className="text-gray-400 text-sm ml-2">
                                     {coin.symbol.toUpperCase()}
@@ -822,48 +829,53 @@ export default function AltseasonDashboard() {
                             </div>
                             <div className="text-right">
                               <div className={cn(
-                                "text-lg font-bold flex items-center",
+                                "text-xl font-bold flex items-center justify-end",
                                 coin.performanceVsBtc[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
                               )}>
                                 {coin.performanceVsBtc[selectedTimeframe] > 0 ? 
-                                  <ArrowUpRight className="w-4 h-4 mr-1" /> : 
-                                  <ArrowDownRight className="w-4 h-4 mr-1" />
+                                  <TrendingUp className="w-5 h-5 mr-1" /> : 
+                                  <TrendingDown className="w-5 h-5 mr-1" />
                                 }
                                 {formatPercentage(coin.performanceVsBtc[selectedTimeframe])}
                               </div>
-                              <div className="text-xs text-gray-500">
-                                vs BTC
+                              <div className="text-xs text-gray-400 font-medium mt-1">
+                                Outperformance vs BTC
                               </div>
                             </div>
                           </div>
-                          <div className="mt-3 grid grid-cols-4 gap-2 text-sm">
-                            <div>
-                              <span className="text-gray-500">Price Change:</span>
+                          
+                          {/* Performance Metrics */}
+                          <div className="mt-4 bg-gray-800/50 rounded-lg p-3">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-gray-500">{selectedTimeframe.toUpperCase()} Price Change</span>
                               <div className={cn(
-                                "font-medium",
+                                "text-sm font-bold",
                                 coin.priceChange[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
                               )}>
                                 {formatPercentage(coin.priceChange[selectedTimeframe])}
                               </div>
                             </div>
+                          </div>
+                          
+                          {/* Market Stats */}
+                          <div className="mt-3 flex justify-between text-xs">
                             <div>
-                              <span className="text-gray-500">BTC Change:</span>
-                              <div className={cn(
-                                "font-medium",
-                                performance?.btcPerformance[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
-                              )}>
-                                {formatPercentage(performance?.btcPerformance[selectedTimeframe] || 0)}
-                              </div>
+                              <span className="text-gray-500">Market Cap</span>
+                              <div className="font-medium text-gray-300">{formatNumber(coin.marketCap)}</div>
                             </div>
-                            <div>
-                              <span className="text-gray-500">Market Cap:</span>
-                              <div className="font-medium">{formatNumber(coin.marketCap)}</div>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">24h Volume:</span>
-                              <div className="font-medium">{formatNumber(coin.volume24h)}</div>
+                            <div className="text-right">
+                              <span className="text-gray-500">24h Volume</span>
+                              <div className="font-medium text-gray-300">{formatNumber(coin.volume24h)}</div>
                             </div>
                           </div>
+                          
+                          {/* Outperformance Indicator */}
+                          {coin.performanceVsBtc[selectedTimeframe] > 20 && (
+                            <div className="mt-3 bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-1.5 flex items-center justify-center">
+                              <Star className="w-4 h-4 text-green-400 mr-1" />
+                              <span className="text-xs font-medium text-green-400">Strong Outperformer</span>
+                            </div>
+                          )}
                         </motion.div>
                       ))}
                     </div>
