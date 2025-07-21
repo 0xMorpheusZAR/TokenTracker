@@ -38,6 +38,13 @@ interface VeloNewsItem {
   effectivePrice?: number;
 }
 
+interface CoinPrice {
+  price: number;
+  change24h: number;
+  marketCap: number;
+  volume24h: number;
+}
+
 function TimeAgo({ timestamp }: { timestamp: number }) {
   const [timeAgo, setTimeAgo] = useState('');
 
@@ -73,14 +80,17 @@ export default function VeloNewsDashboard() {
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [newItemsCount, setNewItemsCount] = useState(0);
+  const [coinPrices, setCoinPrices] = useState<Record<string, CoinPrice>>({});
   const previousNewsIds = useRef<Set<number>>(new Set());
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Fetch news data with auto-refresh
+  // Fetch news data with auto-refresh - optimized for fastest possible updates
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
     queryKey: ['/api/velo/news'],
-    refetchInterval: autoRefresh ? 60000 : false, // Refresh every 60 seconds (1 minute)
+    refetchInterval: autoRefresh ? 10000 : false, // Refresh every 10 seconds for near real-time updates
     staleTime: 0, // Always consider data stale to ensure fresh updates
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    refetchOnReconnect: true, // Refetch when reconnecting to network
   });
 
   const newsData = newsResponse?.data?.stories || newsResponse?.data || [];
@@ -114,6 +124,30 @@ export default function VeloNewsDashboard() {
 
   // Get unique coins from all news items
   const allCoins = Array.from(new Set(newsData.flatMap((item: VeloNewsItem) => item.coins))).sort();
+
+  // Fetch live prices for all unique coins - synchronized with news refresh
+  useEffect(() => {
+    const fetchPrices = () => {
+      if (allCoins.length > 0) {
+        fetch(`/api/coingecko/prices?symbols=${allCoins.join(',')}`)
+          .then(res => res.json())
+          .then(data => {
+            setCoinPrices(data);
+          })
+          .catch(error => {
+            console.error('Failed to fetch coin prices:', error);
+          });
+      }
+    };
+
+    fetchPrices(); // Initial fetch
+    
+    // Sync price updates with news refresh rate when auto-refresh is enabled
+    if (autoRefresh) {
+      const interval = setInterval(fetchPrices, 10000); // Update prices every 10 seconds
+      return () => clearInterval(interval);
+    }
+  }, [allCoins.join(','), autoRefresh]); // Re-fetch when coins change or auto-refresh toggles
 
   // Calculate time range for available news
   const sortedNews = [...newsData].sort((a: VeloNewsItem, b: VeloNewsItem) => a.time - b.time);
@@ -198,7 +232,7 @@ export default function VeloNewsDashboard() {
               )}
             >
               <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
-              {autoRefresh ? 'Auto-refresh ON (1 min)' : 'Auto-refresh OFF'}
+              {autoRefresh ? 'Auto-refresh ON (10s)' : 'Auto-refresh OFF'}
             </Button>
 
             {/* Manual refresh */}
@@ -269,7 +303,7 @@ export default function VeloNewsDashboard() {
         </div>
       </div>
 
-      {/* Time Range Indicator */}
+      {/* News Status Indicator */}
       <div className="max-w-7xl mx-auto mb-4">
         <Card className="bg-emerald-900/20 border-emerald-500/30">
           <CardContent className="p-3">
@@ -278,9 +312,6 @@ export default function VeloNewsDashboard() {
               <p className="text-emerald-400 font-medium">
                 Showing all available news updates
               </p>
-              <span className="text-emerald-300 text-sm">
-                ({timeRangeString})
-              </span>
             </div>
           </CardContent>
         </Card>
@@ -404,15 +435,32 @@ export default function VeloNewsDashboard() {
                         {item.coins.length > 0 && (
                           <div className="flex items-center gap-3 mb-3 flex-wrap">
                             <div className="flex items-center gap-2">
-                              {item.coins.map(coin => (
-                                <Badge
-                                  key={coin}
-                                  className="bg-purple-500/10 text-purple-400 border-purple-500/20"
-                                >
-                                  {getCoinIcon(coin)}
-                                  <span className="ml-1">{coin}</span>
-                                </Badge>
-                              ))}
+                              {item.coins.map(coin => {
+                                const price = coinPrices[coin];
+                                return (
+                                  <Badge
+                                    key={coin}
+                                    className="bg-purple-500/10 text-purple-400 border-purple-500/20 flex items-center gap-2"
+                                  >
+                                    {getCoinIcon(coin)}
+                                    <span>{coin}</span>
+                                    {price && (
+                                      <>
+                                        <span className="text-gray-400">|</span>
+                                        <span className="text-white font-medium">
+                                          ${price.price < 1 ? price.price.toFixed(6) : price.price.toFixed(2)}
+                                        </span>
+                                        <span className={cn(
+                                          "text-xs font-bold",
+                                          price.change24h >= 0 ? "text-green-400" : "text-red-400"
+                                        )}>
+                                          {price.change24h >= 0 ? "+" : ""}{price.change24h.toFixed(2)}%
+                                        </span>
+                                      </>
+                                    )}
+                                  </Badge>
+                                );
+                              })}
                             </div>
                             
                             {/* Trade Buttons */}

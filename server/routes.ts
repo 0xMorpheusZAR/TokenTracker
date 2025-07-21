@@ -303,6 +303,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get live prices for multiple coins
+  app.get("/api/coingecko/prices", async (req, res) => {
+    try {
+      const { symbols } = req.query;
+      if (!symbols) {
+        return res.status(400).json({ error: 'Symbols parameter required' });
+      }
+      
+      const symbolList = (symbols as string).split(',');
+      const priceData = await coinGeckoService.getCurrentPrices(symbolList);
+      
+      if (!priceData) {
+        return res.status(404).json({ error: "Price data not found" });
+      }
+      
+      // Map coin IDs back to symbols
+      const symbolMap: Record<string, string> = {
+        'ethereum': 'ETH',
+        'bitcoin': 'BTC',
+        'ethena': 'ENA',
+        'altlayer': 'ALT',
+        'manta-network': 'MANTA',
+        'pantera-finance': 'PANT',
+        'aevo': 'AEVO',
+        'ripple': 'XRP',
+        'the-open-network': 'TON',
+        'binancecoin': 'BNB',
+        'cardano': 'ADA',
+        'dogecoin': 'DOGE',
+        'solana': 'SOL',
+        'polkadot': 'DOT',
+        'avalanche-2': 'AVAX',
+        'chainlink': 'LINK',
+        'uniswap': 'UNI',
+        'aave': 'AAVE',
+        'matic-network': 'MATIC'
+      };
+      
+      // Transform the response to use symbols as keys
+      const transformedData: any = {};
+      for (const [coinId, data] of Object.entries(priceData)) {
+        const symbol = symbolMap[coinId] || coinId.toUpperCase();
+        transformedData[symbol] = {
+          price: (data as any).usd || 0,
+          change24h: (data as any).usd_24h_change || 0,
+          marketCap: (data as any).usd_market_cap || 0,
+          volume24h: (data as any).usd_24h_vol || 0
+        };
+      }
+      
+      res.json(transformedData);
+    } catch (error) {
+      console.error('Failed to fetch prices:', error);
+      res.status(500).json({ error: 'Failed to fetch prices from CoinGecko' });
+    }
+  });
+
   // Enhanced CoinGecko routes with Pro API features
   app.get("/api/coingecko/detailed", async (req, res) => {
     try {
