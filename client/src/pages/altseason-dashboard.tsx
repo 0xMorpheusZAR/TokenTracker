@@ -28,6 +28,47 @@ import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// TradingView Widget Component
+const TradingViewWidget = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.innerHTML = '';
+      
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
+      script.type = 'text/javascript';
+      script.async = true;
+      
+      script.innerHTML = JSON.stringify({
+        "symbol": "CRYPTOCAP:BTC.D",
+        "width": "100%",
+        "colorTheme": "dark",
+        "isTransparent": true,
+        "locale": "en"
+      });
+
+      containerRef.current.appendChild(script);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
+    };
+  }, []);
+
+  return (
+    <div className="tradingview-widget-container" ref={containerRef}>
+      <div className="tradingview-widget-container__widget"></div>
+      <div className="text-xs text-gray-500 text-center mt-2">
+        Data from TradingView
+      </div>
+    </div>
+  );
+};
+
 // Enhanced Helper functions
 const formatNumber = (num: number) => {
   if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
@@ -463,6 +504,11 @@ export default function AltseasonDashboard() {
                         className="h-3"
                         indicatorClassName="bg-gradient-to-r from-orange-500 to-orange-600"
                       />
+                      
+                      {/* TradingView BTC.D Widget */}
+                      <div className="mt-4">
+                        <TradingViewWidget />
+                      </div>
                     </div>
                     <div className="space-y-3">
                       <div className="p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
