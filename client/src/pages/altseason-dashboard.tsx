@@ -492,37 +492,9 @@ export default function AltseasonDashboard() {
                     <CardDescription>Market share of total crypto market cap</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="mb-6">
-                      <div className="text-4xl font-bold mb-2 flex items-baseline">
-                        <AnimatedCounter value={metrics?.bitcoinDominance || 0} decimals={2} suffix="%" />
-                        {metrics?.bitcoinDominance < 60 && (
-                          <TrendingDown className="w-6 h-6 ml-2 text-green-400" />
-                        )}
-                      </div>
-                      <Progress 
-                        value={metrics?.bitcoinDominance || 0} 
-                        className="h-3"
-                        indicatorClassName="bg-gradient-to-r from-orange-500 to-orange-600"
-                      />
-                      
-                      {/* TradingView BTC.D Widget */}
-                      <div className="mt-4">
-                        <TradingViewWidget />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Total Market Cap</span>
-                          <span className="font-medium text-green-400">{formatNumber(metrics?.totalMarketCap || 0)}</span>
-                        </div>
-                      </div>
-                      <div className="p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">24h Volume</span>
-                          <span className="font-medium text-blue-400">{formatNumber(metrics?.totalVolume || 0)}</span>
-                        </div>
-                      </div>
+                    {/* TradingView BTC.D Widget */}
+                    <div className="mt-2">
+                      <TradingViewWidget />
                     </div>
                   </CardContent>
                 </Card>
