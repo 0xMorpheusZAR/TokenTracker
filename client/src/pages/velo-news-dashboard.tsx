@@ -477,9 +477,24 @@ export default function VeloNewsDashboard() {
                               <PriorityBadge priority={item.priority} />
                               
                               {item.source && (
-                                <Badge variant="outline" className="text-gray-400 border-gray-600">
-                                  {item.source}
-                                </Badge>
+                                <a 
+                                  href={item.link || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-block"
+                                  title={item.link ? `View source: ${item.source}` : `Source: ${item.source}`}
+                                >
+                                  <Badge 
+                                    variant="outline" 
+                                    className={cn(
+                                      "text-gray-400 border-gray-600 transition-all duration-200",
+                                      item.link && "hover:bg-emerald-500/20 hover:border-emerald-500 hover:text-emerald-400 cursor-pointer"
+                                    )}
+                                  >
+                                    {item.source}
+                                    {item.link && <ExternalLink className="w-3 h-3 ml-1" />}
+                                  </Badge>
+                                </a>
                               )}
                             </div>
                           </div>
