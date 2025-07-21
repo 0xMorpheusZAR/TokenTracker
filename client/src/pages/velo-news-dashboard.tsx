@@ -400,18 +400,42 @@ export default function VeloNewsDashboard() {
                           </div>
                         </div>
 
-                        {/* Coins */}
+                        {/* Coins and Trade Buttons */}
                         {item.coins.length > 0 && (
-                          <div className="flex items-center gap-2 mb-3">
-                            {item.coins.map(coin => (
-                              <Badge
-                                key={coin}
-                                className="bg-purple-500/10 text-purple-400 border-purple-500/20"
-                              >
-                                {getCoinIcon(coin)}
-                                <span className="ml-1">{coin}</span>
-                              </Badge>
-                            ))}
+                          <div className="flex items-center gap-3 mb-3 flex-wrap">
+                            <div className="flex items-center gap-2">
+                              {item.coins.map(coin => (
+                                <Badge
+                                  key={coin}
+                                  className="bg-purple-500/10 text-purple-400 border-purple-500/20"
+                                >
+                                  {getCoinIcon(coin)}
+                                  <span className="ml-1">{coin}</span>
+                                </Badge>
+                              ))}
+                            </div>
+                            
+                            {/* Trade Buttons */}
+                            <div className="flex items-center gap-2">
+                              {item.coins.map(coin => (
+                                <a
+                                  key={`trade-${coin}`}
+                                  href={`https://blofin.com/futures/${coin}-USDT`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-md
+                                    bg-black/90 border-2 border-green-400 text-green-400
+                                    hover:bg-green-400/20 hover:border-green-300 hover:text-green-300
+                                    transition-all duration-300 group
+                                    shadow-[0_0_15px_rgba(74,222,128,0.6),inset_0_0_10px_rgba(74,222,128,0.2)] 
+                                    hover:shadow-[0_0_30px_rgba(74,222,128,0.9),inset_0_0_15px_rgba(74,222,128,0.3)]
+                                    animate-pulse-subtle"
+                                >
+                                  <Zap className="w-3 h-3 mr-1 group-hover:animate-pulse" />
+                                  TRADE {coin}
+                                </a>
+                              ))}
+                            </div>
                           </div>
                         )}
 
