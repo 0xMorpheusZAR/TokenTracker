@@ -196,6 +196,7 @@ Changelog:
 - January 22, 2025: Built comprehensive proactive live pricing system - Enhanced backend to automatically detect and fetch live prices for every coin appearing in news (ENA, BTC, DOGE), implemented intelligent caching with 60-second expiry to optimize performance, added background refresh system updating all news-related coins every 2 minutes, created smart cache-first architecture reducing API calls from 1130ms to 183ms response time, backend now maintains live pricing for all news coins without manual requests
 - January 22, 2025: Updated effective price refresh rate to 5 seconds (from 60 seconds) for ultra-fast real-time pricing updates in Velo News Dashboard, leveraging Velo Pro API's high rate limits for near-instantaneous price tracking
 - January 22, 2025: Simplified UI by removing redundant trade buttons and links - now uses only TradingView widget's built-in trading interface for cleaner, more professional appearance with all trading functionality contained within the embedded chart
+- January 22, 2025: Enhanced news feed performance and mobile optimization - Removed "Full Chart" link from VeloChart component, implemented smooth scrolling with CSS optimizations to fix lag issues, added comprehensive mobile responsiveness with flexible layouts, responsive text sizes and chart heights (300px on mobile, 400px on desktop), optimized touch scrolling with webkit-overflow-scrolling, reduced animation complexity on mobile devices for better performance
 ```
 
 ## User Preferences

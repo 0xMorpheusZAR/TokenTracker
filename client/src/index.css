@@ -716,3 +716,41 @@
 .animate-shimmer {
   animation: shimmer 3s ease-in-out infinite;
 }
+
+/* Optimize scrolling performance for news feed */
+.news-feed-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+  overscroll-behavior: contain;
+}
+
+/* Remove scroll lag on mobile */
+.news-feed-scroll > * {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  /* Reduce animation complexity on mobile */
+  .news-item-container {
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Mobile-friendly card spacing */
+  .news-card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Optimize button sizes for touch */
+  .trade-button-glow {
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+  
+  /* Reduce chart height on mobile */
+  .velo-chart-container {
+    height: 300px !important;
+  }
+}

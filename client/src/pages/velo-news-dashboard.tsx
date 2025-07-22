@@ -221,19 +221,19 @@ export default function VeloNewsDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/10 to-gray-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/10 to-gray-900 p-3 md:p-6">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto mb-4 md:mb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2 flex items-center">
-              <Activity className="w-10 h-10 mr-3 text-emerald-400" />
+            <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 flex items-center">
+              <Activity className="w-8 md:w-10 h-8 md:h-10 mr-2 md:mr-3 text-emerald-400" />
               Velo News Feed
             </h1>
             <p className="text-gray-400">Live cryptocurrency news updates from Velo Data API</p>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full md:w-auto">
             {/* New items notification */}
             <AnimatePresence>
               {newItemsCount > 0 && (
@@ -299,7 +299,7 @@ export default function VeloNewsDashboard() {
         </div>
 
         {/* Stats bar */}
-        <div className="mt-6 grid grid-cols-4 gap-4">
+        <div className="mt-4 md:mt-6 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           <Card className="bg-gray-800/50 border-gray-700">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -372,8 +372,8 @@ export default function VeloNewsDashboard() {
       <div className="max-w-7xl mx-auto mb-6">
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <Filter className="w-5 h-5 text-gray-400" />
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
+              <Filter className="w-5 h-5 text-gray-400 hidden md:block" />
               
               {/* Coin filter with new coins indicator */}
               <div className="relative">
@@ -416,7 +416,7 @@ export default function VeloNewsDashboard() {
                 <option value="low">Low</option>
               </select>
 
-              <div className="ml-auto text-gray-400 text-sm">
+              <div className="ml-0 md:ml-auto text-gray-400 text-xs md:text-sm mt-2 md:mt-0">
                 Showing {filteredNews.length} of {newsData.length} stories
               </div>
             </div>
@@ -437,7 +437,7 @@ export default function VeloNewsDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[600px] pr-4" ref={scrollAreaRef}>
+            <div className="relative h-[400px] md:h-[600px] overflow-y-auto news-feed-scroll" ref={scrollAreaRef}>
               <AnimatePresence>
                 {filteredNews.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-[400px] text-gray-400">
@@ -455,7 +455,7 @@ export default function VeloNewsDashboard() {
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                     >
                       <div className={cn(
-                        "p-4 rounded-lg mb-4 border transition-all duration-300",
+                        "p-3 md:p-4 rounded-lg mb-3 md:mb-4 border transition-all duration-300 news-item-container",
                         "bg-gray-900/50 border-gray-700",
                         "hover:bg-gray-800/50 hover:border-gray-600",
                         item.priority === 1 || item.priority === '1' ? "border-l-4 border-l-red-500" : "",
@@ -546,10 +546,10 @@ export default function VeloNewsDashboard() {
                         {item.coins[0] && (
                           <div className="mb-4">
                             {/* Trading Chart */}
-                            <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
+                            <div className="bg-black rounded-lg overflow-hidden border border-gray-800 velo-chart-container">
                               <VeloChart
                                 symbol={item.coins[0]}
-                                height={400}
+                                height={typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 400}
                                 spotPrice={spotPrices[item.coins[0]]}
                                 priceChange={(() => {
                                   const effectivePrice = item.effectivePrice;
@@ -626,7 +626,7 @@ export default function VeloNewsDashboard() {
                   ))
                 )}
               </AnimatePresence>
-            </ScrollArea>
+            </div>
           </CardContent>
         </Card>
       </div>
