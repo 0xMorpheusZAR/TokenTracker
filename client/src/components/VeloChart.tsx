@@ -65,31 +65,7 @@ export default function VeloChart({
         </a>
       </div>
 
-      {/* Ticker info - exact Velo style */}
-      <div className="bg-black px-3 py-1">
-        <div className="flex items-baseline gap-2 text-sm">
-          <span className="text-white font-normal">{symbol}USDT • {exchange}</span>
-          {spotPrice && (
-            <>
-              <span className="text-green-500">O</span>
-              <span className="text-white">{spotPrice.toLocaleString()}</span>
-              <span className="text-green-500 ml-2">H</span>
-              <span className="text-white">{(spotPrice * 1.001).toLocaleString()}</span>
-              <span className="text-red-500 ml-2">L</span>
-              <span className="text-white">{(spotPrice * 0.999).toLocaleString()}</span>
-              <span className="text-green-500 ml-2">C</span>
-              <span className={cn(
-                priceChange && priceChange >= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                {spotPrice.toLocaleString()} {priceChange !== undefined && `${priceChange >= 0 ? '+' : ''}${(priceChange * spotPrice / 100).toFixed(1)} (${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%)`}
-              </span>
-            </>
-          )}
-        </div>
-        <div className="text-xs text-gray-500 mt-0.5">
-          Volume {volume || '26.863K'}
-        </div>
-      </div>
+
 
       {/* Chart - exact Velo style */}
       <div className="velo-chart-wrapper" style={{ height: height, backgroundColor: '#000000' }}>
