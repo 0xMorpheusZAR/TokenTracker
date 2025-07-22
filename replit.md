@@ -199,6 +199,7 @@ Changelog:
 - January 22, 2025: Enhanced news feed performance and mobile optimization - Removed "Full Chart" link from VeloChart component, implemented smooth scrolling with CSS optimizations to fix lag issues, added comprehensive mobile responsiveness with flexible layouts, responsive text sizes and chart heights (300px on mobile, 400px on desktop), optimized touch scrolling with webkit-overflow-scrolling, reduced animation complexity on mobile devices for better performance
 - January 22, 2025: Removed refresh buttons from UI while maintaining automatic 5-second updates for both news and pricing data, enhanced market statistics styling with Velo-inspired design featuring darker gradients, larger text, uppercase labels, text shadows, and professional layout matching Velo Data's UI/UX
 - January 22, 2025: Updated BTC market cap and FDV display format from billions ($2366.23b) to trillions ($2.37t) for cleaner presentation matching industry standards
+- January 22, 2025: Optimized entire Velo News Dashboard for mobile usage - implemented comprehensive responsive design with flexible layouts, mobile-friendly text sizes (xs/sm on mobile, base/lg on desktop), touch-friendly filter dropdowns with full-width on mobile, responsive stats cards with proper padding adjustments, enhanced news feed with improved mobile scrolling, responsive chart heights (300px mobile, 400px desktop), and mobile-optimized CSS with touch targets, improved spacing, and performance optimizations
 ```
 
 ## User Preferences

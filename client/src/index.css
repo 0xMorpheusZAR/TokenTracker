@@ -736,6 +736,9 @@
   /* Reduce animation complexity on mobile */
   .news-item-container {
     transition: background-color 0.2s ease;
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: 12px;
   }
   
   /* Mobile-friendly card spacing */
@@ -749,9 +752,40 @@
     font-size: 0.875rem;
   }
   
+  /* Mobile filters and inputs */
+  select, .filter-select {
+    min-height: 44px;
+    font-size: 0.875rem;
+    padding: 8px 12px;
+  }
+  
+  /* Touch-friendly elements */
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better text readability on mobile */
+  .mobile-text {
+    line-height: 1.5;
+    font-size: 14px;
+  }
+  
   /* Reduce chart height on mobile */
   .velo-chart-container {
     height: 300px !important;
+    margin-bottom: 12px;
+  }
+  
+  /* Enhanced scrolling for mobile */
+  .news-feed-scroll {
+    padding: 8px;
+  }
+  
+  /* Improved spacing for mobile cards */
+  .mobile-card {
+    padding: 12px;
+    margin-bottom: 12px;
   }
 }
 

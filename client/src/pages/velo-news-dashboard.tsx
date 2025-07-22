@@ -102,7 +102,7 @@ export default function VeloNewsDashboard() {
     refetchOnReconnect: true, // Refetch when reconnecting to network
   });
 
-  const newsData = newsResponse?.data?.stories || newsResponse?.data || [];
+  const newsData = (newsResponse as any)?.data?.stories || (newsResponse as any)?.data || [];
 
   // Extract unique coins from news items
   const uniqueCoins = React.useMemo(() => {
@@ -133,7 +133,7 @@ export default function VeloNewsDashboard() {
     if (newsData.length > 0) {
       // Track new news items
       const currentIds = new Set(newsData.map((item: VeloNewsItem) => item.id));
-      const newIds = [...currentIds].filter(id => !previousNewsIds.current.has(id));
+      const newIds = Array.from(currentIds).filter(id => !previousNewsIds.current.has(id));
       
       if (previousNewsIds.current.size > 0 && newIds.length > 0) {
         setNewItemsCount(newIds.length);
@@ -141,7 +141,7 @@ export default function VeloNewsDashboard() {
         setTimeout(() => setNewItemsCount(0), 5000);
       }
       
-      previousNewsIds.current = currentIds;
+      previousNewsIds.current = currentIds as Set<number>;
 
       // Track new coins
       const currentCoins = new Set<string>();
@@ -149,7 +149,7 @@ export default function VeloNewsDashboard() {
         item.coins.forEach((coin: string) => currentCoins.add(coin));
       });
       
-      const newCoinsList = [...currentCoins].filter(coin => !previousCoins.current.has(coin));
+      const newCoinsList = Array.from(currentCoins).filter(coin => !previousCoins.current.has(coin));
       
       if (previousCoins.current.size > 0 && newCoinsList.length > 0) {
         setNewCoins(newCoinsList);
@@ -167,7 +167,7 @@ export default function VeloNewsDashboard() {
     const priorityMatch = selectedPriority === 'all' || 
       (selectedPriority === 'high' && (item.priority === 1 || item.priority === '1')) ||
       (selectedPriority === 'normal' && (item.priority === 2 || item.priority === '2')) ||
-      (selectedPriority === 'low' && (item.priority > 2 || parseInt(item.priority as string) > 2));
+      (selectedPriority === 'low' && (typeof item.priority === 'number' ? item.priority > 2 : parseInt(item.priority as string) > 2));
     
     return coinMatch && priorityMatch;
   });
@@ -269,53 +269,53 @@ export default function VeloNewsDashboard() {
         {/* Stats bar */}
         <div className="mt-4 md:mt-6 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           <Card className="bg-gray-800/50 border-gray-700">
-            <CardContent className="p-4">
+            <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Total Stories</p>
-                  <p className="text-2xl font-bold text-white">{filteredNews.length}</p>
+                  <p className="text-gray-400 text-xs md:text-sm">Total Stories</p>
+                  <p className="text-lg md:text-2xl font-bold text-white">{filteredNews.length}</p>
                 </div>
-                <Bell className="w-8 h-8 text-purple-400" />
+                <Bell className="w-6 md:w-8 h-6 md:h-8 text-purple-400" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gray-800/50 border-gray-700">
-            <CardContent className="p-4">
+            <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">High Priority</p>
-                  <p className="text-2xl font-bold text-red-400">
+                  <p className="text-gray-400 text-xs md:text-sm">High Priority</p>
+                  <p className="text-lg md:text-2xl font-bold text-red-400">
                     {filteredNews.filter((n: VeloNewsItem) => n.priority === 1 || n.priority === '1').length}
                   </p>
                 </div>
-                <AlertCircle className="w-8 h-8 text-red-400" />
+                <AlertCircle className="w-6 md:w-8 h-6 md:h-8 text-red-400" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gray-800/50 border-gray-700">
-            <CardContent className="p-4">
+            <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Coins Covered</p>
-                  <p className="text-2xl font-bold text-white">{allCoins.length}</p>
+                  <p className="text-gray-400 text-xs md:text-sm">Coins Covered</p>
+                  <p className="text-lg md:text-2xl font-bold text-white">{allCoins.length}</p>
                 </div>
-                <Star className="w-8 h-8 text-yellow-400" />
+                <Star className="w-6 md:w-8 h-6 md:h-8 text-yellow-400" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gray-800/50 border-gray-700">
-            <CardContent className="p-4">
+            <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Last Update</p>
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-gray-400 text-xs md:text-sm">Last Update</p>
+                  <p className="text-xs md:text-sm font-medium text-white">
                     {new Date(dataUpdatedAt).toLocaleTimeString()}
                   </p>
                 </div>
-                <Clock className="w-8 h-8 text-emerald-400" />
+                <Clock className="w-6 md:w-8 h-6 md:h-8 text-emerald-400" />
               </div>
             </CardContent>
           </Card>
@@ -323,12 +323,12 @@ export default function VeloNewsDashboard() {
       </div>
 
       {/* News Status Indicator */}
-      <div className="max-w-7xl mx-auto mb-4">
+      <div className="max-w-7xl mx-auto mb-4 px-4 md:px-0">
         <Card className="bg-emerald-900/20 border-emerald-500/30">
-          <CardContent className="p-3">
-            <div className="flex items-center justify-center gap-3">
-              <Clock className="w-5 h-5 text-emerald-400" />
-              <p className="text-emerald-400 font-medium">
+          <CardContent className="p-2 md:p-3">
+            <div className="flex items-center justify-center gap-2 md:gap-3">
+              <Clock className="w-4 md:w-5 h-4 md:h-5 text-emerald-400" />
+              <p className="text-emerald-400 font-medium text-sm md:text-base">
                 Showing all available news updates
               </p>
             </div>
@@ -337,21 +337,21 @@ export default function VeloNewsDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="max-w-7xl mx-auto mb-6">
+      <div className="max-w-7xl mx-auto mb-6 px-4 md:px-0">
         <Card className="bg-gray-800/50 border-gray-700">
-          <CardContent className="p-4">
+          <CardContent className="p-3 md:p-4">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
               <Filter className="w-5 h-5 text-gray-400 hidden md:block" />
               
               {/* Coin filter with new coins indicator */}
-              <div className="relative">
+              <div className="relative w-full md:w-auto">
                 <select
                   value={selectedCoin}
                   onChange={(e) => setSelectedCoin(e.target.value)}
-                  className="bg-gray-700 text-white rounded-lg px-4 py-2 pr-8 border border-gray-600 focus:border-emerald-500 focus:outline-none"
+                  className="w-full md:w-auto bg-gray-700 text-white rounded-lg px-3 md:px-4 py-2 pr-8 border border-gray-600 focus:border-emerald-500 focus:outline-none text-sm md:text-base"
                 >
                   <option value="all">All Coins ({allCoins.length})</option>
-                  {allCoins.map(coin => (
+                  {allCoins.map((coin: string) => (
                     <option key={coin} value={coin.toLowerCase()}>
                       {coin}
                       {newCoins.includes(coin) && ' 🆕'}
@@ -376,7 +376,7 @@ export default function VeloNewsDashboard() {
               <select
                 value={selectedPriority}
                 onChange={(e) => setSelectedPriority(e.target.value)}
-                className="bg-gray-700 text-white rounded-lg px-4 py-2 border border-gray-600 focus:border-emerald-500 focus:outline-none"
+                className="w-full md:w-auto bg-gray-700 text-white rounded-lg px-3 md:px-4 py-2 pr-8 border border-gray-600 focus:border-emerald-500 focus:outline-none text-sm md:text-base"
               >
                 <option value="all">All Priorities</option>
                 <option value="high">High Priority</option>
@@ -393,19 +393,19 @@ export default function VeloNewsDashboard() {
       </div>
 
       {/* News Feed */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 md:px-0">
         <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center">
-              <Bell className="w-6 h-6 mr-2 text-emerald-400" />
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-white flex items-center text-lg md:text-xl">
+              <Bell className="w-5 md:w-6 h-5 md:h-6 mr-2 text-emerald-400" />
               Live News Feed
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm md:text-base">
               Real-time updates from Velo Data API
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="relative h-[400px] md:h-[600px] overflow-y-auto news-feed-scroll" ref={scrollAreaRef}>
+          <CardContent className="p-3 md:p-6">
+            <div className="relative h-[500px] md:h-[600px] overflow-y-auto news-feed-scroll" ref={scrollAreaRef}>
               <AnimatePresence>
                 {filteredNews.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-[400px] text-gray-400">
@@ -428,16 +428,16 @@ export default function VeloNewsDashboard() {
                         "hover:bg-gray-800/50 hover:border-gray-600",
                         item.priority === 1 || item.priority === '1' ? "border-l-4 border-l-red-500" : "",
                         item.priority === 2 || item.priority === '2' ? "border-l-4 border-l-yellow-500" : "",
-                        (item.priority > 2 || parseInt(item.priority as string) > 2) ? "border-l-4 border-l-gray-500" : ""
+                        (typeof item.priority === 'number' ? item.priority > 2 : parseInt(item.priority as string) > 2) ? "border-l-4 border-l-gray-500" : ""
                       )}>
                         {/* Header */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
+                            <h3 className="text-base md:text-lg font-semibold text-white mb-2 leading-tight">
                               {item.headline}
                             </h3>
                             
-                            <div className="flex items-center gap-4 text-sm">
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 text-xs md:text-sm">
                               <div className="flex items-center text-gray-400">
                                 <Clock className="w-4 h-4 mr-1" />
                                 <TimeAgo timestamp={item.time} />
@@ -471,7 +471,7 @@ export default function VeloNewsDashboard() {
 
                         {/* Coins */}
                         {item.coins.length > 0 && (
-                          <div className="flex items-center gap-2 mb-3">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
                             {item.coins.map(coin => (
                               <Badge
                                 key={coin}
