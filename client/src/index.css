@@ -754,3 +754,21 @@
     height: 300px !important;
   }
 }
+
+/* Enhanced Market Statistics */
+.market-stats-container {
+  background: linear-gradient(to bottom, #0a0a0a, #050505);
+  border-top: 1px solid rgba(55, 65, 81, 0.8);
+}
+
+.market-stat-value {
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.market-stat-label {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}

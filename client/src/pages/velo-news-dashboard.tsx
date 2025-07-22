@@ -531,47 +531,47 @@ export default function VeloNewsDashboard() {
                               />
                               
                               {/* Market Statistics Footer */}
-                              <div className="bg-gray-900 border-t border-gray-800 p-4">
-                                <div className="grid grid-cols-5 gap-4 text-sm">
-                                  <div>
-                                    <div className="text-gray-500 text-xs">Open Interest</div>
-                                    <div className="text-white font-semibold">
+                              <div className="market-stats-container p-6">
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+                                  <div className="flex flex-col">
+                                    <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">Open Interest</div>
+                                    <div className="market-stat-value text-white font-bold text-lg">
                                       {item.coins[0] === 'BTC' ? '$31.60b' : 
                                        item.coins[0] === 'ETH' ? '$8.42b' :
                                        item.coins[0] === 'SOL' ? '$1.23b' :
                                        item.coins[0] === 'ENA' ? '$245M' : '$56.3M'}
                                     </div>
                                   </div>
-                                  <div>
-                                    <div className="text-gray-500 text-xs">24h Volume</div>
-                                    <div className="text-white font-semibold">
+                                  <div className="flex flex-col">
+                                    <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">24h Volume</div>
+                                    <div className="market-stat-value text-white font-bold text-lg">
                                       {item.coins[0] === 'BTC' ? '$56.23b' : 
                                        item.coins[0] === 'ETH' ? '$18.76b' :
                                        item.coins[0] === 'SOL' ? '$3.45b' :
                                        item.coins[0] === 'ENA' ? '$128M' : '$23.4M'}
                                     </div>
                                   </div>
-                                  <div>
-                                    <div className="text-gray-500 text-xs">24h Funding (APR)</div>
-                                    <div className="text-white font-semibold">
+                                  <div className="flex flex-col">
+                                    <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">24h Funding (APR)</div>
+                                    <div className="market-stat-value text-white font-bold text-lg">
                                       {item.coins[0] === 'BTC' ? '11.01%' : 
                                        item.coins[0] === 'ETH' ? '9.52%' :
                                        item.coins[0] === 'SOL' ? '14.28%' :
                                        item.coins[0] === 'ENA' ? '18.65%' : '12.47%'}
                                     </div>
                                   </div>
-                                  <div>
-                                    <div className="text-gray-500 text-xs">Marketcap</div>
-                                    <div className="text-white font-semibold">
+                                  <div className="flex flex-col">
+                                    <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">Marketcap</div>
+                                    <div className="market-stat-value text-white font-bold text-lg">
                                       {item.coins[0] === 'BTC' ? '$2366.23b' : 
                                        item.coins[0] === 'ETH' ? '$358.42b' :
                                        item.coins[0] === 'SOL' ? '$48.76b' :
                                        item.coins[0] === 'ENA' ? '$1.42b' : '$567M'}
                                     </div>
                                   </div>
-                                  <div>
-                                    <div className="text-gray-500 text-xs">FDV</div>
-                                    <div className="text-white font-semibold">
+                                  <div className="flex flex-col">
+                                    <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">FDV</div>
+                                    <div className="market-stat-value text-white font-bold text-lg">
                                       {item.coins[0] === 'BTC' ? '$2366.23b' : 
                                        item.coins[0] === 'ETH' ? '$358.42b' :
                                        item.coins[0] === 'SOL' ? '$52.34b' :
