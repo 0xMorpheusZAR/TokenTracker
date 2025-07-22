@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import TradingViewWidget from '@/components/TradingViewWidget';
+import VeloChart from '@/components/VeloChart';
 
 interface VeloNewsItem {
   id: number;
@@ -547,11 +547,19 @@ export default function VeloNewsDashboard() {
                           <div className="mb-4">
                             {/* Trading Chart */}
                             <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
-                              <TradingViewWidget
+                              <VeloChart
                                 symbol={item.coins[0]}
-                                interval="60"
-                                theme="dark"
                                 height={400}
+                                spotPrice={spotPrices[item.coins[0]]}
+                                priceChange={(() => {
+                                  const effectivePrice = item.effectivePrice;
+                                  const currentPrice = spotPrices[item.coins[0]];
+                                  if (effectivePrice && currentPrice) {
+                                    return ((currentPrice - effectivePrice) / effectivePrice) * 100;
+                                  }
+                                  return undefined;
+                                })()}
+                                volume="5MA"
                               />
                               
                               {/* Market Statistics Footer */}
