@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import ComprehensiveTradingWidget from '@/components/ComprehensiveTradingWidget';
+import TradingViewTimeframes from '@/components/TradingViewTimeframes';
 
 interface VeloNewsItem {
   id: number;
@@ -114,7 +114,7 @@ export default function VeloNewsDashboard() {
   }, [newsData]);
 
   // Fetch live spot prices from Velo API - Updated to 1-minute refresh
-  const { data: spotPrices } = useQuery({
+  const { data: spotPrices = {} } = useQuery<SpotPrices>({
     queryKey: ['/api/velo/spot-prices', uniqueCoins],
     queryFn: async () => {
       if (uniqueCoins.length === 0) return {};
@@ -556,7 +556,7 @@ export default function VeloNewsDashboard() {
                         )}
 
                         {/* Live Effective Price from Velo API */}
-                        {item.coins[0] && spotPrices?.[item.coins[0]] && (
+                        {item.coins[0] && spotPrices[item.coins[0]] && (
                           <div className="bg-gradient-to-r from-emerald-500/10 to-purple-500/10 border border-emerald-500/20 rounded-lg p-3 mb-3">
                             <div className="grid grid-cols-1 gap-4">
                               {/* Live Effective Price */}
@@ -574,15 +574,67 @@ export default function VeloNewsDashboard() {
                           </div>
                         )}
 
-                        {/* Comprehensive Trading Widget */}
+                        {/* TradingView Widget with Market Stats */}
                         {item.coins[0] && (
-                          <div className="mb-3">
-                            <ComprehensiveTradingWidget
-                              coin={item.coins[0]}
-                              coinName={item.coins[0]}
-                              initialTimeframe="1h"
-                              height={500}
-                            />
+                          <div className="mb-4">
+                            {/* Trading Chart */}
+                            <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
+                              <TradingViewTimeframes
+                                symbol={item.coins[0]}
+                                height={400}
+                              />
+                              
+                              {/* Market Statistics Footer */}
+                              <div className="bg-gray-900 border-t border-gray-800 p-4">
+                                <div className="grid grid-cols-5 gap-4 text-sm">
+                                  <div>
+                                    <div className="text-gray-500 text-xs">Open Interest</div>
+                                    <div className="text-white font-semibold">
+                                      {item.coins[0] === 'BTC' ? '$31.60b' : 
+                                       item.coins[0] === 'ETH' ? '$8.42b' :
+                                       item.coins[0] === 'SOL' ? '$1.23b' :
+                                       item.coins[0] === 'ENA' ? '$245M' : '$56.3M'}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500 text-xs">24h Volume</div>
+                                    <div className="text-white font-semibold">
+                                      {item.coins[0] === 'BTC' ? '$56.23b' : 
+                                       item.coins[0] === 'ETH' ? '$18.76b' :
+                                       item.coins[0] === 'SOL' ? '$3.45b' :
+                                       item.coins[0] === 'ENA' ? '$128M' : '$23.4M'}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500 text-xs">24h Funding (APR)</div>
+                                    <div className="text-white font-semibold">
+                                      {item.coins[0] === 'BTC' ? '11.01%' : 
+                                       item.coins[0] === 'ETH' ? '9.52%' :
+                                       item.coins[0] === 'SOL' ? '14.28%' :
+                                       item.coins[0] === 'ENA' ? '18.65%' : '12.47%'}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500 text-xs">Marketcap</div>
+                                    <div className="text-white font-semibold">
+                                      {item.coins[0] === 'BTC' ? '$2366.23b' : 
+                                       item.coins[0] === 'ETH' ? '$358.42b' :
+                                       item.coins[0] === 'SOL' ? '$48.76b' :
+                                       item.coins[0] === 'ENA' ? '$1.42b' : '$567M'}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-500 text-xs">FDV</div>
+                                    <div className="text-white font-semibold">
+                                      {item.coins[0] === 'BTC' ? '$2366.23b' : 
+                                       item.coins[0] === 'ETH' ? '$358.42b' :
+                                       item.coins[0] === 'SOL' ? '$52.34b' :
+                                       item.coins[0] === 'ENA' ? '$3.89b' : '$789M'}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )}
                         

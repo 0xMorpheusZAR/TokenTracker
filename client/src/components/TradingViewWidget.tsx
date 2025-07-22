@@ -1,94 +1,96 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 
 interface TradingViewWidgetProps {
-  symbol?: string;
+  symbol: string;
   interval?: string;
   theme?: 'light' | 'dark';
-  width?: string | number;
-  height?: string | number;
+  height?: number;
+  width?: string;
 }
 
-export function TradingViewBTCDominance({
+function TradingViewWidget({ 
+  symbol, 
+  interval = '60', 
   theme = 'dark',
-  width = '100%',
-  height = 150
+  height = 500,
+  width = '100%'
 }: TradingViewWidgetProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const container = useRef<HTMLDivElement>(null);
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-      
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-      script.type = 'text/javascript';
-      script.async = true;
-      
-      script.innerHTML = JSON.stringify({
-        "symbol": "CRYPTOCAP:BTC.D",
-        "width": width,
-        "height": height,
-        "locale": "en",
-        "dateRange": "12M",
-        "colorTheme": theme,
-        "trendLineColor": "rgba(255, 155, 0, 1)",
-        "underLineColor": "rgba(255, 155, 0, 0.3)",
-        "underLineBottomColor": "rgba(255, 155, 0, 0)",
-        "isTransparent": true,
-        "autosize": false,
-        "largeChartUrl": ""
-      });
+    if (!container.current) return;
 
-      containerRef.current.appendChild(script);
-    }
+    // Clear any existing content
+    container.current.innerHTML = '';
+
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      "autosize": false,
+      "symbol": `BINANCE:${symbol}USDT`,
+      "interval": interval,
+      "timezone": "Etc/UTC",
+      "theme": theme,
+      "style": "1",
+      "locale": "en",
+      "enable_publishing": false,
+      "backgroundColor": "rgba(0, 0, 0, 1)",
+      "gridColor": "rgba(42, 46, 57, 0.3)",
+      "hide_top_toolbar": false,
+      "hide_legend": false,
+      "save_image": false,
+      "hide_volume": false,
+      "support_host": "https://www.tradingview.com",
+      "container_id": `tradingview_${Math.random().toString(36).substring(7)}`,
+      "studies": [
+        {
+          "id": "Volume@tv-basicstudies",
+          "inputs": {
+            "showMA": false
+          }
+        }
+      ],
+      "overrides": {
+        "mainSeriesProperties.candleStyle.upColor": "#26a69a",
+        "mainSeriesProperties.candleStyle.downColor": "#ef5350",
+        "mainSeriesProperties.candleStyle.borderUpColor": "#26a69a",
+        "mainSeriesProperties.candleStyle.borderDownColor": "#ef5350",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350",
+        "paneProperties.background": "#000000",
+        "paneProperties.vertGridProperties.color": "#363c4e",
+        "paneProperties.horzGridProperties.color": "#363c4e",
+        "scalesProperties.textColor": "#AAA",
+        "volumePaneSize": "medium"
+      },
+      "height": height,
+      "width": width
+    });
+
+    const widgetContainer = document.createElement("div");
+    widgetContainer.className = "tradingview-widget-container__widget";
+    widgetContainer.style.height = `${height}px`;
+    widgetContainer.style.width = width;
+    
+    container.current.appendChild(widgetContainer);
+    container.current.appendChild(script);
+    scriptRef.current = script;
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      if (scriptRef.current && scriptRef.current.parentNode) {
+        scriptRef.current.parentNode.removeChild(scriptRef.current);
       }
     };
-  }, [theme, width, height]);
+  }, [symbol, interval, theme, height, width]);
 
   return (
-    <div className="tradingview-widget-container" ref={containerRef}>
+    <div className="tradingview-widget-container" ref={container}>
       <div className="tradingview-widget-container__widget"></div>
     </div>
   );
 }
 
-export function TradingViewTickerWidget() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-      
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
-      script.type = 'text/javascript';
-      script.async = true;
-      
-      script.innerHTML = JSON.stringify({
-        "symbol": "CRYPTOCAP:BTC.D",
-        "width": "100%",
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "locale": "en"
-      });
-
-      containerRef.current.appendChild(script);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-    };
-  }, []);
-
-  return (
-    <div className="tradingview-widget-container" ref={containerRef}>
-      <div className="tradingview-widget-container__widget"></div>
-    </div>
-  );
-}
+export default memo(TradingViewWidget);
