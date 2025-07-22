@@ -65,7 +65,20 @@ export default function VeloChart({
         </a>
       </div>
 
-
+      {/* Trade Button */}
+      <div className="p-3 bg-black border-t border-gray-800">
+        <a
+          href={`https://www.blofin.com/futures-trade/${symbol.toLowerCase()}usdt`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full"
+        >
+          <button className="w-full bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 text-black font-bold py-3 px-6 rounded-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-all duration-300 transform hover:scale-105 animate-neon-pulse relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 translate-x-[-100%] animate-shimmer"></div>
+            <span className="text-lg tracking-wider font-extrabold relative z-10">🚀 TRADE {symbol.toUpperCase()} 🚀</span>
+          </button>
+        </a>
+      </div>
 
       {/* Chart - exact Velo style */}
       <div className="velo-chart-wrapper" style={{ height: height, backgroundColor: '#000000' }}>
