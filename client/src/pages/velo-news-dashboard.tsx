@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import TradingViewTimeframes from '@/components/TradingViewTimeframes';
+import TradingViewWidget from '@/components/TradingViewWidget';
 
 interface VeloNewsItem {
   id: number;
@@ -547,8 +547,10 @@ export default function VeloNewsDashboard() {
                           <div className="mb-4">
                             {/* Trading Chart */}
                             <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
-                              <TradingViewTimeframes
+                              <TradingViewWidget
                                 symbol={item.coins[0]}
+                                interval="60"
+                                theme="dark"
                                 height={400}
                               />
                               
