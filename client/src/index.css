@@ -670,16 +670,20 @@
 }
 
 /* Velo Chart Custom Styles */
-.tradingview-velo-wrapper iframe {
-  margin-top: -32px !important;
+.velo-chart-container {
+  position: relative;
+  background: #000000;
 }
 
-/* Hide TradingView top toolbar indicators button */
-.tradingview-velo-wrapper [data-name="indicators"] {
+.velo-chart-container iframe {
+  background: #000000 !important;
+}
+
+/* Hide all TradingView UI elements except the chart */
+.velo-chart-container [class*="chart-controls-bar"],
+.velo-chart-container [class*="header-chart-panel"],
+.velo-chart-container [class*="control-bar"],
+.velo-chart-container [data-name="legend"],
+.velo-chart-container [class*="overlapStudiesWrapper"] {
   display: none !important;
-}
-
-/* Custom toolbar styling */
-.tradingview-velo-wrapper .tv-chart-toolbar {
-  background-color: #000000 !important;
 }
