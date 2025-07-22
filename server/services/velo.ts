@@ -245,7 +245,7 @@ class VeloService {
         queryParams.end = params.end;
       }
 
-      const csvData = await this.makeRequest('/rows', queryParams);
+      const csvData = await this.makeRequest<string>('/rows', queryParams);
       return this.parseMarketDataCSV(csvData);
     } catch (error) {
       console.error('Failed to fetch options data:', error);
@@ -427,6 +427,46 @@ class VeloService {
       console.error('Failed to fetch crypto news:', error);
       throw error;
     }
+  }
+
+  // Live spot prices for specific coins (adapted from working BTC method)
+  async getLiveSpotPrices(coins: string[]): Promise<Record<string, number>> {
+    const results: Record<string, number> = {};
+    
+    for (const coin of coins) {
+      try {
+        // Use the most reliable exchange (Binance) for live pricing
+        const end = Date.now();
+        const begin = end - (60 * 60 * 1000); // Last 60 minutes for fresh data
+        
+        const csvData = await this.getMarketData({
+          type: 'spot',
+          exchanges: ['binance'],
+          products: [`${coin}USDT`],
+          columns: ['close_price'],
+          begin,
+          end,
+          resolution: '1m' // 1-minute resolution for most recent data
+        });
+        
+        const priceData = this.parseMarketDataCSV(csvData);
+        
+        if (priceData.length > 0) {
+          // Get the most recent price
+          const latestPrice = priceData[priceData.length - 1];
+          
+          if (latestPrice.close_price && latestPrice.close_price > 0) {
+            results[coin] = latestPrice.close_price;
+            console.log(`Live price for ${coin}: $${latestPrice.close_price}`);
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to fetch live price for ${coin}:`, error.message);
+      }
+    }
+
+    console.log(`Final live prices result:`, results);
+    return results;
   }
 
   // Multi-asset price data for dashboard charts

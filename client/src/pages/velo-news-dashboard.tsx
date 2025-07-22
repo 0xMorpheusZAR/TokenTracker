@@ -104,7 +104,7 @@ export default function VeloNewsDashboard() {
     return Array.from(coins);
   }, [newsData]);
 
-  // Fetch live spot prices from Velo API
+  // Fetch live spot prices from Velo API - Updated to 1-minute refresh
   const { data: spotPrices } = useQuery({
     queryKey: ['/api/velo/spot-prices', uniqueCoins],
     queryFn: async () => {
@@ -114,7 +114,7 @@ export default function VeloNewsDashboard() {
       return response.json();
     },
     enabled: uniqueCoins.length > 0,
-    refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
+    refetchInterval: autoRefresh ? 60000 : false, // Refresh every 60 seconds (1 minute) for live pricing
     refetchIntervalInBackground: true,
     staleTime: 0
   });
@@ -546,44 +546,21 @@ export default function VeloNewsDashboard() {
                           </p>
                         )}
 
-                        {/* Effective Price from Velo API */}
-                        {item.effectivePrice && (
+                        {/* Live Effective Price from Velo API */}
+                        {item.coins[0] && spotPrices?.[item.coins[0]] && (
                           <div className="bg-gradient-to-r from-emerald-500/10 to-purple-500/10 border border-emerald-500/20 rounded-lg p-3 mb-3">
-                            <div className="grid grid-cols-2 gap-4">
-                              {/* Effective Price */}
+                            <div className="grid grid-cols-1 gap-4">
+                              {/* Live Effective Price */}
                               <div>
                                 <span className="text-xs text-gray-400 uppercase tracking-wide">Effective Price</span>
                                 <div className="text-2xl font-bold text-white mt-1">
-                                  ${item.effectivePrice < 1 ? item.effectivePrice.toFixed(6) : item.effectivePrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  ${spotPrices[item.coins[0]] < 1 ? spotPrices[item.coins[0]].toFixed(6) : spotPrices[item.coins[0]].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
-                                {item.effectiveTime && (
-                                  <div className="text-xs text-gray-400 mt-1">
-                                    <TimeAgo timestamp={item.effectiveTime} />
-                                  </div>
-                                )}
+                                <div className="text-xs text-emerald-400 mt-1 flex items-center">
+                                  <Activity className="w-3 h-3 mr-1" />
+                                  Live • Updates every minute
+                                </div>
                               </div>
-                              
-                              {/* Current Live Price from Velo */}
-                              {item.coins[0] && spotPrices?.[item.coins[0]] && (
-                                <div>
-                                  <span className="text-xs text-gray-400 uppercase tracking-wide">Live Price</span>
-                                  <div className="text-2xl font-bold text-white mt-1">
-                                    ${spotPrices[item.coins[0]] < 1 ? spotPrices[item.coins[0]].toFixed(6) : spotPrices[item.coins[0]].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                  </div>
-                                  <div className="text-xs mt-1">
-                                    {(() => {
-                                      const priceDiff = ((spotPrices[item.coins[0]] - item.effectivePrice) / item.effectivePrice) * 100;
-                                      const isPositive = priceDiff > 0;
-                                      return (
-                                        <span className={`flex items-center ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-                                          {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                                          {isPositive ? '+' : ''}{priceDiff.toFixed(2)}%
-                                        </span>
-                                      );
-                                    })()}
-                                  </div>
-                                </div>
-                              )}
                             </div>
                           </div>
                         )}
