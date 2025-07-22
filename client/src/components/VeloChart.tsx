@@ -92,21 +92,12 @@ export default function VeloChart({
       </div>
 
       {/* Chart - exact Velo style */}
-      <div style={{ height: height, position: 'relative', overflow: 'hidden' }} className="velo-chart-container bg-black">
-        <div style={{ position: 'absolute', top: '-32px', left: '0', right: '0', bottom: '0' }}>
+      <div className="velo-chart-wrapper" style={{ height: height, backgroundColor: '#000000' }}>
         <TradingViewWidget
           symbol={symbol}
           interval={selectedTimeframe}
           theme="dark"
-          height={height + 32}
-          hide_top_toolbar={true}
-          hide_legend={true}
-          save_image={false}
-          hide_side_toolbar={true}
-          allow_symbol_change={false}
-          details={false}
-          hotlist={false}
-          calendar={false}
+          height={height + 45}
           toolbar_bg="#000000"
           container_id={`velo_chart_${symbol}_${Date.now()}`}
           overrides={{
@@ -150,7 +141,6 @@ export default function VeloChart({
             "hide_side_toolbar"
           ]}
         />
-        </div>
       </div>
     </div>
   );
