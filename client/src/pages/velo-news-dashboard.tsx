@@ -465,17 +465,9 @@ export default function VeloNewsDashboard() {
                         {/* Header */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <a
-                              href={item.coins.length > 0 ? `https://blofin.com/futures/${item.coins[0]}-USDT` : '#'}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group relative"
-                              title={item.coins.length > 0 ? `Trade ${item.coins[0]} on BloFin` : ''}
-                            >
-                              <h3 className="text-lg font-semibold text-white mb-2 leading-tight group-hover:text-emerald-400 transition-colors cursor-pointer">
-                                {item.headline}
-                              </h3>
-                            </a>
+                            <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
+                              {item.headline}
+                            </h3>
                             
                             <div className="flex items-center gap-4 text-sm">
                               <div className="flex items-center text-gray-400">
@@ -509,42 +501,18 @@ export default function VeloNewsDashboard() {
                           </div>
                         </div>
 
-                        {/* Coins and Trade Buttons */}
+                        {/* Coins */}
                         {item.coins.length > 0 && (
-                          <div className="flex items-center gap-3 mb-3 flex-wrap">
-                            <div className="flex items-center gap-2">
-                              {item.coins.map(coin => (
-                                <Badge
-                                  key={coin}
-                                  className="bg-purple-500/10 text-purple-400 border-purple-500/20"
-                                >
-                                  {getCoinIcon(coin)}
-                                  <span className="ml-1">{coin}</span>
-                                </Badge>
-                              ))}
-                            </div>
-                            
-                            {/* Trade Buttons */}
-                            <div className="flex items-center gap-2">
-                              {item.coins.map(coin => (
-                                <a
-                                  key={`trade-${coin}`}
-                                  href={`https://blofin.com/futures/${coin}-USDT`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-md
-                                    bg-black/90 border-2 border-green-400 text-green-400
-                                    hover:bg-green-400/20 hover:border-green-300 hover:text-green-300
-                                    transition-all duration-300 group
-                                    shadow-[0_0_15px_rgba(74,222,128,0.6),inset_0_0_10px_rgba(74,222,128,0.2)] 
-                                    hover:shadow-[0_0_30px_rgba(74,222,128,0.9),inset_0_0_15px_rgba(74,222,128,0.3)]
-                                    animate-pulse-subtle"
-                                >
-                                  <Zap className="w-3 h-3 mr-1 group-hover:animate-pulse" />
-                                  TRADE {coin}
-                                </a>
-                              ))}
-                            </div>
+                          <div className="flex items-center gap-2 mb-3">
+                            {item.coins.map(coin => (
+                              <Badge
+                                key={coin}
+                                className="bg-purple-500/10 text-purple-400 border-purple-500/20"
+                              >
+                                {getCoinIcon(coin)}
+                                <span className="ml-1">{coin}</span>
+                              </Badge>
+                            ))}
                           </div>
                         )}
 
@@ -638,20 +606,7 @@ export default function VeloNewsDashboard() {
                           </div>
                         )}
                         
-                        {/* Trade Link */}
-                        <div className="flex items-center justify-end">
-                          {item.coins.length > 0 && (
-                            <a
-                              href={`https://blofin.com/futures/${item.coins[0]}-USDT`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
-                            >
-                              Trade on BloFin
-                              <ExternalLink className="w-3 h-3 ml-1" />
-                            </a>
-                          )}
-                        </div>
+
                       </div>
                       
                       {index < filteredNews.length - 1 && (
