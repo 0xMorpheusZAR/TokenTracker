@@ -123,7 +123,7 @@ export default function VeloNewsDashboard() {
       return response.json();
     },
     enabled: uniqueCoins.length > 0,
-    refetchInterval: autoRefresh ? 60000 : false, // Refresh every 60 seconds (1 minute) for live pricing
+    refetchInterval: autoRefresh ? 5000 : false, // Refresh every 5 seconds for ultra-fast live pricing
     refetchIntervalInBackground: true,
     staleTime: 0
   });
@@ -567,7 +567,7 @@ export default function VeloNewsDashboard() {
                                 </div>
                                 <div className="text-xs text-emerald-400 mt-1 flex items-center">
                                   <Activity className="w-3 h-3 mr-1" />
-                                  Live • Updates every minute
+                                  Live • Updates every 5 seconds
                                 </div>
                               </div>
                             </div>
