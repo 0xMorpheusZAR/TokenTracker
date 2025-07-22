@@ -573,6 +573,18 @@ export default function VeloNewsDashboard() {
                             </div>
                           </div>
                         )}
+
+                        {/* Comprehensive Trading Widget */}
+                        {item.coins[0] && (
+                          <div className="mb-3">
+                            <ComprehensiveTradingWidget
+                              coin={item.coins[0]}
+                              coinName={item.coins[0]}
+                              initialTimeframe="1h"
+                              height={500}
+                            />
+                          </div>
+                        )}
                         
                         {/* Trade Link */}
                         <div className="flex items-center justify-end">

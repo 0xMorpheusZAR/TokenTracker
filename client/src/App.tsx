@@ -40,7 +40,6 @@ function Router() {
 
       <Route path="/velo-dashboard" component={VeloNewsDashboard} />
       <Route path="/velo-news" component={VeloNewsDashboard} />
-      <Route path="/trading-analysis" component={TradingAnalysis} />
       <Route path="/altseason" component={AltseasonDashboard} />
       <Route component={NotFound} />
     </Switch>
