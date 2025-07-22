@@ -92,12 +92,13 @@ export default function VeloChart({
       </div>
 
       {/* Chart - exact Velo style */}
-      <div style={{ height }} className="velo-chart-container bg-black">
+      <div style={{ height: height, position: 'relative', overflow: 'hidden' }} className="velo-chart-container bg-black">
+        <div style={{ position: 'absolute', top: '-32px', left: '0', right: '0', bottom: '0' }}>
         <TradingViewWidget
           symbol={symbol}
           interval={selectedTimeframe}
           theme="dark"
-          height={height}
+          height={height + 32}
           hide_top_toolbar={true}
           hide_legend={true}
           save_image={false}
@@ -125,6 +126,7 @@ export default function VeloChart({
           }}
           disabled_features={[
             "header_widget",
+            "header_widget_dom_node",
             "header_symbol_search",
             "header_compare",
             "display_market_status",
@@ -138,7 +140,9 @@ export default function VeloChart({
             "header_chart_type",
             "left_toolbar",
             "control_bar",
-            "timeframes_toolbar"
+            "timeframes_toolbar",
+            "main_series_scale_menu",
+            "create_volume_indicator_by_default"
           ]}
           enabled_features={[
             "hide_left_toolbar_by_default",
@@ -146,6 +150,7 @@ export default function VeloChart({
             "hide_side_toolbar"
           ]}
         />
+        </div>
       </div>
     </div>
   );
