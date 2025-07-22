@@ -5,6 +5,7 @@
 2. [Velo Data Pro API](#velo-data-pro-api)
 3. [Dune Analytics API](#dune-analytics-api)
 4. [DefiLlama Pro API](#defillama-pro-api)
+5. [Blofin Integration](#blofin-integration)
 
 ---
 
@@ -569,6 +570,307 @@ DUNE_API_KEY=your_dune_api_key
 6. **Implement proper CORS policies**
 7. **Use API key rotation strategies**
 8. **Monitor API usage and set up alerts**
+
+---
+
+## Blofin Integration
+
+### Overview
+Blofin integration provides real-time cryptocurrency exchange announcements and price pump alerts through their Help Center API (Zendesk) and Market Data API.
+
+### Announcement Center API (Zendesk)
+
+#### Base URL
+```
+https://blofin.zendesk.com/api/v2/help_center
+```
+
+#### Authentication
+No authentication required (public read-only access)
+
+#### Get Section Articles
+```
+GET /en-us/sections/{section_id}/articles.json
+```
+
+**Section IDs:**
+- Spot Listing: `11892707214991`
+- Futures Listing: `6200516139919`
+- Latest News: `[section_id]`
+- Latest Promotions: `[section_id]`
+
+**Response Structure:**
+```json
+{
+  "articles": [
+    {
+      "id": 123456,
+      "title": "BloFin Will List VELVET/USDT for Spot Trading (2025-07-10)",
+      "html_url": "https://support.blofin.com/hc/en-us/articles/...",
+      "created_at": "2025-07-10T12:00:00Z",
+      "updated_at": "2025-07-10T12:00:00Z",
+      "body": "HTML content of the announcement"
+    }
+  ],
+  "page": 1,
+  "per_page": 30,
+  "page_count": 1,
+  "count": 5
+}
+```
+
+### Market Data API
+
+#### Base URL
+```
+https://api.blofin.com/api/v1
+```
+
+#### Get All Tickers
+```
+GET /market/tickers
+```
+
+**Response Structure:**
+```json
+{
+  "code": "0",
+  "msg": "",
+  "data": [
+    {
+      "instId": "BTC-USDT",
+      "last": "98000",
+      "lastSz": "0.001",
+      "askPx": "98001",
+      "askSz": "0.5",
+      "bidPx": "97999",
+      "bidSz": "0.5",
+      "open24h": "96000",
+      "high24h": "98500",
+      "low24h": "95500",
+      "volCcy24h": "1234567890",
+      "vol24h": "12500",
+      "sodUtc0": "97000",
+      "sodUtc8": "97100",
+      "ts": "1642000000000"
+    }
+  ]
+}
+```
+
+### WebSocket API (Real-time Price Updates)
+
+#### Connection
+```
+wss://stream.blofin.com/ws/v1/public
+```
+
+#### Subscribe to Tickers
+```json
+{
+  "op": "subscribe",
+  "args": [
+    {
+      "channel": "tickers",
+      "instId": "BTC-USDT"
+    }
+  ]
+}
+```
+
+### Implementation Strategy
+
+#### 1. Announcement Polling Service
+```javascript
+class BloffinAnnouncementService {
+  private lastSeenIds = new Map<string, Set<number>>();
+  
+  async pollAnnouncements() {
+    const sections = [
+      { id: '11892707214991', name: 'spot_listing' },
+      { id: '6200516139919', name: 'futures_listing' }
+    ];
+    
+    for (const section of sections) {
+      const articles = await this.fetchSectionArticles(section.id);
+      const newArticles = this.filterNewArticles(articles, section.name);
+      
+      for (const article of newArticles) {
+        await this.processAnnouncement(article, section.name);
+      }
+    }
+  }
+  
+  private async fetchSectionArticles(sectionId: string) {
+    const response = await fetch(
+      `https://blofin.zendesk.com/api/v2/help_center/en-us/sections/${sectionId}/articles.json`
+    );
+    return response.json();
+  }
+  
+  private parseAnnouncementTitle(title: string) {
+    // Extract symbol from title like "BloFin Will List XYZ/USDT..."
+    const match = title.match(/\b([A-Z]+)\/([A-Z]+)\b/);
+    if (match) {
+      return {
+        baseAsset: match[1],
+        quoteAsset: match[2],
+        pair: `${match[1]}-${match[2]}`
+      };
+    }
+    return null;
+  }
+}
+```
+
+#### 2. Price Pump Detection
+```javascript
+class PumpAlertService {
+  private priceHistory = new Map<string, Array<{price: number, timestamp: number}>>();
+  private PUMP_THRESHOLD = 5.0; // 5% in 5 minutes
+  private TIME_WINDOW = 5 * 60 * 1000; // 5 minutes
+  
+  async detectPumps(tickers: any[]) {
+    const pumps = [];
+    const now = Date.now();
+    
+    for (const ticker of tickers) {
+      const history = this.priceHistory.get(ticker.instId) || [];
+      history.push({ price: parseFloat(ticker.last), timestamp: now });
+      
+      // Keep only last 5 minutes of data
+      const cutoff = now - this.TIME_WINDOW;
+      const recentHistory = history.filter(h => h.timestamp > cutoff);
+      this.priceHistory.set(ticker.instId, recentHistory);
+      
+      if (recentHistory.length > 1) {
+        const oldestPrice = recentHistory[0].price;
+        const currentPrice = parseFloat(ticker.last);
+        const changePercent = ((currentPrice - oldestPrice) / oldestPrice) * 100;
+        
+        if (changePercent >= this.PUMP_THRESHOLD) {
+          pumps.push({
+            symbol: ticker.instId,
+            changePercent,
+            currentPrice,
+            timeWindow: Math.round((now - recentHistory[0].timestamp) / 60000)
+          });
+        }
+      }
+    }
+    
+    return pumps;
+  }
+}
+```
+
+#### 3. Trading Link Generation
+```javascript
+function generateTradingLink(type: string, pair: string, referralCode: string) {
+  const baseUrl = 'https://blofin.com';
+  const tradingPair = pair.replace('/', '-'); // XYZ/USDT → XYZ-USDT
+  
+  let url = '';
+  if (type === 'spot') {
+    url = `${baseUrl}/spot/${tradingPair}`;
+  } else if (type === 'futures' || type === 'perpetual') {
+    url = `${baseUrl}/futures/${tradingPair}`;
+  }
+  
+  // Add referral tracking
+  if (referralCode) {
+    // For new users, route through invite link
+    // For existing users, append tracking parameters
+    url = appendReferralTracking(url, referralCode);
+  }
+  
+  return url;
+}
+```
+
+### Integration Configuration
+
+```javascript
+// Environment variables
+const BLOFIN_CONFIG = {
+  // API endpoints
+  HELP_CENTER_URL: 'https://blofin.zendesk.com/api/v2/help_center',
+  MARKET_API_URL: 'https://api.blofin.com/api/v1',
+  WEBSOCKET_URL: 'wss://stream.blofin.com/ws/v1/public',
+  
+  // Section IDs
+  SECTIONS: {
+    SPOT_LISTING: '11892707214991',
+    FUTURES_LISTING: '6200516139919',
+    LATEST_NEWS: 'NEWS_SECTION_ID',
+    PROMOTIONS: 'PROMOTIONS_SECTION_ID'
+  },
+  
+  // Polling intervals
+  ANNOUNCEMENT_POLL_INTERVAL: 60000, // 1 minute
+  PRICE_POLL_INTERVAL: 60000, // 1 minute
+  
+  // Alert thresholds
+  PUMP_THRESHOLD_PERCENT: 5.0,
+  PUMP_TIME_WINDOW_MINUTES: 5,
+  
+  // Referral
+  REFERRAL_CODE: 'MilesDeutscher',
+  INVITE_URL: 'https://blofin.com/invite/MilesDeutscher'
+};
+```
+
+### Rate Limits & Best Practices
+
+1. **Announcement API**: 
+   - No official rate limit documented
+   - Recommended: 4 requests/minute (1 per section)
+   - Total daily: ~5,760 requests
+
+2. **Market Data API**:
+   - Public endpoints: No authentication required
+   - Recommended: 1 request/minute for all tickers
+   - Use WebSocket for real-time updates when possible
+
+3. **Best Practices**:
+   - Cache announcement IDs to avoid duplicates
+   - Batch ticker requests (single call for all pairs)
+   - Use exponential backoff for failed requests
+   - Implement circuit breaker for API errors
+   - Store price history efficiently (rolling window)
+
+### Error Handling
+
+```javascript
+class BloffinAPIError extends Error {
+  constructor(
+    public statusCode: number,
+    public endpoint: string,
+    message: string
+  ) {
+    super(message);
+    this.name = 'BloffinAPIError';
+  }
+}
+
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<T> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => 
+        setTimeout(resolve, delay * Math.pow(2, i))
+      );
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+```
 
 ---
 

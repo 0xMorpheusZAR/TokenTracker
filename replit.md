@@ -51,6 +51,7 @@ The application uses a normalized schema with three core entities:
 - **CoinGecko API**: Primary data source for accurate real-time and historical price data
 - **DefiLlama API**: Protocol TVL and revenue data for 1,100+ DeFi protocols
 - **Dune Analytics API**: On-chain data and custom queries for Hyperliquid metrics
+- **Blofin Exchange API**: Real-time announcement feed (spot/futures listings) and price pump alerts with referral integration
 - **API Key Management**: Environment-based configuration for external services
 
 ### UI Components
@@ -191,6 +192,7 @@ Changelog:
 - January 22, 2025: Implemented new coin tracking for All Coins section - Added immediate detection when new tickers appear in news, enhanced coin filter dropdown with new coin count display, visual indicators (🆕 emoji) for new coins, prominent notification banner with purple neon styling, improved manual refresh button visibility with better contrast
 - January 22, 2025: Added clickable source links to news items - Made source badges clickable when link available, added external link icon indicator, applied neon hover effects (emerald glow), added tooltips for link status, maintained styling for sources without links
 - January 22, 2025: Created comprehensive API documentation - Built docs/api/APIDOCS.md with complete documentation for CoinGecko Pro, Velo Data Pro, Dune Analytics, and DefiLlama Pro APIs, updated README.md with enhanced API section linking to documentation, added Velo News API optimal implementation strategy with 10-second refresh rate and BloFin integration
+- January 22, 2025: Integrated Blofin Exchange announcement feed and price pump alerts - Created dedicated README-blofin-integration.md for Blofin team, polls Help Center API (Zendesk) every 60 seconds for new spot/futures listings and promotions, monitors market data for 5% price pumps within 5-minute windows, generates trading links with Miles Deutscher referral tracking, added comprehensive Blofin API documentation to docs/api/APIDOCS.md covering announcement polling, market data monitoring, WebSocket integration, and implementation strategies
 ```
 
 ## User Preferences

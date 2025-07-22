@@ -324,6 +324,7 @@ async getCryptoNews(hours = 24) {
 - **High Resolution**: 1-minute granularity for recent data
 - **Multiple Asset Classes**: Futures, options, and spot markets
 - **Market Caps**: Real-time cryptocurrency market capitalizations
+- **Blofin Integration**: Real-time exchange announcements and price pump alerts
 
 ### TypeScript Implementation
 
@@ -418,6 +419,24 @@ VELO_API_KEY=your_velo_api_key
 ```
 
 For detailed Velo API documentation, see our [Velo Integration Guide](./README-velo-integration.md).
+
+## 🔔 Blofin Integration
+
+The dashboard integrates with Blofin exchange for real-time announcements and price alerts.
+
+### Features
+- **New Listing Alerts**: Spot and futures listing announcements
+- **Price Pump Detection**: 5% surge alerts within 5-minute windows
+- **Promotion Updates**: Trading competitions and special events
+- **Direct Trading Links**: One-click access with referral tracking
+
+### Implementation
+- Polls Blofin's Help Center API every 60 seconds
+- Monitors market data for rapid price movements
+- Integrates seamlessly with Velo News Dashboard
+- Supports Miles Deutscher's referral partnership
+
+For detailed Blofin integration documentation, see [Blofin Integration Guide](./README-blofin-integration.md).
 
 ## 🤝 Contributing
 
