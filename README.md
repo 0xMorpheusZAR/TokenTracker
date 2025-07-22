@@ -49,12 +49,15 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 
 ### 📰 Velo News Dashboard
 - **Ultra-fast 10-second refresh rate** for immediate news discovery
-- **Real-time crypto news** from Velo Data API
+- **Real-time crypto news** from Velo Data API with source attribution
 - **Seamless BloFin integration** - headlines link directly to futures trading
 - **Priority filtering** - High/Normal/Low priority news categorization
 - **Coin-specific filtering** - Filter news by cryptocurrency
 - **Trade buttons** with neon styling for instant BloFin access
 - **Auto-refresh toggle** with visual indicators
+- **New coin detection** - Visual alerts when new tickers appear
+- **Effective pricing** - Shows price at news publication time
+- **Source links** - Clickable source badges to view original announcements
 
 ## 🛠️ Tech Stack
 
@@ -75,13 +78,42 @@ This platform provides institutional-grade analytics for cryptocurrency tokens, 
 - **Session management** with connect-pg-simple
 
 ### External APIs
-- **Velo Data API** for cross-exchange futures, options, spot market data, and real-time news
-- **CoinGecko Pro API** for real-time pricing data
-- **CryptoRank API** for unlock schedule data
-- **Dune Analytics API** for on-chain blockchain metrics and custom queries
-- **DefiLlama API** for DeFi protocol TVL and revenue data
-- **Discord OAuth2** for authentication
+
+#### Data Providers
+1. **[Velo Data Pro API](docs/api/APIDOCS.md#velo-data-pro-api)**
+   - Real-time crypto news with 10-second refresh capability
+   - Cross-exchange futures, options, and spot market data
+   - High-resolution 1-minute interval data
+   - Effective price tracking at news publication time
+   - Optimal for news-driven trading strategies
+
+2. **[CoinGecko Pro API](docs/api/APIDOCS.md#coingecko-pro-api)**  
+   - Comprehensive cryptocurrency market data
+   - 10,000+ cryptocurrencies tracked
+   - Real-time pricing, market caps, and volume
+   - Historical data with customizable intervals
+   - Rate limit: 30 calls/minute
+
+3. **[Dune Analytics API](docs/api/APIDOCS.md#dune-analytics-api)**
+   - On-chain blockchain data queries
+   - Custom SQL queries for complex analytics
+   - Pre-built queries for Pump.fun and Bonk.fun metrics
+   - CSV and JSON response formats
+   - Real-time market share calculations
+
+4. **[DefiLlama Pro API](docs/api/APIDOCS.md#defillama-pro-api)**
+   - DeFi protocol TVL and revenue metrics
+   - 1,100+ protocols tracked
+   - Fee and revenue breakdowns
+   - Historical data aggregation
+   - No authentication required
+
+#### Authentication Services
+- **Discord OAuth2** for user authentication
 - **Whop API** for membership verification
+- **CryptoRank API** for token unlock schedules
+
+📚 **[View Complete API Documentation](docs/api/APIDOCS.md)**
 
 ## 🚀 Getting Started
 
@@ -108,13 +140,15 @@ npm install
 # Database
 DATABASE_URL=postgresql://user:password@host:port/database
 
-# API Keys
-COINGECKO_PRO_API_KEY=your_coingecko_pro_key
-CRYPTORANK_API_KEY=your_cryptorank_key
-VELO_API_KEY=your_velo_api_key
+# Primary Data APIs (Required)
+COINGECKO_PRO_API_KEY=your_coingecko_pro_key  # Real-time price data
+VELO_API_KEY=your_velo_api_key                # News and market data
 
-# Optional APIs
-DUNE_API_KEY=your_dune_key
+# Secondary Data APIs (Optional but Recommended)
+DUNE_API_KEY=your_dune_key                    # On-chain analytics
+CRYPTORANK_API_KEY=your_cryptorank_key        # Token unlock schedules
+
+# Authentication APIs (Optional)
 WHOP_API_KEY=your_whop_key
 DISCORD_CLIENT_ID=your_discord_client_id
 DISCORD_CLIENT_SECRET=your_discord_client_secret
@@ -156,8 +190,15 @@ The application will be available at `http://localhost:5000`
 │   ├── routes.ts         # API route handlers
 │   ├── storage.ts        # Data access layer
 │   └── services/         # External API integrations
+│       ├── coingecko.ts  # CoinGecko Pro API service
+│       ├── velo.ts       # Velo Data API service  
+│       ├── dune.ts       # Dune Analytics service
+│       └── defillama.ts  # DefiLlama API service
 ├── shared/               # Shared types and schemas
 │   └── schema.ts         # Database schema definitions
+├── docs/                 # Documentation
+│   └── api/              # API documentation
+│       └── APIDOCS.md    # Comprehensive API guide
 └── drizzle.config.ts     # Database configuration
 ```
 
@@ -233,14 +274,56 @@ DUNE_API_KEY=pZBvRD0acWVAtWRwnTtOuZgUvuETutIt
 
 ## 🚀 Velo Data API Integration
 
-The dashboard integrates with Velo Data API to provide cross-exchange market data for futures, options, and spot markets.
+The dashboard integrates with Velo Data API to provide cross-exchange market data and real-time crypto news.
 
-### Features
+### News API - Optimal Implementation
+
+#### Features
+- **Ultra-Fast Updates**: 10-second refresh rate for immediate news discovery
+- **Priority System**: High (1), Normal (2), Low (3+) priority classification
+- **Effective Pricing**: Price at the time news was published
+- **Source Attribution**: Direct links to original announcements
+- **Multi-Coin Support**: Track multiple cryptocurrencies per news item
+
+#### Optimal News Pulling Strategy
+```javascript
+// Recommended configuration for fastest news updates
+const newsConfig = {
+  endpoint: 'https://api.velo.xyz/api/n/news',
+  refreshRate: 10000,      // 10 seconds
+  hours: 24,               // 24-hour window
+  cacheByID: true,         // Track by news ID
+  detectNewCoins: true,    // Alert on new tickers
+  linkToBloFin: true       // Route to futures trading
+};
+
+// Implementation example
+async getCryptoNews(hours = 24) {
+  const response = await fetch(
+    `https://api.velo.xyz/api/n/news?hours=${hours}`,
+    { headers: this.getAuthHeaders() }
+  );
+  
+  const data = await response.json();
+  
+  // Process effective prices and links
+  return data.data.map(item => ({
+    ...item,
+    tradeUrl: item.coins[0] 
+      ? `https://blofin.com/futures/${item.coins[0]}-USDT` 
+      : null,
+    priceChange: item.effectivePrice && currentPrice
+      ? ((currentPrice - item.effectivePrice) / item.effectivePrice) * 100
+      : null
+  }));
+}
+```
+
+### Market Data Features
 - **Cross-Exchange Data**: Aggregate data from major exchanges
 - **High Resolution**: 1-minute granularity for recent data
 - **Multiple Asset Classes**: Futures, options, and spot markets
 - **Market Caps**: Real-time cryptocurrency market capitalizations
-- **News Feed**: Crypto news with priority indicators (requires additional permissions)
 
 ### TypeScript Implementation
 
@@ -309,6 +392,12 @@ asyncio.run(stream_news())
 ### API Endpoints
 
 ```javascript
+// Get crypto news (primary endpoint)
+GET /api/velo/news?hours=24
+
+// Get spot prices for news coins
+GET /api/velo/spot-prices
+
 // Get market data
 GET /api/velo/market-data
 

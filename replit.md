@@ -188,6 +188,9 @@ Changelog:
 - July 21, 2025: Built Velo News Dashboard with ultra-fast 10-second refresh rate for real-time crypto news scanning, integrated BloFin futures trading links for each coin, removed price display per user request
 - July 21, 2025: Implemented seamless news link routing to BloFin - All news headlines now link directly to BloFin futures trading page with relevant coin pair, replaced "Read more" links with "Trade on BloFin" for unified trading experience
 - July 21, 2025: Integrated comprehensive effective pricing from Velo API - News dashboard now displays both effective price (at time of news) and live spot price with real-time comparison, added `/api/velo/spot-prices` endpoint for fetching current market prices, shows price change percentage with trend indicators
+- January 22, 2025: Implemented new coin tracking for All Coins section - Added immediate detection when new tickers appear in news, enhanced coin filter dropdown with new coin count display, visual indicators (🆕 emoji) for new coins, prominent notification banner with purple neon styling, improved manual refresh button visibility with better contrast
+- January 22, 2025: Added clickable source links to news items - Made source badges clickable when link available, added external link icon indicator, applied neon hover effects (emerald glow), added tooltips for link status, maintained styling for sources without links
+- January 22, 2025: Created comprehensive API documentation - Built docs/api/APIDOCS.md with complete documentation for CoinGecko Pro, Velo Data Pro, Dune Analytics, and DefiLlama Pro APIs, updated README.md with enhanced API section linking to documentation, added Velo News API optimal implementation strategy with 10-second refresh rate and BloFin integration
 ```
 
 ## User Preferences
