@@ -668,3 +668,18 @@
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Velo Chart Custom Styles */
+.tradingview-velo-wrapper iframe {
+  margin-top: -32px !important;
+}
+
+/* Hide TradingView top toolbar indicators button */
+.tradingview-velo-wrapper [data-name="indicators"] {
+  display: none !important;
+}
+
+/* Custom toolbar styling */
+.tradingview-velo-wrapper .tv-chart-toolbar {
+  background-color: #000000 !important;
+}
