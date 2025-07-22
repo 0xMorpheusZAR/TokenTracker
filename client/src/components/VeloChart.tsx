@@ -68,7 +68,7 @@ export default function VeloChart({
       {/* Trade Button */}
       <div className="p-3 bg-black border-t border-gray-800">
         <a
-          href={`https://www.blofin.com/futures-trade/${symbol.toLowerCase()}usdt`}
+          href={`https://www.blofin.com/trade/${symbol.toUpperCase()}-USDT-SWAP`}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full"
