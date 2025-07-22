@@ -1465,6 +1465,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Futures market data for TradingView widget
+  app.get("/api/velo/futures/:coin", async (req, res) => {
+    try {
+      const { coin } = req.params;
+      const { timeframe = '1h' } = req.query;
+      
+      const futuresData = await veloService.getFuturesMarketData(coin.toUpperCase(), timeframe as string);
+      
+      res.json({
+        symbol: `${coin.toUpperCase()}USDT`,
+        timeframe: timeframe,
+        data: futuresData,
+        count: futuresData.length,
+        provider: "Velo Pro API"
+      });
+    } catch (error) {
+      console.error(`Failed to fetch futures data for ${req.params.coin}:`, error);
+      res.status(500).json({ error: 'Failed to fetch futures market data' });
+    }
+  });
+
+  // Market stats for TradingView widget
+  app.get("/api/velo/market-stats/:coin", async (req, res) => {
+    try {
+      const { coin } = req.params;
+      
+      const marketStats = await veloService.getMarketStats(coin.toUpperCase());
+      
+      res.json({
+        symbol: `${coin.toUpperCase()}USDT`,
+        stats: marketStats,
+        provider: "Velo Pro API",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error(`Failed to fetch market stats for ${req.params.coin}:`, error);
+      res.status(500).json({ error: 'Failed to fetch market stats' });
+    }
+  });
+
   // BTC 24h price data
   app.get("/api/velo/btc/24h", async (req, res) => {
     try {

@@ -5,6 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { 
   Bell, 
   Clock, 
@@ -20,10 +27,12 @@ import {
   Activity,
   Sparkles,
   MessageSquare,
-  Star
+  Star,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import ComprehensiveTradingWidget from '@/components/ComprehensiveTradingWidget';
 
 interface VeloNewsItem {
   id: number;
