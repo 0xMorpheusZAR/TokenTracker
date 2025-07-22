@@ -86,7 +86,7 @@ function TimeAgo({ timestamp }: { timestamp: number }) {
 export default function VeloNewsDashboard() {
   const [selectedCoin, setSelectedCoin] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const autoRefresh = true; // Always enabled
   const [newItemsCount, setNewItemsCount] = useState(0);
   const [newCoins, setNewCoins] = useState<string[]>([]);
   const previousNewsIds = useRef<Set<number>>(new Set());
@@ -96,7 +96,7 @@ export default function VeloNewsDashboard() {
   // Fetch news data with auto-refresh - optimized for fastest possible updates
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
     queryKey: ['/api/velo/news'],
-    refetchInterval: autoRefresh ? 10000 : false, // Refresh every 10 seconds for near real-time updates
+    refetchInterval: autoRefresh ? 5000 : false, // Refresh every 10 seconds for near real-time updates
     staleTime: 0, // Always consider data stale to ensure fresh updates
     refetchOnWindowFocus: true, // Refetch when window regains focus
     refetchOnReconnect: true, // Refetch when reconnecting to network
@@ -262,39 +262,7 @@ export default function VeloNewsDashboard() {
               )}
             </AnimatePresence>
 
-            {/* Auto-refresh toggle */}
-            <Button
-              variant={autoRefresh ? "default" : "outline"}
-              size="sm"
-              onClick={() => setAutoRefresh(!autoRefresh)}
-              className={cn(
-                "transition-all",
-                autoRefresh ? "bg-emerald-600 hover:bg-emerald-700" : ""
-              )}
-            >
-              <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
-              {autoRefresh ? 'Auto-refresh ON (10s)' : 'Auto-refresh OFF'}
-            </Button>
 
-            {/* Manual refresh */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={isLoading}
-              className={cn(
-                "bg-gray-700/80 hover:bg-gray-600 border-gray-500 text-white",
-                "shadow-lg hover:shadow-xl transition-all duration-200",
-                "min-w-[48px] h-[40px] flex items-center justify-center",
-                isLoading && "bg-emerald-600/20 border-emerald-500"
-              )}
-              title="Manual refresh"
-            >
-              <RefreshCw className={cn(
-                "w-5 h-5", 
-                isLoading && "animate-spin text-emerald-400"
-              )} />
-            </Button>
           </div>
         </div>
 
