@@ -45,6 +45,8 @@ interface VeloProduct {
 
 class VeloService {
   private config: VeloConfig;
+  private livePriceCache: Map<string, { price: number; timestamp: number }> = new Map();
+  private cacheExpiry = 60 * 1000; // 60 seconds cache
 
   constructor() {
     this.config = {
@@ -55,6 +57,13 @@ class VeloService {
     if (!this.config.apiKey) {
       console.warn('Velo API key not found. Some features may be limited.');
     }
+
+    // Start background refresh every 2 minutes for all news coins
+    setInterval(() => {
+      this.refreshNewsCoinsInBackground();
+    }, 2 * 60 * 1000); // 2 minutes
+
+    console.log('Velo service initialized with live pricing cache and background refresh');
   }
 
   private getAuthHeaders(): Record<string, string> {
@@ -429,13 +438,53 @@ class VeloService {
     }
   }
 
-  // Live spot prices for specific coins (adapted from working BTC method)
+  // Check if cached price is still valid
+  private isCacheValid(timestamp: number): boolean {
+    return Date.now() - timestamp < this.cacheExpiry;
+  }
+
+  // Get cached price if valid
+  private getCachedPrice(coin: string): number | null {
+    const cached = this.livePriceCache.get(coin);
+    if (cached && this.isCacheValid(cached.timestamp)) {
+      return cached.price;
+    }
+    return null;
+  }
+
+  // Cache live price
+  private cachePrice(coin: string, price: number): void {
+    this.livePriceCache.set(coin, {
+      price: price,
+      timestamp: Date.now()
+    });
+  }
+
+  // Live spot prices for specific coins (optimized with caching)
   async getLiveSpotPrices(coins: string[]): Promise<Record<string, number>> {
     const results: Record<string, number> = {};
+    const coinsToFetch: string[] = [];
     
+    // Check cache first
     for (const coin of coins) {
+      const cachedPrice = this.getCachedPrice(coin);
+      if (cachedPrice !== null) {
+        results[coin] = cachedPrice;
+      } else {
+        coinsToFetch.push(coin);
+      }
+    }
+    
+    if (coinsToFetch.length === 0) {
+      console.log(`All ${coins.length} prices served from cache`);
+      return results;
+    }
+    
+    console.log(`Fetching fresh prices for ${coinsToFetch.length} coins: ${coinsToFetch.join(', ')}`);
+    
+    // Batch fetch prices for coins not in cache
+    for (const coin of coinsToFetch) {
       try {
-        // Use the most reliable exchange (Binance) for live pricing
         const end = Date.now();
         const begin = end - (60 * 60 * 1000); // Last 60 minutes for fresh data
         
@@ -452,12 +501,12 @@ class VeloService {
         const priceData = this.parseMarketDataCSV(csvData);
         
         if (priceData.length > 0) {
-          // Get the most recent price
           const latestPrice = priceData[priceData.length - 1];
           
           if (latestPrice.close_price && latestPrice.close_price > 0) {
             results[coin] = latestPrice.close_price;
-            console.log(`Live price for ${coin}: $${latestPrice.close_price}`);
+            this.cachePrice(coin, latestPrice.close_price);
+            console.log(`Fresh price for ${coin}: $${latestPrice.close_price}`);
           }
         }
       } catch (error) {
@@ -465,8 +514,38 @@ class VeloService {
       }
     }
 
-    console.log(`Final live prices result:`, results);
+    console.log(`Final result: ${Object.keys(results).length} prices (${coins.length - coinsToFetch.length} cached, ${Object.keys(results).length - (coins.length - coinsToFetch.length)} fresh)`);
     return results;
+  }
+
+  // Get all coins mentioned in recent news automatically
+  async getCoinsFromRecentNews(): Promise<string[]> {
+    try {
+      const news = await this.getCryptoNews(24);
+      const allCoins = new Set<string>();
+      
+      news.forEach(item => {
+        item.coins.forEach(coin => allCoins.add(coin));
+      });
+      
+      return Array.from(allCoins);
+    } catch (error) {
+      console.error('Failed to extract coins from news:', error);
+      return [];
+    }
+  }
+
+  // Background refresh of all news-related coin prices
+  async refreshNewsCoinsInBackground(): Promise<void> {
+    try {
+      const newsCoins = await this.getCoinsFromRecentNews();
+      if (newsCoins.length > 0) {
+        console.log(`Background refresh: updating prices for ${newsCoins.length} news coins`);
+        await this.getLiveSpotPrices(newsCoins);
+      }
+    } catch (error) {
+      console.error('Background coin price refresh failed:', error);
+    }
   }
 
   // Multi-asset price data for dashboard charts

@@ -1394,16 +1394,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Crypto news
+  // Crypto news with automatic live pricing for all coins
   app.get("/api/velo/news", async (req, res) => {
     try {
       const { hours = 24 } = req.query;
       const hoursNum = parseInt(hours as string);
       
       const news = await veloService.getCryptoNews(hoursNum);
+      
+      // Extract all unique coins from news items
+      const allCoins = new Set<string>();
+      news.forEach(item => {
+        item.coins.forEach(coin => allCoins.add(coin));
+      });
+      
+      const uniqueCoins = Array.from(allCoins);
+      console.log(`Auto-fetching live prices for ${uniqueCoins.length} coins found in news: ${uniqueCoins.join(', ')}`);
+      
+      // Automatically fetch live prices for all coins mentioned in news
+      let livePrices: Record<string, number> = {};
+      if (uniqueCoins.length > 0) {
+        try {
+          livePrices = await veloService.getLiveSpotPrices(uniqueCoins);
+          console.log(`Successfully cached live prices for ${Object.keys(livePrices).length} coins`);
+        } catch (priceError) {
+          console.error('Failed to fetch live prices for news coins:', priceError);
+        }
+      }
+
+      // Enhance news items with live pricing data
+      const enhancedNews = news.map(item => ({
+        ...item,
+        // Add live pricing for the primary coin if available
+        livePrice: item.coins[0] && livePrices[item.coins[0]] ? livePrices[item.coins[0]] : null,
+        // Keep the original effectivePrice for comparison
+        effectivePrice: item.effectivePrice || (item.coins[0] && livePrices[item.coins[0]] ? livePrices[item.coins[0]] : null)
+      }));
 
       res.json({
-        data: news,
+        data: enhancedNews,
+        livePrices: livePrices, // Include all live prices in response
+        coinsTracked: uniqueCoins,
         timeframe_hours: hoursNum,
         provider: "Velo Pro API"
       });
