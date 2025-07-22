@@ -197,6 +197,8 @@ Changelog:
 - January 22, 2025: Updated effective price refresh rate to 5 seconds (from 60 seconds) for ultra-fast real-time pricing updates in Velo News Dashboard, leveraging Velo Pro API's high rate limits for near-instantaneous price tracking
 - January 22, 2025: Simplified UI by removing redundant trade buttons and links - now uses only TradingView widget's built-in trading interface for cleaner, more professional appearance with all trading functionality contained within the embedded chart
 - January 22, 2025: Enhanced news feed performance and mobile optimization - Removed "Full Chart" link from VeloChart component, implemented smooth scrolling with CSS optimizations to fix lag issues, added comprehensive mobile responsiveness with flexible layouts, responsive text sizes and chart heights (300px on mobile, 400px on desktop), optimized touch scrolling with webkit-overflow-scrolling, reduced animation complexity on mobile devices for better performance
+- January 22, 2025: Removed refresh buttons from UI while maintaining automatic 5-second updates for both news and pricing data, enhanced market statistics styling with Velo-inspired design featuring darker gradients, larger text, uppercase labels, text shadows, and professional layout matching Velo Data's UI/UX
+- January 22, 2025: Updated BTC market cap and FDV display format from billions ($2366.23b) to trillions ($2.37t) for cleaner presentation matching industry standards
 ```
 
 ## User Preferences

@@ -563,7 +563,7 @@ export default function VeloNewsDashboard() {
                                   <div className="flex flex-col">
                                     <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">Marketcap</div>
                                     <div className="market-stat-value text-white font-bold text-lg">
-                                      {item.coins[0] === 'BTC' ? '$2366.23b' : 
+                                      {item.coins[0] === 'BTC' ? '$2.37t' : 
                                        item.coins[0] === 'ETH' ? '$358.42b' :
                                        item.coins[0] === 'SOL' ? '$48.76b' :
                                        item.coins[0] === 'ENA' ? '$1.42b' : '$567M'}
@@ -572,7 +572,7 @@ export default function VeloNewsDashboard() {
                                   <div className="flex flex-col">
                                     <div className="market-stat-label text-gray-400 text-xs font-medium mb-2">FDV</div>
                                     <div className="market-stat-value text-white font-bold text-lg">
-                                      {item.coins[0] === 'BTC' ? '$2366.23b' : 
+                                      {item.coins[0] === 'BTC' ? '$2.37t' : 
                                        item.coins[0] === 'ETH' ? '$358.42b' :
                                        item.coins[0] === 'SOL' ? '$52.34b' :
                                        item.coins[0] === 'ENA' ? '$3.89b' : '$789M'}
