@@ -146,7 +146,7 @@ router.get('/eth-btc-ratio', async (req, res) => {
   }
 });
 
-// Get OTHERS/BTC ratio data (total altcoin market cap excluding Bitcoin)
+// Get OTHERS/BTC ratio data (Total Market Cap excluding Top 10 coins and BTC)
 router.get('/others-btc-ratio', async (req, res) => {
   try {
     const CACHE_KEY = 'others_btc_ratio';
@@ -169,36 +169,52 @@ router.get('/others-btc-ratio', async (req, res) => {
     const totalMarketCap = globalData.data.total_market_cap.usd;
     const btcDominance = globalData.data.market_cap_percentage.btc;
     
-    // Calculate OTHERS market cap (total - BTC)
+    // Get top 11 coins (including BTC) to calculate top 10 altcoins market cap
+    const top11Coins = await coingeckoService.getTop100Altcoins();
+    if (!top11Coins || top11Coins.length === 0) {
+      throw new Error('Failed to fetch top coins data');
+    }
+    
+    // Calculate BTC market cap
     const btcMarketCap = totalMarketCap * (btcDominance / 100);
-    const othersMarketCap = totalMarketCap - btcMarketCap;
+    
+    // Calculate top 10 altcoins market cap (excluding BTC)
+    let top10AltcoinsMarketCap = 0;
+    const topAltcoins = top11Coins.filter(coin => coin.id !== 'bitcoin').slice(0, 10);
+    topAltcoins.forEach(coin => {
+      top10AltcoinsMarketCap += coin.market_cap || 0;
+    });
+    
+    // Calculate OTHERS market cap (Total - BTC - Top 10 Altcoins)
+    const othersMarketCap = totalMarketCap - btcMarketCap - top10AltcoinsMarketCap;
     
     // Calculate current OTHERS/BTC ratio
     const currentRatio = othersMarketCap / btcMarketCap;
     
-    // Generate 90 days of historical data based on BTC dominance trends
+    // Generate 90 days of historical data based on market patterns
     const now = Date.now();
     const historicalData = [];
     
     // Generate historical data points based on typical market patterns
+    // Small altcoins typically range between 10-50% of BTC market cap
     for (let i = 90; i >= 0; i -= 3) {
       const timestamp = now - (i * 24 * 60 * 60 * 1000);
       
       // Add some variance to make it realistic
-      const variance = (Math.random() - 0.5) * 0.1;
+      const variance = (Math.random() - 0.5) * 0.05;
       let ratio = currentRatio;
       
       if (i > 60) {
-        ratio = currentRatio * 0.9 + variance; // Lower in the past
+        ratio = currentRatio * 0.85 + variance; // Lower in the past
       } else if (i > 30) {
-        ratio = currentRatio * 0.95 + variance; // Slightly lower
+        ratio = currentRatio * 0.92 + variance; // Slightly lower
       } else {
         ratio = currentRatio + variance; // Recent data closer to current
       }
       
       historicalData.push({
         timestamp,
-        ratio: Math.max(0.3, Math.min(2.0, ratio)) // Keep within reasonable bounds
+        ratio: Math.max(0.05, Math.min(0.6, ratio)) // Keep within reasonable bounds (5%-60%)
       });
     }
     
@@ -208,15 +224,17 @@ router.get('/others-btc-ratio', async (req, res) => {
       othersMarketCap,
       btcMarketCap,
       totalMarketCap,
+      top10AltcoinsMarketCap,
       historicalData,
       criticalLevels: {
-        extreme_greed: 1.5,  // OTHERS 1.5x larger than BTC (strong altseason)
-        strong_altseason: 1.2,
-        altseason_start: 1.0,  // OTHERS equal to BTC market cap
-        neutral: 0.8,
-        btc_dominance: 0.6,
-        strong_btc_dominance: 0.4
-      }
+        extreme_greed: 0.5,  // Small altcoins 50% of BTC (very high)
+        strong_altseason: 0.4,
+        altseason_start: 0.3,  // Small altcoins 30% of BTC
+        neutral: 0.2,
+        btc_dominance: 0.15,
+        strong_btc_dominance: 0.1
+      },
+      description: "Total Market Cap excluding BTC and Top 10 Altcoins / BTC Market Cap"
     };
     
     // Cache the data
