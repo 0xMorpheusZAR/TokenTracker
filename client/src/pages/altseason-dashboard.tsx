@@ -789,157 +789,44 @@ export default function AltseasonDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-xs text-gray-400 mb-1">Current Ratio</p>
-                          <p className="text-2xl font-bold text-indigo-400">
-                            {othersBtcData?.currentRatio?.toFixed(3) || '0.000'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-400 mb-1">Bitcoin Dominance</p>
-                          <p className="text-lg font-semibold text-orange-400">
-                            {othersBtcData?.btcDominance?.toFixed(1) || '0.0'}%
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-400 mb-1">Market Status</p>
-                          <p className={cn(
-                            "text-lg font-semibold",
-                            othersBtcData?.currentRatio > 1.0 ? "text-green-400" :
-                            othersBtcData?.currentRatio > 0.8 ? "text-yellow-400" :
-                            othersBtcData?.currentRatio > 0.6 ? "text-orange-400" : "text-red-400"
-                          )}>
-                            {othersBtcData?.currentRatio > 1.0 ? "Strong Altseason" :
-                             othersBtcData?.currentRatio > 0.8 ? "Altseason Starting" :
-                             othersBtcData?.currentRatio > 0.6 ? "Neutral" : "BTC Dominant"}
-                          </p>
-                        </div>
+                      <div className="text-center mb-2">
+                        <p className="text-sm text-gray-400">Live data from TradingView</p>
+                        <p className="text-xs text-gray-500">CRYPTOCAP:OTHERS represents total market cap of all cryptocurrencies excluding Bitcoin</p>
                       </div>
                     </div>
                     
-                    <ResponsiveContainer width="100%" height={350}>
-                      <AreaChart data={othersBtcChartData}>
-                        <defs>
-                          <linearGradient id="colorOthersRatio" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                        <XAxis 
-                          dataKey="date" 
-                          stroke="#9CA3AF"
-                          tick={{ fill: '#9CA3AF', fontSize: 12 }}
-                        />
-                        <YAxis 
-                          stroke="#9CA3AF"
-                          tick={{ fill: '#9CA3AF', fontSize: 12 }}
-                          domain={['auto', 'auto']}
-                        />
-                        <RechartsTooltip 
-                          contentStyle={{ 
-                            backgroundColor: '#1F2937', 
-                            border: '1px solid #374151',
-                            borderRadius: '8px'
-                          }}
-                          labelStyle={{ color: '#E5E7EB' }}
-                          itemStyle={{ color: '#E5E7EB' }}
-                        />
-                        
-                        {/* Critical Level Lines */}
-                        <ReferenceLine 
-                          y={1.2} 
-                          stroke="#10B981" 
-                          strokeDasharray="5 5"
-                          label={{ 
-                            value: "Extreme Altseason (1.2)",
-                            position: "right",
-                            style: { fill: "#10B981", fontSize: 12 }
-                          }}
-                        />
-                        <ReferenceLine 
-                          y={1.0} 
-                          stroke="#F59E0B" 
-                          strokeDasharray="5 5"
-                          label={{ 
-                            value: "Strong Altseason (1.0)",
-                            position: "right",
-                            style: { fill: "#F59E0B", fontSize: 12 }
-                          }}
-                        />
-                        <ReferenceLine 
-                          y={0.8} 
-                          stroke="#6366F1" 
-                          strokeDasharray="5 5"
-                          label={{ 
-                            value: "Altseason Start (0.8)",
-                            position: "right",
-                            style: { fill: "#6366F1", fontSize: 12 }
-                          }}
-                        />
-                        <ReferenceLine 
-                          y={0.6} 
-                          stroke="#EF4444" 
-                          strokeDasharray="5 5"
-                          label={{ 
-                            value: "Neutral (0.6)",
-                            position: "right",
-                            style: { fill: "#EF4444", fontSize: 12 }
-                          }}
-                        />
-                        
-                        {/* Add BTC Dominance line */}
-                        <ReferenceLine 
-                          y={0.4} 
-                          stroke="#DC2626" 
-                          strokeDasharray="5 5"
-                          label={{ 
-                            value: "BTC Dominance (0.4)",
-                            position: "right",
-                            style: { fill: "#DC2626", fontSize: 12 }
-                          }}
-                        />
-                        
-                        {/* Current Ratio Indicator */}
-                        <ReferenceLine 
-                          y={othersBtcData?.currentRatio || 0.7}
-                          stroke="#8B5CF6"
-                          strokeDasharray="5 5"
-                          strokeWidth={2}
-                          label={{
-                            value: `Current: ${(othersBtcData?.currentRatio || 0.7).toFixed(3)}`,
-                            position: "left",
-                            style: { fill: "#8B5CF6", fontSize: 12, fontWeight: 600 }
-                          }}
-                        />
-                        
-                        <Area 
-                          type="monotone" 
-                          dataKey="ratio" 
-                          stroke="#8B5CF6"
-                          fillOpacity={1}
-                          fill="url(#colorOthersRatio)"
-                          strokeWidth={2}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="ma7" 
-                          stroke="#10B981"
-                          strokeWidth={1}
-                          dot={false}
-                          name="7D MA"
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="ma30" 
-                          stroke="#F59E0B"
-                          strokeWidth={1}
-                          dot={false}
-                          name="30D MA"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    {/* TradingView Widget for OTHERS/BTC */}
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                      <iframe
+                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Afalse%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3AOTHERS%2FCRYPTOCAP%3ABTC%22%2C%22studies%22%3A%5B%5D%2C%22container_id%22%3A%22tradingview_others_btc%22%7D`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          border: "none",
+                        }}
+                        allowFullScreen
+                      />
+                    </div>
+                    
+                    {/* Add critical levels legend */}
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <span className="text-gray-400">BTC Dominant (&lt;0.10)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
+                        <span className="text-gray-400">Neutral (0.10-0.13)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                        <span className="text-gray-400">Alt Season (0.13-0.17)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <span className="text-gray-400">Strong Alts (&gt;0.17)</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
