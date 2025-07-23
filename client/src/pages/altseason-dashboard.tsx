@@ -792,12 +792,30 @@ export default function AltseasonDashboard() {
           <TabsContent value="analysis" className="mt-6">
             <div className="space-y-6">
               {/* Top Altcoins Performance */}
-              <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-yellow-600 transition-all">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between text-white">
+              <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-yellow-600/30 hover:border-yellow-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
+                {/* Premium background effects */}
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/10 via-purple-600/10 to-pink-600/10"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/20 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-purple-500/20 via-transparent to-transparent"></div>
+                
+                <CardHeader className="relative z-10">
+                  <div className="absolute -top-10 -left-10 w-40 h-40 bg-yellow-500/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl"></div>
+                  
+                  <CardTitle className="flex items-center justify-between text-white relative z-10">
                     <span className="flex items-center">
-                      <Rocket className="mr-2 text-yellow-400" />
-                      <span className="text-sm sm:text-base">Top Altcoins vs Bitcoin Performance</span>
+                      <div className="relative mr-3">
+                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 blur-xl opacity-70"></div>
+                        <div className="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 p-2 rounded-lg border border-yellow-500/30">
+                          <Rocket className="text-yellow-400 w-6 h-6" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent">
+                          Top Altcoins vs Bitcoin
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-0.5">Performance Analysis</p>
+                      </div>
                     </span>
                     <div className="flex gap-2">
                       {['7d', '30d', '90d'].map(tf => (
@@ -807,119 +825,173 @@ export default function AltseasonDashboard() {
                           size="sm"
                           onClick={() => setSelectedTimeframe(tf)}
                           className={cn(
-                            "font-bold px-4 py-2 transition-all duration-300",
+                            "font-bold px-5 py-2.5 transition-all duration-300 relative overflow-hidden group",
                             selectedTimeframe === tf 
-                              ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/25 text-white" 
-                              : "bg-gray-700/50 border-gray-600 hover:bg-gray-700 hover:border-purple-500 text-gray-100"
+                              ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-500 hover:from-yellow-600 hover:via-orange-600 hover:to-yellow-600 shadow-lg shadow-yellow-500/30 text-white border-0 scale-105" 
+                              : "bg-gray-800/80 backdrop-blur-sm border-gray-600/50 hover:bg-gray-700/80 hover:border-yellow-500/50 text-gray-200"
                           )}
-                          style={{ color: selectedTimeframe === tf ? '#ffffff' : '#f3f4f6' }}
                         >
-                          <span className="font-bold">{tf.toUpperCase()}</span>
+                          <span className="relative z-10 font-bold tracking-wide">{tf.toUpperCase()}</span>
+                          {selectedTimeframe === tf && (
+                            <>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                              <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-orange-600/20 blur-md"></div>
+                            </>
+                          )}
                         </Button>
                       ))}
                     </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <ScrollArea className="h-[400px]">
-                    <div className="space-y-3">
+                <CardContent className="relative z-10">
+                  <ScrollArea className="h-[500px] pr-2">
+                    <div className="space-y-4 p-1">
                       {topPerformers.map((coin: any, index: number) => (
                         <motion.div
                           key={coin.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ duration: 0.4, delay: index * 0.05, type: "spring", stiffness: 100 }}
                           className={cn(
-                            "p-4 rounded-xl transition-all duration-300 cursor-pointer",
-                            "bg-gradient-to-br from-gray-800/50 to-gray-900/50",
-                            "border border-gray-700/50 hover:border-purple-500/50",
-                            "hover:shadow-xl hover:shadow-purple-500/10",
-                            coin.performanceVsBtc[selectedTimeframe] > 20 && "ring-2 ring-green-500/30 bg-gradient-to-br from-green-900/20 to-gray-900/50"
+                            "relative p-5 rounded-2xl transition-all duration-500 cursor-pointer group",
+                            "bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90",
+                            "border border-gray-700/30 hover:border-yellow-500/50",
+                            "hover:shadow-2xl hover:shadow-yellow-500/20 hover:scale-[1.02]",
+                            "backdrop-blur-xl overflow-hidden",
+                            coin.performanceVsBtc[selectedTimeframe] > 20 && "ring-2 ring-green-500/40 border-green-500/30"
                           )}
                         >
-                          <div className="flex items-center justify-between">
+                          {/* Premium gradient background for outperformers */}
+                          {coin.performanceVsBtc[selectedTimeframe] > 20 && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent rounded-2xl"></div>
+                          )}
+                          
+                          {/* Animated background pattern */}
+                          <div className="absolute inset-0 opacity-5">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,white_0,transparent_50%)]"></div>
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,white_0,transparent_50%)]"></div>
+                          </div>
+                          
+                          <div className="relative z-10 flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                               <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50"></div>
-                                <img 
-                                  src={coin.image} 
-                                  alt={coin.name} 
-                                  className="w-12 h-12 rounded-full relative z-10 ring-2 ring-gray-700"
-                                />
-                                <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full px-2 py-0.5 text-xs font-bold shadow-lg z-20">
+                                {/* Premium coin image with effects */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 p-1 rounded-full">
+                                  <img 
+                                    src={coin.image} 
+                                    alt={coin.name} 
+                                    className="w-14 h-14 rounded-full relative z-10 border-2 border-gray-700 group-hover:border-yellow-500/50 transition-colors"
+                                  />
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-full px-2.5 py-1 text-xs font-bold shadow-lg z-20 border border-gray-800">
                                   #{index + 1}
                                 </div>
                               </div>
                               <div>
-                                <div className="font-semibold flex items-center text-white">
+                                <div className="font-bold text-lg text-white flex items-center">
                                   {coin.name} 
-                                  <span className="text-gray-400 text-sm ml-2">
+                                  <span className="text-gray-400 text-sm ml-2 font-medium bg-gray-800/50 px-2 py-0.5 rounded-md">
                                     {coin.symbol.toUpperCase()}
                                   </span>
                                 </div>
-                                <div className="text-sm text-gray-400">
+                                <div className="text-sm text-gray-400 font-medium">
                                   ${coin.currentPrice.toFixed(coin.currentPrice < 1 ? 6 : 2)}
                                 </div>
                               </div>
                             </div>
                             <div className="text-right">
                               <div className={cn(
-                                "text-xl font-bold flex items-center justify-end",
+                                "text-2xl font-bold flex items-center justify-end",
                                 coin.performanceVsBtc[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
                               )}>
                                 {coin.performanceVsBtc[selectedTimeframe] > 0 ? 
-                                  <TrendingUp className="w-5 h-5 mr-1" /> : 
-                                  <TrendingDown className="w-5 h-5 mr-1" />
+                                  <TrendingUp className="w-6 h-6 mr-1.5" /> : 
+                                  <TrendingDown className="w-6 h-6 mr-1.5" />
                                 }
-                                {formatPercentage(coin.performanceVsBtc[selectedTimeframe])}
+                                <span className="font-mono">{formatPercentage(coin.performanceVsBtc[selectedTimeframe])}</span>
                               </div>
-                              <div className="text-xs text-gray-400 font-medium mt-1">
-                                Outperformance vs BTC
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Performance Metrics */}
-                          <div className="mt-4 bg-gray-800/50 rounded-lg p-3">
-                            <div className="flex justify-between items-center">
-                              <span className="text-xs text-gray-500">{selectedTimeframe.toUpperCase()} Price Change</span>
-                              <div className={cn(
-                                "text-sm font-bold",
-                                coin.priceChange[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
-                              )}>
-                                {formatPercentage(coin.priceChange[selectedTimeframe])}
+                              <div className="text-xs text-gray-500 font-semibold mt-1 uppercase tracking-wide">
+                                vs Bitcoin
                               </div>
                             </div>
                           </div>
                           
-                          {/* Market Stats */}
-                          <div className="mt-3 flex justify-between text-xs">
-                            <div>
-                              <span className="text-gray-500">Market Cap</span>
-                              <div className="font-medium text-gray-300">{formatNumber(coin.marketCap)}</div>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-gray-500">24h Volume</span>
-                              <div className="font-medium text-gray-300">{formatNumber(coin.volume24h)}</div>
-                            </div>
-                          </div>
-                          
-                          {/* Trading Actions */}
-                          <div className="mt-3 space-y-2">
-                            {/* Trade Now Button - BloFin */}
-                            <a
-                              href={`https://blofin.com/futures/${coin.symbol.toUpperCase()}-USDT`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block w-full"
-                            >
-                              <button className="w-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-[0_0_20px_rgba(251,146,60,0.6)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                                <span className="text-sm tracking-wide font-bold relative z-10 flex items-center justify-center">
-                                  🚀 TRADE {coin.symbol.toUpperCase()} ON BLOFIN
+                          {/* Performance Metrics - Premium Design */}
+                          <div className="mt-5 relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl blur-xl"></div>
+                            <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
+                              <div className="flex justify-between items-center mb-3">
+                                <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                                  {selectedTimeframe} Performance
                                 </span>
-                              </button>
-                            </a>
+                                <div className={cn(
+                                  "text-lg font-bold font-mono flex items-center",
+                                  coin.priceChange[selectedTimeframe] > 0 ? "text-green-400" : "text-red-400"
+                                )}>
+                                  {coin.priceChange[selectedTimeframe] > 0 ? "+" : ""}
+                                  {formatPercentage(coin.priceChange[selectedTimeframe])}
+                                </div>
+                              </div>
+                              
+                              {/* Progress Bar */}
+                              <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                                <div 
+                                  className={cn(
+                                    "h-full rounded-full transition-all duration-1000 ease-out",
+                                    coin.priceChange[selectedTimeframe] > 0 
+                                      ? "bg-gradient-to-r from-green-500 to-emerald-400" 
+                                      : "bg-gradient-to-r from-red-500 to-pink-400"
+                                  )}
+                                  style={{ 
+                                    width: `${Math.min(Math.abs(coin.priceChange[selectedTimeframe]), 100)}%` 
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Market Stats - Enhanced Grid */}
+                          <div className="mt-4 grid grid-cols-2 gap-3">
+                            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs text-gray-400 font-medium">Market Cap</span>
+                                <DollarSign className="w-3 h-3 text-yellow-500/50" />
+                              </div>
+                              <div className="font-bold text-white text-sm">{formatNumber(coin.marketCap)}</div>
+                            </div>
+                            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs text-gray-400 font-medium">24h Volume</span>
+                                <Activity className="w-3 h-3 text-purple-500/50" />
+                              </div>
+                              <div className="font-bold text-white text-sm">{formatNumber(coin.volume24h)}</div>
+                            </div>
+                          </div>
+                          
+                          {/* Trading Actions - Premium Design */}
+                          <div className="mt-5 space-y-3">
+                            {/* Trade Now Button - BloFin */}
+                            <div className="relative group">
+                              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                              <a
+                                href={`https://blofin.com/futures/${coin.symbol.toUpperCase()}-USDT`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="relative block w-full"
+                              >
+                                <button className="w-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 hover:from-orange-700 hover:via-amber-700 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden group">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"></div>
+                                  <span className="text-sm tracking-wide font-bold relative z-10 flex items-center justify-center">
+                                    <div className="relative">
+                                      <Rocket className="w-5 h-5 mr-2" />
+                                      <div className="absolute inset-0 bg-white blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                                    </div>
+                                    TRADE {coin.symbol.toUpperCase()} ON BLOFIN
+                                  </span>
+                                </button>
+                              </a>
+                            </div>
                             
                             {/* Chart Analysis Button - TradingView */}
                             <Dialog 
@@ -928,26 +1000,29 @@ export default function AltseasonDashboard() {
                               onOpenChange={(open) => setChartModalOpen({...chartModalOpen, [coin.id]: open})}
                             >
                               <DialogTrigger asChild>
-                                <button 
-                                  onClick={async () => {
-                                    // Fetch correct trading pair info for this coin
-                                    try {
-                                      const res = await fetch(`/api/altseason/coin-trading-info/${coin.id}`);
-                                      const tradingInfo = await res.json();
-                                      setTradingPairs(prev => ({...prev, [coin.id]: tradingInfo}));
-                                    } catch (error) {
-                                      console.error('Failed to fetch trading info:', error);
-                                    }
-                                    setChartModalOpen({...chartModalOpen, [coin.id]: true});
-                                  }}
-                                  className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
-                                >
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                                  <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
-                                    <BarChart3 className="w-4 h-4 mr-2" />
-                                    TRADINGVIEW CHART
-                                  </span>
-                                </button>
+                                <div className="relative group">
+                                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                                  <button 
+                                    onClick={async () => {
+                                      // Fetch correct trading pair info for this coin
+                                      try {
+                                        const res = await fetch(`/api/altseason/coin-trading-info/${coin.id}`);
+                                        const tradingInfo = await res.json();
+                                        setTradingPairs(prev => ({...prev, [coin.id]: tradingInfo}));
+                                      } catch (error) {
+                                        console.error('Failed to fetch trading info:', error);
+                                      }
+                                      setChartModalOpen({...chartModalOpen, [coin.id]: true});
+                                    }}
+                                    className="relative w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-700 hover:from-blue-800 hover:via-indigo-800 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] overflow-hidden group"
+                                  >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"></div>
+                                    <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
+                                      <BarChart3 className="w-5 h-5 mr-2" />
+                                      TRADINGVIEW CHART ANALYSIS
+                                    </span>
+                                  </button>
+                                </div>
                               </DialogTrigger>
                               <DialogContent className="max-w-4xl w-full bg-black border-gray-800">
                                 <DialogHeader>
@@ -996,11 +1071,23 @@ export default function AltseasonDashboard() {
                             </Dialog>
                           </div>
                           
-                          {/* Outperformance Indicator */}
+                          {/* Outperformance Indicator - Premium Badge */}
                           {coin.performanceVsBtc[selectedTimeframe] > 20 && (
-                            <div className="mt-3 bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-1.5 flex items-center justify-center">
-                              <Star className="w-4 h-4 text-green-400 mr-1" />
-                              <span className="text-xs font-medium text-green-400">Strong Outperformer</span>
+                            <div className="mt-5 relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl blur-xl"></div>
+                              <div className="relative bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-green-500/10 backdrop-blur-sm border border-green-500/40 rounded-xl px-4 py-3 flex items-center justify-center shadow-lg shadow-green-500/10">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-400/10 to-transparent animate-pulse"></div>
+                                <Star className="w-5 h-5 text-green-400 mr-2 relative z-10" />
+                                <span className="text-sm font-bold text-green-400 uppercase tracking-wide relative z-10">
+                                  Strong Outperformer
+                                </span>
+                                <div className="absolute -top-1 -right-1">
+                                  <span className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </motion.div>
