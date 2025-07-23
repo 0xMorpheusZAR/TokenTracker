@@ -773,7 +773,7 @@ export default function AltseasonDashboard() {
                     <CardTitle className="flex items-center justify-between text-white">
                       <span className="flex items-center">
                         <Activity className="mr-2 text-indigo-400" />
-                        <span className="text-sm sm:text-base">OTHERS/BTC Ratio - All Altcoins vs Bitcoin</span>
+                        <span className="text-sm sm:text-base">OTHERS/BTC Ratio - Key Alt Season Indicator</span>
                       </span>
                       <TooltipProvider>
                         <Tooltip>
@@ -788,12 +788,6 @@ export default function AltseasonDashboard() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="mb-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                      <div className="text-center mb-2">
-                        <p className="text-sm text-gray-400">Live data from TradingView</p>
-                        <p className="text-xs text-gray-500">CRYPTOCAP:OTHERS represents total market cap of all cryptocurrencies excluding Bitcoin</p>
-                      </div>
-                    </div>
                     
                     {/* TradingView Widget for OTHERS/BTC */}
                     <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
