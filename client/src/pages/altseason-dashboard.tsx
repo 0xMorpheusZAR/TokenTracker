@@ -773,7 +773,7 @@ export default function AltseasonDashboard() {
                     <CardTitle className="flex items-center justify-between text-white">
                       <span className="flex items-center">
                         <Activity className="mr-2 text-indigo-400" />
-                        <span className="text-sm sm:text-base">OTHERS/BTC Ratio - Market Cap excluding Top 10 & BTC / BTC</span>
+                        <span className="text-sm sm:text-base">OTHERS/BTC Ratio - All Altcoins vs Bitcoin</span>
                       </span>
                       <TooltipProvider>
                         <Tooltip>
@@ -781,7 +781,7 @@ export default function AltseasonDashboard() {
                             <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
                           </TooltipTrigger>
                           <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
-                            <p>The OTHERS/BTC ratio compares the total market cap of all cryptocurrencies excluding the top 10 altcoins and Bitcoin, divided by Bitcoin's market cap. This represents the smaller altcoin market (rank 11+) relative to Bitcoin.</p>
+                            <p>The OTHERS/BTC ratio compares the total market cap of all altcoins (excluding Bitcoin) to Bitcoin's market cap. When this ratio rises above 1.0, it means altcoins collectively have more market cap than Bitcoin.</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -806,13 +806,13 @@ export default function AltseasonDashboard() {
                           <p className="text-xs text-gray-400 mb-1">Market Status</p>
                           <p className={cn(
                             "text-lg font-semibold",
-                            othersBtcData?.currentRatio > 0.4 ? "text-green-400" :
-                            othersBtcData?.currentRatio > 0.3 ? "text-yellow-400" :
-                            othersBtcData?.currentRatio > 0.2 ? "text-orange-400" : "text-red-400"
+                            othersBtcData?.currentRatio > 1.0 ? "text-green-400" :
+                            othersBtcData?.currentRatio > 0.8 ? "text-yellow-400" :
+                            othersBtcData?.currentRatio > 0.6 ? "text-orange-400" : "text-red-400"
                           )}>
-                            {othersBtcData?.currentRatio > 0.4 ? "Small Cap Season" :
-                             othersBtcData?.currentRatio > 0.3 ? "Altseason Starting" :
-                             othersBtcData?.currentRatio > 0.2 ? "Neutral" : "BTC Dominant"}
+                            {othersBtcData?.currentRatio > 1.0 ? "Strong Altseason" :
+                             othersBtcData?.currentRatio > 0.8 ? "Altseason Starting" :
+                             othersBtcData?.currentRatio > 0.6 ? "Neutral" : "BTC Dominant"}
                           </p>
                         </div>
                       </div>
@@ -849,54 +849,66 @@ export default function AltseasonDashboard() {
                         
                         {/* Critical Level Lines */}
                         <ReferenceLine 
-                          y={0.5} 
+                          y={1.2} 
                           stroke="#10B981" 
                           strokeDasharray="5 5"
                           label={{ 
-                            value: "Extreme Small Cap Season (0.5)",
+                            value: "Extreme Altseason (1.2)",
                             position: "right",
                             style: { fill: "#10B981", fontSize: 12 }
                           }}
                         />
                         <ReferenceLine 
-                          y={0.4} 
+                          y={1.0} 
                           stroke="#F59E0B" 
                           strokeDasharray="5 5"
                           label={{ 
-                            value: "Strong Altseason (0.4)",
+                            value: "Strong Altseason (1.0)",
                             position: "right",
                             style: { fill: "#F59E0B", fontSize: 12 }
                           }}
                         />
                         <ReferenceLine 
-                          y={0.3} 
+                          y={0.8} 
                           stroke="#6366F1" 
                           strokeDasharray="5 5"
                           label={{ 
-                            value: "Altseason Start (0.3)",
+                            value: "Altseason Start (0.8)",
                             position: "right",
                             style: { fill: "#6366F1", fontSize: 12 }
                           }}
                         />
                         <ReferenceLine 
-                          y={0.2} 
+                          y={0.6} 
                           stroke="#EF4444" 
                           strokeDasharray="5 5"
                           label={{ 
-                            value: "Neutral (0.2)",
+                            value: "Neutral (0.6)",
                             position: "right",
                             style: { fill: "#EF4444", fontSize: 12 }
                           }}
                         />
                         
+                        {/* Add BTC Dominance line */}
+                        <ReferenceLine 
+                          y={0.4} 
+                          stroke="#DC2626" 
+                          strokeDasharray="5 5"
+                          label={{ 
+                            value: "BTC Dominance (0.4)",
+                            position: "right",
+                            style: { fill: "#DC2626", fontSize: 12 }
+                          }}
+                        />
+                        
                         {/* Current Ratio Indicator */}
                         <ReferenceLine 
-                          y={othersBtcData?.currentRatio || 0.25}
+                          y={othersBtcData?.currentRatio || 0.7}
                           stroke="#8B5CF6"
                           strokeDasharray="5 5"
                           strokeWidth={2}
                           label={{
-                            value: `Current: ${(othersBtcData?.currentRatio || 0.25).toFixed(3)}`,
+                            value: `Current: ${(othersBtcData?.currentRatio || 0.7).toFixed(3)}`,
                             position: "left",
                             style: { fill: "#8B5CF6", fontSize: 12, fontWeight: 600 }
                           }}

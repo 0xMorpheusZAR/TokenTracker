@@ -1,0 +1,74 @@
+# others_btc_chart.py
+import os, time, json, requests, pandas as pd
+from pathlib import Path
+import matplotlib.pyplot as plt      # static
+# import plotly.express as px        # uncomment for interactive
+
+API_KEY = os.getenv("COINGECKO_KEY")           # set this in Replit secrets!
+BASE    = "https://pro-api.coingecko.com/api/v3"
+HEADERS = {"x-cg-pro-api-key": API_KEY}
+
+# ---------- helpers ----------
+def cg(endpoint, params=None):
+    """Light wrapper around CoinGecko GET"""
+    url = f"{BASE}{endpoint}"
+    r   = requests.get(url, headers=HEADERS, params=params or {})
+    r.raise_for_status()
+    return r.json()
+
+def series_coin_mcap(coin_id: str, days=365):
+    """Return pd.Series of market‑cap for a coin (USD)"""
+    path   = f"/coins/{coin_id}/market_chart"
+    params = {"vs_currency": "usd", "days": days, "interval": "daily"}
+    data   = cg(path, params)["market_caps"]
+    return pd.Series(
+        {pd.to_datetime(ts, unit="ms"): cap for ts, cap in data},
+        name=coin_id.upper()
+    )
+
+def series_global_mcap(days=365):
+    """Return pd.Series of global market‑cap (USD)"""
+    path   = "/global/market_cap_chart"
+    params = {"vs_currency": "usd", "days": days}
+    data   = cg(path, params)["market_cap_chart"]
+    return pd.Series(
+        {pd.to_datetime(ts, unit="ms"): cap for ts, cap in data},
+        name="TOTAL"
+    )
+
+# ---------- main ----------
+def build_others_btc(days=365, big_caps=("bitcoin", "ethereum"),
+                     interactive=False, outfile="others_btc.png"):
+    cache = Path(f".cgcache_{days}d.json")
+    if cache.exists() and time.time() - cache.stat().st_mtime < 900:  # 15 min
+        df = pd.read_json(cache, convert_dates=["date"]).set_index("date")
+    else:
+        total = series_global_mcap(days)
+        caps  = {c: series_coin_mcap(c, days) for c in big_caps}
+        df    = pd.concat([total, *caps.values()], axis=1).dropna()
+        df["OTHERS"] = df["TOTAL"] - df[[s.name for s in caps.values()]].sum(axis=1)
+        df["BTC_CAP"] = df["BITCOIN"]
+        df["OTHERS_BTC"] = df["OTHERS"] / df["BTC_CAP"]
+        df.to_json(cache, orient="table", index=True)
+
+    # ---------- plot ----------
+    if interactive:
+        import plotly.express as px
+        fig = px.line(df, y="OTHERS_BTC", title="OTHERS / BTC Market‑Cap Ratio")
+        fig.write_html(outfile.replace(".png", ".html"))
+    else:
+        plt.figure(figsize=(10, 5))
+        plt.plot(df.index, df["OTHERS_BTC"], linewidth=2)
+        plt.title("OTHERS / BTC Market‑Cap Ratio")
+        plt.ylabel("Ratio")
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(outfile, dpi=150)
+        plt.close()
+
+    return outfile
+
+if __name__ == "__main__":
+    print("Generating OTHERS/BTC chart…")
+    where = build_others_btc(days=365*3, interactive=False)
+    print(f"Chart saved to {where}")

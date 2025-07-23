@@ -185,8 +185,8 @@ router.get('/others-btc-ratio', async (req, res) => {
       top10AltcoinsMarketCap += coin.market_cap || 0;
     });
     
-    // Calculate OTHERS market cap (Total - BTC - Top 10 Altcoins)
-    const othersMarketCap = totalMarketCap - btcMarketCap - top10AltcoinsMarketCap;
+    // Calculate OTHERS market cap (Total Market Cap excluding Bitcoin = All Altcoins)
+    const othersMarketCap = totalMarketCap - btcMarketCap;
     
     // Calculate current OTHERS/BTC ratio
     const currentRatio = othersMarketCap / btcMarketCap;
@@ -196,25 +196,25 @@ router.get('/others-btc-ratio', async (req, res) => {
     const historicalData = [];
     
     // Generate historical data points based on typical market patterns
-    // Small altcoins typically range between 10-50% of BTC market cap
+    // All altcoins typically range between 40-100% of BTC market cap
     for (let i = 90; i >= 0; i -= 3) {
       const timestamp = now - (i * 24 * 60 * 60 * 1000);
       
       // Add some variance to make it realistic
-      const variance = (Math.random() - 0.5) * 0.05;
+      const variance = (Math.random() - 0.5) * 0.1;
       let ratio = currentRatio;
       
       if (i > 60) {
-        ratio = currentRatio * 0.85 + variance; // Lower in the past
+        ratio = currentRatio * 0.9 + variance; // Lower in the past
       } else if (i > 30) {
-        ratio = currentRatio * 0.92 + variance; // Slightly lower
+        ratio = currentRatio * 0.95 + variance; // Slightly lower
       } else {
         ratio = currentRatio + variance; // Recent data closer to current
       }
       
       historicalData.push({
         timestamp,
-        ratio: Math.max(0.05, Math.min(0.6, ratio)) // Keep within reasonable bounds (5%-60%)
+        ratio: Math.max(0.3, Math.min(1.5, ratio)) // Keep within reasonable bounds (30%-150%)
       });
     }
     
@@ -224,17 +224,16 @@ router.get('/others-btc-ratio', async (req, res) => {
       othersMarketCap,
       btcMarketCap,
       totalMarketCap,
-      top10AltcoinsMarketCap,
       historicalData,
       criticalLevels: {
-        extreme_greed: 0.5,  // Small altcoins 50% of BTC (very high)
-        strong_altseason: 0.4,
-        altseason_start: 0.3,  // Small altcoins 30% of BTC
-        neutral: 0.2,
-        btc_dominance: 0.15,
-        strong_btc_dominance: 0.1
+        extreme_greed: 1.2,  // Altcoins 120% of BTC (extreme altseason)
+        strong_altseason: 1.0,  // Altcoins equal to BTC market cap
+        altseason_start: 0.8,  // Altcoins 80% of BTC
+        neutral: 0.6,
+        btc_dominance: 0.4,
+        strong_btc_dominance: 0.3
       },
-      description: "Total Market Cap excluding BTC and Top 10 Altcoins / BTC Market Cap"
+      description: "OTHERS/BTC = Total Altcoin Market Cap / Bitcoin Market Cap"
     };
     
     // Cache the data
