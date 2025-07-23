@@ -239,7 +239,7 @@ export default function VeloNewsDashboard() {
           <div>
             <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <Activity className="w-8 md:w-10 h-8 md:h-10 mr-2 md:mr-3 text-emerald-400" />
-              Velo News Feed
+              Alpha News Terminal
             </h1>
             <p className="text-gray-400">Live cryptocurrency news updates from Velo Data API</p>
           </div>
