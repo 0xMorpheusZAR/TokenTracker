@@ -864,11 +864,12 @@ export default function AltseasonDashboard() {
                                   <TradingViewWidget
                                     symbol={
                                       // Handle special cases for stablecoins
-                                      coin.symbol.toUpperCase() === 'USDT' ? 'BINANCE:USDTUSD' :
-                                      coin.symbol.toUpperCase() === 'USDC' ? 'BINANCE:USDCUSDT' :
-                                      coin.symbol.toUpperCase() === 'DAI' ? 'BINANCE:DAIUSDT' :
-                                      coin.symbol.toUpperCase() === 'LETH' ? 'BINANCE:STETHUSDT' :  // Lido Staked ETH
-                                      `BINANCE:${coin.symbol.toUpperCase()}USDT`
+                                      coin.symbol.toUpperCase() === 'USDT' ? 'USDTUSD' :
+                                      coin.symbol.toUpperCase() === 'USDC' ? 'USDCUSDT' :
+                                      coin.symbol.toUpperCase() === 'DAI' ? 'DAIUSDT' :
+                                      coin.symbol.toUpperCase() === 'LETH' ? 'STETHUSDT' :  // Lido Staked ETH
+                                      coin.symbol.toUpperCase() === 'STETH' ? 'STETHUSDT' :  // Staked ETH
+                                      `${coin.symbol.toUpperCase()}USDT`
                                     }
                                     interval="240"
                                     theme="dark"
