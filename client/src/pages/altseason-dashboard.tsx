@@ -171,7 +171,7 @@ export default function AltseasonDashboard() {
   // Fetch altseason metrics with enhanced error handling
   const { data: metrics, isLoading: metricsLoading, error: metricsError } = useQuery({
     queryKey: ['/api/altseason/metrics'],
-    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
+    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -179,19 +179,19 @@ export default function AltseasonDashboard() {
   // Fetch ETH/BTC ratio data
   const { data: ethBtcData, isLoading: ethBtcLoading } = useQuery({
     queryKey: ['/api/altseason/eth-btc-ratio'],
-    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
+    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
   });
 
   // Fetch OTHERS/BTC ratio data
   const { data: othersBtcData, isLoading: othersBtcLoading } = useQuery({
     queryKey: ['/api/altseason/others-btc-ratio'],
-    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
+    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
   });
 
   // Fetch OTHERS/ETH ratio data
   const { data: othersEthData, isLoading: othersEthLoading } = useQuery({
     queryKey: ['/api/altseason/others-eth-ratio'],
-    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
+    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
   });
 
   // Fetch altcoins performance
