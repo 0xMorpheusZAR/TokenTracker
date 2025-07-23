@@ -357,21 +357,7 @@ export default function AltseasonDashboard() {
                 <span className="sm:hidden">Real-time altseason tracking</span>
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAutoRefresh(!autoRefresh)}
-                className={cn(
-                  "text-white border-gray-600 hover:bg-gray-700",
-                  autoRefresh && "bg-green-900/20 border-green-700 text-green-400"
-                )}
-              >
-                <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
-                {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
-              </Button>
-
-            </div>
+            {/* Removed button area per user request */}
           </div>
 
           {/* Enhanced Key Alert */}
@@ -660,6 +646,51 @@ export default function AltseasonDashboard() {
                     </div>
                     
 
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* BTC.D - Bitcoin Dominance Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.35 }}
+                className="mt-6"
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-orange-600 transition-all">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center">
+                        <Bitcoin className="mr-2 text-orange-500" />
+                        <span className="text-sm sm:text-base">BTC.D - Key Altseason Indicator</span>
+                      </span>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-white">
+                            <AnimatedCounter value={metrics?.bitcoinDominance || 61.02} decimals={2} suffix="%" />
+                          </p>
+                          <p className="text-xs text-gray-400">Market Cap BTC Dominance %</p>
+                        </div>
+                      </div>
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      Live from TradingView
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {/* TradingView Widget for BTC.D */}
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                      <iframe
+                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3ABTC.D%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_btc_d%22%7D`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          border: "none",
+                        }}
+                        allowFullScreen
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
