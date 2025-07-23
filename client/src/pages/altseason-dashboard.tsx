@@ -35,7 +35,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import TradingViewWidget from '@/components/TradingViewWidget';
+import TradingViewAdvancedWidget from '@/components/TradingViewAdvancedWidget';
 
 
 
@@ -165,6 +165,8 @@ export default function AltseasonDashboard() {
   const [selectedView, setSelectedView] = useState<'overview' | 'analysis' | 'education'>('overview');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showNotifications, setShowNotifications] = useState(true);
+  const [tradingPairs, setTradingPairs] = useState<Record<string, any>>({});
+  const [chartModalOpen, setChartModalOpen] = useState<Record<string, boolean>>({});
 
   // Fetch altseason metrics with enhanced error handling
   const { data: metrics, isLoading: metricsLoading, error: metricsError } = useQuery({
@@ -844,9 +846,26 @@ export default function AltseasonDashboard() {
                             </a>
                             
                             {/* Chart Analysis Button - TradingView */}
-                            <Dialog>
+                            <Dialog 
+                              key={`chart-dialog-${coin.id}`}
+                              open={chartModalOpen[coin.id]} 
+                              onOpenChange={(open) => setChartModalOpen({...chartModalOpen, [coin.id]: open})}
+                            >
                               <DialogTrigger asChild>
-                                <button className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
+                                <button 
+                                  onClick={async () => {
+                                    // Fetch correct trading pair info for this coin
+                                    try {
+                                      const res = await fetch(`/api/altseason/coin-trading-info/${coin.id}`);
+                                      const tradingInfo = await res.json();
+                                      setTradingPairs(prev => ({...prev, [coin.id]: tradingInfo}));
+                                    } catch (error) {
+                                      console.error('Failed to fetch trading info:', error);
+                                    }
+                                    setChartModalOpen({...chartModalOpen, [coin.id]: true});
+                                  }}
+                                  className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
+                                >
                                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                                   <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
                                     <BarChart3 className="w-4 h-4 mr-2" />
@@ -861,8 +880,8 @@ export default function AltseasonDashboard() {
                                   </DialogTitle>
                                 </DialogHeader>
                                 <div className="mt-4" style={{ height: '600px' }}>
-                                  <TradingViewWidget
-                                    symbol={`BINANCE:${coin.symbol.toUpperCase()}USDT`}
+                                  <TradingViewAdvancedWidget
+                                    symbol={tradingPairs[coin.id]?.tradingViewSymbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
                                     interval="240"
                                     theme="dark"
                                     height={600}
@@ -890,6 +909,11 @@ export default function AltseasonDashboard() {
                                       "create_volume_indicator_by_default",
                                       "drawing_templates"
                                     ]}
+                                    allow_symbol_change={true}
+                                    save_image={true}
+                                    details={true}
+                                    hotlist={true}
+                                    calendar={true}
                                   />
                                 </div>
                               </DialogContent>

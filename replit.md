@@ -220,6 +220,7 @@ Changelog:
 - January 23, 2025: Integrated TradingView trading widgets for altcoins in Analysis section - Added comprehensive trading integration with direct TradingView links for each altcoin, embedded TradingView chart widgets in modal dialogs for advanced analysis, dual-button interface (Trade Now + Chart Analysis), following BloFin integration pattern from Velo Dashboard with purple/blue gradient styling and shimmer effects
 - January 23, 2025: Updated altcoin trading links to use BloFin - Changed "TRADE" buttons to redirect to BloFin futures (e.g., https://blofin.com/futures/PENGU-USDT), maintained TradingView widgets for "CHART ANALYSIS" functionality, updated button styling with orange/amber gradient for BloFin and blue gradient for TradingView to clearly differentiate the two services
 - January 23, 2025: Fixed TradingView widget symbols for crypto tokens - Reverted to using BINANCE: exchange prefix format (e.g., BINANCE:PENGUUSDT) as required by TradingView widget API, matching their chart URL structure (https://www.tradingview.com/chart/?symbol=BINANCE%3APENGUUSDT)
+- January 23, 2025: Implemented dynamic TradingView symbol detection using CoinGecko API - Created TradingViewAdvancedWidget component with full charting features, added /api/altseason/coin-trading-info endpoint to fetch best exchange and trading pair based on volume, integrated automatic symbol detection for each altcoin to ensure correct TradingView charts display
 ```
 
 ## User Preferences

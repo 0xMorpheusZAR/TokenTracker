@@ -535,4 +535,55 @@ router.get('/others-eth-ratio', async (req, res) => {
   }
 });
 
+// Get trading pair info for a coin
+router.get('/coin-trading-info/:coinId', async (req, res) => {
+  try {
+    const { coinId } = req.params;
+    const coingeckoService = req.app.locals.coingeckoService;
+    
+    // Get tickers to find the best exchange and trading pair
+    const tickers = await coingeckoService.getCoinTickers(coinId);
+    
+    // Find the ticker with highest volume on major exchanges
+    const majorExchanges = ['binance', 'coinbase_exchange', 'kraken', 'okex', 'huobi', 'kucoin', 'bybit_spot', 'gate'];
+    const sortedTickers = tickers
+      .filter((ticker: any) => majorExchanges.includes(ticker.market.identifier))
+      .sort((a: any, b: any) => b.converted_volume.usd - a.converted_volume.usd);
+    
+    if (sortedTickers.length === 0) {
+      // Fallback to any exchange
+      const bestTicker = tickers.sort((a: any, b: any) => b.converted_volume.usd - a.converted_volume.usd)[0];
+      res.json({
+        exchange: bestTicker?.market?.identifier || 'binance',
+        tradingPair: bestTicker?.base + bestTicker?.target || 'UNKNOWN',
+        tradingViewSymbol: `${bestTicker?.market?.identifier.toUpperCase()}:${bestTicker?.base}${bestTicker?.target}`
+      });
+    } else {
+      const bestTicker = sortedTickers[0];
+      const exchange = bestTicker.market.identifier === 'binance' ? 'BINANCE' : 
+                      bestTicker.market.identifier === 'coinbase_exchange' ? 'COINBASE' :
+                      bestTicker.market.identifier === 'kraken' ? 'KRAKEN' :
+                      bestTicker.market.identifier === 'okex' ? 'OKEX' :
+                      bestTicker.market.identifier === 'huobi' ? 'HUOBI' :
+                      bestTicker.market.identifier === 'kucoin' ? 'KUCOIN' :
+                      bestTicker.market.identifier === 'bybit_spot' ? 'BYBIT' :
+                      bestTicker.market.identifier === 'gate' ? 'GATEIO' :
+                      bestTicker.market.identifier.toUpperCase();
+      
+      res.json({
+        exchange: exchange,
+        tradingPair: `${bestTicker.base}${bestTicker.target}`,
+        tradingViewSymbol: `${exchange}:${bestTicker.base}${bestTicker.target}`
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching coin trading info:', error);
+    res.json({
+      exchange: 'BINANCE',
+      tradingPair: 'UNKNOWNUSDT',
+      tradingViewSymbol: 'BINANCE:UNKNOWNUSDT'
+    });
+  }
+});
+
 export default router;

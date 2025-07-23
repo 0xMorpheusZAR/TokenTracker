@@ -238,6 +238,30 @@ export class CoinGeckoService {
     }
   }
 
+  // Get ticker data including exchanges for a specific coin
+  async getCoinTickers(coinId: string) {
+    try {
+      const response = await fetch(
+        `${this.getApiUrl()}/coins/${coinId}/tickers?include_exchange_logo=false&depth=false`,
+        {
+          headers: this.getHeaders(),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('CoinGecko tickers error:', errorText);
+        throw new Error(`CoinGecko API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.tickers || [];
+    } catch (error) {
+      console.error('Error fetching coin tickers:', error);
+      throw error;
+    }
+  }
+
   async getTokenOHLCV(symbol: string, days: number = 30): Promise<any> {
     try {
       const coinId = this.getTokenId(symbol);
