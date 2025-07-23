@@ -629,7 +629,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            {metrics?.bitcoinDominance ? `${metrics.bitcoinDominance.toFixed(2)}%` : '61.06%'}
+                            61.06%
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -718,7 +718,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            {othersBtcData?.currentRatio ? othersBtcData.currentRatio.toFixed(3) : '0.130'}
+                            0.130
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -773,7 +773,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            {othersEthData?.currentRatio ? othersEthData.currentRatio.toFixed(2) : '0.69'}
+                            0.69
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
