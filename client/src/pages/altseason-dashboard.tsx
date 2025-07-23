@@ -13,7 +13,7 @@ import {
   Eye, EyeOff, Moon, Sun, Wind, Flame, Snowflake, Sparkles, Timer,
   RefreshCw, Globe, TrendingUpIcon, Gauge, Waves, AlertTriangle,
   Crown, Trophy, Star, Heart, Lightbulb, BookOpen, Layers, Filter,
-  CircleDot, Crosshair, Navigation
+  CircleDot, Crosshair, Navigation, Calculator
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -783,6 +783,168 @@ export default function AltseasonDashboard() {
                     </div>
                     
 
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Monte Carlo Simulation for Top 5 ETH Outperformers */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.45 }}
+                className="mt-6"
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-purple-600 transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center">
+                        <Calculator className="mr-2 text-purple-400" />
+                        <span className="text-sm sm:text-base">Monte Carlo Simulation - Top 5 ETH Outperformers</span>
+                      </span>
+                      <Badge className="bg-purple-600/20 text-purple-400 border-purple-500">
+                        30-Day Price Projections
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>
+                      Statistical price simulations based on historical volatility and performance
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {performanceEth?.altcoins && (
+                      <div className="space-y-6">
+                        {/* Get top 5 ETH outperformers */}
+                        {(() => {
+                          const top5EthOutperformers = performanceEth.altcoins
+                            .filter(coin => coin.performanceVsEth?.["30d"] > 0)
+                            .sort((a, b) => (b.performanceVsEth?.["30d"] || 0) - (a.performanceVsEth?.["30d"] || 0))
+                            .slice(0, 5);
+
+                          return top5EthOutperformers.map((coin, index) => {
+                            // Monte Carlo simulation parameters
+                            const currentPrice = coin.currentPrice || 0;
+                            const volatility = Math.abs(coin.performanceVsEth?.["30d"] || 20) / 100;
+                            const drift = (coin.performanceVsEth?.["30d"] || 0) / 30 / 100; // Daily drift
+                            const simulations = 100;
+                            const days = 30;
+
+                            // Run Monte Carlo simulations
+                            const runSimulation = () => {
+                              const paths = [];
+                              for (let sim = 0; sim < simulations; sim++) {
+                                const path = [currentPrice];
+                                let price = currentPrice;
+                                
+                                for (let day = 1; day <= days; day++) {
+                                  const randomShock = Math.sqrt(1/365) * volatility * (Math.random() * 2 - 1);
+                                  const dailyReturn = drift / 365 + randomShock;
+                                  price = price * (1 + dailyReturn);
+                                  path.push(price);
+                                }
+                                paths.push(path);
+                              }
+                              return paths;
+                            };
+
+                            const simulationPaths = runSimulation();
+                            
+                            // Calculate percentiles
+                            const finalPrices = simulationPaths.map(path => path[path.length - 1]);
+                            finalPrices.sort((a, b) => a - b);
+                            
+                            const p10 = finalPrices[Math.floor(simulations * 0.1)];
+                            const p50 = finalPrices[Math.floor(simulations * 0.5)];
+                            const p90 = finalPrices[Math.floor(simulations * 0.9)];
+
+                            // Prepare chart data - show 5 sample paths
+                            const chartData = Array.from({ length: days + 1 }, (_, i) => ({
+                              day: i,
+                              path1: simulationPaths[0]?.[i],
+                              path2: simulationPaths[20]?.[i],
+                              path3: simulationPaths[40]?.[i],
+                              path4: simulationPaths[60]?.[i],
+                              path5: simulationPaths[80]?.[i],
+                            }));
+
+                            return (
+                              <motion.div
+                                key={coin.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-gray-900/50 rounded-xl p-4 border border-gray-700"
+                              >
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-3">
+                                    <img 
+                                      src={coin.image} 
+                                      alt={coin.symbol} 
+                                      className="w-8 h-8 rounded-full"
+                                      onError={(e) => {
+                                        e.currentTarget.src = `https://via.placeholder.com/32?text=${coin.symbol.charAt(0)}`;
+                                      }}
+                                    />
+                                    <div>
+                                      <p className="font-semibold text-white">{coin.symbol.toUpperCase()}</p>
+                                      <p className="text-sm text-gray-400">{coin.name}</p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-sm text-gray-400">Current Price</p>
+                                    <p className="font-bold text-white">${formatNumber(currentPrice)}</p>
+                                    <p className={cn(
+                                      "text-sm font-medium",
+                                      coin.performanceVsEth?.["30d"] > 0 ? "text-purple-400" : "text-red-400"
+                                    )}>
+                                      +{coin.performanceVsEth?.["30d"]?.toFixed(1)}% vs ETH
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Simulation Chart */}
+                                <div className="h-40 mb-4">
+                                  <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData}>
+                                      <XAxis dataKey="day" stroke="#6B7280" fontSize={10} />
+                                      <YAxis stroke="#6B7280" fontSize={10} domain={['dataMin - 5%', 'dataMax + 5%']} />
+                                      <Line type="monotone" dataKey="path1" stroke="#A78BFA" strokeWidth={1} dot={false} strokeOpacity={0.3} />
+                                      <Line type="monotone" dataKey="path2" stroke="#C084FC" strokeWidth={1} dot={false} strokeOpacity={0.3} />
+                                      <Line type="monotone" dataKey="path3" stroke="#E879F9" strokeWidth={1} dot={false} strokeOpacity={0.3} />
+                                      <Line type="monotone" dataKey="path4" stroke="#F472B6" strokeWidth={1} dot={false} strokeOpacity={0.3} />
+                                      <Line type="monotone" dataKey="path5" stroke="#FB7185" strokeWidth={1} dot={false} strokeOpacity={0.3} />
+                                    </LineChart>
+                                  </ResponsiveContainer>
+                                </div>
+
+                                {/* Price Targets */}
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div className="bg-red-500/10 rounded-lg p-3 border border-red-500/20">
+                                    <p className="text-xs text-red-400 mb-1">Bearish (10%)</p>
+                                    <p className="font-bold text-white">${formatNumber(p10)}</p>
+                                    <p className="text-xs text-red-400">
+                                      {((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                    </p>
+                                  </div>
+                                  <div className="bg-purple-500/10 rounded-lg p-3 border border-purple-500/20">
+                                    <p className="text-xs text-purple-400 mb-1">Base (50%)</p>
+                                    <p className="font-bold text-white">${formatNumber(p50)}</p>
+                                    <p className="text-xs text-purple-400">
+                                      {((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                    </p>
+                                  </div>
+                                  <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/20">
+                                    <p className="text-xs text-green-400 mb-1">Bullish (90%)</p>
+                                    <p className="font-bold text-white">${formatNumber(p90)}</p>
+                                    <p className="text-xs text-green-400">
+                                      {((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                    </p>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
