@@ -448,17 +448,23 @@ export default function AltseasonDashboard() {
                         {metrics?.outperformingCount || 0} coins
                       </Badge>
                     </CardTitle>
-                    <CardDescription>30-day outperformance leaders</CardDescription>
+                    <CardDescription className="flex items-center justify-between">
+                      <span>30-day outperformance leaders</span>
+                      <span className="text-xs text-gray-500">
+                        <RefreshCw className="w-3 h-3 inline-block mr-1 animate-spin" />
+                        Live updates
+                      </span>
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <div className="h-[340px] overflow-y-auto custom-scrollbar">
+                    <div className="h-[340px] overflow-y-auto custom-scrollbar relative">
                       <div className="space-y-1 p-4">
-                        {metrics?.outperformingCoins?.slice(0, 15).map((coin, index) => (
+                        {metrics?.outperformingCoins?.map((coin, index) => (
                           <motion.div
                             key={coin.id}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.03 }}
+                            transition={{ delay: Math.min(index * 0.01, 0.2) }}
                             className={cn(
                               "flex items-center justify-between p-2 rounded-lg transition-all duration-200",
                               "hover:bg-gray-700/30 hover:scale-[1.02]",
@@ -497,13 +503,6 @@ export default function AltseasonDashboard() {
                             </div>
                           </motion.div>
                         ))}
-                        {metrics?.outperformingCoins?.length > 15 && (
-                          <div className="text-center py-2">
-                            <p className="text-xs text-gray-400">
-                              +{metrics.outperformingCoins.length - 15} more coins
-                            </p>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </CardContent>
