@@ -25,7 +25,7 @@ interface VeloCapData {
   market_cap: number;
 }
 
-interface VeloNewsItem {
+export interface VeloNewsItem {
   id: number;
   time: number;
   headline: string;
@@ -452,6 +452,26 @@ class VeloService {
       }
     } catch (error) {
       console.error('Failed to fetch crypto news:', error);
+      throw error;
+    }
+  }
+
+  // Get news within a specific date range
+  async getCryptoNewsDateRange(beginDate: Date, endDate: Date): Promise<VeloNewsItem[]> {
+    try {
+      console.log(`Fetching news from ${beginDate.toISOString()} to ${endDate.toISOString()}`);
+      const allNews = await this.getNews(beginDate.getTime());
+      
+      // Filter news to only include items up to the end date
+      const filteredNews = allNews.filter(news => {
+        const newsTime = news.time || news.effectiveTime;
+        return newsTime >= beginDate.getTime() && newsTime <= endDate.getTime();
+      });
+      
+      console.log(`Found ${filteredNews.length} news items in date range`);
+      return filteredNews;
+    } catch (error) {
+      console.error('Failed to fetch crypto news for date range:', error);
       throw error;
     }
   }

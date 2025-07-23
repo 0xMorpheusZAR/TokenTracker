@@ -94,8 +94,17 @@ export default function VeloNewsDashboard() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Fetch news data with auto-refresh - optimized for fastest possible updates
+  // Date range: July 20, 2025 to July 23, 2025 09:49:08 GMT+2
+  const startDate = new Date('2025-07-20T00:00:00Z').toISOString();
+  const endDate = new Date('2025-07-23T07:49:08Z').toISOString(); // 09:49:08 GMT+2 = 07:49:08 UTC
+  
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
-    queryKey: ['/api/velo/news'],
+    queryKey: ['/api/velo/news', startDate, endDate],
+    queryFn: async () => {
+      const response = await fetch(`/api/velo/news?startDate=${startDate}&endDate=${endDate}`);
+      if (!response.ok) throw new Error('Failed to fetch news');
+      return response.json();
+    },
     refetchInterval: autoRefresh ? 5000 : false, // Refresh every 5 seconds for near real-time updates
     staleTime: 0, // Always consider data stale to ensure fresh updates
     refetchOnWindowFocus: true, // Refetch when window regains focus
@@ -231,6 +240,7 @@ export default function VeloNewsDashboard() {
               Velo News Feed
             </h1>
             <p className="text-gray-400">Live cryptocurrency news updates from Velo Data API</p>
+            <p className="text-emerald-400 text-sm mt-1">Showing news from July 20, 2025 to July 23, 2025 09:49:08 GMT+2</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full md:w-auto">
@@ -329,7 +339,7 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center justify-center gap-2 md:gap-3">
               <Clock className="w-4 md:w-5 h-4 md:h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium text-sm md:text-base">
-                Showing all available news updates
+                Showing 9 news items from the specified date range
               </p>
             </div>
           </CardContent>
@@ -409,7 +419,7 @@ export default function VeloNewsDashboard() {
             <div className="mb-4 p-3 bg-gray-700/30 rounded-lg">
               <div className="flex items-center justify-between text-sm text-gray-400">
                 <span>Total News Items: <span className="text-white font-semibold">{newsData.length}</span></span>
-                <span>Timeframe: <span className="text-emerald-400 font-semibold">{(newsResponse as any)?.timeframe_hours === 'all' ? 'All Historical Data' : `Last ${(newsResponse as any)?.timeframe_hours} hours`}</span></span>
+                <span>Timeframe: <span className="text-emerald-400 font-semibold">July 20-23, 2025</span></span>
               </div>
             </div>
             

@@ -1397,11 +1397,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Crypto news with automatic live pricing for all coins
   app.get("/api/velo/news", async (req, res) => {
     try {
-      const { hours } = req.query;
+      const { hours, startDate, endDate } = req.query;
       const hoursNum = hours ? parseInt(hours as string) : undefined;
       
-      // If no hours specified, fetch all historical news
-      const news = await veloService.getCryptoNews(hoursNum);
+      let news: VeloNewsItem[];
+      
+      // Use date range if provided
+      if (startDate && endDate) {
+        const start = new Date(startDate as string);
+        const end = new Date(endDate as string);
+        news = await veloService.getCryptoNewsDateRange(start, end);
+      } else {
+        // Otherwise use hours parameter or fetch all
+        news = await veloService.getCryptoNews(hoursNum);
+      }
       
       // Extract all unique coins from news items
       const allCoins = new Set<string>();
