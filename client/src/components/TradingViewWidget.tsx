@@ -28,42 +28,9 @@ function TradingViewWidget({
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.type = "text/javascript";
     script.async = true;
-    // Handle special symbol mappings
-    let tradingViewSymbol = symbol;
-    let exchange = 'BINANCE';
-    
-    // Handle special cases
-    if (symbol === '1000FLOKI') tradingViewSymbol = 'FLOKI';
-    else if (symbol === '1000PEPE') tradingViewSymbol = 'PEPE';
-    else if (symbol === 'MATIC') tradingViewSymbol = 'POL'; // MATIC renamed to POL
-    else if (symbol === 'PUMP') {
-      exchange = 'MEXC'; // PUMP token may be on MEXC
-      tradingViewSymbol = 'PUMP';
-    }
-    else if (symbol === 'XMR') {
-      exchange = 'KUCOIN'; // Monero delisted from many exchanges
-      tradingViewSymbol = 'XMR';
-    }
-    else if (symbol === 'BSV') {
-      exchange = 'HUOBI'; // BSV delisted from some exchanges
-      tradingViewSymbol = 'BSV';
-    }
-    
-    // Fallback symbol construction
-    const fullSymbol = `${exchange}:${tradingViewSymbol}USDT`;
-    console.log(`TradingView Widget: Loading ${fullSymbol}`);
-    
-    // Add error handling
-    script.onerror = () => {
-      console.error(`Failed to load TradingView widget for ${fullSymbol}`);
-      if (container.current) {
-        container.current.innerHTML = `<div style="color: #666; text-align: center; padding: 20px;">Chart unavailable for ${symbol}</div>`;
-      }
-    };
-    
     script.innerHTML = JSON.stringify({
       "autosize": false,
-      "symbol": fullSymbol,
+      "symbol": `BINANCE:${symbol}USDT`,
       "interval": interval,
       "timezone": "Etc/UTC",
       "theme": theme,

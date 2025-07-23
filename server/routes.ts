@@ -1397,8 +1397,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Crypto news with automatic live pricing for all coins
   app.get("/api/velo/news", async (req, res) => {
     try {
-      // Get all accumulated news (no longer using hours parameter)
-      const news = await veloService.getNews();
+      const { hours = 24 } = req.query;
+      const hoursNum = parseInt(hours as string);
+      
+      const news = await veloService.getCryptoNews(hoursNum);
       
       // Extract all unique coins from news items
       const allCoins = new Set<string>();
@@ -1429,15 +1431,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         effectivePrice: item.effectivePrice || (item.coins[0] && livePrices[item.coins[0]] ? livePrices[item.coins[0]] : null)
       }));
 
-      // Include accumulated count for monitoring
-      const accumulatedCount = veloService.getAccumulatedNewsCount();
-      console.log(`Returning ${news.length} accumulated news items (total stored: ${accumulatedCount})`);
-      
       res.json({
         data: enhancedNews,
         livePrices: livePrices, // Include all live prices in response
         coinsTracked: uniqueCoins,
-        accumulatedCount: accumulatedCount,
+        timeframe_hours: hoursNum,
         provider: "Velo Pro API"
       });
     } catch (error) {

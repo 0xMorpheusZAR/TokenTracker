@@ -74,7 +74,49 @@ export default function VeloChart({
           symbol={symbol}
           interval={selectedTimeframe}
           theme="dark"
-          height={height}
+          height={height + 45}
+          toolbar_bg="#000000"
+          container_id={`velo_chart_${symbol}_${Date.now()}`}
+          overrides={{
+            "mainSeriesProperties.candleStyle.upColor": "#00FF00",
+            "mainSeriesProperties.candleStyle.downColor": "#FF0000",
+            "mainSeriesProperties.candleStyle.borderUpColor": "#00FF00",
+            "mainSeriesProperties.candleStyle.borderDownColor": "#FF0000",
+            "mainSeriesProperties.candleStyle.wickUpColor": "#00FF00",
+            "mainSeriesProperties.candleStyle.wickDownColor": "#FF0000",
+            "paneProperties.background": "#000000",
+            "paneProperties.backgroundType": "solid",
+            "paneProperties.vertGridProperties.color": "#1a1a1a",
+            "paneProperties.horzGridProperties.color": "#1a1a1a",
+            "scalesProperties.textColor": "#999999",
+            "scalesProperties.backgroundColor": "#000000",
+            "scalesProperties.lineColor": "#1a1a1a"
+          }}
+          disabled_features={[
+            "header_widget",
+            "header_widget_dom_node",
+            "header_symbol_search",
+            "header_compare",
+            "display_market_status",
+            "study_templates",
+            "header_indicators",
+            "header_settings",
+            "header_fullscreen_button",
+            "header_screenshot",
+            "header_undo_redo",
+            "use_localstorage_for_settings",
+            "header_chart_type",
+            "left_toolbar",
+            "control_bar",
+            "timeframes_toolbar",
+            "main_series_scale_menu",
+            "create_volume_indicator_by_default"
+          ]}
+          enabled_features={[
+            "hide_left_toolbar_by_default",
+            "hide_top_toolbar",
+            "hide_side_toolbar"
+          ]}
         />
       </div>
     </div>

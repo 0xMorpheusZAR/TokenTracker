@@ -47,7 +47,6 @@ class VeloService {
   private config: VeloConfig;
   private livePriceCache: Map<string, { price: number; timestamp: number }> = new Map();
   private cacheExpiry = 60 * 1000; // 60 seconds cache
-  private accumulatedNews: Map<number, VeloNewsItem> = new Map(); // Persistent news storage by ID
 
   constructor() {
     this.config = {
@@ -64,15 +63,7 @@ class VeloService {
       this.refreshNewsCoinsInBackground();
     }, 2 * 60 * 1000); // 2 minutes
 
-    // Start background news accumulation every 5 seconds
-    setInterval(() => {
-      this.accumulateNewsInBackground();
-    }, 5 * 1000); // 5 seconds
-
-    console.log('Velo service initialized with live pricing cache, news accumulation, and background refresh');
-    
-    // Initial news fetch
-    this.accumulateNewsInBackground();
+    console.log('Velo service initialized with live pricing cache and background refresh');
   }
 
   private getAuthHeaders(): Record<string, string> {
@@ -351,8 +342,8 @@ class VeloService {
     return data;
   }
 
-  // Private method to fetch fresh news from API
-  private async fetchFreshNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
+  // News endpoint - uses different base URL
+  async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
     try {
       const newsBaseUrl = 'https://api.velo.xyz/api/n';
       const url = new URL(`${newsBaseUrl}/news`);
@@ -380,40 +371,6 @@ class VeloService {
       console.error('Failed to fetch news:', error);
       return [];
     }
-  }
-
-  // Background accumulation of news
-  private async accumulateNewsInBackground() {
-    try {
-      const freshNews = await this.fetchFreshNews();
-      let newItemsCount = 0;
-      
-      // Add new items to accumulated storage
-      freshNews.forEach(item => {
-        if (!this.accumulatedNews.has(item.id)) {
-          this.accumulatedNews.set(item.id, item);
-          newItemsCount++;
-        }
-      });
-      
-      if (newItemsCount > 0) {
-        console.log(`Added ${newItemsCount} new news items to accumulator. Total: ${this.accumulatedNews.size}`);
-      }
-    } catch (error) {
-      console.error('Error accumulating news:', error);
-    }
-  }
-
-  // Public method returns all accumulated news
-  async getNews(beginTimestamp?: number): Promise<VeloNewsItem[]> {
-    // If we don't have any accumulated news yet, fetch some
-    if (this.accumulatedNews.size === 0) {
-      await this.accumulateNewsInBackground();
-    }
-    
-    // Return all accumulated news sorted by time (newest first)
-    const allNews = Array.from(this.accumulatedNews.values());
-    return allNews.sort((a, b) => b.time - a.time);
   }
 
   // Convenience methods for common use cases
@@ -564,7 +521,7 @@ class VeloService {
   // Get all coins mentioned in recent news automatically
   async getCoinsFromRecentNews(): Promise<string[]> {
     try {
-      const news = await this.getNews(); // Use accumulated news
+      const news = await this.getCryptoNews(24);
       const allCoins = new Set<string>();
       
       news.forEach(item => {
@@ -589,11 +546,6 @@ class VeloService {
     } catch (error) {
       console.error('Background coin price refresh failed:', error);
     }
-  }
-
-  // Get accumulated news count
-  getAccumulatedNewsCount(): number {
-    return this.accumulatedNews.size;
   }
 
   // Get futures market data for specific coin
