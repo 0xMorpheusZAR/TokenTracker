@@ -59,14 +59,18 @@ function TradingViewAdvancedWidget({
   useEffect(() => {
     if (!container.current) return;
 
-    // Clear any existing content
-    container.current.innerHTML = '';
+    // Add a small delay to ensure the dialog is fully rendered
+    const timeoutId = setTimeout(() => {
+      if (!container.current) return;
 
-    const containerId = container_id || `tradingview_${Math.random().toString(36).substring(7)}`;
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
+      // Clear any existing content
+      container.current.innerHTML = '';
+
+      const containerId = container_id || `tradingview_${Math.random().toString(36).substring(7)}`;
+      const script = document.createElement("script");
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+      script.type = "text/javascript";
+      script.async = true;
     
     const config: any = {
       "autosize": false,
@@ -153,7 +157,10 @@ function TradingViewAdvancedWidget({
     container.current.appendChild(script);
     scriptRef.current = script;
 
+    }, 100); // 100ms delay to ensure dialog is rendered
+
     return () => {
+      clearTimeout(timeoutId);
       if (scriptRef.current && scriptRef.current.parentNode) {
         scriptRef.current.parentNode.removeChild(scriptRef.current);
       }

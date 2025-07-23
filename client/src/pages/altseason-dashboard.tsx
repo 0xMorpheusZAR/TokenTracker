@@ -965,7 +965,7 @@ export default function AltseasonDashboard() {
                                     theme="dark"
                                     height={600}
                                     toolbar_bg="#000000"
-                                    container_id={`altcoin_chart_${coin.symbol}_${Date.now()}`}
+                                    container_id={`altcoin_chart_${coin.symbol}_${coin.id}`}
                                     overrides={{
                                       "mainSeriesProperties.candleStyle.upColor": "#00FF00",
                                       "mainSeriesProperties.candleStyle.downColor": "#FF0000",
