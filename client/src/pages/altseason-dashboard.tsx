@@ -792,9 +792,29 @@ export default function AltseasonDashboard() {
 
           {/* Analysis Tab */}
           <TabsContent value="analysis" className="mt-6">
-            <div className="space-y-6">
-              {/* Top Altcoins Performance */}
-              <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-yellow-600/30 hover:border-yellow-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
+            {/* Sub-tabs for Bitcoin and Ethereum comparisons */}
+            <Tabs defaultValue="bitcoin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-900/50 backdrop-blur-sm border border-gray-700">
+                <TabsTrigger 
+                  value="bitcoin" 
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500 data-[state=active]:text-white font-bold"
+                >
+                  <Bitcoin className="w-4 h-4 mr-2" />
+                  Top Altcoins vs Bitcoin
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="ethereum" 
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-blue-500 data-[state=active]:text-white font-bold"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Top Altcoins vs Ethereum
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Bitcoin Comparison Tab */}
+              <TabsContent value="bitcoin" className="mt-0">
+                {/* Top Altcoins Performance vs Bitcoin */}
+                <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-yellow-600/30 hover:border-yellow-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
                 {/* Premium background effects */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/10 via-purple-600/10 to-pink-600/10"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/20 via-transparent to-transparent"></div>
@@ -1098,9 +1118,12 @@ export default function AltseasonDashboard() {
                   </ScrollArea>
                 </CardContent>
               </Card>
+              </TabsContent>
 
-              {/* Top Altcoins Performance vs Ethereum */}
-              <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-indigo-600/30 hover:border-indigo-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
+              {/* Ethereum Comparison Tab */}
+              <TabsContent value="ethereum" className="mt-0">
+                {/* Top Altcoins Performance vs Ethereum */}
+                <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-indigo-600/30 hover:border-indigo-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
                 {/* Premium background effects */}
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 via-purple-600/10 to-blue-600/10"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/20 via-transparent to-transparent"></div>
@@ -1420,7 +1443,8 @@ export default function AltseasonDashboard() {
                   </ScrollArea>
                 </CardContent>
               </Card>
-            </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           {/* Education Tab */}
