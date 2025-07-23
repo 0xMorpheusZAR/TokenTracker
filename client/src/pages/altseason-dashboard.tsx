@@ -810,15 +810,15 @@ export default function AltseasonDashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-orange-500 rounded"></div>
-                        <span className="text-gray-400">Balanced (3.0-4.0)</span>
+                        <span className="text-gray-400">Balanced (3.0-3.7)</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                        <span className="text-gray-400">Alt Season (4.0-5.0)</span>
+                        <span className="text-gray-400">Alt Season (3.7-4.5)</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span className="text-gray-400">Peak Alts (&gt;5.0)</span>
+                        <span className="text-gray-400">Peak Alts (&gt;4.5)</span>
                       </div>
                     </div>
                   </CardContent>

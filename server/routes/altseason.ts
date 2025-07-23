@@ -499,13 +499,22 @@ router.get('/others-eth-ratio', async (req, res) => {
     const globalData = await coingeckoService.getGlobalData();
     const totalMarketCap = globalData.data.total_market_cap.usd;
     
-    // Get Bitcoin market cap
-    const btcData = await coingeckoService.getCoinData('bitcoin');
-    const btcMarketCap = btcData.market_data.market_cap.usd;
+    // Get market data for BTC and ETH
+    const marketData = await coingeckoService.getMarketData(['BTC', 'ETH']);
+    if (!marketData || marketData.length < 2) {
+      throw new Error('Failed to fetch BTC and ETH market data');
+    }
     
-    // Get Ethereum market cap
-    const ethData = await coingeckoService.getCoinData('ethereum');
-    const ethMarketCap = ethData.market_data.market_cap.usd;
+    // Find BTC and ETH data
+    const btcData = marketData.find((coin: any) => coin.symbol.toUpperCase() === 'BTC');
+    const ethData = marketData.find((coin: any) => coin.symbol.toUpperCase() === 'ETH');
+    
+    if (!btcData || !ethData) {
+      throw new Error('BTC or ETH data not found');
+    }
+    
+    const btcMarketCap = btcData.market_cap;
+    const ethMarketCap = ethData.market_cap;
     
     // Calculate OTHERS (all altcoins excluding BTC)
     const othersMarketCap = totalMarketCap - btcMarketCap;
