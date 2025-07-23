@@ -145,7 +145,7 @@ function TradingViewAdvancedWidget({
       config.hide_side_toolbar = true;
     }
 
-    script.innerHTML = JSON.stringify(config);
+    script.textContent = JSON.stringify(config);
 
     const widgetContainer = document.createElement("div");
     widgetContainer.id = containerId;
