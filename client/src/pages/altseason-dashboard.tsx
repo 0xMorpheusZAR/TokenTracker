@@ -1704,7 +1704,7 @@ export default function AltseasonDashboard() {
                               </div>
                               <div className="text-right">
                                 <p className="text-sm text-gray-400">Current Price</p>
-                                <p className="font-bold text-xl text-white">${formatNumber(currentPrice)}</p>
+                                <p className="font-bold text-xl text-white">${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice.toFixed(4)}</p>
                                 <p className={cn(
                                   "text-sm font-medium mt-1",
                                   coin.performanceVsEth?.["30d"] > 0 ? "text-purple-400" : "text-red-400"
@@ -1715,8 +1715,8 @@ export default function AltseasonDashboard() {
                             </div>
 
                             {/* Simulation Chart */}
-                            <div className="h-80 mb-6 bg-gray-900/30 rounded-xl p-4">
-                              <h4 className="text-sm text-gray-400 mb-3 text-center">Possible Price Movements Over Next 30 Days</h4>
+                            <div className="h-80 mb-6 bg-gradient-to-br from-purple-900/20 to-purple-800/10 rounded-xl p-4 border border-purple-500/20">
+                              <h4 className="text-lg font-semibold text-white mb-3 text-center">📈 30-Day Price Forecast</h4>
                               <ResponsiveContainer width="100%" height="90%">
                                 <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
                                   <defs>
@@ -1731,12 +1731,6 @@ export default function AltseasonDashboard() {
                                     stroke="#9CA3AF" 
                                     fontSize={14}
                                     tick={{ fill: '#9CA3AF' }}
-                                    label={{ 
-                                      value: 'Days from Today', 
-                                      position: 'insideBottom', 
-                                      offset: -10,
-                                      style: { fill: '#9CA3AF', fontSize: 16 }
-                                    }}
                                     tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? '30 Days' : value === 15 ? '15 Days' : ''}
                                   />
                                   <YAxis 
@@ -1744,13 +1738,8 @@ export default function AltseasonDashboard() {
                                     fontSize={14}
                                     tick={{ fill: '#9CA3AF' }}
                                     domain={['dataMin - 5%', 'dataMax + 5%']}
-                                    tickFormatter={(value) => `$${value >= 1 ? value.toFixed(0) : value.toFixed(3)}`}
-                                    label={{ 
-                                      value: 'Projected Price', 
-                                      angle: -90, 
-                                      position: 'insideLeft',
-                                      style: { fill: '#9CA3AF', fontSize: 16 }
-                                    }}
+                                    tickFormatter={(value) => value >= 1000 ? `$${(value/1000).toFixed(0)}K` : value >= 1 ? `$${value.toFixed(0)}` : `$${value.toFixed(4)}`}
+
                                   />
                                   <RechartsTooltip
                                     contentStyle={{ 
@@ -1762,12 +1751,14 @@ export default function AltseasonDashboard() {
                                     formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : 4)}`, 'Price']}
                                     labelFormatter={(label) => `Day ${label}`}
                                   />
-                                  <Line type="monotone" dataKey="path1" stroke="#A78BFA" strokeWidth={2} dot={false} strokeOpacity={0.3} />
-                                  <Line type="monotone" dataKey="path2" stroke="#C084FC" strokeWidth={2} dot={false} strokeOpacity={0.3} />
-                                  <Line type="monotone" dataKey="path3" stroke="#E879F9" strokeWidth={2} dot={false} strokeOpacity={0.3} />
-                                  <Line type="monotone" dataKey="path4" stroke="#F472B6" strokeWidth={2} dot={false} strokeOpacity={0.3} />
-                                  <Line type="monotone" dataKey="path5" stroke="#FB7185" strokeWidth={2} dot={false} strokeOpacity={0.3} />
-                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
+                                  <Line type="monotone" dataKey="path1" stroke="#A78BFA" strokeWidth={2} dot={false} strokeOpacity={0.4} />
+                                  <Line type="monotone" dataKey="path2" stroke="#C084FC" strokeWidth={2} dot={false} strokeOpacity={0.4} />
+                                  <Line type="monotone" dataKey="path3" stroke="#E879F9" strokeWidth={2} dot={false} strokeOpacity={0.4} />
+                                  <Line type="monotone" dataKey="path4" stroke="#F472B6" strokeWidth={2} dot={false} strokeOpacity={0.4} />
+                                  <Line type="monotone" dataKey="path5" stroke="#FB7185" strokeWidth={2} dot={false} strokeOpacity={0.4} />
+                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2}>
+                                    <Label value={`Now: $${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice.toFixed(4)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
+                                  </ReferenceLine>
                                 </LineChart>
                               </ResponsiveContainer>
                             </div>
@@ -1785,7 +1776,7 @@ export default function AltseasonDashboard() {
                                     <p className="text-sm font-semibold text-red-400">Bearish Scenario</p>
                                   </div>
                                   <p className="text-xs text-gray-400 mb-2">90% chance price stays above</p>
-                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p10)}</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${p10 >= 1 ? p10.toFixed(2) : p10.toFixed(4)}</p>
                                   <p className={cn(
                                     "text-sm font-medium flex items-center justify-center",
                                     p10 < currentPrice ? "text-red-400" : "text-green-400"
@@ -1804,7 +1795,7 @@ export default function AltseasonDashboard() {
                                     <p className="text-sm font-semibold text-purple-400">Most Likely</p>
                                   </div>
                                   <p className="text-xs text-gray-400 mb-2">50% chance above/below</p>
-                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p50)}</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${p50 >= 1 ? p50.toFixed(2) : p50.toFixed(4)}</p>
                                   <p className={cn(
                                     "text-sm font-medium flex items-center justify-center",
                                     p50 < currentPrice ? "text-red-400" : "text-green-400"
@@ -1823,7 +1814,7 @@ export default function AltseasonDashboard() {
                                     <p className="text-sm font-semibold text-green-400">Bullish Scenario</p>
                                   </div>
                                   <p className="text-xs text-gray-400 mb-2">10% chance price exceeds</p>
-                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p90)}</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${p90 >= 1 ? p90.toFixed(2) : p90.toFixed(4)}</p>
                                   <p className={cn(
                                     "text-sm font-medium flex items-center justify-center",
                                     p90 < currentPrice ? "text-red-400" : "text-green-400"
