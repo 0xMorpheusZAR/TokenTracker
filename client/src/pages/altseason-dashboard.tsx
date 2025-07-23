@@ -25,9 +25,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
+import TradingViewWidget from '@/components/TradingViewWidget';
 
 
 
@@ -816,6 +824,76 @@ export default function AltseasonDashboard() {
                               <span className="text-gray-500">24h Volume</span>
                               <div className="font-medium text-gray-300">{formatNumber(coin.volume24h)}</div>
                             </div>
+                          </div>
+                          
+                          {/* Trading Actions */}
+                          <div className="mt-3 space-y-2">
+                            {/* Trade Now Button */}
+                            <a
+                              href={`https://www.tradingview.com/chart/?symbol=${coin.symbol.toUpperCase()}USDT`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block w-full"
+                            >
+                              <button className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-[0_0_20px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                                <span className="text-sm tracking-wide font-bold relative z-10 flex items-center justify-center">
+                                  📈 TRADE {coin.symbol.toUpperCase()}
+                                </span>
+                              </button>
+                            </a>
+                            
+                            {/* Chart Analysis Button */}
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <button className="w-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(107,114,128,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                                  <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
+                                    <BarChart3 className="w-4 h-4 mr-2" />
+                                    CHART ANALYSIS
+                                  </span>
+                                </button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl w-full bg-black border-gray-800">
+                                <DialogHeader>
+                                  <DialogTitle className="text-white text-xl font-bold">
+                                    {coin.name} ({coin.symbol.toUpperCase()}) - Advanced Chart Analysis
+                                  </DialogTitle>
+                                </DialogHeader>
+                                <div className="mt-4" style={{ height: '600px' }}>
+                                  <TradingViewWidget
+                                    symbol={`${coin.symbol.toUpperCase()}USDT`}
+                                    interval="240"
+                                    theme="dark"
+                                    height={600}
+                                    toolbar_bg="#000000"
+                                    container_id={`altcoin_chart_${coin.symbol}_${Date.now()}`}
+                                    overrides={{
+                                      "mainSeriesProperties.candleStyle.upColor": "#00FF00",
+                                      "mainSeriesProperties.candleStyle.downColor": "#FF0000",
+                                      "mainSeriesProperties.candleStyle.borderUpColor": "#00FF00",
+                                      "mainSeriesProperties.candleStyle.borderDownColor": "#FF0000",
+                                      "mainSeriesProperties.candleStyle.wickUpColor": "#00FF00",
+                                      "mainSeriesProperties.candleStyle.wickDownColor": "#FF0000",
+                                      "paneProperties.background": "#000000",
+                                      "paneProperties.backgroundType": "solid",
+                                      "paneProperties.vertGridProperties.color": "#1a1a1a",
+                                      "paneProperties.horzGridProperties.color": "#1a1a1a",
+                                      "scalesProperties.textColor": "#999999",
+                                      "scalesProperties.backgroundColor": "#000000",
+                                      "scalesProperties.lineColor": "#1a1a1a"
+                                    }}
+                                    enabled_features={[
+                                      "study_templates",
+                                      "use_localstorage_for_settings",
+                                      "save_chart_properties_to_local_storage",
+                                      "create_volume_indicator_by_default",
+                                      "drawing_templates"
+                                    ]}
+                                  />
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                           
                           {/* Outperformance Indicator */}
