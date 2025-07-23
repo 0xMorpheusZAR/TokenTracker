@@ -4,7 +4,7 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar,
   ComposedChart, Scatter, ScatterChart, ZAxis, ReferenceLine, ReferenceArea, RadarChart, PolarGrid, 
-  PolarAngleAxis, PolarRadiusAxis, Radar
+  PolarAngleAxis, PolarRadiusAxis, Radar, Label
 } from 'recharts';
 import { 
   TrendingUp, TrendingDown, Activity, DollarSign, PieChart as PieChartIcon,
@@ -1598,6 +1598,32 @@ export default function AltseasonDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {/* Explanation Card */}
+                <div className="bg-purple-900/20 rounded-xl p-6 mb-8 border border-purple-500/20">
+                  <h3 className="text-white font-semibold mb-3 flex items-center">
+                    <Info className="w-5 h-5 mr-2 text-purple-400" />
+                    What is a Monte Carlo Simulation?
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    Monte Carlo simulations use computer modeling to predict possible future prices by running thousands of scenarios based on historical data. 
+                    Think of it like rolling dice 100 times to see all possible outcomes.
+                  </p>
+                  <div className="grid grid-cols-3 gap-4 mt-4">
+                    <div className="text-center">
+                      <div className="text-red-400 font-semibold">Bearish (10%)</div>
+                      <div className="text-xs text-gray-400">Worst case scenario</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-purple-400 font-semibold">Most Likely (50%)</div>
+                      <div className="text-xs text-gray-400">Expected outcome</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-green-400 font-semibold">Bullish (90%)</div>
+                      <div className="text-xs text-gray-400">Best case scenario</div>
+                    </div>
+                  </div>
+                </div>
+                
                 {performanceEth?.altcoins && (
                   <div className="space-y-6">
                     {/* Get top 5 ETH outperformers */}
@@ -1689,53 +1715,131 @@ export default function AltseasonDashboard() {
                             </div>
 
                             {/* Simulation Chart */}
-                            <div className="h-64 mb-6">
-                              <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData}>
+                            <div className="h-80 mb-6 bg-gray-900/30 rounded-xl p-4">
+                              <h4 className="text-sm text-gray-400 mb-3 text-center">Possible Price Movements Over Next 30 Days</h4>
+                              <ResponsiveContainer width="100%" height="90%">
+                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
+                                  <defs>
+                                    <linearGradient id={`colorGradient${index}`} x1="0" y1="0" x2="0" y2="1">
+                                      <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
+                                      <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.1}/>
+                                    </linearGradient>
+                                  </defs>
+                                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
                                   <XAxis 
                                     dataKey="day" 
-                                    stroke="#6B7280" 
-                                    fontSize={12}
-                                    label={{ value: 'Days', position: 'insideBottom', offset: -5 }}
+                                    stroke="#9CA3AF" 
+                                    fontSize={14}
+                                    tick={{ fill: '#9CA3AF' }}
+                                    label={{ 
+                                      value: 'Days from Today', 
+                                      position: 'insideBottom', 
+                                      offset: -10,
+                                      style: { fill: '#9CA3AF', fontSize: 16 }
+                                    }}
+                                    tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? '30 Days' : value === 15 ? '15 Days' : ''}
                                   />
                                   <YAxis 
-                                    stroke="#6B7280" 
-                                    fontSize={12}
+                                    stroke="#9CA3AF" 
+                                    fontSize={14}
+                                    tick={{ fill: '#9CA3AF' }}
                                     domain={['dataMin - 5%', 'dataMax + 5%']}
-                                    label={{ value: 'Price ($)', angle: -90, position: 'insideLeft' }}
+                                    tickFormatter={(value) => `$${value >= 1 ? value.toFixed(0) : value.toFixed(3)}`}
+                                    label={{ 
+                                      value: 'Projected Price', 
+                                      angle: -90, 
+                                      position: 'insideLeft',
+                                      style: { fill: '#9CA3AF', fontSize: 16 }
+                                    }}
                                   />
-                                  <Line type="monotone" dataKey="path1" stroke="#A78BFA" strokeWidth={1.5} dot={false} strokeOpacity={0.4} />
-                                  <Line type="monotone" dataKey="path2" stroke="#C084FC" strokeWidth={1.5} dot={false} strokeOpacity={0.4} />
-                                  <Line type="monotone" dataKey="path3" stroke="#E879F9" strokeWidth={1.5} dot={false} strokeOpacity={0.4} />
-                                  <Line type="monotone" dataKey="path4" stroke="#F472B6" strokeWidth={1.5} dot={false} strokeOpacity={0.4} />
-                                  <Line type="monotone" dataKey="path5" stroke="#FB7185" strokeWidth={1.5} dot={false} strokeOpacity={0.4} />
+                                  <RechartsTooltip
+                                    contentStyle={{ 
+                                      backgroundColor: 'rgba(17, 24, 39, 0.95)', 
+                                      border: '1px solid #374151',
+                                      borderRadius: '8px'
+                                    }}
+                                    labelStyle={{ color: '#9CA3AF' }}
+                                    formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : 4)}`, 'Price']}
+                                    labelFormatter={(label) => `Day ${label}`}
+                                  />
+                                  <Line type="monotone" dataKey="path1" stroke="#A78BFA" strokeWidth={2} dot={false} strokeOpacity={0.3} />
+                                  <Line type="monotone" dataKey="path2" stroke="#C084FC" strokeWidth={2} dot={false} strokeOpacity={0.3} />
+                                  <Line type="monotone" dataKey="path3" stroke="#E879F9" strokeWidth={2} dot={false} strokeOpacity={0.3} />
+                                  <Line type="monotone" dataKey="path4" stroke="#F472B6" strokeWidth={2} dot={false} strokeOpacity={0.3} />
+                                  <Line type="monotone" dataKey="path5" stroke="#FB7185" strokeWidth={2} dot={false} strokeOpacity={0.3} />
+                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
                                 </LineChart>
                               </ResponsiveContainer>
                             </div>
 
                             {/* Price Targets */}
-                            <div className="grid grid-cols-3 gap-4">
-                              <div className="bg-red-500/10 rounded-lg p-4 border border-red-500/20">
-                                <p className="text-sm text-red-400 mb-2">Bearish (10%)</p>
-                                <p className="font-bold text-xl text-white">${formatNumber(p10)}</p>
-                                <p className="text-sm text-red-400 mt-1">
-                                  {((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                </p>
+                            <div className="mb-4">
+                              <h4 className="text-sm text-gray-400 mb-3 text-center">Price Predictions After 30 Days</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <motion.div 
+                                  whileHover={{ scale: 1.05 }}
+                                  className="bg-gradient-to-br from-red-500/10 to-red-600/10 rounded-xl p-5 border border-red-500/30 text-center"
+                                >
+                                  <div className="flex items-center justify-center mb-2">
+                                    <TrendingDown className="w-5 h-5 text-red-400 mr-1" />
+                                    <p className="text-sm font-semibold text-red-400">Bearish Scenario</p>
+                                  </div>
+                                  <p className="text-xs text-gray-400 mb-2">90% chance price stays above</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p10)}</p>
+                                  <p className={cn(
+                                    "text-sm font-medium flex items-center justify-center",
+                                    p10 < currentPrice ? "text-red-400" : "text-green-400"
+                                  )}>
+                                    {p10 < currentPrice ? <ArrowDownRight className="w-4 h-4 mr-1" /> : <ArrowUpRight className="w-4 h-4 mr-1" />}
+                                    {((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                </motion.div>
+                                
+                                <motion.div 
+                                  whileHover={{ scale: 1.05 }}
+                                  className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-xl p-5 border border-purple-500/30 text-center"
+                                >
+                                  <div className="flex items-center justify-center mb-2">
+                                    <Activity className="w-5 h-5 text-purple-400 mr-1" />
+                                    <p className="text-sm font-semibold text-purple-400">Most Likely</p>
+                                  </div>
+                                  <p className="text-xs text-gray-400 mb-2">50% chance above/below</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p50)}</p>
+                                  <p className={cn(
+                                    "text-sm font-medium flex items-center justify-center",
+                                    p50 < currentPrice ? "text-red-400" : "text-green-400"
+                                  )}>
+                                    {p50 < currentPrice ? <ArrowDownRight className="w-4 h-4 mr-1" /> : <ArrowUpRight className="w-4 h-4 mr-1" />}
+                                    {((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                </motion.div>
+                                
+                                <motion.div 
+                                  whileHover={{ scale: 1.05 }}
+                                  className="bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl p-5 border border-green-500/30 text-center"
+                                >
+                                  <div className="flex items-center justify-center mb-2">
+                                    <TrendingUp className="w-5 h-5 text-green-400 mr-1" />
+                                    <p className="text-sm font-semibold text-green-400">Bullish Scenario</p>
+                                  </div>
+                                  <p className="text-xs text-gray-400 mb-2">10% chance price exceeds</p>
+                                  <p className="font-bold text-2xl text-white mb-1">${formatNumber(p90)}</p>
+                                  <p className={cn(
+                                    "text-sm font-medium flex items-center justify-center",
+                                    p90 < currentPrice ? "text-red-400" : "text-green-400"
+                                  )}>
+                                    {p90 < currentPrice ? <ArrowDownRight className="w-4 h-4 mr-1" /> : <ArrowUpRight className="w-4 h-4 mr-1" />}
+                                    {((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                </motion.div>
                               </div>
-                              <div className="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20">
-                                <p className="text-sm text-purple-400 mb-2">Base (50%)</p>
-                                <p className="font-bold text-xl text-white">${formatNumber(p50)}</p>
-                                <p className="text-sm text-purple-400 mt-1">
-                                  {((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                </p>
-                              </div>
-                              <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
-                                <p className="text-sm text-green-400 mb-2">Bullish (90%)</p>
-                                <p className="font-bold text-xl text-white">${formatNumber(p90)}</p>
-                                <p className="text-sm text-green-400 mt-1">
-                                  {((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                </p>
-                              </div>
+                            </div>
+                            
+                            {/* Methodology Note */}
+                            <div className="bg-gray-900/30 rounded-lg p-4 text-center">
+                              <p className="text-xs text-gray-500">
+                                Based on {simulations} simulations using historical volatility and ETH outperformance trend
+                              </p>
                             </div>
                           </motion.div>
                         );
