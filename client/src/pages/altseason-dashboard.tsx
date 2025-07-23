@@ -612,55 +612,12 @@ export default function AltseasonDashboard() {
               </motion.div>
             </div>
 
-            {/* ETH/BTC Ratio Chart */}
+            {/* BTC.D - Bitcoin Dominance Chart */}
             <div className="col-span-1 md:col-span-2 lg:col-span-3 mt-4 lg:mt-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all duration-300">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between text-white">
-                      <span className="flex items-center">
-                        <Target className="mr-2 text-indigo-400" />
-                        <span className="text-sm sm:text-base">ETH/BTC Ratio - Key Altseason Indicator</span>
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl sm:text-2xl font-bold text-white">
-                            {ethBtcData?.currentRatio ? ethBtcData.currentRatio.toFixed(4) : '0.0309'}
-                          </p>
-                          <p className="text-xs text-gray-400">Current Ratio</p>
-                        </div>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {/* TradingView Widget for ETH/BTC */}
-                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
-                      <iframe
-                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22ETHBTC%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_eth_btc%22%7D`}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          border: "none",
-                        }}
-                        allowFullScreen
-                      />
-                    </div>
-                    
-
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* BTC.D - Bitcoin Dominance Chart */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.35 }}
-                className="mt-6"
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-orange-600 transition-all">
                   <CardHeader>
@@ -695,6 +652,49 @@ export default function AltseasonDashboard() {
                         allowFullScreen
                       />
                     </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* ETH/BTC Ratio Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.35 }}
+                className="mt-6"
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center">
+                        <Target className="mr-2 text-indigo-400" />
+                        <span className="text-sm sm:text-base">ETH/BTC Ratio - Key Altseason Indicator</span>
+                      </span>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-white">
+                            {ethBtcData?.currentRatio ? ethBtcData.currentRatio.toFixed(4) : '0.0309'}
+                          </p>
+                          <p className="text-xs text-gray-400">Current Ratio</p>
+                        </div>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {/* TradingView Widget for ETH/BTC */}
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                      <iframe
+                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22ETHBTC%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_eth_btc%22%7D`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          border: "none",
+                        }}
+                        allowFullScreen
+                      />
+                    </div>
+                    
+
                   </CardContent>
                 </Card>
               </motion.div>
