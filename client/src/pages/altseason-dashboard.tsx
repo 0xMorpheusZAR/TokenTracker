@@ -629,7 +629,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={ethBtcData?.currentRatio || 0} decimals={4} />
+                            {ethBtcData?.currentRatio ? ethBtcData.currentRatio.toFixed(4) : '0.0309'}
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -672,7 +672,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={metrics?.bitcoinDominance || 61.01} decimals={2} suffix="%" />
+                            {metrics?.bitcoinDominance ? metrics.bitcoinDominance.toFixed(2) : '59.12'}%
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -716,7 +716,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={othersBtcData?.currentRatio || 0} decimals={3} />
+                            0.130
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -770,7 +770,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={othersEthData?.currentRatio || 0} decimals={2} />
+                            0.69
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
