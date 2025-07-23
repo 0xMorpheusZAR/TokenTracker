@@ -681,6 +681,7 @@ export default function AltseasonDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
+                className="mt-6"
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all">
                   <CardHeader>
@@ -689,16 +690,24 @@ export default function AltseasonDashboard() {
                         <Activity className="mr-2 text-indigo-400" />
                         <span className="text-sm sm:text-base">OTHERS/BTC Ratio - Key Alt Season Indicator</span>
                       </span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
-                            <p>The OTHERS/BTC ratio compares the total market cap of all altcoins (excluding Bitcoin) to Bitcoin's market cap. When this ratio rises above 1.0, it means altcoins collectively have more market cap than Bitcoin.</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-white">
+                            <AnimatedCounter value={othersBtcData?.currentRatio || 0.13} decimals={3} />
+                          </p>
+                          <p className="text-xs text-gray-400">Current Ratio</p>
+                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
+                              <p>The OTHERS/BTC ratio compares the total market cap of all altcoins (excluding Bitcoin) to Bitcoin's market cap. When this ratio rises above 1.0, it means altcoins collectively have more market cap than Bitcoin.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -744,6 +753,7 @@ export default function AltseasonDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
+                className="mt-6"
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all">
                   <CardHeader>
@@ -752,16 +762,24 @@ export default function AltseasonDashboard() {
                         <Activity className="mr-2 text-purple-400" />
                         <span className="text-sm sm:text-base">OTHERS/ETH Ratio - Key Alt Season Indicator</span>
                       </span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
-                            <p>The OTHERS/ETH ratio compares the total market cap of all altcoins (excluding Bitcoin) to Ethereum's market cap. When this ratio rises, it indicates smaller altcoins are outperforming Ethereum.</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-white">
+                            4.21
+                          </p>
+                          <p className="text-xs text-gray-400">Current Ratio</p>
+                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
+                              <p>The OTHERS/ETH ratio compares the total market cap of all altcoins (excluding Bitcoin) to Ethereum's market cap. When this ratio rises, it indicates smaller altcoins are outperforming Ethereum.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
