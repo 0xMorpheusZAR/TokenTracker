@@ -308,39 +308,115 @@ Check API connection and authentication status.
 
 Fetch cryptocurrency news and market updates.
 
-**URL:** `GET /news`
+**URL:** `GET https://api.velo.xyz/api/n/news`
 
 **Parameters:**
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `begin` | number | No | Start timestamp for news (milliseconds) |
-| `limit` | number | No | Maximum number of news items (default: 100) |
 
 **Response Format:** JSON
+
+**News Object Structure:**
 ```json
-[
-  {
-    "id": 123456,
-    "time": 1704153600000,
-    "effectiveTime": 1704153600000,
-    "headline": "Bitcoin ETF Approval Expected This Week",
-    "source": "Bloomberg",
-    "priority": 1,
-    "coins": ["BTC"],
-    "sentiment": "bullish",
-    "impact": 5,
-    "summary": "The SEC is expected to approve multiple Bitcoin ETF applications...",
-    "link": "https://bloomberg.com/news/..."
-  }
-]
+{
+  "id": 55,                           // Unique identifier
+  "time": 1704085200000,             // Timestamp the news was published
+  "effectiveTime": 1704085200000,    // Timestamp the news happened
+  "headline": "Hello world",         // News headline
+  "source": "Velo",                  // News source
+  "priority": 2,                     // 1 = top priority only, 2 = everything else
+  "coins": ["BTC"],                  // List of relevant coins
+  "summary": "# Hello world",        // May include markdown
+  "link": "https://velodata.app"     // Source link
+}
 ```
 
 **Priority Levels:**
-- `1`: High priority (breaking news)
-- `2`: Normal priority
-- `3`: Low priority
+- `1`: Top priority news only
+- `2`: Everything else
 
-**Impact Scale:** 1-5 (1 = low impact, 5 = high impact)
+**WebSocket Events:**
+
+The WebSocket may send additional event types:
+
+**Edit Event:**
+```json
+{
+  "id": 55,
+  "time": 1704085200000,
+  "effectiveTime": 1704085200000,
+  "headline": "Updated headline",
+  "source": "Velo",
+  "priority": 2,
+  "coins": ["BTC"],
+  "summary": "# Updated content",
+  "link": "https://velodata.app",
+  "edit": true                      // Indicates this is an edit
+}
+```
+
+**Delete Event:**
+```json
+{
+  "id": 55,
+  "deleted": true                   // Indicates this news item was deleted
+}
+```
+
+---
+
+## Python Integration for News API
+
+### Quick Start
+
+```python
+import asyncio
+from velodata import lib as velo
+
+# new velo client
+client = velo.client('api_key')
+
+# get past stories
+print(client.news.get_news())
+
+# stream new stories
+async def stream():
+    async for message in client.news.stream_news():
+        if(message in ('connected', 'heartbeat', 'closed')):
+            print(message)
+        else:
+            print(json.loads(message))
+        
+asyncio.run(stream())
+```
+
+### Get News
+
+```python
+news.get_news(begin)
+```
+
+**Parameters:**
+- `begin` (optional, defaults to 0): millisecond timestamp to only fetch news after
+
+**Returns:** list of news objects (dicts)
+
+### Stream News
+
+```python
+news.stream_news()
+```
+
+**Returns:** generator, generator returns 'connected', 'heartbeat', 'closed', or news object (dict)
+
+### Close Stream
+
+```python
+news.close_stream()
+```
+
+Closes open websocket and exits generator
 
 ---
 
@@ -394,17 +470,15 @@ interface VeloProduct {
 ### News Item
 ```typescript
 interface VeloNewsItem {
-  id: number;                // Unique news ID
-  time: number;              // Publication timestamp
-  effectiveTime: number;     // When news becomes effective
+  id: number;                // Unique identifier
+  time: number;              // Timestamp the news was published
+  effectiveTime: number;     // Timestamp the news happened
   headline: string;          // News headline
   source: string;            // News source
-  priority: number;          // Priority level (1-3)
-  coins: string[];           // Related coins
-  sentiment?: string;        // Market sentiment
-  impact?: number;           // Impact scale (1-5)
-  summary: string;           // Full news summary
-  link: string | null;       // External link
+  priority: number;          // 1 = top priority only, 2 = everything else
+  coins: string[];           // List of relevant coins
+  summary: string;           // May include markdown
+  link: string | null;       // Source link
 }
 ```
 
