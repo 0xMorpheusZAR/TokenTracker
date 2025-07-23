@@ -225,6 +225,7 @@ Changelog:
 - January 23, 2025: Added visual list of top 50 altcoins outperforming BTC as mini dashboard - Created "Top Performers vs BTC" card next to Altseason Index, displays outperforming coins with logos, symbols, ranks, and 30-day performance metrics, color-coded based on outperformance levels (green for strong performers), scrollable list with custom scrollbar styling, real-time updates every 10 seconds showing current outperformance leaders
 - January 23, 2025: Fixed TradingView chart dialog runtime error in Analysis section - Added 100ms delay to ensure dialog renders before widget initialization, changed container_id from dynamic Date.now() to stable coin.symbol + coin.id combination, added proper cleanup for setTimeout to prevent memory leaks
 - January 23, 2025: Swapped order of BTC.D and ETH/BTC ratio dashboards - BTC.D now appears first in the Overview tab, followed by ETH/BTC, OTHERS/BTC, and OTHERS/ETH for improved visual hierarchy
+- January 23, 2025: Expanded TradingView widgets to show full side toolbar - Increased height to 700px, added minWidth of 1000px, updated popup dimensions to 1200x750, and added horizontal scrolling to ensure complete visibility of key stats, volume, and performance data in all ratio charts
 ```
 
 ## User Preferences
