@@ -240,7 +240,6 @@ export default function VeloNewsDashboard() {
               Velo News Feed
             </h1>
             <p className="text-gray-400">Live cryptocurrency news updates from Velo Data API</p>
-            <p className="text-emerald-400 text-sm mt-1">Showing news from July 20, 2025 to July 23, 2025 09:49:08 GMT+2</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full md:w-auto">
@@ -322,7 +321,7 @@ export default function VeloNewsDashboard() {
                 <div>
                   <p className="text-gray-400 text-xs md:text-sm">Last Update</p>
                   <p className="text-xs md:text-sm font-medium text-white">
-                    {new Date(dataUpdatedAt).toLocaleTimeString()}
+                    {new Date(dataUpdatedAt).toISOString().split('T')[1].split('.')[0]} UTC
                   </p>
                 </div>
                 <Clock className="w-6 md:w-8 h-6 md:h-8 text-emerald-400" />
@@ -419,7 +418,6 @@ export default function VeloNewsDashboard() {
             <div className="mb-4 p-3 bg-gray-700/30 rounded-lg">
               <div className="flex items-center justify-between text-sm text-gray-400">
                 <span>Total News Items: <span className="text-white font-semibold">{newsData.length}</span></span>
-                <span>Timeframe: <span className="text-emerald-400 font-semibold">July 20-23, 2025</span></span>
               </div>
             </div>
             
