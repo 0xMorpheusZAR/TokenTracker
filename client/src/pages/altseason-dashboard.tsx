@@ -1755,14 +1755,51 @@ export default function AltseasonDashboard() {
                                     formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : currentPrice >= 0.01 ? 4 : currentPrice >= 0.0001 ? 6 : 8)}`, 'Price']}
                                     labelFormatter={(label) => label === 0 ? 'Today' : `Day ${label}`}
                                   />
-                                  <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
-                                  <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
                                   <Line type="monotone" dataKey="bullish" stroke="#10B981" strokeWidth={2} dot={false} strokeOpacity={0.8} />
+                                  <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
+                                  <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
                                   <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2}>
-                                    <Label value={`Now: $${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
+                                    <Label value={`$${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
                                   </ReferenceLine>
                                 </LineChart>
                               </ResponsiveContainer>
+                            </div>
+                            
+                            {/* 30-Day Price Projections */}
+                            <div className="grid grid-cols-3 gap-4 mt-6">
+                              <div className="bg-green-900/20 rounded-lg p-4 border border-green-500/20">
+                                <div className="text-center">
+                                  <p className="text-xs text-green-400 mb-1">Bullish Scenario</p>
+                                  <p className="text-lg font-bold text-green-400">
+                                    +{((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    ${p90 >= 1 ? p90.toFixed(2) : p90 >= 0.01 ? p90.toFixed(4) : p90 >= 0.0001 ? p90.toFixed(6) : p90.toFixed(8)}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-500/20">
+                                <div className="text-center">
+                                  <p className="text-xs text-purple-400 mb-1">Most Likely</p>
+                                  <p className="text-lg font-bold text-purple-400">
+                                    {p50 >= currentPrice ? '+' : ''}{((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    ${p50 >= 1 ? p50.toFixed(2) : p50 >= 0.01 ? p50.toFixed(4) : p50 >= 0.0001 ? p50.toFixed(6) : p50.toFixed(8)}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="bg-red-900/20 rounded-lg p-4 border border-red-500/20">
+                                <div className="text-center">
+                                  <p className="text-xs text-red-400 mb-1">Bearish Scenario</p>
+                                  <p className="text-lg font-bold text-red-400">
+                                    {p10 >= currentPrice ? '+' : ''}{((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    ${p10 >= 1 ? p10.toFixed(2) : p10 >= 0.01 ? p10.toFixed(4) : p10 >= 0.0001 ? p10.toFixed(6) : p10.toFixed(8)}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                             
                             {/* Legend and Info Section */}
