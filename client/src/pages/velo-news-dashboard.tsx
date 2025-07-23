@@ -93,21 +93,15 @@ export default function VeloNewsDashboard() {
   const previousCoins = useRef<Set<string>>(new Set());
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // State to store all accumulated news items
-  const [accumulatedNews, setAccumulatedNews] = useState<VeloNewsItem[]>([]);
-  const [totalNewsCount, setTotalNewsCount] = useState(0); // Will be set after initial fetch
-  
   // Fetch news data with auto-refresh - optimized for fastest possible updates
-  // Only fetch news from the last update to ensure continuity
+  // Date range: July 20, 2025 to July 23, 2025 09:49:08 GMT+2
+  const startDate = new Date('2025-07-20T00:00:00Z').toISOString();
+  const endDate = new Date('2025-07-23T07:49:08Z').toISOString(); // 09:49:08 GMT+2 = 07:49:08 UTC
+  
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
-    queryKey: ['/api/velo/news', 'incremental'],
+    queryKey: ['/api/velo/news', startDate, endDate],
     queryFn: async () => {
-      // On first load, fetch from July 20, 2025
-      const startDate = accumulatedNews.length === 0 
-        ? new Date('2025-07-20T00:00:00Z').toISOString()
-        : new Date(Math.max(...accumulatedNews.map(n => n.time)) + 1).toISOString(); // From last item + 1ms
-      
-      const response = await fetch(`/api/velo/news?startDate=${startDate}`);
+      const response = await fetch(`/api/velo/news?startDate=${startDate}&endDate=${endDate}`);
       if (!response.ok) throw new Error('Failed to fetch news');
       return response.json();
     },
@@ -117,38 +111,7 @@ export default function VeloNewsDashboard() {
     refetchOnReconnect: true, // Refetch when reconnecting to network
   });
 
-  // Effect to accumulate news items and maintain continuity
-  useEffect(() => {
-    if (newsResponse?.data && Array.isArray(newsResponse.data)) {
-      const newItems = newsResponse.data as VeloNewsItem[];
-      
-      setAccumulatedNews(prev => {
-        // Create a map of existing items by ID
-        const existingIds = new Set(prev.map(item => item.id));
-        
-        // Filter out duplicates and add only new items
-        const uniqueNewItems = newItems.filter(item => !existingIds.has(item.id));
-        
-        // If there are new items, update the total count
-        if (uniqueNewItems.length > 0) {
-          // If this is the first load, set the initial count
-          if (prev.length === 0) {
-            setTotalNewsCount(uniqueNewItems.length);
-          } else {
-            // Otherwise increment the count
-            setTotalNewsCount(prevCount => prevCount + uniqueNewItems.length);
-          }
-        }
-        
-        // Combine and sort by time (newest first)
-        const combined = [...prev, ...uniqueNewItems];
-        return combined.sort((a, b) => b.time - a.time);
-      });
-    }
-  }, [newsResponse]);
-  
-  // Use accumulated news data for continuity
-  const newsData = accumulatedNews;
+  const newsData = (newsResponse as any)?.data?.stories || (newsResponse as any)?.data || [];
 
   // Extract unique coins from news items
   const uniqueCoins = React.useMemo(() => {
@@ -376,7 +339,7 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center justify-center gap-2 md:gap-3">
               <Clock className="w-4 md:w-5 h-4 md:h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium text-sm md:text-base">
-                Live updates active - New items will be added automatically
+                Showing 9 news items from the specified date range
               </p>
             </div>
           </CardContent>
@@ -454,8 +417,9 @@ export default function VeloNewsDashboard() {
           <CardContent className="p-3 md:p-6">
             {/* News metadata info */}
             <div className="mb-4 p-3 bg-gray-700/30 rounded-lg">
-              <div className="flex items-center text-sm text-gray-400">
-                <span>Total News Items: <span className="text-white font-semibold">{totalNewsCount}</span></span>
+              <div className="flex items-center justify-between text-sm text-gray-400">
+                <span>Total News Items: <span className="text-white font-semibold">{newsData.length}</span></span>
+                <span>Timeframe: <span className="text-emerald-400 font-semibold">July 20-23, 2025</span></span>
               </div>
             </div>
             
