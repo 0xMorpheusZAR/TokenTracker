@@ -365,7 +365,8 @@ class VeloService {
 
       const data = await response.json();
       const newsCount = Array.isArray(data) ? data.length : (data.stories?.length || 0);
-      console.log(`Successfully fetched ${newsCount} news items from Velo`);
+      const timeframeInfo = beginTimestamp ? `from timestamp ${beginTimestamp} (${new Date(beginTimestamp).toISOString()})` : 'all available';
+      console.log(`Successfully fetched ${newsCount} news items from Velo (${timeframeInfo})`);
       return Array.isArray(data) ? data : (data.stories || []);
     } catch (error) {
       console.error('Failed to fetch news:', error);
@@ -428,10 +429,27 @@ class VeloService {
     }
   }
 
-  async getCryptoNews(hours: number = 24): Promise<VeloNewsItem[]> {
+  async getCryptoNews(hours?: number): Promise<VeloNewsItem[]> {
     try {
-      const beginTimestamp = Date.now() - (hours * 60 * 60 * 1000);
-      return await this.getNews(beginTimestamp);
+      if (hours !== undefined && hours > 0) {
+        const beginTimestamp = Date.now() - (hours * 60 * 60 * 1000);
+        console.log(`Fetching news from last ${hours} hours`);
+        return await this.getNews(beginTimestamp);
+      } else {
+        // Try fetching without any begin timestamp first for all historical data
+        console.log('Fetching ALL historical news (no timestamp filter)');
+        const allNews = await this.getNews();
+        
+        // If we get limited results, try with a very early timestamp
+        if (allNews.length < 10) {
+          console.log('Trying with early timestamp (Jan 1, 2024) for more historical data');
+          const earlyTimestamp = new Date('2024-01-01').getTime();
+          const historicalNews = await this.getNews(earlyTimestamp);
+          return historicalNews.length > allNews.length ? historicalNews : allNews;
+        }
+        
+        return allNews;
+      }
     } catch (error) {
       console.error('Failed to fetch crypto news:', error);
       throw error;

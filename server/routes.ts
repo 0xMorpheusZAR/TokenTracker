@@ -1397,9 +1397,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Crypto news with automatic live pricing for all coins
   app.get("/api/velo/news", async (req, res) => {
     try {
-      const { hours = 24 } = req.query;
-      const hoursNum = parseInt(hours as string);
+      const { hours } = req.query;
+      const hoursNum = hours ? parseInt(hours as string) : undefined;
       
+      // If no hours specified, fetch all historical news
       const news = await veloService.getCryptoNews(hoursNum);
       
       // Extract all unique coins from news items
@@ -1431,11 +1432,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         effectivePrice: item.effectivePrice || (item.coins[0] && livePrices[item.coins[0]] ? livePrices[item.coins[0]] : null)
       }));
 
+      // Log more details about the news fetch
+      console.log(`News API Response: ${enhancedNews.length} items, timeframe: ${hoursNum || 'all historical'}`);
+      if (enhancedNews.length > 0) {
+        const oldestNews = enhancedNews.reduce((oldest, item) => 
+          item.time < oldest.time ? item : oldest
+        );
+        const newestNews = enhancedNews.reduce((newest, item) => 
+          item.time > newest.time ? item : newest
+        );
+        console.log(`Date range: ${new Date(oldestNews.time).toISOString()} to ${new Date(newestNews.time).toISOString()}`);
+      }
+
       res.json({
         data: enhancedNews,
         livePrices: livePrices, // Include all live prices in response
         coinsTracked: uniqueCoins,
-        timeframe_hours: hoursNum,
+        timeframe_hours: hoursNum || 'all', // Show 'all' when fetching all historical data
+        totalNewsItems: enhancedNews.length,
         provider: "Velo Pro API"
       });
     } catch (error) {

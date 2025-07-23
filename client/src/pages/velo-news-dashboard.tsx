@@ -96,7 +96,7 @@ export default function VeloNewsDashboard() {
   // Fetch news data with auto-refresh - optimized for fastest possible updates
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
     queryKey: ['/api/velo/news'],
-    refetchInterval: autoRefresh ? 5000 : false, // Refresh every 10 seconds for near real-time updates
+    refetchInterval: autoRefresh ? 5000 : false, // Refresh every 5 seconds for near real-time updates
     staleTime: 0, // Always consider data stale to ensure fresh updates
     refetchOnWindowFocus: true, // Refetch when window regains focus
     refetchOnReconnect: true, // Refetch when reconnecting to network
@@ -405,6 +405,14 @@ export default function VeloNewsDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-3 md:p-6">
+            {/* News metadata info */}
+            <div className="mb-4 p-3 bg-gray-700/30 rounded-lg">
+              <div className="flex items-center justify-between text-sm text-gray-400">
+                <span>Total News Items: <span className="text-white font-semibold">{newsData.length}</span></span>
+                <span>Timeframe: <span className="text-emerald-400 font-semibold">{(newsResponse as any)?.timeframe_hours === 'all' ? 'All Historical Data' : `Last ${(newsResponse as any)?.timeframe_hours} hours`}</span></span>
+              </div>
+            </div>
+            
             <div className="relative h-[500px] md:h-[600px] overflow-y-auto news-feed-scroll" ref={scrollAreaRef}>
               <AnimatePresence>
                 {filteredNews.length === 0 ? (
