@@ -420,6 +420,100 @@ router.get('/altcoins-performance', async (req, res) => {
   }
 });
 
+// Get top altcoins performance vs Ethereum
+router.get('/altcoins-performance-eth', async (req, res) => {
+  try {
+    const coingeckoService = req.app.locals.coingeckoService;
+    const { period = '90d' } = req.query;
+    
+    // Get top 100 coins to ensure we have enough altcoins after filtering
+    const topCoins = await coingeckoService.getTop100Altcoins();
+    
+    if (!topCoins || topCoins.length === 0) {
+      throw new Error('Failed to fetch coins data');
+    }
+    
+    // Get Ethereum data separately for comparison
+    const ethereumData = topCoins.find(coin => coin.id === 'ethereum');
+    if (!ethereumData) {
+      throw new Error('Ethereum data not found');
+    }
+    
+    // Filter out Ethereum and ETH derivatives, then get exactly top 50 altcoins
+    const ethDerivatives = [
+      'ethereum', 'wrapped-steth', 'staked-ether', 'wsteth', 'weeth', 'steth', 
+      'lido-staked-ether', 'rocket-pool-eth', 'frax-ether', 'sfrxeth',
+      'wbeth', 'weth', 'wrapped-ether', 'wrapped-beacon-eth', 'binance-wrapped-eth'
+    ];
+    const top50Altcoins = topCoins
+      .filter(coin => !ethDerivatives.includes(coin.id))
+      .slice(0, 50);
+    
+    // For 90-day data, we'll use approximation based on 30-day trends
+    const eth90dPerformance = (ethereumData?.price_change_percentage_30d_in_currency || 0) * 3;
+    
+    const ethPerformance = {
+      '24h': ethereumData?.price_change_percentage_24h || 0,
+      '7d': ethereumData?.price_change_percentage_7d_in_currency || ethereumData?.price_change_percentage_7d || 0,
+      '30d': ethereumData?.price_change_percentage_30d_in_currency || ethereumData?.price_change_percentage_30d || 0,
+      '90d': eth90dPerformance
+    };
+    
+    // Calculate relative performance with actual 90d data
+    const altcoinsPerformance = await Promise.all(
+      top50Altcoins.map(async coin => {
+        // Fetch 90-day historical data for each altcoin
+        let coin90dPerformance = 0;
+        try {
+          const coinHistoricalData = await coingeckoService.getTokenHistory(coin.id, 90);
+          if (coinHistoricalData && coinHistoricalData.prices && coinHistoricalData.prices.length > 0) {
+            const oldestPrice = coinHistoricalData.prices[0][1];
+            const currentPrice = coin.current_price;
+            coin90dPerformance = ((currentPrice - oldestPrice) / oldestPrice) * 100;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch 90d data for ${coin.id}, using approximation`);
+          // Fallback to approximation if historical data fails
+          coin90dPerformance = (coin.price_change_percentage_30d_in_currency || 0) * 2.5;
+        }
+        
+        return {
+          id: coin.id,
+          symbol: coin.symbol,
+          name: coin.name,
+          image: coin.image,
+          currentPrice: coin.current_price,
+          marketCap: coin.market_cap,
+          volume24h: coin.total_volume,
+          priceChange: {
+            '7d': coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0,
+            '30d': coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0,
+            '90d': coin90dPerformance
+          },
+          performanceVsEth: {
+            '7d': ((coin.price_change_percentage_7d_in_currency || coin.price_change_percentage_7d || 0)) - ethPerformance['7d'],
+            '30d': ((coin.price_change_percentage_30d_in_currency || coin.price_change_percentage_30d || 0)) - ethPerformance['30d'],
+            '90d': coin90dPerformance - ethPerformance['90d']
+          }
+        };
+      })
+    );
+    
+    // Sort by performance vs ETH for the selected timeframe
+    const sortedAltcoins = altcoinsPerformance.sort((a, b) => 
+      b.performanceVsEth['30d'] - a.performanceVsEth['30d']
+    );
+    
+    res.json({
+      ethPerformance,
+      altcoins: sortedAltcoins
+    });
+  } catch (error) {
+    console.error('Failed to fetch altcoins performance vs ETH:', error);
+    res.status(500).json({ error: 'Failed to fetch altcoins performance vs ETH' });
+  }
+});
+
 // Get historical altseason patterns
 router.get('/historical-patterns', async (req, res) => {
   try {

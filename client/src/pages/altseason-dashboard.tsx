@@ -160,6 +160,7 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '', decimals = 0 }: {
 
 export default function AltseasonDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
+  const [selectedTimeframeEth, setSelectedTimeframeEth] = useState('30d');
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [showAdvancedMetrics, setShowAdvancedMetrics] = useState(false);
   const [selectedView, setSelectedView] = useState<'overview' | 'analysis' | 'education'>('overview');
@@ -194,9 +195,15 @@ export default function AltseasonDashboard() {
     refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
   });
 
-  // Fetch altcoins performance
+  // Fetch altcoins performance vs Bitcoin
   const { data: performance, isLoading: perfLoading } = useQuery({
     queryKey: ['/api/altseason/altcoins-performance', selectedTimeframe],
+    refetchInterval: autoRefresh ? 60000 : false,
+  });
+
+  // Fetch altcoins performance vs Ethereum
+  const { data: performanceEth, isLoading: perfEthLoading } = useQuery({
+    queryKey: ['/api/altseason/altcoins-performance-eth', selectedTimeframeEth],
     refetchInterval: autoRefresh ? 60000 : false,
   });
 
@@ -266,7 +273,7 @@ export default function AltseasonDashboard() {
     };
   }) || [];
 
-  // Get top performing altcoins from metrics data for consistency
+  // Get top performing altcoins vs Bitcoin
   const topPerformers = useMemo(() => {
     if (!metrics?.outperformingCoins) return [];
     
@@ -291,6 +298,16 @@ export default function AltseasonDashboard() {
       }
     }));
   }, [metrics?.outperformingCoins]);
+
+  // Get top performing altcoins vs Ethereum
+  const topPerformersEth = useMemo(() => {
+    if (!performanceEth?.altcoins) return [];
+    
+    // Return top performers sorted by performance vs ETH
+    return performanceEth.altcoins
+      .filter(coin => coin.performanceVsEth[selectedTimeframeEth] > 0)
+      .slice(0, 50);
+  }, [performanceEth?.altcoins, selectedTimeframeEth]);
 
   // Calculate altseason probability score
   const altseasonProbability = metrics ? {
@@ -1092,6 +1109,328 @@ export default function AltseasonDashboard() {
                           )}
                         </motion.div>
                       ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+
+              {/* Top Altcoins Performance vs Ethereum */}
+              <Card className="relative bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border border-indigo-600/30 hover:border-indigo-500/50 transition-all duration-300 shadow-2xl overflow-hidden">
+                {/* Premium background effects */}
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 via-purple-600/10 to-blue-600/10"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/20 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-500/20 via-transparent to-transparent"></div>
+                
+                <CardHeader className="relative z-10">
+                  <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
+                  
+                  <CardTitle className="flex items-center justify-between text-white relative z-10">
+                    <span className="flex items-center">
+                      <div className="relative mr-3">
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-blue-500 blur-xl opacity-70"></div>
+                        <div className="relative z-10 bg-gradient-to-br from-gray-900 to-gray-800 p-2 rounded-lg border border-indigo-500/30">
+                          <Zap className="text-indigo-400 w-6 h-6" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                          Top Altcoins vs Ethereum
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-0.5">Performance Analysis</p>
+                      </div>
+                    </span>
+                    <div className="flex gap-2">
+                      {['7d', '30d', '90d'].map(tf => (
+                        <Button
+                          key={tf}
+                          variant={selectedTimeframeEth === tf ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedTimeframeEth(tf)}
+                          className={cn(
+                            "font-bold px-5 py-2.5 transition-all duration-300 relative overflow-hidden group",
+                            selectedTimeframeEth === tf 
+                              ? "bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-500 hover:from-indigo-600 hover:via-blue-600 hover:to-indigo-600 shadow-lg shadow-indigo-500/30 text-white border-0 scale-105" 
+                              : "bg-gray-800/80 backdrop-blur-sm border-gray-600/50 hover:bg-gray-700/80 hover:border-indigo-500/50 text-gray-200"
+                          )}
+                        >
+                          <span className="relative z-10 font-bold tracking-wide">{tf.toUpperCase()}</span>
+                          {selectedTimeframeEth === tf && (
+                            <>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-blue-600/20 blur-md"></div>
+                            </>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <ScrollArea className="h-[500px] pr-2">
+                    <div className="space-y-4 p-1">
+                      {perfEthLoading ? (
+                        <div className="flex items-center justify-center h-64">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+                        </div>
+                      ) : topPerformersEth.length === 0 ? (
+                        <div className="text-center py-8 text-gray-400">
+                          <p>No altcoins outperforming ETH in {selectedTimeframeEth}</p>
+                        </div>
+                      ) : (
+                        topPerformersEth.map((coin: any, index: number) => (
+                          <motion.div
+                            key={coin.id}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.4, delay: index * 0.05, type: "spring", stiffness: 100 }}
+                            className={cn(
+                              "relative p-5 rounded-2xl transition-all duration-500 cursor-pointer group",
+                              "bg-gradient-to-br from-gray-900/90 via-gray-800/90 to-gray-900/90",
+                              "border border-gray-700/30 hover:border-indigo-500/50",
+                              "hover:shadow-2xl hover:shadow-indigo-500/20 hover:scale-[1.02]",
+                              "backdrop-blur-xl overflow-hidden",
+                              coin.performanceVsEth[selectedTimeframeEth] > 20 && "ring-2 ring-green-500/40 border-green-500/30"
+                            )}
+                          >
+                            {/* Premium gradient background for outperformers */}
+                            {coin.performanceVsEth[selectedTimeframeEth] > 20 && (
+                              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent rounded-2xl"></div>
+                            )}
+                            
+                            {/* Animated background pattern */}
+                            <div className="absolute inset-0 opacity-5">
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,white_0,transparent_50%)]"></div>
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,white_0,transparent_50%)]"></div>
+                            </div>
+                            
+                            <div className="relative z-10 flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <div className="relative">
+                                  {/* Premium coin image with effects */}
+                                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                                  <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 p-1 rounded-full">
+                                    <img 
+                                      src={coin.image} 
+                                      alt={coin.name} 
+                                      className="w-14 h-14 rounded-full relative z-10 border-2 border-gray-700 group-hover:border-indigo-500/50 transition-colors"
+                                    />
+                                  </div>
+                                  <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-full px-2.5 py-1 text-xs font-bold shadow-lg z-20 border border-gray-800">
+                                    #{index + 1}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="font-bold text-lg text-white flex items-center">
+                                    {coin.name} 
+                                    <span className="text-gray-400 text-sm ml-2 font-medium bg-gray-800/50 px-2 py-0.5 rounded-md">
+                                      {coin.symbol.toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div className="text-sm text-gray-400 font-medium">
+                                    ${coin.currentPrice.toFixed(coin.currentPrice < 1 ? 6 : 2)}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className={cn(
+                                  "text-2xl font-bold flex items-center justify-end",
+                                  coin.performanceVsEth[selectedTimeframeEth] > 0 ? "text-green-400" : "text-red-400"
+                                )}>
+                                  {coin.performanceVsEth[selectedTimeframeEth] > 0 ? 
+                                    <TrendingUp className="w-6 h-6 mr-1.5" /> : 
+                                    <TrendingDown className="w-6 h-6 mr-1.5" />
+                                  }
+                                  <span className="font-mono">{formatPercentage(coin.performanceVsEth[selectedTimeframeEth])}</span>
+                                </div>
+                                <div className="text-xs text-gray-500 font-semibold mt-1 uppercase tracking-wide">
+                                  vs Ethereum
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Performance Metrics - Premium Design */}
+                            <div className="mt-5 relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-xl blur-xl"></div>
+                              <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50">
+                                <div className="flex justify-between items-center mb-3">
+                                  <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                                    {selectedTimeframeEth} Performance
+                                  </span>
+                                  <div className={cn(
+                                    "text-lg font-bold font-mono flex items-center",
+                                    coin.priceChange[selectedTimeframeEth] > 0 ? "text-green-400" : "text-red-400"
+                                  )}>
+                                    {coin.priceChange[selectedTimeframeEth] > 0 ? "+" : ""}
+                                    {formatPercentage(coin.priceChange[selectedTimeframeEth])}
+                                  </div>
+                                </div>
+                                
+                                {/* Progress Bar */}
+                                <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                                  <div 
+                                    className={cn(
+                                      "h-full rounded-full transition-all duration-1000 ease-out",
+                                      coin.priceChange[selectedTimeframeEth] > 0 
+                                        ? "bg-gradient-to-r from-green-500 to-emerald-400" 
+                                        : "bg-gradient-to-r from-red-500 to-pink-400"
+                                    )}
+                                    style={{ 
+                                      width: `${Math.min(Math.abs(coin.priceChange[selectedTimeframeEth]), 100)}%` 
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Market Stats - Enhanced Grid */}
+                            <div className="mt-4 grid grid-cols-2 gap-3">
+                              <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs text-gray-400 font-medium">Market Cap</span>
+                                  <DollarSign className="w-3 h-3 text-indigo-500/50" />
+                                </div>
+                                <div className="font-bold text-white text-sm">{formatNumber(coin.marketCap)}</div>
+                              </div>
+                              <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm rounded-lg p-3 border border-gray-700/30">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs text-gray-400 font-medium">24h Volume</span>
+                                  <Activity className="w-3 h-3 text-blue-500/50" />
+                                </div>
+                                <div className="font-bold text-white text-sm">{formatNumber(coin.volume24h)}</div>
+                              </div>
+                            </div>
+                            
+                            {/* Trading Actions - Premium Design */}
+                            <div className="mt-5 space-y-3">
+                              {/* Trade Now Button - BloFin */}
+                              <div className="relative group">
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-yellow-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                                <a
+                                  href={`https://blofin.com/futures/${coin.symbol.toUpperCase()}-USDT`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="relative block w-full"
+                                >
+                                  <button className="w-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 hover:from-orange-700 hover:via-amber-700 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"></div>
+                                    <span className="text-sm tracking-wide font-bold relative z-10 flex items-center justify-center">
+                                      <div className="relative">
+                                        <Rocket className="w-5 h-5 mr-2" />
+                                        <div className="absolute inset-0 bg-white blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                                      </div>
+                                      TRADE {coin.symbol.toUpperCase()} ON BLOFIN
+                                    </span>
+                                  </button>
+                                </a>
+                              </div>
+                              
+                              {/* Chart Analysis Button - TradingView */}
+                              <Dialog 
+                                key={`chart-dialog-eth-${coin.id}`}
+                                open={chartModalOpen[`eth-${coin.id}`]} 
+                                onOpenChange={(open) => setChartModalOpen({...chartModalOpen, [`eth-${coin.id}`]: open})}
+                              >
+                                <DialogTrigger asChild>
+                                  <div className="relative group">
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                                    <button 
+                                      onClick={async () => {
+                                        // Fetch correct trading pair info for this coin
+                                        try {
+                                          const res = await fetch(`/api/altseason/coin-trading-info/${coin.id}`);
+                                          const tradingInfo = await res.json();
+                                          setTradingPairs(prev => ({...prev, [`eth-${coin.id}`]: tradingInfo}));
+                                        } catch (error) {
+                                          console.error('Failed to fetch trading info:', error);
+                                        }
+                                        setChartModalOpen({...chartModalOpen, [`eth-${coin.id}`]: true});
+                                      }}
+                                      className="relative w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-700 hover:from-blue-800 hover:via-indigo-800 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] overflow-hidden group"
+                                    >
+                                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700"></div>
+                                      <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
+                                        <BarChart3 className="w-5 h-5 mr-2" />
+                                        TRADINGVIEW CHART ANALYSIS
+                                      </span>
+                                    </button>
+                                  </div>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-[1200px] max-h-[90vh] overflow-hidden bg-gray-900 border-gray-800">
+                                  <DialogHeader>
+                                    <DialogTitle className="text-xl font-bold text-white flex items-center">
+                                      <BarChart3 className="w-6 h-6 mr-2 text-indigo-400" />
+                                      {coin.name} ({coin.symbol.toUpperCase()}) Chart Analysis
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <div className="h-[700px] w-full mt-4">
+                                    <TradingViewAdvancedWidget
+                                      symbol={tradingPairs[`eth-${coin.id}`]?.symbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
+                                      theme="dark"
+                                      locale="en"
+                                      width="100%"
+                                      height={700}
+                                      autosize={false}
+                                      interval="D"
+                                      timezone="Etc/UTC"
+                                      style={1}
+                                      hide_side_toolbar={false}
+                                      enable_publishing={false}
+                                      container_id={`tradingview_eth_${coin.symbol}_${coin.id}`}
+                                      toolbar_bg="#000000"
+                                      save_image={true}
+                                      details={true}
+                                      hotlist={true}
+                                      calendar={true}
+                                      studies={[
+                                        "STD;MA",
+                                        "STD;RSI"
+                                      ]}
+                                      overrides={{
+                                        "paneProperties.background": "#000000",
+                                        "paneProperties.backgroundType": "solid",
+                                        "paneProperties.vertGridProperties.color": "#1a1a1a",
+                                        "paneProperties.horzGridProperties.color": "#1a1a1a",
+                                        "scalesProperties.textColor": "#999999",
+                                        "scalesProperties.backgroundColor": "#000000",
+                                        "scalesProperties.lineColor": "#1a1a1a"
+                                      }}
+                                      enabled_features={[
+                                        "study_templates",
+                                        "use_localstorage_for_settings",
+                                        "save_chart_properties_to_local_storage",
+                                        "create_volume_indicator_by_default",
+                                        "drawing_templates"
+                                      ]}
+                                      allow_symbol_change={true}
+                                    />
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                            
+                            {/* Outperformance Indicator - Premium Badge */}
+                            {coin.performanceVsEth[selectedTimeframeEth] > 20 && (
+                              <div className="mt-5 relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl blur-xl"></div>
+                                <div className="relative bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-green-500/10 backdrop-blur-sm border border-green-500/40 rounded-xl px-4 py-3 flex items-center justify-center shadow-lg shadow-green-500/10">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-400/10 to-transparent animate-pulse"></div>
+                                  <Star className="w-5 h-5 text-green-400 mr-2 relative z-10" />
+                                  <span className="text-sm font-bold text-green-400 uppercase tracking-wide relative z-10">
+                                    Strong ETH Outperformer
+                                  </span>
+                                  <div className="absolute -top-1 -right-1">
+                                    <span className="relative flex h-3 w-3">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </motion.div>
+                        ))
+                      )}
                     </div>
                   </ScrollArea>
                 </CardContent>

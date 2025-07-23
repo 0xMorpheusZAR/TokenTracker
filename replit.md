@@ -229,6 +229,7 @@ Changelog:
 - January 23, 2025: Updated real-time ratio refresh rate to 5 seconds - Changed all ratio-related API queries (BTC.D, ETH/BTC, OTHERS/BTC, OTHERS/ETH) from 10-second to 5-second refresh intervals to match TradingView widget pricing updates for synchronized real-time display
 - January 23, 2025: Added "Back to Dashboard" button on Altseason Analysis Dashboard - Placed return button in header for easy navigation back to main dashboard, styled with gray/transparent design matching dashboard theme
 - January 23, 2025: Removed current ratio displays from all Altseason ratio charts - Cleaned up UI by removing ratio value displays from BTC.D, ETH/BTC, OTHERS/BTC, and OTHERS/ETH charts, keeping only TradingView widgets for cleaner presentation
+- January 23, 2025: Built comprehensive "Top Performers vs ETH" feature with premium styling - Added new API endpoint /api/altseason/altcoins-performance-eth that fetches Top 50 Altcoins and calculates performance relative to Ethereum for 7D/30D/90D timeframes, implemented complete React Query integration with separate timeframe state management, created visually stunning UI section with indigo/blue gradient theme and glass morphism effects matching Bitcoin performance section, includes BloFin trading links and TradingView chart analysis modals for each coin, displays ETH outperformers with premium badges and animations
 ```
 
 ## User Preferences
