@@ -331,19 +331,7 @@ export default function VeloNewsDashboard() {
         </div>
       </div>
 
-      {/* News Status Indicator */}
-      <div className="max-w-7xl mx-auto mb-4 px-4 md:px-0">
-        <Card className="bg-emerald-900/20 border-emerald-500/30">
-          <CardContent className="p-2 md:p-3">
-            <div className="flex items-center justify-center gap-2 md:gap-3">
-              <Clock className="w-4 md:w-5 h-4 md:h-5 text-emerald-400" />
-              <p className="text-emerald-400 font-medium text-sm md:text-base">
-                Showing 9 news items from the specified date range
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto mb-6 px-4 md:px-0">
