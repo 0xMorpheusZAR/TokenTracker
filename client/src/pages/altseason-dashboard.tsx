@@ -1811,6 +1811,22 @@ export default function AltseasonDashboard() {
                 
                 {performanceEth?.altcoins && (
                   <div className="space-y-6">
+                    {/* Dynamic Top 5 ETH Outperformers Header */}
+                    <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl p-4 border border-purple-500/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <TrendingUp className="w-6 h-6 text-purple-400" />
+                          <h3 className="text-lg font-bold text-white">Top 5 ETH Outperformers</h3>
+                          <Badge variant="outline" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                            Live Updates
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          Automatically tracking the best performers vs ETH
+                        </p>
+                      </div>
+                    </div>
+
                     {/* Get top 5 ETH outperformers */}
                     {(() => {
                       const top5EthOutperformers = performanceEth.altcoins
@@ -1819,7 +1835,21 @@ export default function AltseasonDashboard() {
                         .slice(0, 5);
 
                       return top5EthOutperformers.map((coin, index) => (
-                        <MonteCarloSimulation key={coin.id} coin={coin} index={index} />
+                        <div key={coin.id} className="relative">
+                          {/* Ranking Badge */}
+                          <div className="absolute -top-3 -left-3 z-10">
+                            <div className={cn(
+                              "w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg",
+                              index === 0 ? "bg-gradient-to-br from-yellow-400 to-yellow-600 text-black" :
+                              index === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500 text-black" :
+                              index === 2 ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white" :
+                              "bg-gradient-to-br from-purple-500 to-purple-700 text-white"
+                            )}>
+                              #{index + 1}
+                            </div>
+                          </div>
+                          <MonteCarloSimulation coin={coin} index={index} />
+                        </div>
                       ));
                     })()}
                   </div>
