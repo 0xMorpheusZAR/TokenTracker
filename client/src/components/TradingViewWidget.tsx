@@ -22,13 +22,15 @@ function TradingViewWidget({
     if (!container.current) return;
 
     // Clear any existing content
-    container.current.innerHTML = '';
+    while (container.current.firstChild) {
+      container.current.removeChild(container.current.firstChild);
+    }
 
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.type = "text/javascript";
     script.async = true;
-    script.innerHTML = JSON.stringify({
+    script.textContent = JSON.stringify({
       "autosize": false,
       "symbol": `BINANCE:${symbol}USDT`,
       "interval": interval,

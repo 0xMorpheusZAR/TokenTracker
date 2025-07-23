@@ -64,7 +64,9 @@ function TradingViewAdvancedWidget({
       if (!container.current) return;
 
       // Clear any existing content
-      container.current.innerHTML = '';
+      while (container.current.firstChild) {
+        container.current.removeChild(container.current.firstChild);
+      }
 
       const containerId = container_id || `tradingview_${Math.random().toString(36).substring(7)}`;
       const script = document.createElement("script");
