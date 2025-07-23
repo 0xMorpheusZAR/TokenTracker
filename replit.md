@@ -214,6 +214,7 @@ Changelog:
 - January 23, 2025: Added full charting functionality to TradingView widgets - Enabled drawing tools, technical indicators, save image feature, symbol changing, hotlist, calendar, and side toolbar for all three ratio charts (ETH/BTC, OTHERS/BTC, OTHERS/ETH), added default MA and RSI indicators to each chart as starting points for analysis
 - January 23, 2025: Fixed ratio values to match user specifications - Updated OTHERS/BTC ratio API endpoint to return 0.13 (matching TradingView CRYPTOCAP:OTHERS/CRYPTOCAP:BTC), updated OTHERS/ETH ratio API endpoint to return 0.69 per user request
 - January 23, 2025: Added BTC.D (Bitcoin Dominance) Key Altseason Indicator - Integrated TradingView advanced chart widget for CRYPTOCAP:BTC.D symbol, displays real-time Bitcoin dominance percentage with full charting functionality including drawing tools and indicators, shows "Live from TradingView" status indicator, removed button area from dashboard header per user request
+- January 23, 2025: Enhanced UI cleanliness - Removed "Historical ETH/BTC price ratio movement" text from ETH/BTC chart, updated BTC.D chart description to "Historical BTC.d price ratio movement", removed small BTC.D widget (58.99% display) that was showing as separate component, cleaned up unnecessary TradingViewWidget component from code
 ```
 
 ## User Preferences

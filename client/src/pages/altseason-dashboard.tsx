@@ -29,57 +29,7 @@ import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// TradingView Widget Component
-const TradingViewWidget = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = '';
-      
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
-      script.type = 'text/javascript';
-      script.async = true;
-      
-      script.innerHTML = JSON.stringify({
-        "symbol": "CRYPTOCAP:BTC.D",
-        "width": "100%",
-        "height": 90,
-        "colorTheme": "dark",
-        "isTransparent": false,
-        "locale": "en",
-        "largeChartUrl": ""
-      });
-
-      containerRef.current.appendChild(script);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-    };
-  }, []);
-
-  return (
-    <div className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 rounded-lg blur-xl"></div>
-      <div className="relative bg-gray-900/50 rounded-lg border border-orange-700/30 overflow-hidden backdrop-blur-sm">
-        <div className="tradingview-widget-container p-4" ref={containerRef}>
-          <div className="tradingview-widget-container__widget"></div>
-        </div>
-        <div className="px-4 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-400">Live from TradingView</span>
-          </div>
-          <Bitcoin className="w-4 h-4 text-orange-400/50" />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Enhanced Helper functions
 const formatNumber = (num: number) => {
@@ -471,55 +421,7 @@ export default function AltseasonDashboard() {
                 </Card>
               </motion.div>
 
-              {/* Enhanced Bitcoin Dominance Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-orange-600 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/20">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between text-white">
-                      <span className="flex items-center text-sm sm:text-base">
-                        <Bitcoin className="mr-1 sm:mr-2 text-orange-400 w-4 h-4 sm:w-5 sm:h-5" />
-                        Bitcoin Dominance
-                      </span>
-                      <HoverCard>
-                        <HoverCardTrigger>
-                          <Info className="w-4 h-4 text-gray-400 cursor-help" />
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80 bg-gray-900/95 border-gray-700">
-                          <div className="space-y-2">
-                            <h4 className="text-sm font-semibold text-white">Bitcoin Dominance Explained</h4>
-                            <p className="text-xs text-gray-400">
-                              Bitcoin dominance represents BTC's percentage of the total crypto market cap. Lower dominance often indicates capital flowing into altcoins, a key altseason signal.
-                            </p>
-                            <div className="pt-2 border-t border-gray-700">
-                              <p className="text-xs font-medium text-white">Key Levels:</p>
-                              <ul className="text-xs text-gray-400 mt-1 space-y-1">
-                                <li>• Above 65%: Strong BTC dominance</li>
-                                <li>• 55-65%: Balanced market</li>
-                                <li>• Below 55%: Altcoin strength</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    </CardTitle>
-                    <CardDescription>Market share of total crypto market cap</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {/* TradingView BTC.D Widget */}
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <TradingViewWidget />
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+
 
               {/* Market Cap Distribution */}
               <motion.div
@@ -627,9 +529,6 @@ export default function AltseasonDashboard() {
                         </div>
                       </div>
                     </CardTitle>
-                    <CardDescription>
-                      Historical ETH/BTC price ratio movement
-                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {/* TradingView Widget for ETH/BTC */}
@@ -673,9 +572,8 @@ export default function AltseasonDashboard() {
                         </div>
                       </div>
                     </CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                      Live from TradingView
+                    <CardDescription>
+                      Historical BTC.d price ratio movement
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
