@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense, memo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -35,7 +35,9 @@ import {
 import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import TradingViewAdvancedWidget from '@/components/TradingViewAdvancedWidget';
+
+// Lazy load TradingView widgets
+const TradingViewAdvancedWidget = lazy(() => import('@/components/TradingViewAdvancedWidget'));
 
 
 
@@ -158,6 +160,182 @@ const AnimatedCounter = ({ value, prefix = '', suffix = '', decimals = 0 }: {
   );
 };
 
+// Memoized Monte Carlo simulation component
+const MonteCarloSimulation = memo(({ coin, index }: { coin: any, index: number }) => {
+  const simulationData = useMemo(() => {
+    const currentPrice = coin.currentPrice || 0;
+    const volatility = Math.abs(coin.performanceVsEth?.["30d"] || 20) / 100;
+    const drift = (coin.performanceVsEth?.["30d"] || 0) / 30 / 100; // Daily drift
+    const simulations = 100;
+    const days = 30;
+
+    // Run Monte Carlo simulations
+    const runSimulation = () => {
+      const paths = [];
+      for (let sim = 0; sim < simulations; sim++) {
+        const path = [currentPrice];
+        let price = currentPrice;
+        
+        for (let day = 1; day <= days; day++) {
+          const randomShock = Math.sqrt(1/365) * volatility * (Math.random() * 2 - 1);
+          const dailyReturn = drift / 365 + randomShock;
+          price = price * (1 + dailyReturn);
+          path.push(price);
+        }
+        paths.push(path);
+      }
+      return paths;
+    };
+
+    const simulationPaths = runSimulation();
+    
+    // Calculate percentiles
+    const finalPrices = simulationPaths.map(path => path[path.length - 1]);
+    finalPrices.sort((a, b) => a - b);
+    
+    const p10 = finalPrices[Math.floor(simulations * 0.1)];
+    const p50 = finalPrices[Math.floor(simulations * 0.5)];
+    const p90 = finalPrices[Math.floor(simulations * 0.9)];
+
+    // Sort paths by final price and select representative ones
+    const sortedPaths = simulationPaths.sort((a, b) => a[a.length - 1] - b[b.length - 1]);
+    const bearishPath = sortedPaths[Math.floor(simulations * 0.1)];
+    const mostLikelyPath = sortedPaths[Math.floor(simulations * 0.5)];
+    const bullishPath = sortedPaths[Math.floor(simulations * 0.9)];
+    
+    // Prepare chart data - show only 3 representative paths
+    const chartData = Array.from({ length: days + 1 }, (_, i) => ({
+      day: i,
+      bearish: bearishPath[i],
+      mostLikely: mostLikelyPath[i],
+      bullish: bullishPath[i],
+    }));
+
+    return { currentPrice, p10, p50, p90, chartData };
+  }, [coin.id, coin.currentPrice, coin.performanceVsEth?.["30d"]]);
+
+  const { currentPrice, p10, p50, p90, chartData } = simulationData;
+
+  return (
+    <motion.div
+      key={coin.id}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="bg-gray-900/50 rounded-xl p-6 border border-gray-700"
+    >
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <img 
+            src={coin.image} 
+            alt={coin.symbol} 
+            className="w-12 h-12 rounded-full"
+            onError={(e) => {
+              e.currentTarget.src = `https://via.placeholder.com/48?text=${coin.symbol.charAt(0)}`;
+            }}
+          />
+          <div>
+            <p className="font-bold text-xl text-white">{coin.symbol.toUpperCase()}</p>
+            <p className="text-gray-400">{coin.name}</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-sm text-gray-400">Current Price</p>
+          <p className="font-bold text-xl text-white">${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}</p>
+          <p className={cn(
+            "text-sm font-medium mt-1",
+            coin.performanceVsEth?.["30d"] > 0 ? "text-purple-400" : "text-red-400"
+          )}>
+            +{coin.performanceVsEth?.["30d"]?.toFixed(1)}% vs ETH
+          </p>
+        </div>
+      </div>
+
+      {/* Simulation Chart */}
+      <div className="h-80 bg-gradient-to-br from-purple-900/20 to-purple-800/10 rounded-xl p-4 border border-purple-500/20">
+        <h4 className="text-lg font-semibold text-white mb-2 text-center">📈 30-Day Price Forecast</h4>
+        <ResponsiveContainer width="100%" height="85%">
+          <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
+            <defs>
+              <linearGradient id={`colorGradient${index}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.1}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+            <XAxis 
+              dataKey="day" 
+              stroke="#9CA3AF" 
+              fontSize={14}
+              tick={{ fill: '#9CA3AF', dy: 10 }}
+              tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? 'Day 30' : value === 15 ? 'Day 15' : ''}
+            />
+            <YAxis 
+              stroke="#9CA3AF" 
+              fontSize={14}
+              tick={{ fill: '#9CA3AF' }}
+              domain={['dataMin - 5%', 'dataMax + 5%']}
+              tickFormatter={(value) => value >= 1000 ? `$${(value/1000).toFixed(0)}K` : value >= 1 ? `$${value.toFixed(2)}` : value >= 0.01 ? `$${value.toFixed(4)}` : value >= 0.0001 ? `$${value.toFixed(6)}` : `$${value.toFixed(8)}`}
+
+            />
+            <RechartsTooltip
+              contentStyle={{ 
+                backgroundColor: 'rgba(17, 24, 39, 0.95)', 
+                border: '1px solid #374151',
+                borderRadius: '8px'
+              }}
+              labelStyle={{ color: '#9CA3AF' }}
+              formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : currentPrice >= 0.01 ? 4 : currentPrice >= 0.0001 ? 6 : 8)}`, 'Price']}
+              labelFormatter={(label) => label === 0 ? 'Today' : `Day ${label}`}
+            />
+            <Line type="monotone" dataKey="bullish" stroke="#10B981" strokeWidth={2} dot={false} strokeOpacity={0.8} />
+            <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
+            <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
+            <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      
+      {/* 30-Day Price Projections */}
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        <div className="bg-green-900/20 rounded-lg p-4 border border-green-500/20">
+          <div className="text-center">
+            <p className="text-xs text-green-400 mb-1">Bullish Scenario</p>
+            <p className="text-lg font-bold text-green-400">
+              +{((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              ${p90 >= 1 ? p90.toFixed(2) : p90 >= 0.01 ? p90.toFixed(4) : p90 >= 0.0001 ? p90.toFixed(6) : p90.toFixed(8)}
+            </p>
+          </div>
+        </div>
+        <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-500/20">
+          <div className="text-center">
+            <p className="text-xs text-purple-400 mb-1">Most Likely</p>
+            <p className="text-lg font-bold text-purple-400">
+              {p50 > currentPrice ? '+' : ''}{((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              ${p50 >= 1 ? p50.toFixed(2) : p50 >= 0.01 ? p50.toFixed(4) : p50 >= 0.0001 ? p50.toFixed(6) : p50.toFixed(8)}
+            </p>
+          </div>
+        </div>
+        <div className="bg-red-900/20 rounded-lg p-4 border border-red-500/20">
+          <div className="text-center">
+            <p className="text-xs text-red-400 mb-1">Bearish Scenario</p>
+            <p className="text-lg font-bold text-red-400">
+              {((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              ${p10 >= 1 ? p10.toFixed(2) : p10 >= 0.01 ? p10.toFixed(4) : p10 >= 0.0001 ? p10.toFixed(6) : p10.toFixed(8)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
 export default function AltseasonDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
   const [selectedTimeframeEth, setSelectedTimeframeEth] = useState('30d');
@@ -168,31 +346,38 @@ export default function AltseasonDashboard() {
   const [showNotifications, setShowNotifications] = useState(true);
   const [tradingPairs, setTradingPairs] = useState<Record<string, any>>({});
   const [chartModalOpen, setChartModalOpen] = useState<Record<string, boolean>>({});
+  
+  // Performance optimization: Reduce animation complexity
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Fetch altseason metrics with enhanced error handling
+  // Fetch altseason metrics with optimized polling
   const { data: metrics, isLoading: metricsLoading, error: metricsError } = useQuery({
     queryKey: ['/api/altseason/metrics'],
-    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
+    refetchInterval: autoRefresh ? 10000 : false, // Reduced frequency to 10s
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 5000, // Consider data fresh for 5s
   });
 
-  // Fetch ETH/BTC ratio data
+  // Fetch ETH/BTC ratio data with optimized polling
   const { data: ethBtcData, isLoading: ethBtcLoading } = useQuery({
     queryKey: ['/api/altseason/eth-btc-ratio'],
-    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
+    refetchInterval: autoRefresh ? 10000 : false, // Reduced frequency to 10s
+    staleTime: 5000,
   });
 
-  // Fetch OTHERS/BTC ratio data
+  // Fetch OTHERS/BTC ratio data with optimized polling
   const { data: othersBtcData, isLoading: othersBtcLoading } = useQuery({
     queryKey: ['/api/altseason/others-btc-ratio'],
-    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
+    refetchInterval: autoRefresh ? 10000 : false, // Reduced frequency to 10s
+    staleTime: 5000,
   });
 
-  // Fetch OTHERS/ETH ratio data
+  // Fetch OTHERS/ETH ratio data with optimized polling
   const { data: othersEthData, isLoading: othersEthLoading } = useQuery({
     queryKey: ['/api/altseason/others-eth-ratio'],
-    refetchInterval: autoRefresh ? 5000 : false, // Update every 5 seconds for real-time ratio display
+    refetchInterval: autoRefresh ? 10000 : false, // Reduced frequency to 10s
+    staleTime: 5000,
   });
 
   // Fetch altcoins performance vs Bitcoin
@@ -1633,211 +1818,9 @@ export default function AltseasonDashboard() {
                         .sort((a, b) => (b.performanceVsEth?.["30d"] || 0) - (a.performanceVsEth?.["30d"] || 0))
                         .slice(0, 5);
 
-                      return top5EthOutperformers.map((coin, index) => {
-                        // Monte Carlo simulation parameters
-                        const currentPrice = coin.currentPrice || 0;
-                        const volatility = Math.abs(coin.performanceVsEth?.["30d"] || 20) / 100;
-                        const drift = (coin.performanceVsEth?.["30d"] || 0) / 30 / 100; // Daily drift
-                        const simulations = 100;
-                        const days = 30;
-
-                        // Run Monte Carlo simulations
-                        const runSimulation = () => {
-                          const paths = [];
-                          for (let sim = 0; sim < simulations; sim++) {
-                            const path = [currentPrice];
-                            let price = currentPrice;
-                            
-                            for (let day = 1; day <= days; day++) {
-                              const randomShock = Math.sqrt(1/365) * volatility * (Math.random() * 2 - 1);
-                              const dailyReturn = drift / 365 + randomShock;
-                              price = price * (1 + dailyReturn);
-                              path.push(price);
-                            }
-                            paths.push(path);
-                          }
-                          return paths;
-                        };
-
-                        const simulationPaths = runSimulation();
-                        
-                        // Calculate percentiles
-                        const finalPrices = simulationPaths.map(path => path[path.length - 1]);
-                        finalPrices.sort((a, b) => a - b);
-                        
-                        const p10 = finalPrices[Math.floor(simulations * 0.1)];
-                        const p50 = finalPrices[Math.floor(simulations * 0.5)];
-                        const p90 = finalPrices[Math.floor(simulations * 0.9)];
-
-                        // Sort paths by final price and select representative ones
-                        const sortedPaths = simulationPaths.sort((a, b) => a[a.length - 1] - b[b.length - 1]);
-                        const bearishPath = sortedPaths[Math.floor(simulations * 0.1)];
-                        const mostLikelyPath = sortedPaths[Math.floor(simulations * 0.5)];
-                        const bullishPath = sortedPaths[Math.floor(simulations * 0.9)];
-                        
-                        // Prepare chart data - show only 3 representative paths
-                        const chartData = Array.from({ length: days + 1 }, (_, i) => ({
-                          day: i,
-                          bearish: bearishPath[i],
-                          mostLikely: mostLikelyPath[i],
-                          bullish: bullishPath[i],
-                        }));
-
-                        return (
-                          <motion.div
-                            key={coin.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="bg-gray-900/50 rounded-xl p-6 border border-gray-700"
-                          >
-                            <div className="flex items-center justify-between mb-6">
-                              <div className="flex items-center gap-4">
-                                <img 
-                                  src={coin.image} 
-                                  alt={coin.symbol} 
-                                  className="w-12 h-12 rounded-full"
-                                  onError={(e) => {
-                                    e.currentTarget.src = `https://via.placeholder.com/48?text=${coin.symbol.charAt(0)}`;
-                                  }}
-                                />
-                                <div>
-                                  <p className="font-bold text-xl text-white">{coin.symbol.toUpperCase()}</p>
-                                  <p className="text-gray-400">{coin.name}</p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-sm text-gray-400">Current Price</p>
-                                <p className="font-bold text-xl text-white">${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}</p>
-                                <p className={cn(
-                                  "text-sm font-medium mt-1",
-                                  coin.performanceVsEth?.["30d"] > 0 ? "text-purple-400" : "text-red-400"
-                                )}>
-                                  +{coin.performanceVsEth?.["30d"]?.toFixed(1)}% vs ETH
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Simulation Chart */}
-                            <div className="h-80 bg-gradient-to-br from-purple-900/20 to-purple-800/10 rounded-xl p-4 border border-purple-500/20">
-                              <h4 className="text-lg font-semibold text-white mb-2 text-center">📈 30-Day Price Forecast</h4>
-                              <ResponsiveContainer width="100%" height="85%">
-                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
-                                  <defs>
-                                    <linearGradient id={`colorGradient${index}`} x1="0" y1="0" x2="0" y2="1">
-                                      <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
-                                      <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.1}/>
-                                    </linearGradient>
-                                  </defs>
-                                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                                  <XAxis 
-                                    dataKey="day" 
-                                    stroke="#9CA3AF" 
-                                    fontSize={14}
-                                    tick={{ fill: '#9CA3AF', dy: 10 }}
-                                    tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? 'Day 30' : value === 15 ? 'Day 15' : ''}
-                                  />
-                                  <YAxis 
-                                    stroke="#9CA3AF" 
-                                    fontSize={14}
-                                    tick={{ fill: '#9CA3AF' }}
-                                    domain={['dataMin - 5%', 'dataMax + 5%']}
-                                    tickFormatter={(value) => value >= 1000 ? `$${(value/1000).toFixed(0)}K` : value >= 1 ? `$${value.toFixed(2)}` : value >= 0.01 ? `$${value.toFixed(4)}` : value >= 0.0001 ? `$${value.toFixed(6)}` : `$${value.toFixed(8)}`}
-
-                                  />
-                                  <RechartsTooltip
-                                    contentStyle={{ 
-                                      backgroundColor: 'rgba(17, 24, 39, 0.95)', 
-                                      border: '1px solid #374151',
-                                      borderRadius: '8px'
-                                    }}
-                                    labelStyle={{ color: '#9CA3AF' }}
-                                    formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : currentPrice >= 0.01 ? 4 : currentPrice >= 0.0001 ? 6 : 8)}`, 'Price']}
-                                    labelFormatter={(label) => label === 0 ? 'Today' : `Day ${label}`}
-                                  />
-                                  <Line type="monotone" dataKey="bullish" stroke="#10B981" strokeWidth={2} dot={false} strokeOpacity={0.8} />
-                                  <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
-                                  <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
-                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
-                                </LineChart>
-                              </ResponsiveContainer>
-                            </div>
-                            
-                            {/* 30-Day Price Projections */}
-                            <div className="grid grid-cols-3 gap-4 mt-6">
-                              <div className="bg-green-900/20 rounded-lg p-4 border border-green-500/20">
-                                <div className="text-center">
-                                  <p className="text-xs text-green-400 mb-1">Bullish Scenario</p>
-                                  <p className="text-lg font-bold text-green-400">
-                                    +{((p90 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    ${p90 >= 1 ? p90.toFixed(2) : p90 >= 0.01 ? p90.toFixed(4) : p90 >= 0.0001 ? p90.toFixed(6) : p90.toFixed(8)}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-500/20">
-                                <div className="text-center">
-                                  <p className="text-xs text-purple-400 mb-1">Most Likely</p>
-                                  <p className="text-lg font-bold text-purple-400">
-                                    {p50 >= currentPrice ? '+' : ''}{((p50 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    ${p50 >= 1 ? p50.toFixed(2) : p50 >= 0.01 ? p50.toFixed(4) : p50 >= 0.0001 ? p50.toFixed(6) : p50.toFixed(8)}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="bg-red-900/20 rounded-lg p-4 border border-red-500/20">
-                                <div className="text-center">
-                                  <p className="text-xs text-red-400 mb-1">Bearish Scenario</p>
-                                  <p className="text-lg font-bold text-red-400">
-                                    {p10 >= currentPrice ? '+' : ''}{((p10 - currentPrice) / currentPrice * 100).toFixed(1)}%
-                                  </p>
-                                  <p className="text-xs text-gray-400 mt-1">
-                                    ${p10 >= 1 ? p10.toFixed(2) : p10 >= 0.01 ? p10.toFixed(4) : p10 >= 0.0001 ? p10.toFixed(6) : p10.toFixed(8)}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Legend and Info Section */}
-                            <div className="mt-6 space-y-4">
-                              {/* Legend */}
-                              <div className="bg-gray-900/40 rounded-lg p-4">
-                                <div className="flex items-center justify-center gap-8">
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-6 h-1 bg-red-500 mr-2 rounded-full"></span>
-                                    <span className="text-sm text-gray-400">Bearish</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-6 h-1 bg-purple-500 mr-2 rounded-full"></span>
-                                    <span className="text-sm text-gray-400">Most Likely</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-6 h-1 bg-green-500 mr-2 rounded-full"></span>
-                                    <span className="text-sm text-gray-400">Bullish</span>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Current Price Indicator */}
-                              <div className="bg-gray-900/30 rounded-lg p-3 text-center">
-                                <p className="text-sm text-gray-400 flex items-center justify-center">
-                                  <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                                  Green dashed line indicates current trading price (live data from CoinGecko)
-                                </p>
-                              </div>
-                              
-                              {/* Methodology Note */}
-                              <div className="bg-purple-900/20 rounded-lg p-3 text-center border border-purple-500/20">
-                                <p className="text-sm text-gray-400">
-                                  Based on {simulations} simulations using historical volatility and ETH outperformance trend
-                                </p>
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      });
+                      return top5EthOutperformers.map((coin, index) => (
+                        <MonteCarloSimulation key={coin.id} coin={coin} index={index} />
+                      ));
                     })()}
                   </div>
                 )}
