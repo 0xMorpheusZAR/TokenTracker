@@ -103,6 +103,7 @@ export default function VeloNewsDashboard() {
   });
 
   const newsData = (newsResponse as any)?.data?.stories || (newsResponse as any)?.data || [];
+  const accumulatedCount = (newsResponse as any)?.accumulatedCount || 0;
 
   // Extract unique coins from news items
   const uniqueCoins = React.useMemo(() => {
@@ -396,12 +397,19 @@ export default function VeloNewsDashboard() {
       <div className="max-w-7xl mx-auto px-4 md:px-0">
         <Card className="bg-gray-800/50 border-gray-700">
           <CardHeader className="p-4 md:p-6">
-            <CardTitle className="text-white flex items-center text-lg md:text-xl">
-              <Bell className="w-5 md:w-6 h-5 md:h-6 mr-2 text-emerald-400" />
-              Live News Feed
+            <CardTitle className="text-white flex flex-col md:flex-row items-start md:items-center gap-2 text-lg md:text-xl">
+              <div className="flex items-center">
+                <Bell className="w-5 md:w-6 h-5 md:h-6 mr-2 text-emerald-400" />
+                Live News Feed
+              </div>
+              {accumulatedCount > 0 && (
+                <span className="text-sm font-normal text-emerald-400">
+                  ({accumulatedCount.toLocaleString()} total accumulated)
+                </span>
+              )}
             </CardTitle>
             <CardDescription className="text-sm md:text-base">
-              Real-time updates from Velo Data API
+              Real-time updates from Velo Data API - All historical news preserved
             </CardDescription>
           </CardHeader>
           <CardContent className="p-3 md:p-6">
