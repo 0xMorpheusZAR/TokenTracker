@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar,
+  XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar,
   ComposedChart, Scatter, ScatterChart, ZAxis, ReferenceLine, ReferenceArea, RadarChart, PolarGrid, 
   PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
@@ -24,6 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -221,6 +222,12 @@ export default function AltseasonDashboard() {
     refetchInterval: autoRefresh ? 60000 : false,
   });
 
+  // Fetch OTHERS/BTC ratio data
+  const { data: othersBtcData, isLoading: othersBtcLoading } = useQuery({
+    queryKey: ['/api/altseason/others-btc-ratio'],
+    refetchInterval: autoRefresh ? 60000 : false,
+  });
+
   // Fetch altcoins performance
   const { data: performance, isLoading: perfLoading } = useQuery({
     queryKey: ['/api/altseason/altcoins-performance', selectedTimeframe],
@@ -265,6 +272,21 @@ export default function AltseasonDashboard() {
 
   // Enhanced ETH/BTC ratio data with moving averages
   const ethBtcChartData = ethBtcData?.historicalData?.map((point: any, index: number, array: any[]) => {
+    const ma7 = index >= 6 ? 
+      array.slice(index - 6, index + 1).reduce((sum, p) => sum + p.ratio, 0) / 7 : null;
+    const ma30 = index >= 29 ? 
+      array.slice(index - 29, index + 1).reduce((sum, p) => sum + p.ratio, 0) / 30 : null;
+    
+    return {
+      date: new Date(point.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      ratio: point.ratio,
+      ma7,
+      ma30
+    };
+  }) || [];
+
+  // Enhanced OTHERS/BTC ratio data with moving averages
+  const othersBtcChartData = othersBtcData?.historicalData?.map((point: any, index: number, array: any[]) => {
     const ma7 = index >= 6 ? 
       array.slice(index - 6, index + 1).reduce((sum, p) => sum + p.ratio, 0) / 7 : null;
     const ma30 = index >= 29 ? 
@@ -539,7 +561,7 @@ export default function AltseasonDashboard() {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip 
+                        <RechartsTooltip 
                           content={({ active, payload }) => {
                             if (active && payload && payload.length) {
                               return (
@@ -665,7 +687,7 @@ export default function AltseasonDashboard() {
                           tickFormatter={(value) => value.toFixed(3)}
                           dx={-10}
                         />
-                        <Tooltip content={<CustomTooltip />} />
+                        <RechartsTooltip content={<CustomTooltip />} />
                         
                         {/* Resistance Zones */}
                         <ReferenceArea 
@@ -716,6 +738,171 @@ export default function AltseasonDashboard() {
                           stroke="#6366F1"
                           fillOpacity={1}
                           fill="url(#colorRatio)"
+                          strokeWidth={2}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="ma7" 
+                          stroke="#10B981"
+                          strokeWidth={1}
+                          dot={false}
+                          name="7D MA"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="ma30" 
+                          stroke="#F59E0B"
+                          strokeWidth={1}
+                          dot={false}
+                          name="30D MA"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* OTHERS/BTC Ratio Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center">
+                        <Activity className="mr-2 text-indigo-400" />
+                        <span className="text-sm sm:text-base">OTHERS/BTC Ratio - Total Altcoin Market Cap vs Bitcoin</span>
+                      </span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
+                            <p>The OTHERS/BTC ratio compares the total market cap of all altcoins (excluding Bitcoin) to Bitcoin's market cap. A rising ratio indicates altcoins are gaining dominance.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="mb-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Current Ratio</p>
+                          <p className="text-2xl font-bold text-indigo-400">
+                            {othersBtcData?.currentRatio?.toFixed(3) || '0.000'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Bitcoin Dominance</p>
+                          <p className="text-lg font-semibold text-orange-400">
+                            {othersBtcData?.btcDominance?.toFixed(1) || '0.0'}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Market Status</p>
+                          <p className={cn(
+                            "text-lg font-semibold",
+                            othersBtcData?.currentRatio > 1.2 ? "text-green-400" :
+                            othersBtcData?.currentRatio > 1.0 ? "text-yellow-400" :
+                            othersBtcData?.currentRatio > 0.8 ? "text-orange-400" : "text-red-400"
+                          )}>
+                            {othersBtcData?.currentRatio > 1.2 ? "Strong Altseason" :
+                             othersBtcData?.currentRatio > 1.0 ? "Altseason Starting" :
+                             othersBtcData?.currentRatio > 0.8 ? "Neutral" : "BTC Dominant"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <ResponsiveContainer width="100%" height={350}>
+                      <AreaChart data={othersBtcChartData}>
+                        <defs>
+                          <linearGradient id="colorOthersRatio" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis 
+                          dataKey="date" 
+                          stroke="#9CA3AF"
+                          tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                        />
+                        <YAxis 
+                          stroke="#9CA3AF"
+                          tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                          domain={['auto', 'auto']}
+                        />
+                        <RechartsTooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1F2937', 
+                            border: '1px solid #374151',
+                            borderRadius: '8px'
+                          }}
+                          labelStyle={{ color: '#E5E7EB' }}
+                          itemStyle={{ color: '#E5E7EB' }}
+                        />
+                        
+                        {/* Critical Level Lines */}
+                        <ReferenceLine 
+                          y={1.5} 
+                          stroke="#10B981" 
+                          strokeDasharray="5 5"
+                          label={{ 
+                            value: "Extreme Greed (1.5)",
+                            position: "right",
+                            style: { fill: "#10B981", fontSize: 12 }
+                          }}
+                        />
+                        <ReferenceLine 
+                          y={1.2} 
+                          stroke="#F59E0B" 
+                          strokeDasharray="5 5"
+                          label={{ 
+                            value: "Strong Altseason (1.2)",
+                            position: "right",
+                            style: { fill: "#F59E0B", fontSize: 12 }
+                          }}
+                        />
+                        <ReferenceLine 
+                          y={1.0} 
+                          stroke="#6366F1" 
+                          strokeDasharray="5 5"
+                          label={{ 
+                            value: "Equilibrium (1.0)",
+                            position: "right",
+                            style: { fill: "#6366F1", fontSize: 12 }
+                          }}
+                        />
+                        <ReferenceLine 
+                          y={0.6} 
+                          stroke="#EF4444" 
+                          strokeDasharray="5 5"
+                          label={{ 
+                            value: "BTC Dominance (0.6)",
+                            position: "right",
+                            style: { fill: "#EF4444", fontSize: 12 }
+                          }}
+                        />
+                        
+                        {/* Current Ratio Indicator */}
+                        <ReferenceLine 
+                          y={othersBtcData?.currentRatio || 0.95}
+                          stroke="#8B5CF6"
+                          strokeDasharray="5 5"
+                          strokeWidth={2}
+                        />
+                        
+                        <Area 
+                          type="monotone" 
+                          dataKey="ratio" 
+                          stroke="#8B5CF6"
+                          fillOpacity={1}
+                          fill="url(#colorOthersRatio)"
                           strokeWidth={2}
                         />
                         <Line 
