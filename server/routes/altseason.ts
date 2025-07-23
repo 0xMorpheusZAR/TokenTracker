@@ -490,4 +490,40 @@ router.get('/market-cap-breakdown', async (req, res) => {
   }
 });
 
+// Get OTHERS/ETH ratio
+router.get('/others-eth-ratio', async (req, res) => {
+  try {
+    const coingeckoService = req.app.locals.coingeckoService;
+    
+    // Get global market cap
+    const globalData = await coingeckoService.getGlobalData();
+    const totalMarketCap = globalData.data.total_market_cap.usd;
+    
+    // Get Bitcoin market cap
+    const btcData = await coingeckoService.getCoinData('bitcoin');
+    const btcMarketCap = btcData.market_data.market_cap.usd;
+    
+    // Get Ethereum market cap
+    const ethData = await coingeckoService.getCoinData('ethereum');
+    const ethMarketCap = ethData.market_data.market_cap.usd;
+    
+    // Calculate OTHERS (all altcoins excluding BTC)
+    const othersMarketCap = totalMarketCap - btcMarketCap;
+    
+    // Calculate OTHERS/ETH ratio
+    const othersEthRatio = othersMarketCap / ethMarketCap;
+    
+    res.json({
+      currentRatio: othersEthRatio,
+      othersMarketCap,
+      ethMarketCap,
+      totalMarketCap,
+      btcMarketCap
+    });
+  } catch (error) {
+    console.error('Error calculating OTHERS/ETH ratio:', error);
+    res.status(500).json({ error: 'Failed to calculate OTHERS/ETH ratio' });
+  }
+});
+
 export default router;

@@ -228,6 +228,12 @@ export default function AltseasonDashboard() {
     refetchInterval: autoRefresh ? 60000 : false,
   });
 
+  // Fetch OTHERS/ETH ratio data
+  const { data: othersEthData, isLoading: othersEthLoading } = useQuery({
+    queryKey: ['/api/altseason/others-eth-ratio'],
+    refetchInterval: autoRefresh ? 60000 : false,
+  });
+
   // Fetch altcoins performance
   const { data: performance, isLoading: perfLoading } = useQuery({
     queryKey: ['/api/altseason/altcoins-performance', selectedTimeframe],
@@ -765,7 +771,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            4.21
+                            <AnimatedCounter value={othersEthData?.currentRatio || 0.69} decimals={2} />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
