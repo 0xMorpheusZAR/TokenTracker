@@ -60,23 +60,35 @@ router.get('/metrics', async (req, res) => {
     }
     
     const btcChange30d = bitcoinData.price_change_percentage_30d_in_currency || 0;
+    const btcChange7d = bitcoinData.price_change_percentage_7d_in_currency || 0;
+    
+    // Calculate 90d change for Bitcoin (approximate from 30d data if not available)
+    const btcChange90d = bitcoinData.price_change_percentage_90d_in_currency || (btcChange30d * 2.5);
     
     // Calculate how many altcoins outperformed Bitcoin and get the list
     let outperformingCount = 0;
     const outperformingCoins = [];
     top50Altcoins.forEach(coin => {
-      const coinChange = coin.price_change_percentage_30d_in_currency || 0;
-      if (coinChange > btcChange30d) {
+      const coinChange30d = coin.price_change_percentage_30d_in_currency || 0;
+      const coinChange7d = coin.price_change_percentage_7d_in_currency || 0;
+      const coinChange90d = coin.price_change_percentage_90d_in_currency || (coinChange30d * 2.5);
+      
+      if (coinChange30d > btcChange30d) {
         outperformingCount++;
         outperformingCoins.push({
           id: coin.id,
           symbol: coin.symbol,
           name: coin.name,
           image: coin.image,
-          change30d: coinChange,
-          outperformance: coinChange - btcChange30d,
+          change30d: coinChange30d,
+          change7d: coinChange7d,
+          change90d: coinChange90d,
+          outperformance: coinChange30d - btcChange30d,
+          outperformance7d: coinChange7d - btcChange7d,
+          outperformance90d: coinChange90d - btcChange90d,
           currentPrice: coin.current_price,
           marketCap: coin.market_cap,
+          volume24h: coin.total_volume,
           rank: coin.market_cap_rank
         });
       }
@@ -96,6 +108,8 @@ router.get('/metrics', async (req, res) => {
       outperformingCount,
       outperformingCoins,
       btcChange30d,
+      btcChange7d,
+      btcChange90d,
       isAltseason: altseasonIndex >= 75,
       lastUpdated: new Date().toISOString()
     };

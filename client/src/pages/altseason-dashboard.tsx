@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -266,10 +266,31 @@ export default function AltseasonDashboard() {
     };
   }) || [];
 
-  // Get top performing altcoins with enhanced metrics
-  const topPerformers = performance?.altcoins
-    ?.sort((a: any, b: any) => b.performanceVsBtc[selectedTimeframe] - a.performanceVsBtc[selectedTimeframe])
-    ?.slice(0, 10) || [];
+  // Get top performing altcoins from metrics data for consistency
+  const topPerformers = useMemo(() => {
+    if (!metrics?.outperformingCoins) return [];
+    
+    // Map the data to the format expected by Analysis section
+    return metrics.outperformingCoins.map((coin) => ({
+      id: coin.id,
+      symbol: coin.symbol,
+      name: coin.name,
+      image: coin.image,
+      currentPrice: coin.currentPrice || 0,
+      marketCap: coin.marketCap || 0,
+      volume24h: coin.volume24h || 0,
+      priceChange: {
+        '7d': coin.change7d || 0,
+        '30d': coin.change30d || 0,
+        '90d': coin.change90d || 0
+      },
+      performanceVsBtc: {
+        '7d': coin.outperformance7d || 0,
+        '30d': coin.outperformance || 0,
+        '90d': coin.outperformance90d || 0
+      }
+    }));
+  }, [metrics?.outperformingCoins]);
 
   // Calculate altseason probability score
   const altseasonProbability = metrics ? {
@@ -496,9 +517,6 @@ export default function AltseasonDashboard() {
                                 coin.outperformance > 0 ? "text-emerald-400" : "text-red-400"
                               )}>
                                 +{coin.outperformance.toFixed(1)}%
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                {coin.change30d.toFixed(1)}%
                               </p>
                             </div>
                           </motion.div>
