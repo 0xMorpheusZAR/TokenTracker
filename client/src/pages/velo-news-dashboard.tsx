@@ -93,15 +93,12 @@ export default function VeloNewsDashboard() {
   const previousCoins = useRef<Set<string>>(new Set());
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Fetch news data with auto-refresh - optimized for fastest possible updates
-  // Date range: July 20, 2025 to July 23, 2025 09:49:08 GMT+2
-  const startDate = new Date('2025-07-20T00:00:00Z').toISOString();
-  const endDate = new Date('2025-07-23T07:49:08Z').toISOString(); // 09:49:08 GMT+2 = 07:49:08 UTC
-  
+  // Fetch news data with auto-refresh - fetch all recent news
   const { data: newsResponse, isLoading, refetch, dataUpdatedAt } = useQuery({
-    queryKey: ['/api/velo/news', startDate, endDate],
+    queryKey: ['/api/velo/news', 'live-all'],
     queryFn: async () => {
-      const response = await fetch(`/api/velo/news?startDate=${startDate}&endDate=${endDate}`);
+      // Fetch without time parameters to get all available news
+      const response = await fetch(`/api/velo/news`);
       if (!response.ok) throw new Error('Failed to fetch news');
       return response.json();
     },
@@ -338,7 +335,7 @@ export default function VeloNewsDashboard() {
             <div className="flex items-center justify-center gap-2 md:gap-3">
               <Clock className="w-4 md:w-5 h-4 md:h-5 text-emerald-400" />
               <p className="text-emerald-400 font-medium text-sm md:text-base">
-                Showing 9 news items from the specified date range
+                Showing {newsData.length} news items live • Updates automatically when new items appear
               </p>
             </div>
           </CardContent>
