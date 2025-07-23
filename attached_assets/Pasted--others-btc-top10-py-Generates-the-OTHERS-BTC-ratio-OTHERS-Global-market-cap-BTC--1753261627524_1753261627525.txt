@@ -1,0 +1,104 @@
+# others_btc_top10.py
+"""
+Generates the OTHERS/BTC ratio:
+    OTHERS = Global market cap – BTC – top‑10 coins by cap (ex‑BTC)
+    Ratio  = OTHERS / BTC
+Outputs a PNG (static) or HTML (interactive) line‑chart and
+caches raw data to save CoinGecko Pro credits.
+"""
+
+import os, time, json, requests, pandas as pd
+from pathlib import Path
+import matplotlib.pyplot as plt       # remove if using Plotly only
+# import plotly.express as px         # optional for interactive
+
+API_KEY = os.getenv("COINGECKO_KEY")          # set in Replit secrets
+BASE    = "https://pro-api.coingecko.com/api/v3"
+HEADERS = {"x-cg-pro-api-key": API_KEY}
+
+# ------------------------------------------------------------------
+def cg(endpoint, params=None):
+    r = requests.get(f"{BASE}{endpoint}", headers=HEADERS, params=params or {})
+    r.raise_for_status()
+    return r.json()
+
+# ---------- dynamic top‑10 list -----------------------------------
+def top_altcoin_ids(n=10) -> list[str]:
+    """Return IDs of the top‑`n` coins *excluding BTC* (current snapshot)."""
+    markets = cg(
+        "/coins/markets",
+        params={
+            "vs_currency": "usd",
+            "order": "market_cap_desc",
+            "per_page": n + 1,   # one extra in case BTC in first row
+            "page": 1,
+        },
+    )
+    ids = [c["id"] for c in markets if c["id"] != "bitcoin"][:n]
+    return ids
+
+# ---------- historic market‑cap helpers ---------------------------
+def series_coin_mcap(coin_id: str, days=365):
+    data = cg(
+        f"/coins/{coin_id}/market_chart",
+        params={"vs_currency": "usd", "days": days, "interval": "daily"},
+    )["market_caps"]
+    return pd.Series({pd.to_datetime(ts, unit="ms"): cap for ts, cap in data},
+                     name=coin_id.upper())
+
+def series_global_mcap(days=365):
+    data = cg("/global/market_cap_chart",
+              params={"vs_currency": "usd", "days": days})["market_cap_chart"]
+    return pd.Series({pd.to_datetime(ts, unit="ms"): cap for ts, cap in data},
+                     name="TOTAL")
+
+# ---------- main builder ------------------------------------------
+def build_others_btc(days=365*3,
+                     interactive=False,
+                     outfile="others_btc_top10.png",
+                     cache_minutes=15):
+    cache = Path(f".cgcache_top10_{days}d.json")
+    # ----------------------------------------------------------------
+    if cache.exists() and time.time() - cache.stat().st_mtime < cache_minutes * 60:
+        df = pd.read_json(cache, convert_dates=["date"]).set_index("date")
+    else:
+        # 1️⃣  snapshot of current top‑10 altcoin IDs
+        altcoin_ids = top_altcoin_ids(10)
+        ids_needed  = ["bitcoin"] + altcoin_ids
+
+        # 2️⃣  pull time‑series
+        total  = series_global_mcap(days)
+        caps   = {cid: series_coin_mcap(cid, days) for cid in ids_needed}
+
+        # 3️⃣  assemble dataframe
+        df = pd.concat([total, *caps.values()], axis=1).dropna()
+        df["OTHERS"] = df["TOTAL"] - df[[s.name for s in caps.values()]].sum(axis=1)
+        df["BTC_CAP"] = df["BITCOIN"]
+        df["OTHERS_BTC"] = df["OTHERS"] / df["BTC_CAP"]
+
+        # 4️⃣  cache
+        df.to_json(cache, orient="table", index=True)
+
+    # ------ plot ---------------------------------------------------
+    if interactive:
+        import plotly.express as px
+        fig = px.line(df, y="OTHERS_BTC",
+                      title="OTHERS (ex‑Top‑10 & BTC) / BTC Market‑Cap Ratio")
+        fig.write_html(outfile.replace(".png", ".html"))
+    else:
+        plt.figure(figsize=(10, 5))
+        plt.plot(df.index, df["OTHERS_BTC"], linewidth=2)
+        plt.title("OTHERS (ex‑Top‑10 & BTC) / BTC Market‑Cap Ratio")
+        plt.ylabel("Ratio")
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(outfile, dpi=150)
+        plt.close()
+
+    return outfile
+
+# ------------------------------------------------------------------
+if __name__ == "__main__":
+    print("Building OTHERS/BTC (top‑10 excluded)…")
+    path = build_others_btc()
+    print(f"Chart saved to {path}")

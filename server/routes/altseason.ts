@@ -185,8 +185,8 @@ router.get('/others-btc-ratio', async (req, res) => {
       top10AltcoinsMarketCap += coin.market_cap || 0;
     });
     
-    // Calculate OTHERS market cap (Total Market Cap excluding Bitcoin = All Altcoins)
-    const othersMarketCap = totalMarketCap - btcMarketCap;
+    // Calculate OTHERS market cap (Total - BTC - Top 10 Altcoins)
+    const othersMarketCap = totalMarketCap - btcMarketCap - top10AltcoinsMarketCap;
     
     // Calculate current OTHERS/BTC ratio
     const currentRatio = othersMarketCap / btcMarketCap;
@@ -196,29 +196,58 @@ router.get('/others-btc-ratio', async (req, res) => {
     
     console.log('Fetching historical market cap data from CoinGecko...');
     
+    // Get current top 10 altcoin IDs (excluding Bitcoin)
+    const currentTop10Altcoins = topAltcoins.slice(0, 10).map(coin => coin.id);
+    console.log('Top 10 altcoins (excluding BTC):', currentTop10Altcoins);
+    
     // Fetch historical global market cap data
     const globalMarketCapData = await coingeckoService.getHistoricalGlobalMarketCap(days);
     
     // Fetch historical Bitcoin market cap data
     const btcMarketCapData = await coingeckoService.getHistoricalMarketCap('bitcoin', days);
     
-    // Fetch historical Ethereum market cap data (to calculate OTHERS more accurately)
-    const ethMarketCapData = await coingeckoService.getHistoricalMarketCap('ethereum', days);
+    // Fetch historical market cap data for top 10 altcoins
+    const top10HistoricalData = await Promise.all(
+      currentTop10Altcoins.map(coinId => 
+        coingeckoService.getHistoricalMarketCap(coinId, days)
+          .then(data => ({ coinId, data }))
+          .catch(err => {
+            console.error(`Failed to fetch ${coinId} historical data:`, err);
+            return { coinId, data: [] };
+          })
+      )
+    );
     
     // Create maps for efficient lookup
     const btcMap = new Map(btcMarketCapData.map(([ts, cap]) => [ts, cap]));
-    const ethMap = new Map(ethMarketCapData.map(([ts, cap]) => [ts, cap]));
+    const top10Maps = new Map(
+      top10HistoricalData.map(({ coinId, data }) => [
+        coinId,
+        new Map(data.map(([ts, cap]) => [ts, cap]))
+      ])
+    );
     
     // Calculate OTHERS/BTC ratio for each timestamp
     const historicalData = [];
     
     globalMarketCapData.forEach(([timestamp, totalCap]) => {
       const btcCap = btcMap.get(timestamp);
-      const ethCap = ethMap.get(timestamp);
       
       if (btcCap && totalCap > btcCap) {
-        // OTHERS = Total - BTC (all altcoins)
-        const othersCap = totalCap - btcCap;
+        // Calculate sum of top 10 altcoin market caps at this timestamp
+        let top10Sum = 0;
+        currentTop10Altcoins.forEach(coinId => {
+          const coinMap = top10Maps.get(coinId);
+          if (coinMap) {
+            const coinCap = coinMap.get(timestamp);
+            if (coinCap) {
+              top10Sum += coinCap;
+            }
+          }
+        });
+        
+        // OTHERS = Total - BTC - Top 10 Altcoins
+        const othersCap = totalCap - btcCap - top10Sum;
         const ratio = othersCap / btcCap;
         
         historicalData.push({
@@ -239,15 +268,16 @@ router.get('/others-btc-ratio', async (req, res) => {
       totalMarketCap,
       historicalData,
       criticalLevels: {
-        extreme_greed: 1.2,  // Altcoins 120% of BTC (extreme altseason)
-        strong_altseason: 1.0,  // Altcoins equal to BTC market cap
-        altseason_start: 0.8,  // Altcoins 80% of BTC
-        neutral: 0.6,
-        btc_dominance: 0.4,
-        strong_btc_dominance: 0.3
+        extreme_greed: 0.35,  // Others 35% of BTC (extreme altseason for small caps)
+        strong_altseason: 0.30,  // Others 30% of BTC
+        altseason_start: 0.25,  // Others 25% of BTC
+        neutral: 0.20,
+        btc_dominance: 0.17,
+        strong_btc_dominance: 0.15
       },
-      description: "CRYPTOCAP:OTHERS/CRYPTOCAP:BTC - Real historical data from CoinGecko",
-      dataSource: "CoinGecko Pro API - 365 days of historical market cap data"
+      description: "OTHERS/BTC = (Global Market Cap - BTC - Top 10 Altcoins) / BTC",
+      dataSource: "CoinGecko Pro API - 365 days of historical market cap data",
+      methodology: "OTHERS excludes Bitcoin and current top 10 altcoins by market cap"
     };
     
     // Cache the data
