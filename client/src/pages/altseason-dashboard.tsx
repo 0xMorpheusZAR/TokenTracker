@@ -1719,10 +1719,10 @@ export default function AltseasonDashboard() {
                             </div>
 
                             {/* Simulation Chart */}
-                            <div className="h-96 bg-gradient-to-br from-purple-900/20 to-purple-800/10 rounded-xl p-4 border border-purple-500/20">
-                              <h4 className="text-lg font-semibold text-white mb-3 text-center">📈 30-Day Price Forecast</h4>
-                              <ResponsiveContainer width="100%" height="80%">
-                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 60 }}>
+                            <div className="h-80 bg-gradient-to-br from-purple-900/20 to-purple-800/10 rounded-xl p-4 border border-purple-500/20">
+                              <h4 className="text-lg font-semibold text-white mb-2 text-center">📈 30-Day Price Forecast</h4>
+                              <ResponsiveContainer width="100%" height="85%">
+                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
                                   <defs>
                                     <linearGradient id={`colorGradient${index}`} x1="0" y1="0" x2="0" y2="1">
                                       <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
@@ -1735,7 +1735,7 @@ export default function AltseasonDashboard() {
                                     stroke="#9CA3AF" 
                                     fontSize={14}
                                     tick={{ fill: '#9CA3AF' }}
-                                    tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? '30 Days' : value === 15 ? '15 Days' : ''}
+                                    tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? 'Day 30' : value === 15 ? 'Day 15' : ''}
                                   />
                                   <YAxis 
                                     stroke="#9CA3AF" 
@@ -1763,7 +1763,7 @@ export default function AltseasonDashboard() {
                                   </ReferenceLine>
                                 </LineChart>
                               </ResponsiveContainer>
-                              <div className="text-center mt-3 space-y-2">
+                              <div className="text-center mt-1 space-y-1">
                                 <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
                                   <div className="flex items-center">
                                     <span className="inline-block w-3 h-0.5 bg-red-500 mr-1"></span>
@@ -1779,7 +1779,7 @@ export default function AltseasonDashboard() {
                                   </div>
                                 </div>
                                 <p className="text-xs text-gray-400">
-                                  <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>
+                                  <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1"></span>
                                   Green dashed line indicates current trading price (live data from CoinGecko)
                                 </p>
                               </div>
