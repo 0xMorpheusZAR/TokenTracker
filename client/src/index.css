@@ -806,3 +806,49 @@
   letter-spacing: 0.05em;
   opacity: 0.85;
 }
+
+/* TradingView Widget Container Styling */
+.tradingview-widget-container {
+  background-color: #000000;
+  min-height: 400px;
+  position: relative;
+  width: 100%;
+}
+
+.tradingview-widget-container__widget {
+  background-color: #000000;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+/* Ensure TradingView iframe is visible */
+.tradingview-widget-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block !important;
+}
+
+/* Loading state for TradingView widgets */
+.tradingview-widget-container:not(:has(iframe))::before {
+  content: "Loading chart...";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 14px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Responsive TradingView widget */
+@media (max-width: 768px) {
+  .tradingview-widget-container {
+    min-height: 300px;
+  }
+  
+  .tradingview-widget-container__widget {
+    min-height: 300px;
+  }
+}
