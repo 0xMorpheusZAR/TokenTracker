@@ -641,7 +641,7 @@ export default function AltseasonDashboard() {
                   </CardHeader>
                   <CardContent>
                     {/* TradingView Widget for BTC.D */}
-                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "600px" }}>
                       <iframe
                         src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3ABTC.D%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_btc_d%22%7D`}
                         style={{
@@ -682,7 +682,7 @@ export default function AltseasonDashboard() {
                   </CardHeader>
                   <CardContent>
                     {/* TradingView Widget for ETH/BTC */}
-                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "600px" }}>
                       <iframe
                         src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22ETHBTC%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_eth_btc%22%7D`}
                         style={{
@@ -736,7 +736,7 @@ export default function AltseasonDashboard() {
                   <CardContent>
                     
                     {/* TradingView Widget for OTHERS/BTC */}
-                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "600px" }}>
                       <iframe
                         src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3AOTHERS%2FCRYPTOCAP%3ABTC%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_others_btc%22%7D`}
                         style={{
@@ -789,7 +789,7 @@ export default function AltseasonDashboard() {
                   </CardHeader>
                   <CardContent>
                     {/* TradingView Widget for OTHERS/ETH */}
-                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "600px" }}>
                       <iframe
                         src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Atrue%2C%22save_image%22%3Atrue%2C%22hide_side_toolbar%22%3Afalse%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22calendar%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3AOTHERS%2FCRYPTOCAP%3AETH%22%2C%22studies%22%3A%5B%22STD%3BMA%22%2C%22STD%3BRSI%22%5D%2C%22container_id%22%3A%22tradingview_others_eth%22%7D`}
                         style={{
