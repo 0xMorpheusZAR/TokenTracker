@@ -273,31 +273,16 @@ export default function AltseasonDashboard() {
     };
   }) || [];
 
-  // Get top performing altcoins vs Bitcoin
+  // Get top performing altcoins vs Bitcoin from performance API
   const topPerformers = useMemo(() => {
-    if (!metrics?.outperformingCoins) return [];
+    if (!performance?.altcoins) return [];
     
-    // Map the data to the format expected by Analysis section
-    return metrics.outperformingCoins.map((coin) => ({
-      id: coin.id,
-      symbol: coin.symbol,
-      name: coin.name,
-      image: coin.image,
-      currentPrice: coin.currentPrice || 0,
-      marketCap: coin.marketCap || 0,
-      volume24h: coin.volume24h || 0,
-      priceChange: {
-        '7d': coin.change7d || 0,
-        '30d': coin.change30d || 0,
-        '90d': coin.change90d || 0
-      },
-      performanceVsBtc: {
-        '7d': coin.outperformance7d || 0,
-        '30d': coin.outperformance || 0,
-        '90d': coin.outperformance90d || 0
-      }
-    }));
-  }, [metrics?.outperformingCoins]);
+    // Filter only coins that outperform BTC in the selected timeframe
+    // and return top 50
+    return performance.altcoins
+      .filter(coin => coin.performanceVsBtc[selectedTimeframe] > 0)
+      .slice(0, 50);
+  }, [performance?.altcoins, selectedTimeframe]);
 
   // Get top performing altcoins vs Ethereum
   const topPerformersEth = useMemo(() => {

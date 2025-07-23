@@ -344,14 +344,23 @@ router.get('/altcoins-performance', async (req, res) => {
       throw new Error('Bitcoin data not found');
     }
     
-    // Filter out Bitcoin and ETH derivatives, then get exactly top 50 altcoins
-    const ethDerivatives = [
+    // Filter out Bitcoin, stablecoins, and wrapped tokens to get exactly top 50 altcoins
+    const excludedTokens = [
+      // Bitcoin and derivatives
+      'bitcoin', 'wrapped-bitcoin', 'bitcoin-bep2', 'bitcoin-avalanche-bridged-btc-b',
+      // ETH derivatives
       'wrapped-steth', 'staked-ether', 'wsteth', 'weeth', 'steth', 
       'lido-staked-ether', 'rocket-pool-eth', 'frax-ether', 'sfrxeth',
-      'wbeth', 'weth', 'wrapped-ether', 'wrapped-beacon-eth', 'binance-wrapped-eth'
+      'wbeth', 'weth', 'wrapped-ether', 'wrapped-beacon-eth', 'binance-wrapped-eth',
+      // Major stablecoins
+      'tether', 'usd-coin', 'dai', 'binance-usd', 'true-usd', 'terrausd', 'paxos-standard',
+      'gemini-dollar', 'husd', 'frax', 'neutrino', 'fei-usd', 'tribe', 'reserve-rights-token',
+      'usdd', 'usdc', 'busd', 'tusd', 'usdp', 'gusd', 'susd', 'lusd', 'cusd', 'musd',
+      'tether-gold', 'pax-gold', 'digix-gold', 'first-digital-usd', 'paypal-usd'
     ];
+    
     const top50Altcoins = topCoins
-      .filter(coin => coin.id !== 'bitcoin' && !ethDerivatives.includes(coin.id))
+      .filter(coin => !excludedTokens.includes(coin.id))
       .slice(0, 50);
     
     // For 90-day data, we'll use approximation based on 30-day trends
@@ -405,7 +414,7 @@ router.get('/altcoins-performance', async (req, res) => {
       })
     );
     
-    // Sort by performance vs BTC for the selected timeframe
+    // Sort by performance vs BTC (descending order)
     const sortedAltcoins = altcoinsPerformance.sort((a, b) => 
       b.performanceVsBtc['30d'] - a.performanceVsBtc['30d']
     );
