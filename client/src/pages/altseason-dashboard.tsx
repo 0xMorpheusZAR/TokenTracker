@@ -828,29 +828,29 @@ export default function AltseasonDashboard() {
                           
                           {/* Trading Actions */}
                           <div className="mt-3 space-y-2">
-                            {/* Trade Now Button */}
+                            {/* Trade Now Button - BloFin */}
                             <a
-                              href={`https://www.tradingview.com/chart/?symbol=${coin.symbol.toUpperCase()}USDT`}
+                              href={`https://blofin.com/futures/${coin.symbol.toUpperCase()}-USDT`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="block w-full"
                             >
-                              <button className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-[0_0_20px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
+                              <button className="w-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-[0_0_20px_rgba(251,146,60,0.6)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                                 <span className="text-sm tracking-wide font-bold relative z-10 flex items-center justify-center">
-                                  📈 TRADE {coin.symbol.toUpperCase()}
+                                  🚀 TRADE {coin.symbol.toUpperCase()} ON BLOFIN
                                 </span>
                               </button>
                             </a>
                             
-                            {/* Chart Analysis Button */}
+                            {/* Chart Analysis Button - TradingView */}
                             <Dialog>
                               <DialogTrigger asChild>
-                                <button className="w-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(107,114,128,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
+                                <button className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
                                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                                   <span className="text-sm tracking-wide font-medium relative z-10 flex items-center justify-center">
                                     <BarChart3 className="w-4 h-4 mr-2" />
-                                    CHART ANALYSIS
+                                    TRADINGVIEW CHART
                                   </span>
                                 </button>
                               </DialogTrigger>

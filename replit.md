@@ -218,6 +218,7 @@ Changelog:
 - January 23, 2025: Updated BTC.D chart display - Changed "Market Cap BTC Dominance %" to "Current Ratio" to maintain consistency with other ratio charts (ETH/BTC, OTHERS/BTC, OTHERS/ETH) for unified dashboard presentation
 - January 23, 2025: Updated BTC.D current ratio to match TradingView widget - Fixed display to show 61.01% matching the exact value displayed in the TradingView BTC.D chart widget, ensuring consistency between the current ratio display and the embedded chart
 - January 23, 2025: Integrated TradingView trading widgets for altcoins in Analysis section - Added comprehensive trading integration with direct TradingView links for each altcoin, embedded TradingView chart widgets in modal dialogs for advanced analysis, dual-button interface (Trade Now + Chart Analysis), following BloFin integration pattern from Velo Dashboard with purple/blue gradient styling and shimmer effects
+- January 23, 2025: Updated altcoin trading links to use BloFin - Changed "TRADE" buttons to redirect to BloFin futures (e.g., https://blofin.com/futures/PENGU-USDT), maintained TradingView widgets for "CHART ANALYSIS" functionality, updated button styling with orange/amber gradient for BloFin and blue gradient for TradingView to clearly differentiate the two services
 ```
 
 ## User Preferences
