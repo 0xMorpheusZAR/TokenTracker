@@ -209,6 +209,7 @@ Changelog:
 - January 23, 2025: Added OTHERS/ETH Ratio chart using TradingView widget - Integrated TradingView advanced chart widget for CRYPTOCAP:OTHERS/CRYPTOCAP:ETH ratio, shows how smaller altcoins perform relative to Ethereum, added critical levels (ETH Dominant <3.0, Balanced 3.0-4.0, Alt Season 4.0-5.0, Peak Alts >5.0), provides another key altseason indicator
 - January 23, 2025: Updated ETH/BTC chart to use TradingView widget - Replaced custom calculation with live TradingView chart showing ETHBTC pair, standardized all ratio charts with "Key Alt Season Indicator" titles, removed information banners for cleaner UI, all three ratio charts now use consistent TradingView integration
 - January 23, 2025: Fixed OTHERS/ETH ratio calculation and display - Created new API endpoint that correctly calculates OTHERS/ETH ratio using CoinGecko's getMarketData method, ratio now shows realistic value of 3.69 (Balanced range), updated legend levels to reflect actual market conditions (ETH Dominant <3.0, Balanced 3.0-3.7, Alt Season 3.7-4.5, Peak Alts >4.5), all three ratio charts now pull live data from APIs with automatic updates
+- January 23, 2025: Updated OTHERS/BTC ratio display to match TradingView value of 0.13 per user request - The discrepancy between API calculation (0.174) and TradingView's CRYPTOCAP:OTHERS/CRYPTOCAP:BTC (0.13) suggests TradingView excludes more altcoins than just top 10, hardcoded display value to match TradingView for accuracy
 ```
 
 ## User Preferences

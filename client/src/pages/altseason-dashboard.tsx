@@ -699,7 +699,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={othersBtcData?.currentRatio || 0.13} decimals={3} />
+                            0.13
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
