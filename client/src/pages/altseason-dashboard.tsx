@@ -1708,7 +1708,7 @@ export default function AltseasonDashboard() {
                               </div>
                               <div className="text-right">
                                 <p className="text-sm text-gray-400">Current Price</p>
-                                <p className="font-bold text-xl text-white">${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice.toFixed(4)}</p>
+                                <p className="font-bold text-xl text-white">${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}</p>
                                 <p className={cn(
                                   "text-sm font-medium mt-1",
                                   coin.performanceVsEth?.["30d"] > 0 ? "text-purple-400" : "text-red-400"
@@ -1759,27 +1759,27 @@ export default function AltseasonDashboard() {
                                   <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
                                   <Line type="monotone" dataKey="bullish" stroke="#10B981" strokeWidth={2} dot={false} strokeOpacity={0.8} />
                                   <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2}>
-                                    <Label value={`Now: $${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice.toFixed(4)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
+                                    <Label value={`Now: $${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
                                   </ReferenceLine>
                                 </LineChart>
                               </ResponsiveContainer>
-                              <div className="text-center mt-1 space-y-1">
-                                <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                              <div className="text-center mt-4 space-y-3">
+                                <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
                                   <div className="flex items-center">
-                                    <span className="inline-block w-3 h-0.5 bg-red-500 mr-1"></span>
+                                    <span className="inline-block w-4 h-1 bg-red-500 mr-2 rounded-full"></span>
                                     Bearish
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="inline-block w-3 h-0.5 bg-purple-500 mr-1"></span>
+                                    <span className="inline-block w-4 h-1 bg-purple-500 mr-2 rounded-full"></span>
                                     Most Likely
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="inline-block w-3 h-0.5 bg-green-500 mr-1"></span>
+                                    <span className="inline-block w-4 h-1 bg-green-500 mr-2 rounded-full"></span>
                                     Bullish
                                   </div>
                                 </div>
-                                <p className="text-xs text-gray-400">
-                                  <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1"></span>
+                                <p className="text-xs text-gray-500 mt-2">
+                                  <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
                                   Green dashed line indicates current trading price (live data from CoinGecko)
                                 </p>
                               </div>
