@@ -61,13 +61,29 @@ router.get('/metrics', async (req, res) => {
     
     const btcChange30d = bitcoinData.price_change_percentage_30d_in_currency || 0;
     
-    // Calculate how many altcoins outperformed Bitcoin
+    // Calculate how many altcoins outperformed Bitcoin and get the list
     let outperformingCount = 0;
+    const outperformingCoins = [];
     top50Altcoins.forEach(coin => {
-      if ((coin.price_change_percentage_30d_in_currency || 0) > btcChange30d) {
+      const coinChange = coin.price_change_percentage_30d_in_currency || 0;
+      if (coinChange > btcChange30d) {
         outperformingCount++;
+        outperformingCoins.push({
+          id: coin.id,
+          symbol: coin.symbol,
+          name: coin.name,
+          image: coin.image,
+          change30d: coinChange,
+          outperformance: coinChange - btcChange30d,
+          currentPrice: coin.current_price,
+          marketCap: coin.market_cap,
+          rank: coin.market_cap_rank
+        });
       }
     });
+    
+    // Sort by outperformance (best performers first)
+    outperformingCoins.sort((a, b) => b.outperformance - a.outperformance);
     
     // Calculate Altseason Index (percentage of top 50 altcoins outperforming BTC)
     const altseasonIndex = Math.round((outperformingCount / 50) * 100);
@@ -78,6 +94,7 @@ router.get('/metrics', async (req, res) => {
       totalMarketCap: globalData.data.total_market_cap.usd,
       totalVolume: globalData.data.total_volume.usd,
       outperformingCount,
+      outperformingCoins,
       btcChange30d,
       isAltseason: altseasonIndex >= 75,
       lastUpdated: new Date().toISOString()

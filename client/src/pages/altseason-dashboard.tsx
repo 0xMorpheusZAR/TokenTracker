@@ -431,6 +431,85 @@ export default function AltseasonDashboard() {
                 </Card>
               </motion.div>
 
+              {/* Outperforming Altcoins Mini Dashboard */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-emerald-600 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/20">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center text-sm sm:text-base">
+                        <TrendingUp className="mr-1 sm:mr-2 text-emerald-400 w-4 h-4 sm:w-5 sm:h-5" />
+                        Top Performers vs BTC
+                      </span>
+                      <Badge className="bg-emerald-600/20 text-emerald-400 border-emerald-500">
+                        {metrics?.outperformingCount || 0} coins
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>30-day outperformance leaders</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="h-[340px] overflow-y-auto custom-scrollbar">
+                      <div className="space-y-1 p-4">
+                        {metrics?.outperformingCoins?.slice(0, 15).map((coin, index) => (
+                          <motion.div
+                            key={coin.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.03 }}
+                            className={cn(
+                              "flex items-center justify-between p-2 rounded-lg transition-all duration-200",
+                              "hover:bg-gray-700/30 hover:scale-[1.02]",
+                              coin.outperformance > 50 ? "bg-green-600/10" : 
+                              coin.outperformance > 20 ? "bg-emerald-600/10" : 
+                              "bg-gray-700/20"
+                            )}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <img 
+                                src={coin.image} 
+                                alt={coin.symbol} 
+                                className="w-6 h-6 rounded-full"
+                                onError={(e) => {
+                                  e.currentTarget.src = `https://via.placeholder.com/24?text=${coin.symbol.charAt(0)}`;
+                                }}
+                              />
+                              <div>
+                                <p className="text-xs font-medium text-white">
+                                  {coin.symbol.toUpperCase()}
+                                  <span className="text-gray-400 ml-1">#{coin.rank}</span>
+                                </p>
+                                <p className="text-xs text-gray-400 truncate max-w-[100px]">{coin.name}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={cn(
+                                "text-sm font-bold",
+                                coin.outperformance > 0 ? "text-emerald-400" : "text-red-400"
+                              )}>
+                                +{coin.outperformance.toFixed(1)}%
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                {coin.change30d.toFixed(1)}%
+                              </p>
+                            </div>
+                          </motion.div>
+                        ))}
+                        {metrics?.outperformingCoins?.length > 15 && (
+                          <div className="text-center py-2">
+                            <p className="text-xs text-gray-400">
+                              +{metrics.outperformingCoins.length - 15} more coins
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
 
 
               {/* Market Cap Distribution */}
