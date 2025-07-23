@@ -1734,7 +1734,7 @@ export default function AltseasonDashboard() {
                                     dataKey="day" 
                                     stroke="#9CA3AF" 
                                     fontSize={14}
-                                    tick={{ fill: '#9CA3AF' }}
+                                    tick={{ fill: '#9CA3AF', dy: 10 }}
                                     tickFormatter={(value) => value === 0 ? 'Today' : value === 30 ? 'Day 30' : value === 15 ? 'Day 15' : ''}
                                   />
                                   <YAxis 
@@ -1758,9 +1758,7 @@ export default function AltseasonDashboard() {
                                   <Line type="monotone" dataKey="bullish" stroke="#10B981" strokeWidth={2} dot={false} strokeOpacity={0.8} />
                                   <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
                                   <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
-                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2}>
-                                    <Label value={`$${currentPrice >= 1 ? currentPrice.toFixed(2) : currentPrice >= 0.01 ? currentPrice.toFixed(4) : currentPrice >= 0.0001 ? currentPrice.toFixed(6) : currentPrice.toFixed(8)}`} position="right" fill="#10B981" style={{ fontSize: 14, fontWeight: 'bold' }} />
-                                  </ReferenceLine>
+                                  <ReferenceLine y={currentPrice} stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
                                 </LineChart>
                               </ResponsiveContainer>
                             </div>
