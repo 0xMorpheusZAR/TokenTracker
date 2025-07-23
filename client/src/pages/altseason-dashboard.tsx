@@ -338,7 +338,15 @@ export default function AltseasonDashboard() {
                 <span className="sm:hidden">Real-time altseason tracking</span>
               </p>
             </div>
-            {/* Removed button area per user request */}
+            <Link href="/">
+              <Button 
+                variant="outline" 
+                className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:bg-gray-700 hover:border-gray-600 text-white transition-all duration-200"
+              >
+                <ArrowDownRight className="mr-2 h-4 w-4" />
+                Back to Dashboard
+              </Button>
+            </Link>
           </div>
 
           {/* Enhanced Key Alert */}
@@ -621,19 +629,9 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-orange-600 transition-all">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between text-white">
-                      <span className="flex items-center">
-                        <Bitcoin className="mr-2 text-orange-500" />
-                        <span className="text-sm sm:text-base">BTC.D - Key Altseason Indicator</span>
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl sm:text-2xl font-bold text-white">
-                            61.06%
-                          </p>
-                          <p className="text-xs text-gray-400">Current Ratio</p>
-                        </div>
-                      </div>
+                    <CardTitle className="flex items-center text-white">
+                      <Bitcoin className="mr-2 text-orange-500" />
+                      <span className="text-sm sm:text-base">BTC.D - Key Altseason Indicator</span>
                     </CardTitle>
                     <CardDescription>
                       Historical BTC.d price ratio movement
@@ -666,19 +664,9 @@ export default function AltseasonDashboard() {
               >
                 <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all duration-300">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between text-white">
-                      <span className="flex items-center">
-                        <Target className="mr-2 text-indigo-400" />
-                        <span className="text-sm sm:text-base">ETH/BTC Ratio - Key Altseason Indicator</span>
-                      </span>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl sm:text-2xl font-bold text-white">
-                            {ethBtcData?.currentRatio ? ethBtcData.currentRatio.toFixed(4) : '0.0309'}
-                          </p>
-                          <p className="text-xs text-gray-400">Current Ratio</p>
-                        </div>
-                      </div>
+                    <CardTitle className="flex items-center text-white">
+                      <Target className="mr-2 text-indigo-400" />
+                      <span className="text-sm sm:text-base">ETH/BTC Ratio - Key Altseason Indicator</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -716,12 +704,6 @@ export default function AltseasonDashboard() {
                         <span className="text-sm sm:text-base">OTHERS/BTC Ratio - Key Alt Season Indicator</span>
                       </span>
                       <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl sm:text-2xl font-bold text-white">
-                            0.130
-                          </p>
-                          <p className="text-xs text-gray-400">Current Ratio</p>
-                        </div>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
@@ -771,12 +753,6 @@ export default function AltseasonDashboard() {
                         <span className="text-sm sm:text-base">OTHERS/ETH Ratio - Key Alt Season Indicator</span>
                       </span>
                       <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="text-xl sm:text-2xl font-bold text-white">
-                            0.69
-                          </p>
-                          <p className="text-xs text-gray-400">Current Ratio</p>
-                        </div>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
