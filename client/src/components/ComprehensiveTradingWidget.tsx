@@ -94,44 +94,103 @@ export default function ComprehensiveTradingWidget({
   // Initialize simplified chart display
   useEffect(() => {
     if (chartContainerRef.current) {
-      chartContainerRef.current.innerHTML = '';
+      // Clear container safely
+      chartContainerRef.current.textContent = '';
       
-      // Create a professional chart placeholder with live data
-      const chartHTML = `
-        <div class="w-full bg-gray-800 rounded-lg border border-gray-600 overflow-hidden">
-          <div class="bg-gray-900/50 p-3 border-b border-gray-600">
-            <div class="flex items-center justify-between">
-              <div class="text-sm text-gray-300">${coin}USDT • ${selectedTimeframe}</div>
-              <div class="text-xs text-green-400">● LIVE</div>
-            </div>
-          </div>
-          <div class="p-4">
-            <div class="text-center text-gray-400 mb-4">
-              <div class="text-sm">Professional Trading Chart</div>
-              <div class="text-xs mt-1">Real-time data powered by Velo API</div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div class="text-gray-400">Current Price</div>
-                <div class="text-white font-medium">${livePrice ? '$' + formatPrice(livePrice) : 'Loading...'}</div>
-              </div>
-              <div>
-                <div class="text-gray-400">24h Change</div>
-                <div class="${priceChange && priceChange >= 0 ? 'text-green-400' : 'text-red-400'} font-medium">
-                  ${priceChange ? (priceChange >= 0 ? '+' : '') + priceChange.toFixed(2) + '%' : 'Loading...'}
-                </div>
-              </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-700">
-              <div class="text-xs text-gray-500 text-center">
-                Chart interface optimized for ${selectedTimeframe} timeframe
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+      // Create DOM elements safely without innerHTML
+      const container = document.createElement('div');
+      container.className = 'w-full bg-gray-800 rounded-lg border border-gray-600 overflow-hidden';
       
-      chartContainerRef.current.innerHTML = chartHTML;
+      // Header section
+      const header = document.createElement('div');
+      header.className = 'bg-gray-900/50 p-3 border-b border-gray-600';
+      
+      const headerFlex = document.createElement('div');
+      headerFlex.className = 'flex items-center justify-between';
+      
+      const coinInfo = document.createElement('div');
+      coinInfo.className = 'text-sm text-gray-300';
+      coinInfo.textContent = `${coin}USDT • ${selectedTimeframe}`;
+      
+      const liveIndicator = document.createElement('div');
+      liveIndicator.className = 'text-xs text-green-400';
+      liveIndicator.textContent = '● LIVE';
+      
+      headerFlex.appendChild(coinInfo);
+      headerFlex.appendChild(liveIndicator);
+      header.appendChild(headerFlex);
+      
+      // Main content section
+      const content = document.createElement('div');
+      content.className = 'p-4';
+      
+      // Title section
+      const titleSection = document.createElement('div');
+      titleSection.className = 'text-center text-gray-400 mb-4';
+      
+      const title = document.createElement('div');
+      title.className = 'text-sm';
+      title.textContent = 'Professional Trading Chart';
+      
+      const subtitle = document.createElement('div');
+      subtitle.className = 'text-xs mt-1';
+      subtitle.textContent = 'Real-time data powered by Velo API';
+      
+      titleSection.appendChild(title);
+      titleSection.appendChild(subtitle);
+      
+      // Price grid
+      const priceGrid = document.createElement('div');
+      priceGrid.className = 'grid grid-cols-2 gap-4 text-sm';
+      
+      // Current price column
+      const currentPriceCol = document.createElement('div');
+      const currentPriceLabel = document.createElement('div');
+      currentPriceLabel.className = 'text-gray-400';
+      currentPriceLabel.textContent = 'Current Price';
+      
+      const currentPriceValue = document.createElement('div');
+      currentPriceValue.className = 'text-white font-medium';
+      currentPriceValue.textContent = livePrice ? '$' + formatPrice(livePrice) : 'Loading...';
+      
+      currentPriceCol.appendChild(currentPriceLabel);
+      currentPriceCol.appendChild(currentPriceValue);
+      
+      // 24h change column
+      const changeCol = document.createElement('div');
+      const changeLabel = document.createElement('div');
+      changeLabel.className = 'text-gray-400';
+      changeLabel.textContent = '24h Change';
+      
+      const changeValue = document.createElement('div');
+      changeValue.className = `${priceChange && priceChange >= 0 ? 'text-green-400' : 'text-red-400'} font-medium`;
+      changeValue.textContent = priceChange ? (priceChange >= 0 ? '+' : '') + priceChange.toFixed(2) + '%' : 'Loading...';
+      
+      changeCol.appendChild(changeLabel);
+      changeCol.appendChild(changeValue);
+      
+      priceGrid.appendChild(currentPriceCol);
+      priceGrid.appendChild(changeCol);
+      
+      // Footer section
+      const footer = document.createElement('div');
+      footer.className = 'mt-4 pt-4 border-t border-gray-700';
+      
+      const footerText = document.createElement('div');
+      footerText.className = 'text-xs text-gray-500 text-center';
+      footerText.textContent = `Chart interface optimized for ${selectedTimeframe} timeframe`;
+      
+      footer.appendChild(footerText);
+      
+      // Assemble everything
+      content.appendChild(titleSection);
+      content.appendChild(priceGrid);
+      content.appendChild(footer);
+      
+      container.appendChild(header);
+      container.appendChild(content);
+      
+      chartContainerRef.current.appendChild(container);
     }
   }, [coin, selectedTimeframe, height, livePrice, priceChange]);
 
