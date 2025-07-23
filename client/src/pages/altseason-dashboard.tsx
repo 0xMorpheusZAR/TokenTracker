@@ -568,7 +568,7 @@ export default function AltseasonDashboard() {
                           <p className="text-xl sm:text-2xl font-bold text-white">
                             <AnimatedCounter value={metrics?.bitcoinDominance || 61.02} decimals={2} suffix="%" />
                           </p>
-                          <p className="text-xs text-gray-400">Market Cap BTC Dominance %</p>
+                          <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
                       </div>
                     </CardTitle>
