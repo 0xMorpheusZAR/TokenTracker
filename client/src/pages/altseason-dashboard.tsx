@@ -171,7 +171,7 @@ export default function AltseasonDashboard() {
   // Fetch altseason metrics with enhanced error handling
   const { data: metrics, isLoading: metricsLoading, error: metricsError } = useQuery({
     queryKey: ['/api/altseason/metrics'],
-    refetchInterval: autoRefresh ? 30000 : false,
+    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -179,19 +179,19 @@ export default function AltseasonDashboard() {
   // Fetch ETH/BTC ratio data
   const { data: ethBtcData, isLoading: ethBtcLoading } = useQuery({
     queryKey: ['/api/altseason/eth-btc-ratio'],
-    refetchInterval: autoRefresh ? 60000 : false,
+    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
   });
 
   // Fetch OTHERS/BTC ratio data
   const { data: othersBtcData, isLoading: othersBtcLoading } = useQuery({
     queryKey: ['/api/altseason/others-btc-ratio'],
-    refetchInterval: autoRefresh ? 60000 : false,
+    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
   });
 
   // Fetch OTHERS/ETH ratio data
   const { data: othersEthData, isLoading: othersEthLoading } = useQuery({
     queryKey: ['/api/altseason/others-eth-ratio'],
-    refetchInterval: autoRefresh ? 60000 : false,
+    refetchInterval: autoRefresh ? 10000 : false, // Update every 10 seconds
   });
 
   // Fetch altcoins performance
@@ -576,7 +576,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={61.01} decimals={2} suffix="%" />
+                            <AnimatedCounter value={metrics?.bitcoinDominance || 61.01} decimals={2} suffix="%" />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -620,7 +620,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={othersBtcData?.currentRatio || 0.13} decimals={3} />
+                            <AnimatedCounter value={othersBtcData?.currentRatio || 0} decimals={3} />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -674,7 +674,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            <AnimatedCounter value={othersEthData?.currentRatio || 0.69} decimals={2} />
+                            <AnimatedCounter value={othersEthData?.currentRatio || 0} decimals={2} />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>

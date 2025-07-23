@@ -261,7 +261,7 @@ router.get('/others-btc-ratio', async (req, res) => {
     historicalData.sort((a, b) => a.timestamp - b.timestamp);
     
     const responseData = {
-      currentRatio: 0.13, // Fixed to match TradingView CRYPTOCAP:OTHERS/CRYPTOCAP:BTC
+      currentRatio, // Dynamic real-time ratio
       btcDominance,
       othersMarketCap,
       btcMarketCap,
@@ -523,7 +523,7 @@ router.get('/others-eth-ratio', async (req, res) => {
     const othersEthRatio = othersMarketCap / ethMarketCap;
     
     res.json({
-      currentRatio: 0.69, // Fixed to match user specification
+      currentRatio: othersEthRatio, // Dynamic real-time ratio
       othersMarketCap,
       ethMarketCap,
       totalMarketCap,
