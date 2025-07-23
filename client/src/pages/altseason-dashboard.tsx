@@ -624,7 +624,7 @@ export default function AltseasonDashboard() {
                     <CardTitle className="flex items-center justify-between text-white">
                       <span className="flex items-center">
                         <Target className="mr-2 text-indigo-400" />
-                        <span className="text-base sm:text-lg">ETH/BTC Ratio - Key Altseason Indicator</span>
+                        <span className="text-sm sm:text-base">ETH/BTC Ratio - Key Altseason Indicator</span>
                       </span>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
@@ -640,124 +640,38 @@ export default function AltseasonDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ResponsiveContainer width="100%" height={350}>
-                      <AreaChart data={ethBtcChartData}>
-                        <defs>
-                          <linearGradient id="colorRatio" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#6366F1" stopOpacity={0}/>
-                          </linearGradient>
-                          <linearGradient id="resistanceGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#EF4444" stopOpacity={0.3}/>
-                            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.05}/>
-                          </linearGradient>
-                          <pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="10" height="10">
-                            <path d="M0,10 l10,-10 M-2.5,2.5 l5,-5 M7.5,12.5 l5,-5" stroke="#EF4444" strokeWidth="0.5" opacity="0.2"/>
-                          </pattern>
-                        </defs>
-                        <CartesianGrid 
-                          strokeDasharray="3 3" 
-                          stroke="#374151" 
-                          opacity={0.1}
-                          vertical={false}
-                        />
-                        <XAxis 
-                          dataKey="date" 
-                          stroke="transparent"
-                          axisLine={{ stroke: '#4B5563', strokeWidth: 1 }}
-                          tick={{ 
-                            fontSize: 11, 
-                            fill: '#9CA3AF',
-                            fontWeight: 500
-                          }}
-                          tickLine={{ stroke: '#4B5563', strokeWidth: 1 }}
-                          dy={10}
-                        />
-                        <YAxis 
-                          stroke="transparent"
-                          axisLine={{ stroke: '#4B5563', strokeWidth: 1 }}
-                          tick={{ 
-                            fontSize: 11, 
-                            fill: '#9CA3AF',
-                            fontWeight: 500
-                          }}
-                          tickLine={{ stroke: '#4B5563', strokeWidth: 1 }}
-                          domain={[0.025, 0.040]}
-                          ticks={[0.025, 0.030, 0.032, 0.035, 0.040]}
-                          tickFormatter={(value) => value.toFixed(3)}
-                          dx={-10}
-                        />
-                        <RechartsTooltip content={<CustomTooltip />} />
-                        
-                        {/* Resistance Zones */}
-                        <ReferenceArea 
-                          y1={0.032} 
-                          y2={0.0325}
-                          fill="url(#resistanceGradient)"
-                          strokeOpacity={0}
-                          label={{
-                            value: "Immediate Resistance",
-                            position: "right",
-                            style: { 
-                              fill: "#EF4444", 
-                              fontSize: 11, 
-                              fontWeight: 600,
-                              textShadow: "0 0 4px rgba(0,0,0,0.8)"
-                            }
-                          }}
-                        />
-                        <ReferenceArea 
-                          y1={0.035} 
-                          y2={0.036}
-                          fill="url(#diagonalHatch)"
-                          fillOpacity={0.5}
-                          strokeOpacity={0}
-                          label={{
-                            value: "Major HTF Resistance",
-                            position: "right",
-                            style: { 
-                              fill: "#F59E0B", 
-                              fontSize: 11, 
-                              fontWeight: 600,
-                              textShadow: "0 0 4px rgba(0,0,0,0.8)"
-                            }
-                          }}
-                        />
-                        
-                        {/* Current Price Indicator */}
-                        <ReferenceLine 
-                          y={ethBtcData?.currentRatio || 0.0317}
-                          stroke="#10B981"
-                          strokeDasharray="5 5"
-                          strokeWidth={2}
-                        />
-                        
-                        <Area 
-                          type="monotone" 
-                          dataKey="ratio" 
-                          stroke="#6366F1"
-                          fillOpacity={1}
-                          fill="url(#colorRatio)"
-                          strokeWidth={2}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="ma7" 
-                          stroke="#10B981"
-                          strokeWidth={1}
-                          dot={false}
-                          name="7D MA"
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="ma30" 
-                          stroke="#F59E0B"
-                          strokeWidth={1}
-                          dot={false}
-                          name="30D MA"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    {/* TradingView Widget for ETH/BTC */}
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                      <iframe
+                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Afalse%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22ETHBTC%22%2C%22studies%22%3A%5B%5D%2C%22container_id%22%3A%22tradingview_eth_btc%22%7D`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          border: "none",
+                        }}
+                        allowFullScreen
+                      />
+                    </div>
+                    
+                    {/* Add critical levels legend */}
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <span className="text-gray-400">Low (&lt;0.025)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
+                        <span className="text-gray-400">Resistance (0.032)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                        <span className="text-gray-400">Major HTF (0.035)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <span className="text-gray-400">Breakout (&gt;0.075)</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -819,6 +733,68 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-green-500 rounded"></div>
                         <span className="text-gray-400">Strong Alts (&gt;0.17)</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* OTHERS/ETH Ratio Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center">
+                        <Activity className="mr-2 text-purple-400" />
+                        <span className="text-sm sm:text-base">OTHERS/ETH Ratio - Key Alt Season Indicator</span>
+                      </span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-gray-900 border-gray-700 max-w-xs text-gray-200">
+                            <p>The OTHERS/ETH ratio compares the total market cap of all altcoins (excluding Bitcoin) to Ethereum's market cap. When this ratio rises, it indicates smaller altcoins are outperforming Ethereum.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {/* TradingView Widget for OTHERS/ETH */}
+                    <div className="bg-gray-900/50 rounded-lg p-2" style={{ height: "400px" }}>
+                      <iframe
+                        src={`https://s.tradingview.com/embed-widget/advanced-chart/?locale=en#%7B%22interval%22%3A%22D%22%2C%22timezone%22%3A%22Etc%2FUTC%22%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%221%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22locale%22%3A%22en%22%2C%22toolbar_bg%22%3A%22%23f1f3f6%22%2C%22enable_publishing%22%3Afalse%2C%22allow_symbol_change%22%3Afalse%2C%22watchlist%22%3A%5B%5D%2C%22details%22%3Atrue%2C%22show_popup_button%22%3Atrue%2C%22popup_width%22%3A%221000%22%2C%22popup_height%22%3A%22650%22%2C%22symbol%22%3A%22CRYPTOCAP%3AOTHERS%2FCRYPTOCAP%3AETH%22%2C%22studies%22%3A%5B%5D%2C%22container_id%22%3A%22tradingview_others_eth%22%7D`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          border: "none",
+                        }}
+                        allowFullScreen
+                      />
+                    </div>
+                    
+                    {/* Add critical levels legend */}
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <span className="text-gray-400">ETH Dominant (&lt;3.0)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
+                        <span className="text-gray-400">Balanced (3.0-4.0)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                        <span className="text-gray-400">Alt Season (4.0-5.0)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <span className="text-gray-400">Peak Alts (&gt;5.0)</span>
                       </div>
                     </div>
                   </CardContent>
