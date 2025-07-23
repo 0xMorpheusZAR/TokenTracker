@@ -216,6 +216,7 @@ Changelog:
 - January 23, 2025: Added BTC.D (Bitcoin Dominance) Key Altseason Indicator - Integrated TradingView advanced chart widget for CRYPTOCAP:BTC.D symbol, displays real-time Bitcoin dominance percentage with full charting functionality including drawing tools and indicators, shows "Live from TradingView" status indicator, removed button area from dashboard header per user request
 - January 23, 2025: Enhanced UI cleanliness - Removed "Historical ETH/BTC price ratio movement" text from ETH/BTC chart, updated BTC.D chart description to "Historical BTC.d price ratio movement", removed small BTC.D widget (58.99% display) that was showing as separate component, cleaned up unnecessary TradingViewWidget component from code
 - January 23, 2025: Updated BTC.D chart display - Changed "Market Cap BTC Dominance %" to "Current Ratio" to maintain consistency with other ratio charts (ETH/BTC, OTHERS/BTC, OTHERS/ETH) for unified dashboard presentation
+- January 23, 2025: Enhanced BTC.D with live data updates - Updated current ratio to display live Bitcoin dominance data from CoinGecko API with 30-second auto-refresh, fallback value adjusted to match current market data (59.02%), ensuring real-time accuracy matching TradingView widget display
 ```
 
 ## User Preferences
