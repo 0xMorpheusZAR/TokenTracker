@@ -1742,7 +1742,7 @@ export default function AltseasonDashboard() {
                                     fontSize={14}
                                     tick={{ fill: '#9CA3AF' }}
                                     domain={['dataMin - 5%', 'dataMax + 5%']}
-                                    tickFormatter={(value) => value >= 1000 ? `$${(value/1000).toFixed(0)}K` : value >= 1 ? `$${value.toFixed(0)}` : `$${value.toFixed(4)}`}
+                                    tickFormatter={(value) => value >= 1000 ? `$${(value/1000).toFixed(0)}K` : value >= 1 ? `$${value.toFixed(2)}` : value >= 0.01 ? `$${value.toFixed(4)}` : value >= 0.0001 ? `$${value.toFixed(6)}` : `$${value.toFixed(8)}`}
 
                                   />
                                   <RechartsTooltip
@@ -1752,8 +1752,8 @@ export default function AltseasonDashboard() {
                                       borderRadius: '8px'
                                     }}
                                     labelStyle={{ color: '#9CA3AF' }}
-                                    formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : 4)}`, 'Price']}
-                                    labelFormatter={(label) => `Day ${label}`}
+                                    formatter={(value) => [`$${Number(value).toFixed(currentPrice >= 1 ? 2 : currentPrice >= 0.01 ? 4 : currentPrice >= 0.0001 ? 6 : 8)}`, 'Price']}
+                                    labelFormatter={(label) => label === 0 ? 'Today' : `Day ${label}`}
                                   />
                                   <Line type="monotone" dataKey="bearish" stroke="#EF4444" strokeWidth={2} dot={false} strokeOpacity={0.8} />
                                   <Line type="monotone" dataKey="mostLikely" stroke="#A78BFA" strokeWidth={3} dot={false} strokeOpacity={1} />
@@ -1763,33 +1763,42 @@ export default function AltseasonDashboard() {
                                   </ReferenceLine>
                                 </LineChart>
                               </ResponsiveContainer>
-                              <div className="text-center mt-4 space-y-3">
-                                <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
+                            </div>
+                            
+                            {/* Legend and Info Section */}
+                            <div className="mt-6 space-y-4">
+                              {/* Legend */}
+                              <div className="bg-gray-900/40 rounded-lg p-4">
+                                <div className="flex items-center justify-center gap-8">
                                   <div className="flex items-center">
-                                    <span className="inline-block w-4 h-1 bg-red-500 mr-2 rounded-full"></span>
-                                    Bearish
+                                    <span className="inline-block w-6 h-1 bg-red-500 mr-2 rounded-full"></span>
+                                    <span className="text-sm text-gray-400">Bearish</span>
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="inline-block w-4 h-1 bg-purple-500 mr-2 rounded-full"></span>
-                                    Most Likely
+                                    <span className="inline-block w-6 h-1 bg-purple-500 mr-2 rounded-full"></span>
+                                    <span className="text-sm text-gray-400">Most Likely</span>
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="inline-block w-4 h-1 bg-green-500 mr-2 rounded-full"></span>
-                                    Bullish
+                                    <span className="inline-block w-6 h-1 bg-green-500 mr-2 rounded-full"></span>
+                                    <span className="text-sm text-gray-400">Bullish</span>
                                   </div>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">
-                                  <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                              </div>
+                              
+                              {/* Current Price Indicator */}
+                              <div className="bg-gray-900/30 rounded-lg p-3 text-center">
+                                <p className="text-sm text-gray-400 flex items-center justify-center">
+                                  <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></span>
                                   Green dashed line indicates current trading price (live data from CoinGecko)
                                 </p>
                               </div>
-                            </div>
-                            
-                            {/* Methodology Note */}
-                            <div className="bg-gray-900/30 rounded-lg p-4 text-center">
-                              <p className="text-xs text-gray-500">
-                                Based on {simulations} simulations using historical volatility and ETH outperformance trend
-                              </p>
+                              
+                              {/* Methodology Note */}
+                              <div className="bg-purple-900/20 rounded-lg p-3 text-center border border-purple-500/20">
+                                <p className="text-sm text-gray-400">
+                                  Based on {simulations} simulations using historical volatility and ETH outperformance trend
+                                </p>
+                              </div>
                             </div>
                           </motion.div>
                         );
