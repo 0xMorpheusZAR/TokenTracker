@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, lazy, Suspense, memo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense, memo, useCallback, startTransition } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -1223,7 +1223,10 @@ export default function AltseasonDashboard() {
                                       } catch (error) {
                                         console.error('Failed to fetch trading info:', error);
                                       }
-                                      setChartModalOpen({...chartModalOpen, [coin.id]: true});
+                                      // Use startTransition to avoid suspension error
+                                      startTransition(() => {
+                                        setChartModalOpen({...chartModalOpen, [coin.id]: true});
+                                      });
                                     }}
                                     className="relative w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-700 hover:from-blue-800 hover:via-indigo-800 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] overflow-hidden group"
                                   >
@@ -1242,41 +1245,52 @@ export default function AltseasonDashboard() {
                                   </DialogTitle>
                                 </DialogHeader>
                                 <div className="mt-4" style={{ height: '600px' }}>
-                                  <TradingViewAdvancedWidget
-                                    symbol={tradingPairs[coin.id]?.tradingViewSymbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
-                                    interval="240"
-                                    theme="dark"
-                                    height={600}
-                                    toolbar_bg="#000000"
-                                    container_id={`altcoin_chart_${coin.symbol}_${coin.id}`}
-                                    overrides={{
-                                      "mainSeriesProperties.candleStyle.upColor": "#00FF00",
-                                      "mainSeriesProperties.candleStyle.downColor": "#FF0000",
-                                      "mainSeriesProperties.candleStyle.borderUpColor": "#00FF00",
-                                      "mainSeriesProperties.candleStyle.borderDownColor": "#FF0000",
-                                      "mainSeriesProperties.candleStyle.wickUpColor": "#00FF00",
-                                      "mainSeriesProperties.candleStyle.wickDownColor": "#FF0000",
-                                      "paneProperties.background": "#000000",
-                                      "paneProperties.backgroundType": "solid",
-                                      "paneProperties.vertGridProperties.color": "#1a1a1a",
-                                      "paneProperties.horzGridProperties.color": "#1a1a1a",
-                                      "scalesProperties.textColor": "#999999",
-                                      "scalesProperties.backgroundColor": "#000000",
-                                      "scalesProperties.lineColor": "#1a1a1a"
-                                    }}
-                                    enabled_features={[
-                                      "study_templates",
-                                      "use_localstorage_for_settings",
-                                      "save_chart_properties_to_local_storage",
-                                      "create_volume_indicator_by_default",
-                                      "drawing_templates"
-                                    ]}
-                                    allow_symbol_change={true}
-                                    save_image={true}
-                                    details={true}
-                                    hotlist={true}
-                                    calendar={true}
-                                  />
+                                  <Suspense 
+                                    fallback={
+                                      <div className="flex items-center justify-center h-full">
+                                        <div className="text-center">
+                                          <div className="inline-flex items-center justify-center w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                          <p className="text-gray-400">Loading TradingView Chart...</p>
+                                        </div>
+                                      </div>
+                                    }
+                                  >
+                                    <TradingViewAdvancedWidget
+                                      symbol={tradingPairs[coin.id]?.tradingViewSymbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
+                                      interval="240"
+                                      theme="dark"
+                                      height={600}
+                                      toolbar_bg="#000000"
+                                      container_id={`altcoin_chart_${coin.symbol}_${coin.id}`}
+                                      overrides={{
+                                        "mainSeriesProperties.candleStyle.upColor": "#00FF00",
+                                        "mainSeriesProperties.candleStyle.downColor": "#FF0000",
+                                        "mainSeriesProperties.candleStyle.borderUpColor": "#00FF00",
+                                        "mainSeriesProperties.candleStyle.borderDownColor": "#FF0000",
+                                        "mainSeriesProperties.candleStyle.wickUpColor": "#00FF00",
+                                        "mainSeriesProperties.candleStyle.wickDownColor": "#FF0000",
+                                        "paneProperties.background": "#000000",
+                                        "paneProperties.backgroundType": "solid",
+                                        "paneProperties.vertGridProperties.color": "#1a1a1a",
+                                        "paneProperties.horzGridProperties.color": "#1a1a1a",
+                                        "scalesProperties.textColor": "#999999",
+                                        "scalesProperties.backgroundColor": "#000000",
+                                        "scalesProperties.lineColor": "#1a1a1a"
+                                      }}
+                                      enabled_features={[
+                                        "study_templates",
+                                        "use_localstorage_for_settings",
+                                        "save_chart_properties_to_local_storage",
+                                        "create_volume_indicator_by_default",
+                                        "drawing_templates"
+                                      ]}
+                                      allow_symbol_change={true}
+                                      save_image={true}
+                                      details={true}
+                                      hotlist={true}
+                                      calendar={true}
+                                    />
+                                  </Suspense>
                                 </div>
                               </DialogContent>
                             </Dialog>
@@ -1541,7 +1555,10 @@ export default function AltseasonDashboard() {
                                         } catch (error) {
                                           console.error('Failed to fetch trading info:', error);
                                         }
-                                        setChartModalOpen({...chartModalOpen, [`eth-${coin.id}`]: true});
+                                        // Use startTransition to avoid suspension error
+                                        startTransition(() => {
+                                          setChartModalOpen({...chartModalOpen, [`eth-${coin.id}`]: true});
+                                        });
                                       }}
                                       className="relative w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-700 hover:from-blue-800 hover:via-indigo-800 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] overflow-hidden group"
                                     >
@@ -1561,46 +1578,57 @@ export default function AltseasonDashboard() {
                                     </DialogTitle>
                                   </DialogHeader>
                                   <div className="h-[700px] w-full mt-4">
-                                    <TradingViewAdvancedWidget
-                                      symbol={tradingPairs[`eth-${coin.id}`]?.symbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
-                                      theme="dark"
-                                      locale="en"
-                                      width="100%"
-                                      height={700}
-                                      autosize={false}
-                                      interval="D"
-                                      timezone="Etc/UTC"
-                                      style={1}
-                                      hide_side_toolbar={false}
-                                      enable_publishing={false}
-                                      container_id={`tradingview_eth_${coin.symbol}_${coin.id}`}
-                                      toolbar_bg="#000000"
-                                      save_image={true}
-                                      details={true}
-                                      hotlist={true}
-                                      calendar={true}
-                                      studies={[
-                                        "STD;MA",
-                                        "STD;RSI"
-                                      ]}
-                                      overrides={{
-                                        "paneProperties.background": "#000000",
-                                        "paneProperties.backgroundType": "solid",
-                                        "paneProperties.vertGridProperties.color": "#1a1a1a",
-                                        "paneProperties.horzGridProperties.color": "#1a1a1a",
-                                        "scalesProperties.textColor": "#999999",
-                                        "scalesProperties.backgroundColor": "#000000",
-                                        "scalesProperties.lineColor": "#1a1a1a"
-                                      }}
-                                      enabled_features={[
-                                        "study_templates",
-                                        "use_localstorage_for_settings",
-                                        "save_chart_properties_to_local_storage",
-                                        "create_volume_indicator_by_default",
-                                        "drawing_templates"
-                                      ]}
-                                      allow_symbol_change={true}
-                                    />
+                                    <Suspense 
+                                      fallback={
+                                        <div className="flex items-center justify-center h-full">
+                                          <div className="text-center">
+                                            <div className="inline-flex items-center justify-center w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                            <p className="text-gray-400">Loading TradingView Chart...</p>
+                                          </div>
+                                        </div>
+                                      }
+                                    >
+                                      <TradingViewAdvancedWidget
+                                        symbol={tradingPairs[`eth-${coin.id}`]?.symbol || `BINANCE:${coin.symbol.toUpperCase()}USDT`}
+                                        theme="dark"
+                                        locale="en"
+                                        width="100%"
+                                        height={700}
+                                        autosize={false}
+                                        interval="D"
+                                        timezone="Etc/UTC"
+                                        style={1}
+                                        hide_side_toolbar={false}
+                                        enable_publishing={false}
+                                        container_id={`tradingview_eth_${coin.symbol}_${coin.id}`}
+                                        toolbar_bg="#000000"
+                                        save_image={true}
+                                        details={true}
+                                        hotlist={true}
+                                        calendar={true}
+                                        studies={[
+                                          "STD;MA",
+                                          "STD;RSI"
+                                        ]}
+                                        overrides={{
+                                          "paneProperties.background": "#000000",
+                                          "paneProperties.backgroundType": "solid",
+                                          "paneProperties.vertGridProperties.color": "#1a1a1a",
+                                          "paneProperties.horzGridProperties.color": "#1a1a1a",
+                                          "scalesProperties.textColor": "#999999",
+                                          "scalesProperties.backgroundColor": "#000000",
+                                          "scalesProperties.lineColor": "#1a1a1a"
+                                        }}
+                                        enabled_features={[
+                                          "study_templates",
+                                          "use_localstorage_for_settings",
+                                          "save_chart_properties_to_local_storage",
+                                          "create_volume_indicator_by_default",
+                                          "drawing_templates"
+                                        ]}
+                                        allow_symbol_change={true}
+                                      />
+                                    </Suspense>
                                   </div>
                                 </DialogContent>
                               </Dialog>
