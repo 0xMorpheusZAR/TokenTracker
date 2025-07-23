@@ -149,8 +149,8 @@ router.get('/eth-btc-ratio', async (req, res) => {
 // Get OTHERS/BTC ratio data (Total Market Cap excluding Top 10 coins and BTC)
 router.get('/others-btc-ratio', async (req, res) => {
   try {
-    const CACHE_KEY = 'others_btc_ratio';
-    const CACHE_TTL = 30; // 30 minutes
+    const CACHE_KEY = 'others_btc_ratio_historical';
+    const CACHE_TTL = 15; // 15 minutes (matching Python script)
     
     // Check cache first
     const cachedData = cacheService.get(CACHE_KEY, CACHE_TTL);
@@ -191,32 +191,45 @@ router.get('/others-btc-ratio', async (req, res) => {
     // Calculate current OTHERS/BTC ratio
     const currentRatio = othersMarketCap / btcMarketCap;
     
-    // Generate 90 days of historical data based on market patterns
-    const now = Date.now();
+    // Fetch real historical data from CoinGecko
+    const days = 365; // 1 year of data
+    
+    console.log('Fetching historical market cap data from CoinGecko...');
+    
+    // Fetch historical global market cap data
+    const globalMarketCapData = await coingeckoService.getHistoricalGlobalMarketCap(days);
+    
+    // Fetch historical Bitcoin market cap data
+    const btcMarketCapData = await coingeckoService.getHistoricalMarketCap('bitcoin', days);
+    
+    // Fetch historical Ethereum market cap data (to calculate OTHERS more accurately)
+    const ethMarketCapData = await coingeckoService.getHistoricalMarketCap('ethereum', days);
+    
+    // Create maps for efficient lookup
+    const btcMap = new Map(btcMarketCapData.map(([ts, cap]) => [ts, cap]));
+    const ethMap = new Map(ethMarketCapData.map(([ts, cap]) => [ts, cap]));
+    
+    // Calculate OTHERS/BTC ratio for each timestamp
     const historicalData = [];
     
-    // Generate historical data points based on typical market patterns
-    // All altcoins typically range between 40-100% of BTC market cap
-    for (let i = 90; i >= 0; i -= 3) {
-      const timestamp = now - (i * 24 * 60 * 60 * 1000);
+    globalMarketCapData.forEach(([timestamp, totalCap]) => {
+      const btcCap = btcMap.get(timestamp);
+      const ethCap = ethMap.get(timestamp);
       
-      // Add some variance to make it realistic
-      const variance = (Math.random() - 0.5) * 0.1;
-      let ratio = currentRatio;
-      
-      if (i > 60) {
-        ratio = currentRatio * 0.9 + variance; // Lower in the past
-      } else if (i > 30) {
-        ratio = currentRatio * 0.95 + variance; // Slightly lower
-      } else {
-        ratio = currentRatio + variance; // Recent data closer to current
+      if (btcCap && totalCap > btcCap) {
+        // OTHERS = Total - BTC (all altcoins)
+        const othersCap = totalCap - btcCap;
+        const ratio = othersCap / btcCap;
+        
+        historicalData.push({
+          timestamp,
+          ratio
+        });
       }
-      
-      historicalData.push({
-        timestamp,
-        ratio: Math.max(0.3, Math.min(1.5, ratio)) // Keep within reasonable bounds (30%-150%)
-      });
-    }
+    });
+    
+    // Sort by timestamp
+    historicalData.sort((a, b) => a.timestamp - b.timestamp);
     
     const responseData = {
       currentRatio,
@@ -233,7 +246,8 @@ router.get('/others-btc-ratio', async (req, res) => {
         btc_dominance: 0.4,
         strong_btc_dominance: 0.3
       },
-      description: "OTHERS/BTC = Total Altcoin Market Cap / Bitcoin Market Cap"
+      description: "CRYPTOCAP:OTHERS/CRYPTOCAP:BTC - Real historical data from CoinGecko",
+      dataSource: "CoinGecko Pro API - 365 days of historical market cap data"
     };
     
     // Cache the data

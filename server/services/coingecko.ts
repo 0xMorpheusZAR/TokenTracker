@@ -342,6 +342,57 @@ export class CoinGeckoService {
       throw error;
     }
   }
+
+  // Get historical global market cap data
+  async getHistoricalGlobalMarketCap(days: number = 365): Promise<[number, number][]> {
+    try {
+      const params = new URLSearchParams({
+        vs_currency: 'usd',
+        days: days.toString()
+      });
+      
+      const response = await fetch(
+        `${this.getApiUrl()}/global/market_cap_chart?${params}`,
+        { headers: this.getHeaders() }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.market_cap_chart?.market_cap || [];
+    } catch (error) {
+      console.error('Failed to fetch historical global market cap:', error);
+      throw error;
+    }
+  }
+
+  // Get historical market cap data for a specific coin
+  async getHistoricalMarketCap(coinId: string, days: number = 365): Promise<[number, number][]> {
+    try {
+      const params = new URLSearchParams({
+        vs_currency: 'usd',
+        days: days.toString(),
+        interval: 'daily'
+      });
+      
+      const response = await fetch(
+        `${this.getApiUrl()}/coins/${coinId}/market_chart?${params}`,
+        { headers: this.getHeaders() }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.market_caps || [];
+    } catch (error) {
+      console.error(`Failed to fetch historical market cap for ${coinId}:`, error);
+      throw error;
+    }
+  }
 }
 
 export const coinGeckoService = new CoinGeckoService();
