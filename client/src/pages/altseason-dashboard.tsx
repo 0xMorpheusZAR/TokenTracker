@@ -227,6 +227,12 @@ export default function AltseasonDashboard() {
            metrics.altseasonIndex > 40 ? 'neutral' : 'bearish'
   } : null;
 
+  // Calculate top ETH outperformers for 30-day period
+  const topPerformersEth30d = performanceEth?.altcoins
+    ?.filter(coin => coin.performanceVsEth?.["30d"] > 0)
+    ?.sort((a, b) => (b.performanceVsEth?.["30d"] || 0) - (a.performanceVsEth?.["30d"] || 0))
+    ?.slice(0, 10) || [];
+
   // Enhanced chart data preparation
   const altseasonIndexData = [{
     name: 'Altseason Index',
@@ -539,83 +545,76 @@ export default function AltseasonDashboard() {
 
 
 
-              {/* Market Cap Distribution */}
+              {/* Top Performers vs ETH */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-green-600 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/20">
+                <Card className="bg-gray-800/50 backdrop-blur-lg border-gray-700 hover:border-indigo-600 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-white">
-                      <PieChartIcon className="mr-1 sm:mr-2 text-green-400 w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="text-sm sm:text-base">Market Cap Distribution</span>
+                    <CardTitle className="flex items-center justify-between text-white">
+                      <span className="flex items-center text-sm sm:text-base">
+                        <TrendingUp className="mr-1 sm:mr-2 text-indigo-400 w-4 h-4 sm:w-5 sm:h-5" />
+                        Top Performers vs ETH
+                      </span>
+                      <Badge className="bg-indigo-600/20 text-indigo-400 border-indigo-500">
+                        {topPerformersEth30d?.length || 0} coins
+                      </Badge>
                     </CardTitle>
-                    <CardDescription>Current market share breakdown</CardDescription>
+                    <CardDescription className="flex items-center justify-between">
+                      <span>30-day outperformance leaders</span>
+                      <span className="text-xs text-gray-500">
+                        <RefreshCw className="w-3 h-3 inline-block mr-1 animate-spin" />
+                        Live updates
+                      </span>
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          paddingAngle={5}
-                          dataKey="value"
-                          animationBegin={0}
-                          animationDuration={800}
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip 
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              return (
-                                <div className="bg-gray-900/95 p-3 rounded-lg shadow-lg border border-gray-700">
-                                  <p className="text-sm font-medium" style={{ color: payload[0].payload.color }}>
-                                    {payload[0].name}
-                                  </p>
-                                  <p className="text-sm font-bold text-white">
-                                    {payload[0].value?.toFixed(1)}%
-                                  </p>
-                                  {marketCapData && (
-                                    <p className="text-xs text-gray-400 mt-1">
-                                      {formatNumber(marketCapData.totalMarketCap * (payload[0].value / 100))}
-                                    </p>
-                                  )}
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="mt-4 space-y-2">
-                      <AnimatePresence>
-                        {pieData.map((entry, index) => (
+                  <CardContent className="p-0">
+                    <div className="h-[340px] overflow-y-auto custom-scrollbar relative">
+                      <div className="space-y-1 p-4">
+                        {topPerformersEth30d.map((coin, index) => (
                           <motion.div
-                            key={entry.name}
+                            key={coin.id}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="flex items-center justify-between text-sm p-2 rounded hover:bg-gray-700/30 transition-colors"
+                            transition={{ delay: Math.min(index * 0.01, 0.2) }}
+                            className={cn(
+                              "flex items-center justify-between p-2 rounded-lg transition-all duration-200",
+                              "hover:bg-gray-700/30 hover:scale-[1.02]",
+                              coin.performanceVsEth?.["30d"] > 50 ? "bg-indigo-600/10" : 
+                              coin.performanceVsEth?.["30d"] > 20 ? "bg-blue-600/10" : 
+                              "bg-gray-700/20"
+                            )}
                           >
-                            <div className="flex items-center">
-                              <div 
-                                className="w-3 h-3 rounded-full mr-2" 
-                                style={{ backgroundColor: entry.color }}
+                            <div className="flex items-center space-x-3">
+                              <img 
+                                src={coin.image} 
+                                alt={coin.symbol} 
+                                className="w-6 h-6 rounded-full"
+                                onError={(e) => {
+                                  e.currentTarget.src = `https://via.placeholder.com/24?text=${coin.symbol.charAt(0)}`;
+                                }}
                               />
-                              <span className="text-gray-400">{entry.name}</span>
+                              <div>
+                                <p className="text-xs font-medium text-white">
+                                  {coin.symbol.toUpperCase()}
+                                  <span className="text-gray-400 ml-1">#{coin.rank}</span>
+                                </p>
+                                <p className="text-xs text-gray-400 truncate max-w-[100px]">{coin.name}</p>
+                              </div>
                             </div>
-                            <span className="font-medium text-white">{entry.value.toFixed(1)}%</span>
+                            <div className="text-right">
+                              <p className={cn(
+                                "text-sm font-bold",
+                                coin.performanceVsEth?.["30d"] > 0 ? "text-indigo-400" : "text-red-400"
+                              )}>
+                                +{coin.performanceVsEth?.["30d"]?.toFixed(1)}%
+                              </p>
+                            </div>
                           </motion.div>
                         ))}
-                      </AnimatePresence>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
