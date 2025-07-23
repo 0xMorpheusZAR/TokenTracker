@@ -659,25 +659,7 @@ export default function AltseasonDashboard() {
                       />
                     </div>
                     
-                    {/* Add critical levels legend */}
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded"></div>
-                        <span className="text-gray-400">Low (&lt;0.025)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
-                        <span className="text-gray-400">Resistance (0.032)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                        <span className="text-gray-400">Major HTF (0.035)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span className="text-gray-400">Breakout (&gt;0.075)</span>
-                      </div>
-                    </div>
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -699,7 +681,7 @@ export default function AltseasonDashboard() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="text-xl sm:text-2xl font-bold text-white">
-                            0.13
+                            <AnimatedCounter value={othersBtcData?.currentRatio || 0.13} decimals={3} />
                           </p>
                           <p className="text-xs text-gray-400">Current Ratio</p>
                         </div>
@@ -731,25 +713,7 @@ export default function AltseasonDashboard() {
                       />
                     </div>
                     
-                    {/* Add critical levels legend */}
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded"></div>
-                        <span className="text-gray-400">BTC Dominant (&lt;0.10)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
-                        <span className="text-gray-400">Neutral (0.10-0.13)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                        <span className="text-gray-400">Alt Season (0.13-0.17)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span className="text-gray-400">Strong Alts (&gt;0.17)</span>
-                      </div>
-                    </div>
+
                   </CardContent>
                 </Card>
               </motion.div>
@@ -802,25 +766,7 @@ export default function AltseasonDashboard() {
                       />
                     </div>
                     
-                    {/* Add critical levels legend */}
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded"></div>
-                        <span className="text-gray-400">ETH Dominant (&lt;3.0)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
-                        <span className="text-gray-400">Balanced (3.0-3.7)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                        <span className="text-gray-400">Alt Season (3.7-4.5)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span className="text-gray-400">Peak Alts (&gt;4.5)</span>
-                      </div>
-                    </div>
+
                   </CardContent>
                 </Card>
               </motion.div>
