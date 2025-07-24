@@ -2,19 +2,30 @@ import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
+import * as Sentry from "@sentry/node";
+import { env } from "../config/env";
+
+Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV });
 
 const app = express();
+app.use(Sentry.Handlers.requestHandler());
+app.use(helmet());
+app.use(cors({ origin: ["https://tokentracker.app"] }));
+app.use(rateLimit({ windowMs: 60_000, max: 240, standardHeaders: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Configure session middleware
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "dev-secret-change-in-production",
+    secret: env.SESSION_SECRET || "dev-secret-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
@@ -68,6 +79,7 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  app.use(Sentry.Handlers.errorHandler());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -86,10 +98,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  // Serve API and client
+  const port = Number(env.PORT);
   server.listen({
     port,
     host: "0.0.0.0",
