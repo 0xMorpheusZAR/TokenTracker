@@ -8,13 +8,10 @@ import rateLimit from "express-rate-limit";
 import * as Sentry from "@sentry/node";
 import { env } from "../config/env";
 
-Sentry.init({
-  dsn: env.SENTRY_DSN,
-  environment: env.NODE_ENV,
-  integrations: [Sentry.expressIntegration()],
-});
+Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV });
 
 const app = express();
+app.use(Sentry.Handlers.requestHandler());
 app.use(helmet());
 app.use(cors({ origin: ["https://tokentracker.app"] }));
 app.use(rateLimit({ windowMs: 60_000, max: 240, standardHeaders: true }));
@@ -82,7 +79,7 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
-  Sentry.setupExpressErrorHandler(app);
+  app.use(Sentry.Handlers.errorHandler());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
