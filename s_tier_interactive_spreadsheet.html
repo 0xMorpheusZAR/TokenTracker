@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Beta Plays - S-Tier Rankings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tier-section {
+            margin: 30px;
+        }
+
+        .tier-row {
+            display: flex;
+            margin-bottom: 20px;
+            min-height: 120px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tier-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            font-weight: bold;
+            font-size: 2.5em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .s-plus { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .s-tier { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+        .s-minus { background: linear-gradient(135deg, #4ECDC4, #44A08D); }
+        .a-plus { background: linear-gradient(135deg, #A8E6CF, #7FCDCD); }
+        .a-tier { background: linear-gradient(135deg, #88D8C0, #6CC04A); }
+        .a-minus { background: linear-gradient(135deg, #C7CEEA, #A8BFE8); }
+        .b-minus { background: linear-gradient(135deg, #FFA07A, #FA8072); }
+        .c-tier { background: linear-gradient(135deg, #D3D3D3, #A9A9A9); }
+
+        .tier-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .token-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-width: 250px;
+        }
+
+        .token-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .token-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .token-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid #eee;
+        }
+
+        .token-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .token-category {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            background: #ecf0f1;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
+
+        .token-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .token-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+
+        .token-mcap {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            padding: 3px 6px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .token-description {
+            font-size: 0.85em;
+            color: #555;
+            line-height: 1.4;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+
+        .methodology {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .methodology h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .criteria-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .criteria-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .download-section {
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .tier-empty {
+            color: #999;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .tier-row {
+                flex-direction: column;
+            }
+            
+            .tier-label {
+                width: 100%;
+                height: 60px;
+            }
+            
+            .token-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 ETHEREUM BETA PLAYS</h1>
+            <p>S-Tier Rankings & Comprehensive Analysis</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Analysis Date: August 11, 2025</p>
+        </div>
+
+        <div class="stats-section">
+            <h2>📊 Portfolio Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>13</h3>
+                    <p>Tokens Analyzed</p>
+                </div>
+                <div class="stat-item">
+                    <h3>4</h3>
+                    <p>S-Tier Protocols</p>
+                </div>
+                <div class="stat-item">
+                    <h3>69.9</h3>
+                    <p>Average Score</p>
+                </div>
+                <div class="stat-item">
+                    <h3>$30B+</h3>
+                    <p>Total Market Cap</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-section">
+            <!-- S+ TIER -->
+            <div class="tier-row">
+                <div class="tier-label s-plus">S+</div>
+                <div class="tier-content" id="s-plus-content">
+                    <!-- S+ tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- S TIER -->
+            <div class="tier-row">
+                <div class="tier-label s-tier">S</div>
+                <div class="tier-content" id="s-content">
+                    <!-- S tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- S- TIER -->
+            <div class="tier-row">
+                <div class="tier-label s-minus">S-</div>
+                <div class="tier-content" id="s-minus-content">
+                    <!-- S- tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- A+ TIER -->
+            <div class="tier-row">
+                <div class="tier-label a-plus">A+</div>
+                <div class="tier-content" id="a-plus-content">
+                    <!-- A+ tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- A TIER -->
+            <div class="tier-row">
+                <div class="tier-label a-tier">A</div>
+                <div class="tier-content" id="a-content">
+                    <!-- A tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- A- TIER -->
+            <div class="tier-row">
+                <div class="tier-label a-minus">A-</div>
+                <div class="tier-content" id="a-minus-content">
+                    <!-- A- tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- B- TIER -->
+            <div class="tier-row">
+                <div class="tier-label b-minus">B-</div>
+                <div class="tier-content" id="b-minus-content">
+                    <!-- B- tokens will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- C TIER -->
+            <div class="tier-row">
+                <div class="tier-label c-tier">C</div>
+                <div class="tier-content" id="c-content">
+                    <!-- C tokens will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="methodology">
+            <h2>📋 Scoring Methodology</h2>
+            <p>Our S-Tier rating system evaluates tokens across four key dimensions, weighted to reflect their importance in determining long-term success:</p>
+            
+            <div class="criteria-grid">
+                <div class="criteria-item">
+                    <h3>📈 Market Metrics (25%)</h3>
+                    <ul>
+                        <li><strong>Market Cap (40%):</strong> Size and adoption scale</li>
+                        <li><strong>Volume Ratio (30%):</strong> Liquidity health</li>
+                        <li><strong>FDV Premium (30%):</strong> Valuation sanity</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-item">
+                    <h3>🏗️ Fundamentals (30%)</h3>
+                    <ul>
+                        <li><strong>Protocol Maturity (30%):</strong> Track record</li>
+                        <li><strong>Team Quality (25%):</strong> Leadership expertise</li>
+                        <li><strong>Backing Quality (25%):</strong> Investor caliber</li>
+                        <li><strong>Innovation Score (20%):</strong> Technical edge</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-item">
+                    <h3>🚀 Adoption & Growth (25%)</h3>
+                    <ul>
+                        <li><strong>TVL Trend (40%):</strong> Capital inflow</li>
+                        <li><strong>User Growth (30%):</strong> Network effects</li>
+                        <li><strong>Integration Depth (30%):</strong> Ecosystem presence</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-item">
+                    <h3>⚠️ Risk Assessment (20%)</h3>
+                    <ul>
+                        <li><strong>Regulatory Risk (30%):</strong> Compliance outlook</li>
+                        <li><strong>Technical Risk (30%):</strong> Code security</li>
+                        <li><strong>Token Economics (25%):</strong> Sustainability</li>
+                        <li><strong>Competition Moat (15%):</strong> Defensibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h2>📥 Export & Share</h2>
+            <button class="download-btn" onclick="downloadRanking()">📊 Download CSV</button>
+            <button class="download-btn" onclick="shareRanking()">📤 Share Rankings</button>
+            <button class="download-btn" onclick="printRanking()">🖨️ Print Version</button>
+        </div>
+    </div>
+
+    <script>
+        // Token data with S-Tier scores and details
+        const tokenData = {
+            'LDO': {
+                name: 'Lido DAO',
+                category: 'LIQUID STAKING',
+                logo: 'https://assets.coingecko.com/coins/images/13573/standard/Lido_DAO.png',
+                price: '$1.43',
+                marketCap: '$1.27B',
+                score: 88.9,
+                tier: 'S+',
+                scores: { market: 94.0, fundamentals: 88.8, adoption: 95, risk: 75 },
+                description: 'Leading Ethereum liquid staking protocol with dominant market position',
+                backing: 'Paradigm, Coinbase Ventures, Three Arrows Capital'
+            },
+            'AAVE': {
+                name: 'Aave',
+                category: 'LENDING',
+                logo: 'https://assets.coingecko.com/coins/images/12645/standard/AAVE.png',
+                price: '$297.73',
+                marketCap: '$4.52B',
+                score: 87.3,
+                tier: 'S+',
+                scores: { market: 82.0, fundamentals: 94.2, adoption: 90, risk: 80 },
+                description: 'Leading DeFi lending protocol with proven track record',
+                backing: 'Framework Ventures, ParaFi Capital, Three Arrows'
+            },
+            'ARB': {
+                name: 'Arbitrum',
+                category: 'INFRA',
+                logo: 'https://assets.coingecko.com/coins/images/16547/standard/photo_2023-03-29_21.47.00.jpeg',
+                price: '$0.44',
+                marketCap: '$2.29B',
+                score: 85.5,
+                tier: 'S+',
+                scores: { market: 74.5, fundamentals: 95.2, adoption: 85, risk: 85 },
+                description: 'Leading Ethereum Layer 2 solution with strong ecosystem',
+                backing: 'Lightspeed, Polychain, Ribbit Capital'
+            },
+            'PENDLE': {
+                name: 'Pendle',
+                category: 'YIELD',
+                logo: 'https://assets.coingecko.com/coins/images/15069/standard/Pendle_Logo_Normal-03.png',
+                price: '$5.31',
+                marketCap: '$883.80M',
+                score: 75.7,
+                tier: 'S-',
+                scores: { market: 74.5, fundamentals: 77.8, adoption: 75, risk: 75 },
+                description: 'Innovative yield tokenization and trading protocol',
+                backing: 'Mechanism Capital, Spartan Group'
+            },
+            'ENA': {
+                name: 'Ethena',
+                category: 'STABLECOINS',
+                logo: 'https://assets.coingecko.com/coins/images/36530/standard/ethena.png',
+                price: '$0.79',
+                marketCap: '$5.22B',
+                score: 74.0,
+                tier: 'A+',
+                scores: { market: 79.0, fundamentals: 70.8, adoption: 80, risk: 65 },
+                description: 'Synthetic USD stablecoin with rapid growth',
+                backing: 'Dragonfly, Binance Labs, OKX Ventures'
+            },
+            'RPL': {
+                name: 'Rocket Pool',
+                category: 'LIQUID STAKING',
+                logo: 'https://assets.coingecko.com/coins/images/2090/standard/rocket_pool.png',
+                price: '$8.48',
+                marketCap: '$182.91M',
+                score: 73.1,
+                tier: 'A+',
+                scores: { market: 68.0, fundamentals: 83.8, adoption: 60, risk: 80 },
+                description: 'Decentralized Ethereum staking with strong fundamentals',
+                backing: 'ConsenSys, Blockchain Capital'
+            },
+            'MNT': {
+                name: 'Mantle',
+                category: 'INFRA',
+                logo: 'https://assets.coingecko.com/coins/images/30980/standard/token-logo.png',
+                price: '$1.01',
+                marketCap: '$3.42B',
+                score: 72.2,
+                tier: 'A+',
+                scores: { market: 74.5, fundamentals: 73.8, adoption: 70, risk: 70 },
+                description: 'High-performance Layer 2 with strong backing',
+                backing: 'BitDAO treasury, Bybit'
+            },
+            'ETHFI': {
+                name: 'Ether.fi',
+                category: 'RESTAKING',
+                logo: 'https://assets.coingecko.com/coins/images/35958/standard/etherfi.png',
+                price: '$1.21',
+                marketCap: '$508.08M',
+                score: 68.0,
+                tier: 'A',
+                scores: { market: 67.0, fundamentals: 73.2, adoption: 65, risk: 65 },
+                description: 'Leading liquid restaking protocol on EigenLayer',
+                backing: 'Bullish Ventures, Node Capital'
+            },
+            'SKY': {
+                name: 'Sky (Maker)',
+                category: 'RWA/STABLECOINS',
+                logo: 'https://assets.coingecko.com/coins/images/1364/standard/Mark_Maker.png',
+                price: '$2033.63',
+                marketCap: '$864.59M',
+                score: 66.6,
+                tier: 'A',
+                scores: { market: 40.0, fundamentals: 87.8, adoption: 65, risk: 70 },
+                description: 'Pioneer DeFi protocol expanding into RWA',
+                backing: 'Andreessen Horowitz, Polychain Capital'
+            },
+            'EIGEN': {
+                name: 'EigenLayer',
+                category: 'RESTAKING',
+                logo: 'https://assets.coingecko.com/coins/images/30060/standard/eigenlayer.png',
+                price: '$1.36',
+                marketCap: '$436.00M',
+                score: 65.9,
+                tier: 'A',
+                scores: { market: 44.0, fundamentals: 84.8, adoption: 70, risk: 60 },
+                description: 'Revolutionary restaking infrastructure protocol',
+                backing: 'Blockchain Capital, Coinbase Ventures, Polychain'
+            },
+            'CPOOL': {
+                name: 'Clearpool',
+                category: 'RWA',
+                logo: 'https://assets.coingecko.com/coins/images/17816/standard/clearpool-logo.png',
+                price: '$0.17',
+                marketCap: '$132.48M',
+                score: 62.6,
+                tier: 'A-',
+                scores: { market: 60.5, fundamentals: 72.5, adoption: 55, risk: 60 },
+                description: 'Decentralized institutional lending marketplace',
+                backing: 'Sequoia Capital, HashKey Capital'
+            },
+            'COOK': {
+                name: 'METH Protocol',
+                category: 'INFRA',
+                logo: 'https://assets.coingecko.com/coins/images/33041/standard/meth.png',
+                price: '$0.013',
+                marketCap: '$12.43M',
+                score: 45.4,
+                tier: 'B-',
+                scores: { market: 34.0, fundamentals: 52.0, adoption: 45, risk: 50 },
+                description: 'Liquid staking with yield optimization features',
+                backing: 'Private investors'
+            },
+            'PEPE': {
+                name: 'Pepe',
+                category: 'MEME',
+                logo: 'https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg',
+                price: '$0.00001161',
+                marketCap: '$4.88B',
+                score: 43.1,
+                tier: 'C',
+                scores: { market: 82.0, fundamentals: 22.0, adoption: 40, risk: 30 },
+                description: 'Leading Ethereum meme token with strong community',
+                backing: 'Community driven'
+            }
+        };
+
+        function populateTokens() {
+            // Group tokens by tier
+            const tierGroups = {
+                'S+': [],
+                'S': [],
+                'S-': [],
+                'A+': [],
+                'A': [],
+                'A-': [],
+                'B+': [],
+                'B': [],
+                'B-': [],
+                'C': [],
+                'D': []
+            };
+
+            // Categorize tokens by tier
+            Object.entries(tokenData).forEach(([symbol, data]) => {
+                tierGroups[data.tier].push({ symbol, ...data });
+            });
+
+            // Sort each tier by score (descending)
+            Object.keys(tierGroups).forEach(tier => {
+                tierGroups[tier].sort((a, b) => b.score - a.score);
+            });
+
+            // Populate each tier section
+            populateTierSection('s-plus', tierGroups['S+']);
+            populateTierSection('s', tierGroups['S']);
+            populateTierSection('s-minus', tierGroups['S-']);
+            populateTierSection('a-plus', tierGroups['A+']);
+            populateTierSection('a', tierGroups['A']);
+            populateTierSection('a-minus', tierGroups['A-']);
+            populateTierSection('b-minus', tierGroups['B-']);
+            populateTierSection('c', tierGroups['C']);
+        }
+
+        function populateTierSection(tierId, tokens) {
+            const container = document.getElementById(tierId + '-content');
+            container.innerHTML = '';
+
+            if (tokens.length === 0) {
+                container.innerHTML = '<div class="tier-empty">No tokens in this tier</div>';
+                return;
+            }
+
+            tokens.forEach(token => {
+                const tokenCard = createTokenCard(token);
+                container.appendChild(tokenCard);
+            });
+        }
+
+        function createTokenCard(token) {
+            const card = document.createElement('div');
+            card.className = 'token-card';
+            
+            card.innerHTML = `
+                <div class="token-score">${token.score}</div>
+                <div class="token-header">
+                    <img src="${token.logo}" alt="${token.name}" class="token-logo" onerror="this.src='https://via.placeholder.com/40x40/cccccc/666666?text=${token.symbol}'">
+                    <div>
+                        <div class="token-name">${token.symbol}</div>
+                    </div>
+                    <div class="token-category">${token.category}</div>
+                </div>
+                <div class="token-price">${token.price}</div>
+                <div class="token-mcap">Market Cap: ${token.marketCap}</div>
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <span>Market:</span>
+                        <span>${token.scores.market}</span>
+                    </div>
+                    <div class="score-item">
+                        <span>Fundamentals:</span>
+                        <span>${token.scores.fundamentals}</span>
+                    </div>
+                    <div class="score-item">
+                        <span>Adoption:</span>
+                        <span>${token.scores.adoption}</span>
+                    </div>
+                    <div class="score-item">
+                        <span>Risk:</span>
+                        <span>${token.scores.risk}</span>
+                    </div>
+                </div>
+                <div class="token-description">
+                    <strong>${token.name}:</strong> ${token.description}
+                    <br><small><strong>Backing:</strong> ${token.backing}</small>
+                </div>
+            `;
+
+            card.addEventListener('click', () => showTokenDetails(token));
+            return card;
+        }
+
+        function showTokenDetails(token) {
+            alert(`${token.name} (${token.symbol})
+            
+Score: ${token.score}/100 (${token.tier} Tier)
+
+Market Metrics: ${token.scores.market}/100
+Fundamentals: ${token.scores.fundamentals}/100  
+Adoption: ${token.scores.adoption}/100
+Risk Assessment: ${token.scores.risk}/100
+
+Price: ${token.price}
+Market Cap: ${token.marketCap}
+
+Description: ${token.description}
+
+Backing: ${token.backing}`);
+        }
+
+        function downloadRanking() {
+            const csv = generateCSV();
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ethereum_beta_plays_s_tier_rankings_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateCSV() {
+            const headers = ['TICKER', 'NAME', 'TIER', 'TOTAL_SCORE', 'MARKET_SCORE', 'FUNDAMENTALS_SCORE', 'ADOPTION_SCORE', 'RISK_SCORE', 'PRICE', 'MARKET_CAP', 'CATEGORY', 'DESCRIPTION', 'BACKING'];
+            
+            const rows = [headers.join(',')];
+            
+            Object.entries(tokenData).forEach(([symbol, data]) => {
+                const row = [
+                    symbol,
+                    `"${data.name}"`,
+                    data.tier,
+                    data.score,
+                    data.scores.market,
+                    data.scores.fundamentals,
+                    data.scores.adoption,
+                    data.scores.risk,
+                    data.price,
+                    `"${data.marketCap}"`,
+                    data.category,
+                    `"${data.description}"`,
+                    `"${data.backing}"`
+                ];
+                rows.push(row.join(','));
+            });
+            
+            return rows.join('\n');
+        }
+
+        function shareRanking() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Ethereum Beta Plays - S-Tier Rankings',
+                    text: 'Check out these comprehensive S-Tier rankings for Ethereum DeFi protocols!',
+                    url: window.location.href
+                });
+            } else {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('URL copied to clipboard!');
+                });
+            }
+        }
+
+        function printRanking() {
+            window.print();
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', populateTokens);
+    </script>
+</body>
+</html>
