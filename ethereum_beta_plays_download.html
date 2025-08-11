@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Beta Plays - Data Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .download-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        .download-btn {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .download-btn:hover {
+            background: #2980b9;
+        }
+        .csv-btn {
+            background: #27ae60;
+        }
+        .csv-btn:hover {
+            background: #219a52;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #34495e;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .category {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .positive {
+            color: #27ae60;
+        }
+        .negative {
+            color: #e74c3c;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 ETHEREUM BETA PLAYS - LIVE DATA</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Tokens</h3>
+                <p>14 Assets</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Market Cap</h3>
+                <p>$31.2B+</p>
+            </div>
+            <div class="stat-card">
+                <h3>Categories</h3>
+                <p>9 Sectors</p>
+            </div>
+            <div class="stat-card">
+                <h3>Data Source</h3>
+                <p>CoinGecko Pro</p>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h2>📥 Download Options</h2>
+            <button class="download-btn csv-btn" onclick="downloadCSV()">
+                📊 Download CSV for Google Sheets
+            </button>
+            <button class="download-btn" onclick="downloadJSON()">
+                📄 Download JSON Data
+            </button>
+            <button class="download-btn" onclick="copyToClipboard()">
+                📋 Copy CSV to Clipboard
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Google Sheets Import Instructions:</h3>
+            <ol>
+                <li>Click "Download CSV for Google Sheets" button above</li>
+                <li>Open Google Sheets</li>
+                <li>Go to File → Import</li>
+                <li>Upload the downloaded CSV file</li>
+                <li>Choose "Replace spreadsheet" and click "Import data"</li>
+            </ol>
+        </div>
+
+        <h2>📊 Live Data Preview</h2>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>TICKER</th>
+                    <th>CATEGORY</th>
+                    <th>PRICE</th>
+                    <th>MARKET CAP</th>
+                    <th>FDV</th>
+                    <th>24H CHANGE</th>
+                    <th>7D CHANGE</th>
+                    <th>VOLUME 24H</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data will be populated by JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="instructions">
+            <h3>🔍 Key Insights:</h3>
+            <ul>
+                <li><strong>Market Leaders:</strong> ENA ($5.37B), PEPE ($4.99B), AAVE ($4.60B), MNT ($3.46B)</li>
+                <li><strong>7-Day Winners:</strong> LDO (+55%), MNT (+42%), PENDLE (+33%), ENA (+32%)</li>
+                <li><strong>High FDV Risk:</strong> EIGEN (5.4x premium), ENA (2.3x premium)</li>
+                <li><strong>Growing Sectors:</strong> Liquid Staking, Restaking, Layer 2 Infrastructure</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // CSV Data embedded directly in the page
+        const csvData = `TICKER,CATEGORY,PRICE,MARKET_CAP,FDV,CHANGE_24H,CHANGE_7D,VOLUME_24H,EXPLANATION
+LDO,LIQUID STAKING,1.442680239370649,1294481476,1444913013,12.63%,55.05%,476682113,"Lido is a leading Ethereum liquid staking protocol that issues stETH, a liquid staking token used in DeFi and restaking protocols."
+RPL,LIQUID STAKING,8.692178396463603,188003498,188003498,6.36%,27.87%,21483291,"Rocket Pool issues rETH, a liquid staking token, with RPL used for node operator incentives."
+EIGEN,RESTAKING,1.3955857702928611,445914896,2429254732,2.31%,24.66%,80624465,"EigenLayer introduces restaking, a new primitive in cryptoeconomic security enabling reuse of ETH on consensus layer."
+ETHFI,RESTAKING,1.2369133451348717,521171574,1237571901,5.34%,23.93%,145834303,"Ether.fi is an advanced liquidity restaking protocol that leverages EigenLayer to restake ETH and LSTs, issuing eETH."
+AAVE,LENDING,301.9584514956254,4597995041,4836488195,-0.30%,14.82%,417562077,"Aave is an open-source, non-custodial protocol to earn interest on deposits and borrow assets."
+PENDLE,YIELD,5.3050548854289055,888032181,1492987296,-2.50%,32.54%,230868408,Pendle Finance enables trading of tokenized future yield on an automated market maker system.
+ENA,STABLECOINS,0.8089743728930207,5373374767,12171872998,8.73%,32.06%,1175667113,"Ethena is a protocol that issues USDe, a synthetic stablecoin pegged to USD using ETH collateral and derivatives hedging."
+SKY,RWA/STABLECOINS,2071.1085727750765,0.0,876260556,0.27%,8.52%,58209521,Sky (formerly Maker) protocol issues DAI stablecoin and is expanding into real-world asset tokenization.
+FLUID,DEX,0,0,0,0.00%,0.00%,0,Fluid is a DEX protocol focusing on capital efficiency and advanced liquidity management.
+ARB,INFRA,0.4548727150689845,2343669747,4550603302,0.38%,16.31%,314756924,Arbitrum is a Layer 2 scaling solution for Ethereum using optimistic rollups technology.
+COOK,INFRA,0.013119619093007472,12660534,65940284,2.41%,25.64%,4119159,METH Protocol provides liquid staking solutions for ETH with yield optimization features.
+MNT,INFRA,1.029438499703052,3464892054,6402429529,0.03%,41.96%,222098808,Mantle is a high-performance Ethereum Layer 2 network built with modular architecture.
+CPOOL,RWA,0.16939150394164182,134313568,169065538,-0.76%,22.54%,10867440,Clearpool is a decentralized marketplace for uncollateralized institutional loans.
+PEPE,MEME,1.1846096258366029e-05,4988811535,4988811535,-0.89%,13.45%,660915280,One of the most recognized memes online and after SHIB the biggest meme token on Ethereum.`;
+
+        // Parse CSV and populate table
+        function populateTable() {
+            const lines = csvData.trim().split('\n');
+            const headers = lines[0].split(',');
+            const tableBody = document.getElementById('tableBody');
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].split(',');
+                const tr = document.createElement('tr');
+                
+                // Format data for display
+                const ticker = row[0];
+                const category = row[1];
+                const price = parseFloat(row[2]) || 0;
+                const marketCap = parseInt(row[3]) || 0;
+                const fdv = parseInt(row[4]) || 0;
+                const change24h = row[5];
+                const change7d = row[6];
+                const volume = parseInt(row[7]) || 0;
+                
+                tr.innerHTML = `
+                    <td><strong>${ticker}</strong></td>
+                    <td><span class="category">${category}</span></td>
+                    <td>$${price >= 1 ? price.toFixed(2) : price.toFixed(8)}</td>
+                    <td>$${formatNumber(marketCap)}</td>
+                    <td>$${formatNumber(fdv)}</td>
+                    <td class="${change24h.includes('-') ? 'negative' : 'positive'}">${change24h}</td>
+                    <td class="${change7d.includes('-') ? 'negative' : 'positive'}">${change7d}</td>
+                    <td>$${formatNumber(volume)}</td>
+                `;
+                tableBody.appendChild(tr);
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1e9) return (num/1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num/1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num/1e3).toFixed(2) + 'K';
+            return num.toString();
+        }
+
+        function downloadCSV() {
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ethereum_beta_plays_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function downloadJSON() {
+            const lines = csvData.trim().split('\n');
+            const headers = lines[0].split(',');
+            const jsonData = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].split(',');
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index];
+                });
+                jsonData.push(obj);
+            }
+            
+            const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ethereum_beta_plays_' + new Date().toISOString().split('T')[0] + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(csvData).then(() => {
+                alert('CSV data copied to clipboard! You can now paste it directly into Google Sheets.');
+            });
+        }
+
+        // Initialize table on page load
+        document.addEventListener('DOMContentLoaded', populateTable);
+    </script>
+</body>
+</html>
