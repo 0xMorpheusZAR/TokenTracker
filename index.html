@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokenTracker - Professional Crypto Analytics Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .tool-header {
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .beta-plays { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .s-tier { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .thread-optimizer { background: linear-gradient(135deg, #00ff00, #008000); }
+
+        .tool-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .tool-content {
+            padding: 30px;
+        }
+
+        .tool-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .tool-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .tool-features li::before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .tool-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .btn-matrix {
+            background: linear-gradient(135deg, #00ff00, #008000);
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-item h3 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .tool-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 TokenTracker</h1>
+            <p>Professional Crypto Analytics & Media Suite</p>
+        </div>
+
+        <div class="stats-section">
+            <h2>📊 Analytics Suite Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>17</h3>
+                    <p>Ethereum Beta Plays</p>
+                </div>
+                <div class="stat-item">
+                    <h3>4</h3>
+                    <p>S-Tier Protocols</p>
+                </div>
+                <div class="stat-item">
+                    <h3>5</h3>
+                    <p>Viral Thread Frameworks</p>
+                </div>
+                <div class="stat-item">
+                    <h3>$30B+</h3>
+                    <p>Total Market Cap Tracked</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tools-grid">
+            <!-- Ethereum Beta Plays Tool -->
+            <div class="tool-card">
+                <div class="tool-header beta-plays">
+                    <h2>📊 Ethereum Beta Plays</h2>
+                    <p>Live Market Data & Analysis</p>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">
+                        Comprehensive analysis of 17 Ethereum DeFi protocols with live market data, 
+                        categorized across 9 sectors including Liquid Staking, Restaking, and RWA.
+                    </p>
+                    <ul class="tool-features">
+                        <li>Live CoinGecko Pro API integration</li>
+                        <li>Google Sheets import functionality</li>
+                        <li>Interactive data visualization</li>
+                        <li>Category-based performance analysis</li>
+                    </ul>
+                    <div class="tool-buttons">
+                        <a href="ethereum_beta_plays_google_import.html" class="btn">🌐 Interactive Import</a>
+                        <a href="ethereum_beta_plays.csv" class="btn btn-secondary">📄 Download CSV</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S-Tier Rankings Tool -->
+            <div class="tool-card">
+                <div class="tool-header s-tier">
+                    <h2>🏆 S-Tier Rankings</h2>
+                    <p>TierMaker-Style Protocol Rankings</p>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">
+                        Professional ranking system evaluating protocols across 4 key dimensions: 
+                        Market Metrics, Fundamentals, Adoption & Growth, and Risk Assessment.
+                    </p>
+                    <ul class="tool-features">
+                        <li>4-factor scoring methodology (0-100 scale)</li>
+                        <li>Token logos and detailed breakdowns</li>
+                        <li>Interactive tier visualization</li>
+                        <li>Export capabilities for sharing</li>
+                    </ul>
+                    <div class="tool-buttons">
+                        <a href="s_tier_interactive_spreadsheet.html" class="btn">🎯 S-Tier Rankings</a>
+                        <a href="s_tier_analysis.txt" class="btn btn-secondary">📋 Analysis Report</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thread Optimizer Tool -->
+            <div class="tool-card">
+                <div class="tool-header thread-optimizer">
+                    <h2>🔴 Matrix Thread Generator</h2>
+                    <p>Ice Brown Edition - Viral Framework System</p>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-description">
+                        Professional crypto thread optimizer with 5 proven viral frameworks based on 
+                        Miles Deutscher's highest-performing patterns. Matrix-themed UI with real engagement metrics.
+                    </p>
+                    <ul class="tool-features">
+                        <li>5 viral frameworks (1.8x-4.0x engagement)</li>
+                        <li>Matrix-style UI with animations</li>
+                        <li>Verified ETH market data integration</li>
+                        <li>Mobile-optimized for Twitter deployment</li>
+                    </ul>
+                    <div class="tool-buttons">
+                        <a href="ice_brown_eth_thread_optimizer.html" class="btn btn-matrix">🚀 Launch Generator</a>
+                        <a href="ice_brown_thread_optimizer_README.md" class="btn btn-secondary">📖 Documentation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🛠️ Built with SuperClaude Framework</h3>
+            <p>Professional crypto analytics and media tools for data-driven decision making</p>
+            <p style="margin-top: 15px; opacity: 0.8;">
+                <strong>GitHub Repository:</strong> 
+                <a href="https://github.com/0xMorpheusZAR/TokenTracker" style="color: #3498db;">TokenTracker</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.tool-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
