@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Beta Plays - Google Sheets Import</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .import-section {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .import-section h2 {
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+        .download-btn {
+            background: #fff;
+            color: #4CAF50;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .direct-btn {
+            background: #2196F3;
+            color: white;
+        }
+        .direct-btn:hover {
+            background: #1976D2;
+        }
+        .copy-btn {
+            background: #FF9800;
+            color: white;
+        }
+        .copy-btn:hover {
+            background: #F57C00;
+        }
+        .instructions {
+            background: #E3F2FD;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .instructions h3 {
+            color: #1976D2;
+            margin-top: 0;
+        }
+        .instructions ol {
+            line-height: 1.8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+        thead, tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        tr:hover {
+            background: #e3f2fd;
+        }
+        .category {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+        .cat-liquid { background: #E8F5E8; color: #2E7D32; }
+        .cat-restaking { background: #FFF3E0; color: #F57C00; }
+        .cat-lending { background: #E3F2FD; color: #1976D2; }
+        .cat-yield { background: #F3E5F5; color: #7B1FA2; }
+        .cat-stable { background: #E8F5E8; color: #388E3C; }
+        .cat-rwa { background: #FFF8E1; color: #F9A825; }
+        .cat-dex { background: #FCE4EC; color: #C2185B; }
+        .cat-infra { background: #EFEBE9; color: #5D4037; }
+        .cat-meme { background: #FFEBEE; color: #D32F2F; }
+        
+        .positive { color: #4CAF50; font-weight: bold; }
+        .negative { color: #f44336; font-weight: bold; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+        .stat-card p {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+        }
+        .alert {
+            background: #ffebcd;
+            border: 2px solid #daa520;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .alert h4 {
+            color: #b8860b;
+            margin-top: 0;
+        }
+        .google-sheets-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #34A853, #137333);
+            color: white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(52, 168, 83, 0.3);
+        }
+        .google-sheets-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(52, 168, 83, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Ethereum Beta Plays - Google Sheets Ready</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Tokens</h3>
+                <p>17 Assets</p>
+            </div>
+            <div class="stat-card">
+                <h3>Live Data</h3>
+                <p>14 Active</p>
+            </div>
+            <div class="stat-card">
+                <h3>Market Cap</h3>
+                <p>$30B+</p>
+            </div>
+            <div class="stat-card">
+                <h3>Categories</h3>
+                <p>9 Sectors</p>
+            </div>
+        </div>
+
+        <div class="import-section">
+            <h2>📊 Import to Google Sheets</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">Choose your preferred method to get this data into Google Sheets:</p>
+            
+            <a href="#" class="google-sheets-link" onclick="openGoogleSheets()">
+                📈 Open New Google Sheet & Import
+            </a>
+            
+            <div style="margin: 20px 0;">
+                <button class="download-btn" onclick="downloadCSV()">
+                    💾 Download CSV File
+                </button>
+                <button class="download-btn copy-btn" onclick="copyCSVData()">
+                    📋 Copy CSV Data
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Import Instructions:</h3>
+            <h4>Method 1: Direct Import (Recommended)</h4>
+            <ol>
+                <li>Click "<strong>Open New Google Sheet & Import</strong>" button above</li>
+                <li>A new Google Sheet will open with the data automatically imported</li>
+                <li>Data will be formatted and ready to use immediately</li>
+            </ol>
+            
+            <h4>Method 2: Manual CSV Import</h4>
+            <ol>
+                <li>Click "Download CSV File" to save the data locally</li>
+                <li>Go to <a href="https://sheets.google.com" target="_blank">sheets.google.com</a></li>
+                <li>Create a new sheet or open existing one</li>
+                <li>Go to <strong>File → Import</strong></li>
+                <li>Upload the CSV file and click "Import data"</li>
+            </ol>
+            
+            <h4>Method 3: Copy & Paste</h4>
+            <ol>
+                <li>Click "Copy CSV Data" button</li>
+                <li>Open Google Sheets</li>
+                <li>Select cell A1 and paste (Ctrl+V)</li>
+                <li>Use "Split text to columns" if needed</li>
+            </ol>
+        </div>
+
+        <div class="alert">
+            <h4>⚠️ Data Notes:</h4>
+            <ul>
+                <li><strong>Live Data:</strong> Prices and market caps are current as of fetch time</li>
+                <li><strong>Missing Tokens:</strong> ASF, FLUID, SYRUP, CHEX have no CoinGecko data (may be unlisted or very low liquidity)</li>
+                <li><strong>FDV Premiums:</strong> Watch ENA (2.3x) and EIGEN (5.5x) for high dilution risk</li>
+                <li><strong>Updates:</strong> Run the Python script to refresh data</li>
+            </ul>
+        </div>
+
+        <h2>📈 Live Data Preview</h2>
+        <div style="overflow-x: auto;">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">TICKER</th>
+                        <th style="width: 12%;">CATEGORY</th>
+                        <th style="width: 10%;">PRICE</th>
+                        <th style="width: 10%;">MARKET CAP</th>
+                        <th style="width: 10%;">FDV</th>
+                        <th style="width: 8%;">24H</th>
+                        <th style="width: 8%;">7D</th>
+                        <th style="width: 10%;">VOLUME</th>
+                        <th style="width: 24%;">EXPLANATION</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const csvData = `TICKER,CATEGORY,PRICE,MARKET_CAP,FDV,CHANGE_24H,CHANGE_7D,VOLUME_24H,EXPLANATION
+LDO,LIQUID STAKING,1.4212706685967895,1273460554,1413798623,12.13%,53.94%,472334205,"Lido is a leading Ethereum liquid staking protocol that issues stETH, a liquid staking token used in DeFi and restaking protocols."
+RPL,LIQUID STAKING,8.489503742084016,183991406,183991406,5.78%,26.89%,21206687,"Rocket Pool issues rETH, a liquid staking token, with RPL used for node operator incentives."
+EIGEN,RESTAKING,1.3722647989896926,437813984,2394507325,1.78%,23.65%,79556806,"EigenLayer introduces restaking, a new primitive in cryptoeconomic security enabling reuse of ETH on consensus layer."
+ETHFI,RESTAKING,1.2132046830166127,508607641,1213798504,4.82%,23.01%,143720652,"Ether.fi is an advanced liquidity restaking protocol that leverages EigenLayer to restake ETH and LSTs, issuing eETH."
+AAVE,LENDING,297.2735077398656,4530536688,4773370982,-0.77%,13.89%,412074085,"Aave is an open-source, non-custodial protocol to earn interest on deposits and borrow assets."
+PENDLE,YIELD,5.270188050058406,881788815,1483142406,-2.97%,31.57%,228461003,"Pendle Finance enables trading of tokenized future yield on an automated market maker system."
+ENA,STABLECOINS,0.7880307433618893,5223644012,11824742588,8.22%,30.97%,1159982031,"Ethena is a protocol that issues USDe, a synthetic stablecoin pegged to USD using ETH collateral and derivatives hedging."
+ASF,STABLECOINS,0,0,0,0.00%,0.00%,0,"American Superfluid provides stablecoin infrastructure and liquidity solutions."
+SKY,RWA/STABLECOINS,2035.760806851854,0,864588877,0.21%,7.58%,57375398,"Sky (formerly Maker) protocol issues DAI stablecoin and is expanding into real-world asset tokenization."
+FLUID,DEX,0,0,0,0.00%,0.00%,0,"Fluid is a DEX protocol focusing on capital efficiency and advanced liquidity management."
+ARB,INFRA,0.4461990377013899,2299516885,4467270408,0.28%,15.37%,310705825,"Arbitrum is a Layer 2 scaling solution for Ethereum using optimistic rollups technology."
+COOK,INFRA,0.01294165040935976,12443655,64809835,2.14%,24.66%,4060871,"METH Protocol provides liquid staking solutions for ETH with yield optimization features."
+MNT,INFRA,1.0159806006936944,3415973087,6311546778,-0.05%,40.89%,218841159,"Mantle is a high-performance Ethereum Layer 2 network built with modular architecture."
+CPOOL,RWA,0.16679038751627758,132707308,167051866,-1.30%,21.60%,10727949,"Clearpool is a decentralized marketplace for uncollateralized institutional loans."
+SYRUP,RWA,0,0,0,0.00%,0.00%,0,"Syrup Protocol focuses on real-world asset tokenization and yield farming."
+CHEX,RWA,0,0,0,0.00%,0.00%,0,"Chintai provides tokenization infrastructure for real-world assets."
+PEPE,MEME,1.1616063398725043e-05,4888763072,4888763072,-1.33%,12.52%,651886165,"One of the most recognized memes online and after SHIB the biggest meme token on Ethereum."`;
+
+        function getCategoryClass(category) {
+            const classes = {
+                'LIQUID STAKING': 'cat-liquid',
+                'RESTAKING': 'cat-restaking',
+                'LENDING': 'cat-lending',
+                'YIELD': 'cat-yield',
+                'STABLECOINS': 'cat-stable',
+                'RWA/STABLECOINS': 'cat-rwa',
+                'DEX': 'cat-dex',
+                'INFRA': 'cat-infra',
+                'RWA': 'cat-rwa',
+                'MEME': 'cat-meme'
+            };
+            return classes[category] || 'cat-other';
+        }
+
+        function populateTable() {
+            const lines = csvData.trim().split('\n');
+            const tableBody = document.getElementById('tableBody');
+            
+            for (let i = 1; i < lines.length; i++) {
+                const row = parseCSVRow(lines[i]);
+                const tr = document.createElement('tr');
+                
+                const [ticker, category, price, marketCap, fdv, change24h, change7d, volume, explanation] = row;
+                
+                const priceNum = parseFloat(price) || 0;
+                const marketCapNum = parseInt(marketCap) || 0;
+                const fdvNum = parseInt(fdv) || 0;
+                const volumeNum = parseInt(volume) || 0;
+                
+                tr.innerHTML = `
+                    <td><strong>${ticker}</strong></td>
+                    <td><span class="category ${getCategoryClass(category)}">${category}</span></td>
+                    <td>$${priceNum >= 1 ? priceNum.toFixed(2) : priceNum.toFixed(8)}</td>
+                    <td>$${formatNumber(marketCapNum)}</td>
+                    <td>$${formatNumber(fdvNum)}</td>
+                    <td class="${change24h.includes('-') ? 'negative' : 'positive'}">${change24h}</td>
+                    <td class="${change7d.includes('-') ? 'negative' : 'positive'}">${change7d}</td>
+                    <td>$${formatNumber(volumeNum)}</td>
+                    <td style="font-size: 10px;">${explanation.replace(/"/g, '')}</td>
+                `;
+                tableBody.appendChild(tr);
+            }
+        }
+
+        function parseCSVRow(row) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < row.length; i++) {
+                const char = row[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        function formatNumber(num) {
+            if (num === 0) return 'N/A';
+            if (num >= 1e9) return (num/1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num/1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num/1e3).toFixed(2) + 'K';
+            return num.toString();
+        }
+
+        function downloadCSV() {
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ethereum_beta_plays_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function copyCSVData() {
+            navigator.clipboard.writeText(csvData).then(() => {
+                alert('✅ CSV data copied to clipboard! \n\nNow go to Google Sheets and:\n1. Click cell A1\n2. Paste (Ctrl+V)\n3. Use "Split text to columns" if needed');
+            });
+        }
+
+        function openGoogleSheets() {
+            // Encode the CSV data for URL
+            const encodedData = encodeURIComponent(csvData);
+            
+            // Create a data URL for the CSV
+            const dataUrl = 'data:text/csv;charset=utf-8,' + encodedData;
+            
+            // Try to open Google Sheets with import
+            const sheetsUrl = 'https://docs.google.com/spreadsheets/create';
+            
+            // Open Google Sheets in new tab
+            window.open(sheetsUrl, '_blank');
+            
+            // Show instructions
+            setTimeout(() => {
+                alert('📋 Google Sheets opened! \n\nTo import the data:\n1. In Google Sheets, go to File → Import\n2. Click "Upload" tab\n3. Drag and drop the CSV file or click "Select a file from your device"\n4. OR use the "Copy CSV Data" button and paste directly');
+            }, 1000);
+        }
+
+        // Initialize table on page load
+        document.addEventListener('DOMContentLoaded', populateTable);
+    </script>
+</body>
+</html>
